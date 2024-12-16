@@ -8,25 +8,25 @@ function Projects() {
     return (
         <>
             <Sidebar />
-            <div class="content">
+            <div className="content">
                 <Topbar />
-                {/* <div class="container-fluid pt-4 px-4">
-                    <div class="row g-4">
-                        <div class="col-sm-12 col-xl-12">
-                            <div class="bg-light rounded h-100 p-4">
+                <div className="container-fluid pt-4 px-4">
+                    <div className="row g-4">
+                        <div className="col-sm-12 col-xl-12">
+                            <div className="bg-light rounded h-100 p-4">
                                 <div className="row justify-content-center mx-0">
                                     <div className="col-lg-10 col-md-12">
-                                        <div class="d-flex justify-content-between mb-3">
-                                            <div class="p-2 ">
+                                        <div className="d-flex justify-content-between mb-3">
+                                            <div className="p-2">
                                                 <h4>Projects</h4>
                                             </div>
-                                            <div class="p-2 ">
-                                                <Link to="/AddProjects" class="btn">
-                                                    <b><i class="bi bi-plus-circle-fill"></i> Add New Project</b>
+                                            <div className="p-2">
+                                                <Link to="/AddProjects" className="btn">
+                                                    <b><i className="bi bi-plus-circle-fill"></i> Add New Project</b>
                                                 </Link>
                                             </div>
                                         </div>
-                                        <table class="table table-bordered">
+                                        <table className="table table-bordered text-center">
                                             <thead>
                                                 <tr>
                                                     <th>Project Name</th>
@@ -39,26 +39,49 @@ function Projects() {
                                                     <td></td>
                                                     <td></td>
                                                     <td>
-                                                        <button class="btn btn-sm p-0 m-1">
-                                                            <img src="img/60535fdd1b5f2b932e9eed4484a5d87b.png" alt="Icon 1" class="img-fluid" style={{ width: "25px", height: "25px" }} />
+                                                        <Link to="/unit" className="btn btn-primary btn-sm me-2">
+                                                            <i className="fas fa-eye"></i>
+                                                        </Link>
+                                                        <button className="btn btn-warning btn-sm me-2">
+                                                            <i className="fas fa-edit"></i>
                                                         </button>
-                                                        <button class="btn btn-sm p-0 m-1">
-                                                            <img src="img/a0ee6b39b5ab0178a7ab2f5547ddbd75.png" alt="Icon 2" class="img-fluid" style={{ width: "25px", height: "25px" }} />
+                                                        <button className="btn btn-danger btn-sm">
+                                                            <i className="fas fa-trash"></i>
                                                         </button>
-                                                        <button class="btn btn-sm p-0 m-1">
-                                                            <img src="img/622ed723d82bc2b2a3e64ca69673ecb6.png" alt="Icon 3" class="img-fluid" style={{ width: "25px", height: "25px" }} />
-                                                        </button>
+
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td></td>
                                                     <td></td>
-                                                    <td></td>
+                                                    <td>
+                                                        <Link to="/unit" className="btn btn-primary btn-sm me-2">
+                                                            <i className="fas fa-eye"></i>
+                                                        </Link>
+                                                        <button className="btn btn-warning btn-sm me-2">
+                                                            <i className="fas fa-edit"></i>
+                                                        </button>
+                                                        <button className="btn btn-danger btn-sm">
+                                                            <i className="fas fa-trash"></i>
+                                                        </button>
+
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td></td>
                                                     <td></td>
-                                                    <td></td>
+                                                    <td>
+                                                        <Link to="/unit" className="btn btn-primary btn-sm me-2">
+                                                            <i className="fas fa-eye"></i>
+                                                        </Link>
+                                                        <button className="btn btn-warning btn-sm me-2">
+                                                            <i className="fas fa-edit"></i>
+                                                        </button>
+                                                        <button className="btn btn-danger btn-sm">
+                                                            <i className="fas fa-trash"></i>
+                                                        </button>
+
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -67,8 +90,8 @@ function Projects() {
                             </div>
                         </div>
                     </div>
-                </div> */}
-                <Footer/>
+                </div>
+                <Footer />
             </div>
         </>
     )

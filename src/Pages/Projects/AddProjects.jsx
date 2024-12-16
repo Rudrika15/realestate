@@ -10,7 +10,7 @@ function AddProjects() {
             <Sidebar />
             <div class="content">
                 <Topbar />
-                {/* <div class="container-fluid pt-4 px-4">
+                <div class="container-fluid pt-4 px-4">
                     <div class="row g-4">
                         <div class="col-sm-12 col-xl-12">
                             <div class="bg-light rounded h-100 p-4">
@@ -27,99 +27,28 @@ function AddProjects() {
                                                 </Link>
                                             </div>
                                         </div>
-                                        <div className="mb-3">
-                                            <div className="d-flex justify-content-between align-items-center w-100">
-                                                <div className="col-md-6 position-relative" style={{ marginTop: '3rem' }}>
-                                                    <label
-                                                        htmlFor="name"
-                                                        className="form-label text-muted"
-                                                        style={{
-                                                            position: 'absolute',
-                                                            top: '50%',
-                                                            left: '1.5rem',
-                                                            transform: 'translateY(-130%)',
-                                                            background: 'white',
-                                                            padding: '0 5px',
-                                                            zIndex: '1',
-                                                            pointerEvents: 'none',
-                                                        }}
-                                                    >
-                                                        Name <span className="text-danger">*</span>
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        id="name"
-                                                        style={{
-                                                            position: 'relative',
-                                                            zIndex: '0',
-                                                            border: '1px solid #AFA2A2',
-                                                            width: '100%',
-                                                        }}
-                                                    />
+                                        <form>
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label">Name : </label>
+                                                <input type="text" class="form-control" id="name" aria-describedby="name" />
+                                                <div id="name" class="form-text">
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="mb-0">
-                                            <div className="d-flex justify-content-between align-items-center w-100">
-                                                <div className="col-md-6 position-relative" style={{ marginTop: '2rem' }}>
-                                                    <label
-                                                        htmlFor="details"
-                                                        className="form-label"
-                                                        style={{
-                                                            position: 'absolute',
-                                                            top: '50%',
-                                                            left: '47px',
-                                                            transform: 'translateY(-250%)',
-                                                            background: 'white',
-                                                            padding: '0 5px',
-                                                            zIndex: '1',
-                                                            pointerEvents: 'none',
-                                                            color: '#6c757d',
-                                                        }}
-                                                    >
-                                                        Upload Unit <span className="text-danger">*</span>
-                                                    </label>
-                                                    <textarea
-                                                        className="form-control"
-                                                        id="details"
-                                                        style={{
-                                                            position: 'relative',
-                                                            zIndex: '0',
-                                                            border: '1px solid #AFA2A2',
-                                                            height: '100px',
-                                                            width: '38rem',
-                                                            textAlign: 'center',
-                                                            color: '#6c757d',
-                                                            paddingTop: '4rem'
-                                                        }}
-                                                    >
-                                                        Upload a File </textarea>
+                                            <div class="mb-3">
+                                                <label for="file" class="form-label">Upload Unit : </label>
+                                                <input type="file" class="form-control" id="unit" aria-describedby="unit" />
+                                                <div id="unit" class="form-text">
                                                 </div>
                                             </div>
-                                        </div>
-                                        <button
-                                    type="submit"
-                                    style={{
-                                        backgroundColor: '#3F4747',
-                                        color: 'white',
-                                        borderRadius: '5px',
-                                        width: '150px',
-                                        height: '35px',
-                                        border: 'none',
-                                        marginTop: '4rem',
-                                        marginLeft: '27rem'
-                                    }}
-                                >
-                                    Submit
-                                </button>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div> */}
-                <Footer/>
+                </div>
+                <Footer />
             </div>
         </>
     )
