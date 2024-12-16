@@ -1,11 +1,19 @@
-// src/Components/Sidebar/Sidebar.js
-import React from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Sidebar = ({ isSidebarOpen }) => {
+    const [isBookingOpen, setIsBookingOpen] = useState(false);
+    const [isLedgerOpen, setIsLedgerOpen] = useState(false);
+    const [isApprovalOpen, setIsApprovalOpen] = useState(false);
+
+    const toggleBookingDropdown = () => setIsBookingOpen(!isBookingOpen);
+    const toggleLedgerDropdown = () => setIsLedgerOpen(!isLedgerOpen);
+    const toggleApprovalDropdown = () => setIsApprovalOpen(!isApprovalOpen);
+
     return (
         <div className={`sidebar pe-4 pb-3 ${isSidebarOpen ? 'open' : ''}`}>
             <nav className="navbar bg-light navbar-light">
-                <a href="index.html" className="navbar-brand mx-4 mb-3">
+                <a href="" className="navbar-brand mx-4 mb-3">
                     <h3 className="text-primary">
                         <i className="fa fa-hashtag me-2"></i>DASHMIN
                     </h3>
@@ -26,50 +34,58 @@ const Sidebar = ({ isSidebarOpen }) => {
                     </div>
                 </div>
                 <div className="navbar-nav w-100">
-                    <a href="index.html" className="nav-item nav-link">
-                        <i className="fa fa-tachometer-alt me-2"></i>Dashboard
-                    </a>
+                    <Link to="/Projects" className="nav-item nav-link">
+                        <i className="bi bi-kanban"></i> Projects
+                    </Link>
                     <div className="nav-item dropdown">
                         <a
                             href="#"
                             className="nav-link dropdown-toggle"
-                            data-bs-toggle="dropdown"
+                            onClick={toggleBookingDropdown}
                         >
-                            <i className="fa fa-laptop me-2"></i>Elements
+                            <i className="bi bi-calendar"></i> Booking
                         </a>
-                        <div className="dropdown-menu bg-transparent border-0">
-                            <a href="button.html" className="dropdown-item">Buttons</a>
-                            <a href="typography.html" className="dropdown-item">Typography</a>
-                            <a href="element.html" className="dropdown-item">Other Elements</a>
+                        <div className={`dropdown-menu bg-transparent border-0 ${isBookingOpen ? 'show' : ''}`}>
+                            <Link to="/ViewBooking" className="dropdown-item">View Bookings</Link>
+                            <Link to="/CancelledBooking" className="dropdown-item">Cancelled Bookings</Link>
                         </div>
                     </div>
-                    <a href="widget.html" className="nav-item nav-link">
-                        <i className="fa fa-th me-2"></i>Widgets
-                    </a>
-                    <a href="form.html" className="nav-item nav-link">
-                        <i className="fa fa-keyboard me-2"></i>Forms
-                    </a>
-                    <a href="table.html" className="nav-item nav-link active">
-                        <i className="fa fa-table me-2"></i>Tables
-                    </a>
-                    <a href="chart.html" className="nav-item nav-link">
-                        <i className="fa fa-chart-bar me-2"></i>Charts
-                    </a>
+                    <Link to="/Partners" className="nav-item nav-link">
+                        <i className="bi bi-people"></i> Partners
+                    </Link>
+                    <Link to="/Expenses" className="nav-item nav-link">
+                        <i className="bi bi-receipt-cutoff"></i> Expenses
+                    </Link>
                     <div className="nav-item dropdown">
                         <a
                             href="#"
                             className="nav-link dropdown-toggle"
-                            data-bs-toggle="dropdown"
+                            onClick={toggleLedgerDropdown}
                         >
-                            <i className="far fa-file-alt me-2"></i>Pages
+                            <i className="bi bi-clipboard-data"></i> Ledger
                         </a>
-                        <div className="dropdown-menu bg-transparent border-0">
-                            <a href="signin.html" className="dropdown-item">Sign In</a>
-                            <a href="signup.html" className="dropdown-item">Sign Up</a>
-                            <a href="404.html" className="dropdown-item">404 Error</a>
-                            <a href="blank.html" className="dropdown-item">Blank Page</a>
+                        <div className={`dropdown-menu bg-transparent border-0 ${isLedgerOpen ? 'show' : ''}`}>
+                            <Link to="/PartnerIncome" className="dropdown-item">Partner</Link>
+                            <Link to="/CustomerIncome" className="dropdown-item">Customer</Link>
                         </div>
                     </div>
+                    <div className="nav-item dropdown">
+                        <a
+                            href="#"
+                            className="nav-link dropdown-toggle"
+                            onClick={toggleApprovalDropdown}
+                        >
+                            <i className="bi bi-clipboard-check"></i> Approval
+                        </a>
+                        <div className={`dropdown-menu bg-transparent border-0 ${isApprovalOpen ? 'show' : ''}`}>
+                            <Link to="/CashDeposit" className="dropdown-item">Cash Deposit</Link>
+                            <Link to="/ChequeDeposit" className="dropdown-item">Cheque Deposit</Link>
+                            <Link to="/Booking" className="dropdown-item">Booking</Link>
+                        </div>
+                    </div>
+                    <Link to="/Report" className="nav-item nav-link">
+                        <i className="bi bi-graph-up"></i> Report
+                    </Link>
                 </div>
             </nav>
         </div>
