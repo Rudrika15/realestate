@@ -20,7 +20,7 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
                 />
             </form>
             <div className="navbar-nav align-items-center ms-auto">
-                <div className="nav-item dropdown">
+                {/* <div className="nav-item dropdown">
                     <a
                         href="#"
                         className="nav-link dropdown-toggle"
@@ -49,8 +49,8 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
                             See all message
                         </a>
                     </div>
-                </div>
-                <div className="nav-item dropdown">
+                </div> */}
+                {/* <div className="nav-item dropdown">
                     <a
                         href="#"
                         className="nav-link dropdown-toggle"
@@ -69,7 +69,7 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
                             See all notifications
                         </a>
                     </div>
-                </div>
+                </div> */}
                 <div className="nav-item dropdown">
                     <a
                         href="#"
