@@ -46,9 +46,9 @@ function CashDeposit() {
                           <td></td>
                           <td>
                             <div class="btn-group" role="group" aria-label="Action Buttons">
-                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#f0e4ee' }}>Accept</button>
-                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#e4edd1', marginLeft: '0.5rem' }}>Reject</button>
-                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#ccdedc', marginLeft: '0.5rem' }}>View</button>
+                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#f0e4ee', color: "black" }}>Accept</button>
+                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#e4edd1', color: "black", marginLeft: '0.5rem' }}>Reject</button>
+                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#ccdedc', color: "black", marginLeft: '0.5rem' }}>View</button>
                             </div>
                           </td>
                         </tr>
@@ -65,9 +65,9 @@ function CashDeposit() {
                           <td></td>
                           <td>
                             <div class="btn-group" role="group" aria-label="Action Buttons">
-                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#f0e4ee' }}>Accept</button>
-                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#e4edd1', marginLeft: '0.5rem' }}>Reject</button>
-                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#ccdedc', marginLeft: '0.5rem' }}>View</button>
+                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#f0e4ee', color: "black" }}>Accept</button>
+                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#e4edd1', color: "black", marginLeft: '0.5rem' }}>Reject</button>
+                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#ccdedc', color: "black", marginLeft: '0.5rem' }}>View</button>
                             </div>
                           </td>
                         </tr>
@@ -84,9 +84,9 @@ function CashDeposit() {
                           <td></td>
                           <td>
                             <div class="btn-group" role="group" aria-label="Action Buttons">
-                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#f0e4ee' }}>Accept</button>
-                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#e4edd1', marginLeft: '0.5rem' }}>Reject</button>
-                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#ccdedc', marginLeft: '0.5rem' }}>View</button>
+                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#f0e4ee', color: "black" }}>Accept</button>
+                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#e4edd1', color: "black", marginLeft: '0.5rem' }}>Reject</button>
+                              <button type="button" class="btn shadow-sm" style={{ backgroundColor: '#ccdedc', color: "black", marginLeft: '0.5rem' }}>View</button>
                             </div>
                           </td>
                         </tr>

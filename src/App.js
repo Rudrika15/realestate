@@ -24,6 +24,8 @@ import AddPartnerReimbursment from "./Pages/Ledger/AddPartnerReimbursment";
 import PartnerIncome from "./Pages/Ledger/PartnerIncome";
 import CustomerIncome from "./Pages/Ledger/CustomerIncome";
 import PartnerReimbursement from "./Pages/Ledger/PartnerReimbursement";
+import ViewCancelledBooking from "./Pages/Booking/ViewCancelledBooking";
+
 
 const App = () => {
   return (
@@ -53,6 +55,7 @@ const App = () => {
           <Route path="/CustomerIncome" element={<CustomerIncome />} />
           <Route path="/PartnerIncome" element={<PartnerIncome />} />
           <Route path="/PartnerReimbursement" element={<PartnerReimbursement />}/>
+          <Route path="/ViewCancelledBooking" element={<ViewCancelledBooking />}/>
         </Routes>
       </Router>
     </>
