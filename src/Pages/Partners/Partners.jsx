@@ -45,7 +45,6 @@ function Partners() {
                             <button className="btn btn-danger btn-sm">
                               <i className="fas fa-trash"></i>
                             </button>
-
                           </td>
                         </tr>
                         <tr>
