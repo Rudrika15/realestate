@@ -80,7 +80,7 @@ const Sidebar = ({ isSidebarOpen }) => {
                         <div className={`dropdown-menu bg-transparent border-0 ${isApprovalOpen ? 'show' : ''}`}>
                             <Link to="/CashDeposit" className="dropdown-item">Cash Deposit</Link>
                             <Link to="/ChequeDeposit" className="dropdown-item">Cheque Deposit</Link>
-                            <Link to="/Booking" className="dropdown-item">Booking</Link>
+                            <Link to="/BookingAuthorization" className="dropdown-item">Booking</Link>
                         </div>
                     </div>
                     <Link to="/Report" className="nav-item nav-link">

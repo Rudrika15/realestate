@@ -14,12 +14,12 @@ const Login = () => {
 
     const handleLogin = () => {
         if (!email) {
-            toast.error('email is required');
+            toast.error('Email is required');
             return;
         }
 
         if (!password) {
-            toast.error('password is required');
+            toast.error('Password is required');
             return;
         }
 
