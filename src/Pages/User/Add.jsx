@@ -33,7 +33,7 @@ const Add = () => {
                         <div className="row g-4">
                             <div className="col-sm-12 col-xl-12">
                                 <div className="bg-light rounded h-100 p-4">
-                                    <h6 className="mb-4">Bordered Table</h6>
+                                    <h6 className="mb-4">User List</h6>
                                     <table className="table table-bordered">
                                         <thead>
                                             <tr>
