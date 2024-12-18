@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Add from "./Pages/User/Add";
-import Login from "./Pages/User/Login/Login";
+import Login from "./Pages/Login/Login";
 import Projects from "./Pages/Projects/Projects";
 import AddProjects from "./Pages/Projects/AddProjects";
 import Partners from "./Pages/Partners/Partners";
@@ -34,28 +34,28 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Login />}></Route>
           <Route path="/add-user" element={<Add />}></Route>
-          <Route path="/BookingAuthorization" element={<BookingAuthorization />}></Route>
-          <Route path="/CashDeposit" element={<CashDeposit />}></Route>
-          <Route path="/ChequeDeposit" element={<ChequeDeposit />}></Route>
-          <Route path="/Booking" element={<Booking />}></Route>
-          <Route path="/CancelledBooking" element={<CancelledBooking />}></Route>
-          <Route path="/ViewBooking" element={<ViewBooking />}></Route>
-          <Route path="/Projects" element={<Projects />} />
-          <Route path="/AddProjects" element={<AddProjects />} />
-          <Route path="/Unit" element={<Unit />} />
-          <Route path="/EditUnit" element={<EditUnit />} />
-          <Route path="/Partners" element={<Partners />} />
-          <Route path="/AddPartners" element={<AddPartners />} />
-          <Route path="/Expenses" element={<Expenses />} />
-          <Route path="/AddExpenses" element={<AddExpenses />} />
-          <Route path="/Report" element={<Report />} />
-          <Route path="/AddCustomerIncome" element={<AddCustomerIncome />} />
-          <Route path="/AddPartnerIncome" element={<AddPartnerIncome />} />
-          <Route path="/AddPartnerReimbursment" element={<AddPartnerReimbursment />}/>
-          <Route path="/CustomerIncome" element={<CustomerIncome />} />
-          <Route path="/PartnerIncome" element={<PartnerIncome />} />
-          <Route path="/PartnerReimbursement" element={<PartnerReimbursement />}/>
-          <Route path="/ViewCancelledBooking" element={<ViewCancelledBooking />}/>
+          <Route path="/booking-authorization" element={<BookingAuthorization />}></Route>
+          <Route path="/cash-deposit" element={<CashDeposit />}></Route>
+          <Route path="/cheque-deposit" element={<ChequeDeposit />}></Route>
+          <Route path="/booking" element={<Booking />}></Route>
+          <Route path="/cancelled-booking" element={<CancelledBooking />}></Route>
+          <Route path="/view-booking" element={<ViewBooking />}></Route>
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/add-projects" element={<AddProjects />} />
+          <Route path="/unit" element={<Unit />} />
+          <Route path="/edit-unit" element={<EditUnit />} />
+          <Route path="/partners" element={<Partners />} />
+          <Route path="/add-partners" element={<AddPartners />} />
+          <Route path="/expenses" element={<Expenses />} />
+          <Route path="/add-expenses" element={<AddExpenses />} />
+          <Route path="/report" element={<Report />} />
+          <Route path="/add-customer-income" element={<AddCustomerIncome />} />
+          <Route path="/add-partner-income" element={<AddPartnerIncome />} />
+          <Route path="/add-partner-reimbursment" element={<AddPartnerReimbursment />}/>
+          <Route path="/customer-income" element={<CustomerIncome />} />
+          <Route path="/partner-income" element={<PartnerIncome />} />
+          <Route path="/partner-reimbursement" element={<PartnerReimbursement />}/>
+          <Route path="/view-cancelled-booking" element={<ViewCancelledBooking />}/>
         </Routes>
       </Router>
     </>
