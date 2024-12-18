@@ -18,6 +18,7 @@ const AddProjects = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
