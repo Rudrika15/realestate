@@ -41,7 +41,7 @@ function AddExpenses() {
                       <tbody>
                         <tr>
                           <td>
-                            <select class="form-select">
+                            <select class="form-select"> 
                               <option selected>Shiv</option>
                             </select>
                           </td>
