@@ -45,7 +45,6 @@ function AddProjects() {
       toast.error("File Does Not Support. You Must Use .png or .jpg ");
       return;
     }
-    console.log(files);
     setName("");
     files.current.value=null;
   };
