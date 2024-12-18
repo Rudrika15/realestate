@@ -8,7 +8,8 @@ import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from 'react-helmet';
 import "react-toastify/dist/ReactToastify.css";
 
-const AddPartners = () => {
+function AddPartners() {
+  const [selectproject, setselectproject] = useState('');
   const [name1, setName1] = useState('');
   const [percentage1, setPercentage1] = useState('');
   const [name2, setName2] = useState('');
@@ -28,32 +29,47 @@ const AddPartners = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!name1 || !percentage1 || !name2 || !percentage2 || !name3 || !percentage3) {
-      toast.error("All Fields Enter!");
+
+
+    if (!selectproject || selectproject === ' ') {
+      toast.error("Please select a project!");
       return;
     }
 
-    if (!/^[A-Za-z ]+$/.test(name1 && name2 && name3)) {
-      toast.error("Name Can Only  letters And Spaces");
+
+    if (!name1 || !percentage1 || !name2 || !percentage2 || !name3 || !percentage3) {
+      toast.error("All Fields Must Be Filled!");
       return;
     }
+
+
+    if (!/^[A-Za-z ]+$/.test(name1) || !/^[A-Za-z ]+$/.test(name2) || !/^[A-Za-z ]+$/.test(name3)) {
+      toast.error("Names can only contain letters and spaces");
+      return;
+    }
+
 
     if (isNaN(percentage1) || isNaN(percentage2) || isNaN(percentage3)) {
-      toast.error("Percentage Must Be a Valid Number!");
+      toast.error("Percentage must be a valid number!");
       return;
     }
 
     if (parseFloat(percentage1) < 0 || parseFloat(percentage1) > 100 ||
       parseFloat(percentage2) < 0 || parseFloat(percentage2) > 100 ||
       parseFloat(percentage3) < 0 || parseFloat(percentage3) > 100) {
-      toast.error("Percentage Must Be Between 0 And 100!");
+      toast.error("Percentage must be between 0 and 100!");
       return;
     }
-    else {
-      toast.success(" Successfully");
-    }
 
 
+    toast.success("Successfully added partners!");
+    setselectproject('')
+    setName1('');
+    setPercentage1('');
+    setName2('');
+    setPercentage2('');
+    setName3('');
+    setPercentage3('');
   };
 
   return (
@@ -91,16 +107,19 @@ const AddPartners = () => {
                         </select>
                       </div>
                     </div>
-                    <div className="row">
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="name1"
-                          placeholder="Name"
-                          value={name1}
-                          onChange={(e) => setName1(e.target.value)}
-                        />
+                    <form onSubmit={handleSubmit}>
+                      <div className="row">
+                        <div className="col">
+                          <select
+                            className="form-select form-select-sm mb-4 w-50"
+                            aria-label=".form-select-sm example"
+                            value={selectproject}
+                            onChange={(e) => setselectproject(e.target.value)}
+                          >
+                            <option selected>Select Project</option>
+                            <option value="demo">Demo</option>
+                          </select>
+                        </div>
                       </div>
                       <div className="col">
                         <input
@@ -112,7 +131,7 @@ const AddPartners = () => {
                           onChange={(e) => setPercentage1(e.target.value)}
                         />
                       </div>
-                    </div>
+                    </form>
                     <div className="row pt-4">
                       <div className="col">
                         <input
