@@ -1,8 +1,6 @@
-// src/Pages/Add/Add.js
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from 'react-helmet';
@@ -26,24 +24,23 @@ const BookingAuthorization = () => {
       <Helmet>
         <title>React Estate | Booking Authorization</title>
       </Helmet>
-      <div classNameName="container-fluid position-relative bg-white d-flex p-0">
-        <Sidebar isSidebarOpen={isSidebarOpen} />
+      <div className="container-fluid position-relative bg-white d-flex p-0">
+        <Sidebar isSidebarOpen={isSidebarOpen} className="d-none d-lg-block" />
 
-        <div classNameName={`content ${isSidebarOpen ? 'open' : ''}`}>
-          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
+        <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
+          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} className="d-lg-none" />
 
-          <div className="container-fluid pt-4 px-4">
-            <div className="row g-4">
+          <div className="container-fluid pt-4 px-3 px-md-4">
+            <div className="row g-3 g-lg-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
-                    <div className="">
-                      <h6 className="">Booking Authorization</h6>
-                    </div>
+                    <h6>Booking Authorization</h6>
                   </div>
-                  <table className="table table-bordered text-center">
-                    <thead>
-                      <tr>
+                  <div className="table-responsive">
+                    <table className="table table-bordered text-center">
+                      <thead>
+                        <tr>
                         <th scope="col"></th>
                         <th scope="col">Project Name</th>
                         <th scope="col">Unit No</th>
@@ -52,10 +49,10 @@ const BookingAuthorization = () => {
                         <th scope="col">Extra Work Amount</th>
                         <th scope="col">Changes</th>
                         <th scope="col">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
                         <td>
                           <div className="form-check1">
                             <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
@@ -75,7 +72,7 @@ const BookingAuthorization = () => {
                           </div>
                         </td>
                       </tr>
-                      <tr>
+                        <tr>
                         <td>
                           <div className="form-check1">
                             <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
@@ -95,7 +92,7 @@ const BookingAuthorization = () => {
                           </div>
                         </td>
                       </tr>
-                      <tr>
+                        <tr>
                         <td>
                           <div className="form-check1">
                             <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
@@ -115,8 +112,9 @@ const BookingAuthorization = () => {
                           </div>
                         </td>
                       </tr>
-                    </tbody>
-                  </table>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

@@ -5,7 +5,7 @@ import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 
 const PartnerReimbursement = () => {
@@ -29,8 +29,12 @@ const PartnerReimbursement = () => {
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
-        <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
-          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
+        <div className={`content ${isSidebarOpen ? "open" : ""}`}>
+          <Topbar
+            toggleSidebar={toggleSidebar}
+            isTopbarOpen={isTopbarOpen}
+            toggleTopbar={toggleTopbar}
+          />
 
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
@@ -41,112 +45,114 @@ const PartnerReimbursement = () => {
                       <h6 className="">Partner Reimbursement</h6>
                     </div>
                     <div className="">
-                    <Link to="/partner-income">
-                      <button
-                        className="shadow-sm"
-                        style={{
-                          border: "none",
-                          backgroundColor: "#a2bdba",
-                          borderRadius: "0.3rem",
-                          marginRight: '1rem'
-                        }}
-                      >
-                        <a>Income</a>
-                      </button>
-                      </Link>
-                      <Link to="/-artner-reimbursement">
+                      <Link to="/partner-income">
                         <button
                           className="shadow-sm"
                           style={{
                             border: "none",
                             backgroundColor: "#a2bdba",
                             borderRadius: "0.3rem",
+                            marginRight: "1rem",
                           }}
                         >
-                          <a>Reimbursement</a>
+                          <a>Income</a>
                         </button>
                       </Link>
+                      <button
+                        className="shadow-sm"
+                        style={{
+                          border: "none",
+                          backgroundColor: "#a2bdba",
+                          borderRadius: "0.3rem",
+                        }}
+                      >
+                        <a>Reimbursement</a>
+                      </button>
                     </div>
                   </div>
                   <div className="d-flex justify-content-between mb-3">
-                    <div className="">
-                    </div>
+                    <div className=""></div>
                     <div className="">
                       <Link to="/add-partner-reimbursment" className="btn">
-                        <b><i className="bi bi-plus-circle-fill"></i> Add Reimbursement</b>
+                        <b>
+                          <i className="bi bi-plus-circle-fill"></i> Add
+                          Reimbursement
+                        </b>
                       </Link>
                     </div>
                   </div>
-                  <table className="table table-bordered text-center">
-                    <thead>
-                      <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Reimbursment Date</th>
-                        <th scope="col">Payment Mode</th>
-                        <th scope="col">Reimbursment Type</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Remark</th>
-                        <th scope="col">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <button className="btn btn-warning btn-sm me-2">
-                            <i className="fas fa-edit"></i>
-                          </button>
-                          <button className="btn btn-danger btn-sm">
-                            <i className="fas fa-trash"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <button className="btn btn-warning btn-sm me-2">
-                            <i className="fas fa-edit"></i>
-                          </button>
-                          <button className="btn btn-danger btn-sm">
-                            <i className="fas fa-trash"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <button className="btn btn-warning btn-sm me-2">
-                            <i className="fas fa-edit"></i>
-                          </button>
-                          <button className="btn btn-danger btn-sm">
-                            <i className="fas fa-trash"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div className="table-responsive">
+                    <table className="table table-bordered text-center">
+                      <thead>
+                        <tr>
+                          <th scope="col">Name</th>
+                          <th scope="col">Reimbursement Date</th>
+                          <th scope="col">Payment Mode</th>
+                          <th scope="col">Reimbursement Type</th>
+                          <th scope="col">Amount</th>
+                          <th scope="col">Remark</th>
+                          <th scope="col">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <button className="btn btn-warning btn-sm me-1 mb-2">
+                              <i className="fas fa-edit"></i>
+                            </button>
+                            <button className="btn btn-danger btn-sm mb-2">
+                              <i className="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <button className="btn btn-warning btn-sm me-1 mb-2">
+                              <i className="fas fa-edit"></i>
+                            </button>
+                            <button className="btn btn-danger btn-sm mb-2">
+                              <i className="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <button className="btn btn-warning btn-sm me-1 mb-2">
+                              <i className="fas fa-edit"></i>
+                            </button>
+                            <button className="btn btn-danger btn-sm mb-2">
+                              <i className="fas fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           <Footer />
         </div>
-      </div >
+      </div>
     </>
   );
 };

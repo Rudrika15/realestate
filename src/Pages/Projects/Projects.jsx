@@ -5,7 +5,6 @@ import Topbar from '../../Components/Topbar/Topbar';
 import Footer from '../../Components/Footer/Footer';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import Pagination from '../../Components/Pagination/Pagination';
 
 const Projects = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);

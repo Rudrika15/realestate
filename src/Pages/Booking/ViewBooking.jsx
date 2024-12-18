@@ -53,111 +53,114 @@ const ViewBooking = () => {
                       </Link>
                     </div>
                   </div>
-                  <table className="table table-bordered text-center">
-                    <thead>
-                      <tr>
-                        <th scope="col">Unit No</th>
-                        <th scope="col">Booking Date</th>
-                        <th scope="col">Customer Name</th>
-                        <th scope="col">Sale Deed Amount</th>
-                        <th scope="col">Received SD Amount</th>
-                        <th scope="col">Pending SD Amount</th>
-                        <th scope="col">Extra Work Amount</th>
-                        <th scope="col">Received EW Amount</th>
-                        <th scope="col">Pending EW Amount</th>
-                        <th scope="col">Other Work Amount</th>
-                        <th scope="col">Received OT Amount</th>
-                        <th scope="col">Pending OT Amount</th>
-                        <th scope="col">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <Link to="/view-cancelled-booking">
-                            <button
-                              type="button"
-                              className="btn shadow-sm"
-                              style={{
-                                backgroundColor: "#a2bdba",
-                                color: "black",
-                              }}
-                            >
-                              Action
-                            </button>
-                          </Link>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <Link to="/view-cancelled-booking">
-                            <button
-                              type="button"
-                              className="btn shadow-sm"
-                              style={{
-                                backgroundColor: "#a2bdba",
-                                color: "black",
-                              }}
-                            >
-                              Action
-                            </button>
-                          </Link>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <Link to="/view-cancelled-booking">
-                            <button
-                              type="button"
-                              className="btn shadow-sm"
-                              style={{
-                                backgroundColor: "#a2bdba",
-                                color: "black",
-                              }}
-                            >
-                              Action
-                            </button>
-                          </Link>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div className="table-responsive">
+                    <table className="table table-bordered text-center">
+                      <thead>
+                        <tr>
+                          <th scope="col">Unit No</th>
+                          <th scope="col">Booking Date</th>
+                          <th scope="col">Customer Name</th>
+                          <th scope="col">Sale Deed Amount</th>
+                          <th scope="col">Received SD Amount</th>
+                          <th scope="col">Pending SD Amount</th>
+                          <th scope="col">Extra Work Amount</th>
+                          <th scope="col">Received EW Amount</th>
+                          <th scope="col">Pending EW Amount</th>
+                          <th scope="col">Other Work Amount</th>
+                          <th scope="col">Received OT Amount</th>
+                          <th scope="col">Pending OT Amount</th>
+                          <th scope="col">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <Link to="/view-cancelled-booking">
+                              <button
+                                type="button"
+                                className="btn shadow-sm"
+                                style={{
+                                  backgroundColor: "#a2bdba",
+                                  color: "black",
+                                }}
+                              >
+                                Action
+                              </button>
+                            </Link>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <Link to="/view-cancelled-booking">
+                              <button
+                                type="button"
+                                className="btn shadow-sm"
+                                style={{
+                                  backgroundColor: "#a2bdba",
+                                  color: "black",
+                                }}
+                              >
+                                Action
+                              </button>
+                            </Link>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <Link to="/view-cancelled-booking">
+                              <button
+                                type="button"
+                                className="btn shadow-sm"
+                                style={{
+                                  backgroundColor: "#a2bdba",
+                                  color: "black",
+                                }}
+                              >
+                                Action
+                              </button>
+                            </Link>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
                 </div>
               </div>
             </div>
