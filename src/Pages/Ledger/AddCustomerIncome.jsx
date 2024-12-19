@@ -36,11 +36,11 @@ const AddCustomerIncome = () => {
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
-                  <div class="d-flex justify-content-between mb-3">
-                    <div class="p-2 ">
+                  <div className="d-flex justify-content-between mb-3">
+                    <div className="p-2 ">
                       <h6 className="mb-4">Add Customer Income</h6>
                     </div>
-                    <div class="p-2 ">
+                    <div className="p-2 ">
                       <Link to="/customer-income" className="">
                         <h6 className="mb-4"><i className="bi bi-arrow-left-circle-fill"></i> Back</h6>
                       </Link>
@@ -71,26 +71,51 @@ const AddCustomerIncome = () => {
                         <input type="text" className="form-control" id="Status" placeholder="Status" name="Status" />
                       </div>
                     </div>
-                    <div className="row pt-3">
-                      <div className="col">
+                    <div className="row">
+                      <div className="col pt-3">
                         <div className="input-wrapper position-relative">
                           <input
                             type="date"
                             id="date"
                             className="form-control"
-                            required
+                            placeholder="dd-mm-yyyy"
+                            onFocus={(e) => e.target.showPicker()}
                           />
+                          <label
+                            htmlFor="date"
+                            className="placeholder-label"
+                            style={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "13px",
+                              transform: "translateY(-50%)",
+                              pointerEvents: "none",
+                            }}
+                          >
+                            Income Date
+                          </label>
                         </div>
                       </div>
-                      <div className="col">
-                        <div className="input-wrapper position-relative">
-                          <input
+                      <div className="col pt-3">
+                      <input
                             type="date"
                             id="date"
                             className="form-control"
-                            required
+                            placeholder="dd-mm-yyyy"
+                            onFocus={(e) => e.target.showPicker()}
                           />
-                        </div>
+                          <label
+                            htmlFor="date"
+                            className="placeholder-label"
+                            style={{
+                              position: "absolute",
+                              paddingLeft:'0.8rem',
+                              transform: "translateY(-140%)",
+                              pointerEvents: "none",
+                            }}
+                          >
+                            Deposit Date
+                          </label>
                       </div>
                     </div>
                     <div className="row pt-3">
@@ -134,7 +159,28 @@ const AddCustomerIncome = () => {
                       </div>
                     </div>
                     <button type="submit" className="btn btn-primary">Save</button>
-                  </form>
+                    <style jsx="true">{`
+input[type="date"] {
+      appearance: none; 
+      -webkit-appearance: none; 
+      -moz-appearance: none; 
+      border: 1px solid #ccc; 
+      border-radius: 5px; 
+      padding: 10px 15px; 
+      color: #333; 
+      background-color: #f9f9f9; 
+      cursor: pointer; 
+    }
+
+    input[type="date"]::-webkit-datetime-edit {
+      display: none; 
+    }
+
+    input[type="date"] {
+      padding-left: 33rem;
+    }
+                    `}</style >
+                    </form>
                 </div>
               </div>
             </div>

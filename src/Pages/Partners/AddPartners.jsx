@@ -88,11 +88,11 @@ function AddPartners() {
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
-                  <div class="d-flex justify-content-between mb-3">
-                    <div class="p-2 ">
+                  <div className="d-flex justify-content-between mb-3">
+                    <div className="p-2 ">
                       <h6 className="mb-4">Add Partners</h6>
                     </div>
-                    <div class="p-2 ">
+                    <div className="p-2 ">
                       <Link to="/partners" className="">
                         <h6 className="mb-4"><i className="bi bi-arrow-left-circle-fill"></i> Back</h6>
                       </Link>
@@ -108,7 +108,6 @@ function AddPartners() {
                           onChange={(e) => setselectproject(e.target.value)}
                         >
                           <option selected>Select Project</option>
-                          <option value="demo">Demo</option>
                         </select>
                       </div>
                     </div>

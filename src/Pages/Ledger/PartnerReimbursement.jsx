@@ -70,10 +70,10 @@ const PartnerReimbursement = () => {
                       </button>
                     </div>
                   </div>
-                  <div class="d-flex justify-content-between mb-3">
-                    <div class="p-2 ">
+                  <div className="d-flex justify-content-between mb-3">
+                    <div className="p-2 ">
                     </div>
-                    <div class="p-2 ">
+                    <div className="p-2 ">
                       <Link to="/add-partner-reimbursment" className="">
                         <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add Reimbursement</h6>
                       </Link>

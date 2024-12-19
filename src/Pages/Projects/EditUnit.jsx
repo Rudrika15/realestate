@@ -36,8 +36,8 @@ const EditUnit = () => {
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
-                  <div class="d-flex justify-content-between   mb-3">
-                    <div class="p-2 ">
+                  <div className="d-flex justify-content-between   mb-3">
+                    <div className="p-2 ">
                       <h6 className="mb-4">Edit Unit</h6>
                     </div>
                     <div className="p-2 ">

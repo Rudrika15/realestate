@@ -36,11 +36,11 @@ const AddPartnerIncome = () => {
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
-                  <div class="d-flex justify-content-between mb-3">
-                    <div class="p-2 ">
+                  <div className="d-flex justify-content-between mb-3">
+                    <div className="p-2 ">
                       <h6 className="mb-4">Add Partner Income</h6>
                     </div>
-                    <div class="p-2 ">
+                    <div className="p-2 ">
                       <Link to="/partner-income" className="">
                         <h6 className="mb-4"><i className="bi bi-arrow-left-circle-fill"></i> Back</h6>
                       </Link>
@@ -54,17 +54,32 @@ const AddPartnerIncome = () => {
                         </select>
                       </div>
                     </div>
-                    <div className="row w-50">
+                    <div className="row">
                       <div className="col pt-2">
                         <div className="input-wrapper position-relative">
                           <input
                             type="date"
                             id="date"
                             className="form-control"
-                            required
+                            placeholder="dd-mm-yyyy"
+                            onFocus={(e) => e.target.showPicker()}
                           />
+                          <label
+                            htmlFor="date"
+                            className="placeholder-label"
+                            style={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "13px",
+                              transform: "translateY(-50%)",
+                              pointerEvents: "none",
+                            }}
+                          >
+                            Income Date
+                          </label>
                         </div>
                       </div>
+                      <div className="col"></div>
                     </div>
                     <div className="row pt-3">
                       <p>Payment Mode</p>
@@ -88,13 +103,31 @@ const AddPartnerIncome = () => {
                     </div>
                     <div className="row w-75">
                       <div className="col pt-3">
-                        <div className="form-floating">
-                          <textarea className="form-control" placeholder="Remark" id="floatingTextarea"></textarea>
-                          <label for="floatingTextarea">Remark</label>
-                        </div>
+                        <textarea className="form-control" placeholder="Remark" id="floatingTextarea"></textarea>
                       </div>
                     </div>
                     <button type="submit" className="btn btn-primary mt-3">Save</button>
+                    <style jsx="true">{`
+input[type="date"] {
+      appearance: none; 
+      -webkit-appearance: none; 
+      -moz-appearance: none; 
+      border: 1px solid #ccc; 
+      border-radius: 5px; 
+      padding: 10px 15px; 
+      color: #333; 
+      background-color: #f9f9f9; 
+      cursor: pointer; 
+    }
+
+    input[type="date"]::-webkit-datetime-edit {
+      display: none; 
+    }
+
+    input[type="date"] {
+      padding-left: 33rem;
+    }
+                    `}</style >
                   </form>
                 </div>
               </div>
