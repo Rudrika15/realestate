@@ -15,6 +15,8 @@ const Add = () => {
         try {
             setLoading(true);
             const res = await axios.get(getUsers);
+            console.log(res.data);
+            
             if (res.data.status === true) {
                 setData(res.data.data);
             } else {
@@ -68,7 +70,7 @@ const Add = () => {
                                                 <span className="visually-hidden">Loading...</span>
                                             </div>
                                         </div>
-                                    ) : (
+                                   ) : (
                                         <table className="table table-bordered">
                                             <thead>
                                                 <tr>
