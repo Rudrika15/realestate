@@ -70,14 +70,12 @@ const PartnerReimbursement = () => {
                       </button>
                     </div>
                   </div>
-                  <div className="d-flex justify-content-between mb-3">
-                    <div className=""></div>
-                    <div className="">
-                      <Link to="/add-partner-reimbursment" className="btn">
-                        <b>
-                          <i className="bi bi-plus-circle-fill"></i> Add
-                          Reimbursement
-                        </b>
+                  <div class="d-flex justify-content-between mb-3">
+                    <div class="p-2 ">
+                    </div>
+                    <div class="p-2 ">
+                      <Link to="/add-partner-reimbursment" className="">
+                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add Reimbursement</h6>
                       </Link>
                     </div>
                   </div>

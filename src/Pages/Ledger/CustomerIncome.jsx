@@ -36,13 +36,13 @@ const CustomerIncome = () => {
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
-                  <div className="d-flex justify-content-between mb-3">
-                    <div className="">
-                      <h6 className="">Customer Income</h6>
+                  <div class="d-flex justify-content-between   mb-3">
+                    <div class="p-2 ">
+                      <h6 className="mb-4">Customer Income</h6>
                     </div>
-                    <div className="">
-                      <Link to="/add-customer-income" className="btn">
-                        <b><i className="bi bi-plus-circle-fill"></i>Add Customer Income</b>
+                    <div class="p-2 ">
+                      <Link to="/add-customer-income" className="">
+                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add Customer Income</h6>
                       </Link>
                     </div>
                   </div>

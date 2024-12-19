@@ -36,14 +36,13 @@ const ViewCancelledBooking = () => {
                         <div className="row g-4">
                             <div className="col-sm-12 col-xl-12">
                                 <div className="bg-light rounded h-100 p-4">
-                                    <div className="d-flex justify-content-between mb-3">
-                                        <div className="">
-                                            <h6 className="">View Booking</h6>
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <div class="p-2 ">
+                                            <h6 className="mb-4">View Booking</h6>
                                         </div>
-                                        <div className="">
-                                            <Link to="/view-booking" className="btn">
-                                                <i classNameName="bi bi-arrow-left-circle-fill"></i>
-                                                &nbsp; Back
+                                        <div class="p-2 ">
+                                            <Link to="/view-booking" className="">
+                                                <h6 className="mb-4"><i className="bi bi-arrow-left-circle-fill"></i> Back</h6>
                                             </Link>
                                         </div>
                                     </div>

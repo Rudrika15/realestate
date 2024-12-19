@@ -36,72 +36,72 @@ const Expenses = () => {
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
-                  <div className="d-flex justify-content-between mb-3">
-                    <div className="">
-                      <h6 className="">Expenses</h6>
+                  <div class="d-flex justify-content-between   mb-3">
+                    <div class="p-2 ">
+                      <h6 className="mb-4">Expenses</h6>
                     </div>
-                    <div class="">
-                        <Link to="/add-expenses" className="btn">
-                          <b><i className="bi bi-plus-circle-fill"></i> Add New Expense</b>
-                        </Link>
+                    <div class="p-2 ">
+                      <Link to="/add-expenses" className="">
+                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add New Expense</h6>
+                      </Link>
                     </div>
                   </div>
                   <table className="table table-bordered text-center">
                     <thead>
                       <tr>
                         <th scope="col">Name</th>
-                          <th scope="col">Voucher Expense Date</th>
-                          <th scope="col">Expense Head</th>
-                          <th scope="col">Narration</th>
-                          <th scope="col">Amount</th>
-                          <th scope="col">Action</th>
+                        <th scope="col">Voucher Expense Date</th>
+                        <th scope="col">Expense Head</th>
+                        <th scope="col">Narration</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
                         <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <button className="btn btn-warning btn-sm me-2">
-                              <i className="fas fa-edit"></i>
-                            </button>
-                            <button className="btn btn-danger btn-sm">
-                              <i className="fas fa-trash"></i>
-                            </button>
-                          </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                          <button className="btn btn-warning btn-sm me-2">
+                            <i className="fas fa-edit"></i>
+                          </button>
+                          <button className="btn btn-danger btn-sm">
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        </td>
                       </tr>
                       <tr>
                         <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <button className="btn btn-warning btn-sm me-2">
-                              <i className="fas fa-edit"></i>
-                            </button>
-                            <button className="btn btn-danger btn-sm">
-                              <i className="fas fa-trash"></i>
-                            </button>
-                          </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                          <button className="btn btn-warning btn-sm me-2">
+                            <i className="fas fa-edit"></i>
+                          </button>
+                          <button className="btn btn-danger btn-sm">
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        </td>
                       </tr>
                       <tr>
                         <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <button className="btn btn-warning btn-sm me-2">
-                              <i className="fas fa-edit"></i>
-                            </button>
-                            <button className="btn btn-danger btn-sm">
-                              <i className="fas fa-trash"></i>
-                            </button>
-                          </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                          <button className="btn btn-warning btn-sm me-2">
+                            <i className="fas fa-edit"></i>
+                          </button>
+                          <button className="btn btn-danger btn-sm">
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        </td>
                       </tr>
                     </tbody>
                   </table>

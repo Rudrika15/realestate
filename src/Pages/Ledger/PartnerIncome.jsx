@@ -66,12 +66,12 @@ const PartnerIncome = () => {
                       </Link>
                     </div>
                   </div>
-                  <div className="d-flex justify-content-between mb-3">
-                    <div className="">
+                  <div class="d-flex justify-content-between   mb-3">
+                    <div class="p-2 ">
                     </div>
-                    <div className="">
-                      <Link to="/add-partner-income" className="btn">
-                        <b><i className="bi bi-plus-circle-fill"></i> Add Partner Income</b>
+                    <div class="p-2 ">
+                      <Link to="/add-partner-income" className="">
+                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add Partner Income</h6>
                       </Link>
                     </div>
                   </div>

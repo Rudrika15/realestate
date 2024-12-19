@@ -34,14 +34,13 @@ const Unit = () => {
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
-                  <div className="d-flex justify-content-between mb-3">
-                    <div className="">
-                      <h6 className="">Units</h6>
+                  <div class="d-flex justify-content-between   mb-3">
+                    <div class="p-2 ">
+                      <h6 className="mb-4">Units</h6>
                     </div>
-                    <div class="">
-                      <Link to="/projects" class="btn">
-                        <i className="bi bi-arrow-left-circle-fill"></i>
-                        &nbsp; Back
+                    <div class="p-2 ">
+                      <Link to="/projects" className="">
+                        <h6 className="mb-4"><i className="bi bi-arrow-left-circle-fill"></i> Back</h6>
                       </Link>
                     </div>
                   </div>

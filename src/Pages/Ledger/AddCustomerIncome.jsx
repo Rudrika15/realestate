@@ -36,14 +36,13 @@ const AddCustomerIncome = () => {
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
-                  <div className="d-flex justify-content-between mb-3">
-                    <div className="">
-                      <h6 className="">Add Customer Income</h6>
+                  <div class="d-flex justify-content-between mb-3">
+                    <div class="p-2 ">
+                      <h6 className="mb-4">Add Customer Income</h6>
                     </div>
-                    <div class="">
-                      <Link to="/customer-income" className="btn">
-                        <i className="bi bi-arrow-left-circle-fill"></i>
-                        &nbsp; Back
+                    <div class="p-2 ">
+                      <Link to="/customer-income" className="">
+                        <h6 className="mb-4"><i className="bi bi-arrow-left-circle-fill"></i> Back</h6>
                       </Link>
                     </div>
                   </div>
