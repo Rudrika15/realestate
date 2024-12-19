@@ -1,5 +1,5 @@
 // src/Pages/Add/Add.js
-import React, { useState, useRef } from "react";
+import React, { useState, useRef,useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
@@ -14,15 +14,30 @@ const AddProjects = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
 
+
+  const nameRef = useRef(null)
+  const files = useRef(null);
+  const submitRef = useRef(null)
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
-  const files = useRef(null);
+
+    // focus
+    useEffect(() => {
+      nameRef.current.focus();
+    }, []);
+
+  const handleEnter = (e, nextField) => {
+    if (e.key === "Enter" && nextField.current) {
+      e.preventDefault();
+      nextField.current.focus();
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -47,7 +62,7 @@ const AddProjects = () => {
     }
 
     if (unit.size > 2 * 1024 * 1024) {
-      toast.error("Image Is Larger Than 3MB");
+      toast.error("Image Is Larger Than 2MB");
       return;
     }
 
@@ -110,6 +125,8 @@ const AddProjects = () => {
                         aria-describedby="name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        onKeyPress={(e)=>handleEnter(e,files)}
+                        ref={nameRef}
                       />
                     </div>
                     <div className="mb-3">
@@ -122,11 +139,12 @@ const AddProjects = () => {
                         accept="image/png, image/jpeg"
                         id="unit"
                         aria-describedby="unit"
+                        onKeyPress={(e)=>handleEnter(e,submitRef)}
                         ref={files}
                         onChange={(e) => setUnit(e.target.files[0])}
                       />
                     </div>
-                    <button type="submit" className="btn btn-primary">
+                    <button type="submit" className="btn btn-primary" ref={submitRef}>
                       Submit
                     </button>
                   </form>

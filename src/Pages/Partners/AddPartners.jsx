@@ -100,14 +100,6 @@ function AddPartners() {
                     </div>
                   </div>
                   <form onSubmit={handleSubmit}>
-                    <div className="row">
-                      <div className="col">
-                        <select className="form-select form-select-sm mb-4 w-50" aria-label=".form-select-sm example">
-                          <option selected>Select Project</option>
-                        </select>
-                      </div>
-                    </div>
-                    <form onSubmit={handleSubmit}>
                       <div className="row">
                         <div className="col">
                           <select
@@ -131,7 +123,6 @@ function AddPartners() {
                           onChange={(e) => setPercentage1(e.target.value)}
                         />
                       </div>
-                    </form>
                     <div className="row pt-4">
                       <div className="col">
                         <input
