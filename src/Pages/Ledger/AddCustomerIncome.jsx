@@ -11,6 +11,8 @@ import "react-toastify/dist/ReactToastify.css";
 const AddCustomerIncome = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+  const [check, setCheck] = useState(null);
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -19,6 +21,9 @@ const AddCustomerIncome = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
+
+  const files = useRef(null);
+
 
   return (
     <>
@@ -57,10 +62,7 @@ const AddCustomerIncome = () => {
                     </div>
                     <div className="row w-75">
                       <div className="col pt-3">
-                        <div className="form-floating">
                           <textarea className="form-control" placeholder="Address" id="floatingTextarea"></textarea>
-                          <label for="floatingTextarea">Address</label>
-                        </div>
                       </div>
                     </div>
                     <div className="row pt-3">
@@ -97,25 +99,25 @@ const AddCustomerIncome = () => {
                         </div>
                       </div>
                       <div className="col pt-3">
-                      <input
-                            type="date"
-                            id="date"
-                            className="form-control"
-                            placeholder="dd-mm-yyyy"
-                            onFocus={(e) => e.target.showPicker()}
-                          />
-                          <label
-                            htmlFor="date"
-                            className="placeholder-label"
-                            style={{
-                              position: "absolute",
-                              paddingLeft:'0.8rem',
-                              transform: "translateY(-140%)",
-                              pointerEvents: "none",
-                            }}
-                          >
-                            Deposit Date
-                          </label>
+                        <input
+                          type="date"
+                          id="date"
+                          className="form-control"
+                          placeholder="dd-mm-yyyy"
+                          onFocus={(e) => e.target.showPicker()}
+                        />
+                        <label
+                          htmlFor="date"
+                          className="placeholder-label"
+                          style={{
+                            position: "absolute",
+                            paddingLeft: '0.8rem',
+                            transform: "translateY(-140%)",
+                            pointerEvents: "none",
+                          }}
+                        >
+                          Deposit Date
+                        </label>
                       </div>
                     </div>
                     <div className="row pt-3">
@@ -154,40 +156,56 @@ const AddCustomerIncome = () => {
                     </div>
                     <div className="mb-3">
                       <label for="file" className="form-label">Upload Check : </label>
-                      <input type="file" className="form-control" id="check" aria-describedby="check" />
-                      <div id="check" className="form-text">
-                      </div>
+                      <input
+                        type="file"
+                        accept=".jpg, .jpeg, .png, .pdf, .docx"
+                        className="form-control"
+                        multiple
+                        id="check"
+                        aria-describedby="check"
+                        ref={files}
+                        onChange={(e) => setCheck(e.target.files)}
+                      />
                     </div>
                     <button type="submit" className="btn btn-primary">Save</button>
                     <style jsx="true">{`
-input[type="date"] {
-      appearance: none; 
-      -webkit-appearance: none; 
-      -moz-appearance: none; 
-      border: 1px solid #ccc; 
-      border-radius: 5px; 
-      padding: 10px 15px; 
-      color: #333; 
-      background-color: #f9f9f9; 
-      cursor: pointer; 
-    }
+                    .input-wrapper {
+  position: absolute;
+}
 
-    input[type="date"]::-webkit-datetime-edit {
-      display: none; 
-    }
+.input-wrapper input[type="date"] {
+  padding-left: 1.5rem; /* Adds space for the label */
+  padding-right: 1rem;  /* Adds space for the calendar icon */
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  background-color: #fff;
+  width: 100%;
+  height: 2.5rem;
+}
 
-    input[type="date"] {
-      padding-left: 33rem;
+   .placeholder-label {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+
+.input-wrapper input[type="date"]:focus {
+  outline: none;
+}
+
+
+}
     }
                     `}</style >
-                    </form>
+                  </form>
                 </div>
               </div>
             </div>
           </div>
           <Footer />
-        </div>
-      </div>
+        </div >
+      </div >
     </>
   );
 };

@@ -113,16 +113,17 @@ const AddProjects = () => {
                     </div>
                     <div className="mb-3">
                       <label htmlFor="file" className="form-label">
-                        Upload Unit :{" "}
+                        Upload Unit:
                       </label>
                       <input
                         type="file"
+                        accept=".jpg, .jpeg, .png, .pdf, .docx" 
                         className="form-control"
-                        accept="image/png, image/jpeg"
+                        multiple
                         id="unit"
                         aria-describedby="unit"
                         ref={files}
-                        onChange={(e) => setUnit(e.target.files[0])}
+                        onChange={(e) => setUnit(e.target.files)}
                       />
                     </div>
                     <button type="submit" className="btn btn-primary">
