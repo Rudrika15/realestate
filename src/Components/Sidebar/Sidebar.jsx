@@ -51,7 +51,7 @@ const Sidebar = ({ isSidebarOpen }) => {
                         </div>
                     </div>
                     <Link to="/Partners" className="nav-item nav-link">
-                        <i className="bi bi-people"></i> Partners nv b 
+                        <i className="bi bi-people"></i> Partners
                     </Link>
                     <Link to="/Expenses" className="nav-item nav-link">
                         <i className="bi bi-receipt-cutoff"></i> Expenses
