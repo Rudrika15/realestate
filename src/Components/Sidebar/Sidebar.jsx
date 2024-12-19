@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = ({ isSidebarOpen }) => {
     const [isBookingOpen, setIsBookingOpen] = useState(false);
     const [isLedgerOpen, setIsLedgerOpen] = useState(false);
     const [isApprovalOpen, setIsApprovalOpen] = useState(false);
+
+    const location = useLocation();
+
+    const isActive = (path) => location.pathname === path;
+
+    const isBookingActive = () =>
+        ['/view-booking', '/cancelled-booking'].includes(location.pathname);
+
+    const isLedgerActive = () =>
+        ['/partner-income', '/customer-income'].includes(location.pathname);
+
+    const isApprovalActive = () =>
+        ['/cash-deposit', '/cheque-deposit', '/booking-authorization'].includes(location.pathname);
 
     const toggleBookingDropdown = () => setIsBookingOpen(!isBookingOpen);
     const toggleLedgerDropdown = () => setIsLedgerOpen(!isLedgerOpen);
@@ -34,56 +47,142 @@ const Sidebar = ({ isSidebarOpen }) => {
                     </div>
                 </div>
                 <div className="navbar-nav w-100">
-                    <Link to="/Projects" className="nav-item nav-link">
+                    <Link
+                        to="/projects"
+                        className={`nav-item nav-link ${isActive('/projects') ? 'active' : ''}`}
+                    >
                         <i className="bi bi-kanban"></i> Projects
                     </Link>
                     <div className="nav-item dropdown">
                         <a
                             href="#"
-                            className="nav-link dropdown-toggle"
+                            className={`nav-link dropdown-toggle ${
+                                isBookingActive() ? 'active' : ''
+                            }`}
                             onClick={toggleBookingDropdown}
                         >
                             <i className="bi bi-calendar"></i> Booking
                         </a>
-                        <div className={`dropdown-menu bg-transparent border-0 ${isBookingOpen ? 'show' : ''}`}>
-                            <Link to="/ViewBooking" className="dropdown-item">View Bookings</Link>
-                            <Link to="/CancelledBooking" className="dropdown-item">Cancelled Bookings</Link>
+                        <div
+                            className={`dropdown-menu bg-transparent border-0 ${
+                                isBookingOpen ? 'show' : ''
+                            }`}
+                        >
+                            <Link
+                                to="/view-booking"
+                                className={`dropdown-item ms-5 ${
+                                    isActive('/view-booking') ? 'active' : ''
+                                }`}
+                                style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif' }}
+                            >
+                                View Bookings
+                            </Link>
+                            <Link
+                                to="/cancelled-booking"
+                                className={`dropdown-item ms-5 ${
+                                    isActive('/cancelled-booking') ? 'active' : ''
+                                }`}
+                                style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif' }}
+                            >
+                                Cancelled Bookings
+                            </Link>
                         </div>
                     </div>
-                    <Link to="/Partners" className="nav-item nav-link">
+                    <Link
+                        to="/partners"
+                        className={`nav-item nav-link ${isActive('/partners') ? 'active' : ''}`}
+                    >
                         <i className="bi bi-people"></i> Partners
                     </Link>
-                    <Link to="/Expenses" className="nav-item nav-link">
+                    <Link
+                        to="/expenses"
+                        className={`nav-item nav-link ${isActive('/expenses') ? 'active' : ''}`}
+                    >
                         <i className="bi bi-receipt-cutoff"></i> Expenses
                     </Link>
                     <div className="nav-item dropdown">
                         <a
                             href="#"
-                            className="nav-link dropdown-toggle"
+                            className={`nav-link dropdown-toggle ${
+                                isLedgerActive() ? 'active' : ''
+                            }`}
                             onClick={toggleLedgerDropdown}
                         >
                             <i className="bi bi-clipboard-data"></i> Ledger
                         </a>
-                        <div className={`dropdown-menu bg-transparent border-0 ${isLedgerOpen ? 'show' : ''}`}>
-                            <Link to="/PartnerIncome" className="dropdown-item">Partner</Link>
-                            <Link to="/CustomerIncome" className="dropdown-item">Customer</Link>
+                        <div
+                            className={`dropdown-menu bg-transparent border-0 ${
+                                isLedgerOpen ? 'show' : ''
+                            }`}
+                        >
+                            <Link
+                                to="/partner-income"
+                                className={`dropdown-item ms-5 ${
+                                    isActive('/partner-income') ? 'active' : ''
+                                }`}
+                                style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif' }}
+                            >
+                                Partner
+                            </Link>
+                            <Link
+                                to="/customer-income"
+                                className={`dropdown-item ms-5 ${
+                                    isActive('/customer-income') ? 'active' : ''
+                                }`}
+                                style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif' }}
+                            >
+                                Customer
+                            </Link>
                         </div>
                     </div>
                     <div className="nav-item dropdown">
                         <a
                             href="#"
-                            className="nav-link dropdown-toggle"
+                            className={`nav-link dropdown-toggle ${
+                                isApprovalActive() ? 'active' : ''
+                            }`}
                             onClick={toggleApprovalDropdown}
                         >
                             <i className="bi bi-clipboard-check"></i> Approval
                         </a>
-                        <div className={`dropdown-menu bg-transparent border-0 ${isApprovalOpen ? 'show' : ''}`}>
-                            <Link to="/CashDeposit" className="dropdown-item">Cash Deposit</Link>
-                            <Link to="/ChequeDeposit" className="dropdown-item">Cheque Deposit</Link>
-                            <Link to="/BookingAuthorization" className="dropdown-item">Booking</Link>
+                        <div
+                            className={`dropdown-menu bg-transparent border-0 ${
+                                isApprovalOpen ? 'show' : ''
+                            }`}
+                        >
+                            <Link
+                                to="/cash-deposit"
+                                className={`dropdown-item ms-5 ${
+                                    isActive('/cash-deposit') ? 'active' : ''
+                                }`}
+                                style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif' }}
+                            >
+                                Cash Deposit
+                            </Link>
+                            <Link
+                                to="/cheque-deposit"
+                                className={`dropdown-item ms-5 ${
+                                    isActive('/cheque-deposit') ? 'active' : ''
+                                }`}
+                                style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif' }}
+                            >
+                                Cheque Deposit
+                            </Link>
+                            <Link
+                                to="/booking-authorization"
+                                className={`dropdown-item ms-5 ${
+                                    isActive('/booking-authorization') ? 'active' : ''
+                                }`}
+                                style={{ fontSize: '14px', fontFamily: 'Arial, sans-serif' }}
+                            >
+                                Booking
+                            </Link>
                         </div>
                     </div>
-                    <Link to="/Report" className="nav-item nav-link">
+                    <Link
+                        to="/report"
+                        className={`nav-item nav-link ${isActive('/report') ? 'active' : ''}`}
+                    >
                         <i className="bi bi-graph-up"></i> Report
                     </Link>
                 </div>

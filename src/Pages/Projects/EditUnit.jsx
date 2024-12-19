@@ -1,69 +1,98 @@
-import React from 'react'
-import Footer from '../../Components/Footer/Footer'
-import Sidebar from '../../Components/Sidebar/Sidebar'
-import Topbar from '../../Components/Topbar/Topbar'
-import { Link } from 'react-router-dom'
+// src/Pages/Add/Add.js
+import React, { useState, useRef } from "react";
+import Sidebar from "../../Components/Sidebar/Sidebar";
+import Topbar from "../../Components/Topbar/Topbar";
+import { Link } from "react-router-dom";
+import Footer from "../../Components/Footer/Footer";
+import { toast, ToastContainer } from "react-toastify";
+import { Helmet } from 'react-helmet';
+import "react-toastify/dist/ReactToastify.css";
 
-function EditUnit() {
+const EditUnit = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const toggleTopbar = () => {
+    setIsTopbarOpen(!isTopbarOpen);
+  };
+
   return (
     <>
-      <Sidebar />
-      <div class="content">
-        <Topbar />
-        <div className="container-fluid pt-4 px-4">
-          <div className="row g-4">
-            <div className="col-sm-12 col-xl-12">
-              <div className="bg-light rounded h-100 p-4">
-                <div className="row justify-content-center mx-0">
-                  <div className="col-lg-10 col-md-12">
-                    <div className="d-flex justify-content-between mb-3">
-                      <div className="p-2">
-                        <h4>Edit Unit</h4>
+      <Helmet>
+        <title>Real Estate | Edit Unit</title>
+      </Helmet>
+      <ToastContainer />
+      <div className="container-fluid position-relative bg-white d-flex p-0">
+        <Sidebar isSidebarOpen={isSidebarOpen} />
+
+        <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
+          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
+
+          <div className="container-fluid pt-4 px-4">
+            <div className="row g-4">
+              <div className="col-sm-12 col-xl-12">
+                <div className="bg-light rounded h-100 p-4">
+                  <div className="d-flex justify-content-between mb-3">
+                    <div className="">
+                      <h6 className="">Edit Unit</h6>
+                    </div>
+                    <div class="">
+                      <Link to="/unit" className="btn">
+                        <i className="bi bi-arrow-left-circle-fill"></i>
+                        &nbsp; Back
+                      </Link>
+                    </div>
+                  </div>
+                  {/* <div className="d-flex justify-content-between mb-3">
+                                            <div className="p-3 w-30">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text bg-white">
+                                                        <i class="bi bi-search"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control border-start-0" placeholder="Search" aria-label="Search" />
+                                                </div>
+                                            </div>
+                                        </div> */}
+                  <form>
+                    <div className="row pt-3">
+                      <div className="col">
+                        <input type="text" className="form-control" id="wing" placeholder="Wing" name="wing" />
                       </div>
-                      <div class="p-2 ">
-                        <Link to="/Unit" class="btn">
-                          <i className="bi bi-arrow-left-circle-fill"></i>
-                          &nbsp; Back
-                        </Link>
+                      <div className="col">
+                        <input type="text" className="form-control" id="flat name" placeholder="Flat Name" name="flat name" />
                       </div>
                     </div>
-                    <form>
-                      <div class="row">
-                        <div class="col">
-                          <input type="text" class="form-control" id="wing" placeholder="Wing" name="wing" />
-                        </div>
-                        <div class="col">
-                          <input type="text" class="form-control" id="flat name" placeholder="Flat Name" name="flat name" />
-                        </div>
+                    <div className="row pt-4">
+                      <div className="col">
+                        <input type="text" className="form-control" id="Size" placeholder="Size" name="Size" />
                       </div>
-                      <div class="row pt-4">
-                        <div class="col">
-                          <input type="text" class="form-control" id="Size" placeholder="Size" name="Size" />
-                        </div>
-                        <div class="col">
-                          <input type="text" class="form-control" id="Extra Work Amount" placeholder="Extra Work Amount" name="Extra Work Amount" />
-                        </div>
+                      <div className="col">
+                        <input type="text" className="form-control" id="Extra Work Amount" placeholder="Extra Work Amount" name="Extra Work Amount" />
                       </div>
-                      <div class="row pt-4">
-                        <div class="col">
-                          <input type="text" class="form-control" id="Unit Type" placeholder="Unit Type" name="Unit Type" />
-                        </div>
-                        <div class="col">
-                          <input type="text" class="form-control" id="Sale Deed Amount" placeholder="Sale Deed Amount" name="Sale Deed Amount" />
-                        </div>
+                    </div>
+                    <div className="row pt-4">
+                      <div className="col">
+                        <input type="text" className="form-control" id="Unit Type" placeholder="Unit Type" name="Unit Type" />
                       </div>
-                      <button type="submit" class="btn btn-primary mt-3">Save</button>
-                    </form>
-                  </div>
+                      <div className="col">
+                        <input type="text" className="form-control" id="Sale Deed Amount" placeholder="Sale Deed Amount" name="Sale Deed Amount" />
+                      </div>
+                    </div>
+                    <button type="submit" className="btn btn-primary mt-3">Save</button>
+                  </form>
                 </div>
               </div>
             </div>
           </div>
+          <Footer />
         </div>
-        <Footer />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default EditUnit
+export default EditUnit;

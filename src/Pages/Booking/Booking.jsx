@@ -1,14 +1,81 @@
-import React from 'react'
-import Footer from '../../Components/Footer/Footer'
-import Sidebar from '../../Components/Sidebar/Sidebar'
-import Topbar from '../../Components/Topbar/Topbar'
-import { Link } from 'react-router-dom'
+import React, { useState } from "react";
+import Footer from "../../Components/Footer/Footer";
+import Sidebar from "../../Components/Sidebar/Sidebar";
+import Topbar from "../../Components/Topbar/Topbar";
+import { Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Booking() {
+  const [selectOption, setSelectOption] = useState(""); // loan
+  const [loanAmount, setLoanAmount] = useState("");
+  const [bankDetails, setBankDetails] = useState("");
+
+  const [paymentFrequence, setPaymentFrequence] = useState(""); //installments
+  const [amount, setAmount] = useState("");
+  const [totalInstallments, setTotalInstallments] = useState("");
+
+  const [projectName, setProjectName] = useState(""); // validation
+  const [unit, setUnit] = useState("");
+  const [projectDate, setProjectDate] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [customerContact, setCustomerContact] = useState("");
+  const [customerAddress, setCustomerAddress] = useState("");
+  const [saleAmount, setSaleAmount] = useState("");
+  const [extra, setExtra] = useState("");
+  const [work, setWork] = useState("");
+
+  const handleRadio = (e) => {
+    setSelectOption(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!projectName) {
+      toast.error(" select a project!");
+      return;
+    }
+    if (!unit) {
+      toast.error(" select a Unit!");
+      return;
+    }
+    if (!projectDate) {
+      toast.error("select a Date!");
+      return;
+    }
+    if (!customerName) {
+      toast.error("Enter Name!");
+      return;
+    }
+    if (!/^[A-Za-z ]+$/.test(customerName)) {
+      toast.error("Names can only contain letters and spaces");
+      return;
+    }
+    if (!customerContact) {
+      toast.error("Enter Contact Number!");
+      return;
+    }
+    if(customerContact.length <10 ||  customerContact.length >10 ){
+      toast.error("Enter 10 Digit Number!")
+      return;
+    }
+
+    if (!customerAddress) {
+      toast.error("Enter Address");
+      return;
+    }
+    if (customerAddress.length <20 ) {
+      toast.error("Enter Valid Address!");
+      return;
+    }
+  };
+
   return (
     <>
+      <ToastContainer />
       <Sidebar />
-      <div class="content">
+      <div className="content">
         <Topbar />
         <div className="container-fluid pt-4 px-4">
           <div className="row g-4">
@@ -21,112 +88,310 @@ function Booking() {
                         <h4>Booking</h4>
                       </div>
                       <div className="p-2">
-                        <Link to="/ViewBooking" class="btn">
+                        <Link to="/ViewBooking" className="btn">
                           <i className="bi bi-arrow-left-circle-fill"></i>
                           &nbsp; Back
                         </Link>
                       </div>
                     </div>
-                    <form>
-                      <p style={{ fontSize: '1.5rem', color: 'black' }}>Project Details</p>
-                      <div class="row">
-                        <div class="col">
-                          <select class="form-select mb-3" aria-label="Default select example">
-                            <option selected>Project Name</option>
+                    <form onSubmit={handleSubmit}>
+                      <p style={{ fontSize: "1.5rem", color: "black" }}>
+                        Project Details
+                      </p>
+                      <div className="row">
+                        <div className="col">
+                          <select
+                            className="form-select mb-3"
+                            aria-label="Default select example"
+                            value={projectName}
+                            onChange={(e) => setProjectName(e.target.value)}
+                          >
+                            <option value="">Project Name</option>
+                            <option value="demo">demo</option>
                           </select>
                         </div>
-                        <div class="col">
-                          <select class="form-select mb-3" aria-label="Default select example">
-                            <option selected>Unit No</option>
+                        <div className="col">
+                          <select
+                            className="form-select mb-3"
+                            aria-label="Default select example"
+                            value={unit}
+                            onChange={(e) => setUnit(e.target.value)}
+                          >
+                            <option value="">Unit No</option>
+                            <option value="1">1</option>
                           </select>
                         </div>
                       </div>
-                      <div class="row w-50">
-                        <div class="col pt-2">
-                          <div class="input-wrapper position-relative">
+                      <div className="row w-50">
+                        <div className="col pt-2">
+                          <div className="input-wrapper position-relative">
                             <input
                               type="date"
                               id="date"
-                              class="form-control"
-                              required
+                              className="form-control"
+                              // required
+                              value={projectDate}
+                              onChange={(e) => setProjectDate(e.target.value)}
                             />
                           </div>
                         </div>
                       </div>
-                      <p className='pt-3' style={{ fontSize: '1.5rem', color: 'black' }}>Customer Details</p>
-                      <div class="row">
-                        <div class="col">
-                          <input type="text" class="form-control" id="name" placeholder="Name" name="name" />
+                      <p
+                        className="pt-3"
+                        style={{ fontSize: "1.5rem", color: "black" }}
+                      >
+                        Customer Details
+                      </p>
+                      <div className="row">
+                        <div className="col">
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="name"
+                            placeholder="Name"
+                            name="name"
+                            value={customerName}
+                            onChange={(e) => setCustomerName(e.target.value)}
+                          />
                         </div>
-                        <div class="col">
-                          <input type="number" class="form-control" id="Contact No" placeholder="Contact No" name="Contact No" />
+                        <div className="col">
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="Contact No"
+                            placeholder="Contact No"
+                            name="Contact No"
+                            value={customerContact}
+                            onChange={(e) => setCustomerContact(e.target.value)}
+                          />
                         </div>
                       </div>
-                      <div class="row w-75">
-                        <div class="col pt-4">
-                          <div class="form-floating">
-                            <textarea class="form-control" placeholder="Address" id="floatingTextarea"></textarea>
-                            <label for="floatingTextarea">Address</label>
+                      <div className="row w-75">
+                        <div className="col pt-4">
+                          <div className="form-floating">
+                            <textarea
+                              className="form-control"
+                              placeholder="Address"
+                              id="floatingTextarea"
+                              value={customerAddress}
+                              onChange={(e) =>
+                                setCustomerAddress(e.target.value)
+                              }
+                            ></textarea>
+                            <label htmlFor="floatingTextarea">Address</label>
                           </div>
                         </div>
                       </div>
-                      <p className='pt-3' style={{ fontSize: '1.5rem', color: 'black' }}>Payment Details</p>
-                      <div class="row">
-                        <div class="col">
-                          <input type="text" class="form-control" id="Sale Deed Amount" placeholder="Sale Deed Amount" Sale Deed Amount="name" />
+                      <p
+                        className="pt-3"
+                        style={{ fontSize: "1.5rem", color: "black" }}
+                      >
+                        Payment Details
+                      </p>
+                      <div className="row">
+                        <div className="col">
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="Sale Deed Amount"
+                            placeholder="Sale Deed Amount"
+                            name="Sale Deed Amount"
+                          />
                         </div>
-                        <div class="col">
-                          <input type="number" class="form-control" id="Extra Work Amount" placeholder="Extra Work Amount" name="Extra Work Amount" />
+                        <div className="col">
+                          <input
+                            type="number"
+                            className="form-control"
+                            id="Extra Work Amount"
+                            placeholder="Extra Work Amount"
+                            name="Extra Work Amount"
+                          />
                         </div>
                       </div>
-                      <div class="row pt-4">
-                        <div class="col">
-                          <input type="text" class="form-control" id="Other Work Amount" placeholder="Other Work Amount" name="Other Work Amount" />
+                      <div className="row pt-4">
+                        <div className="col">
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="Other Work Amount"
+                            placeholder="Other Work Amount"
+                            name="Other Work Amount"
+                          />
                         </div>
-                        <div class="col">
-                        </div>
+                        <div className="col"></div>
                       </div>
-                      <p className='pt-3' style={{ fontSize: '1.5rem', color: 'black' }}>Payment Terms</p>
-                      <div class="row">
-                        <div class="col">
-                          <input type="text" class="form-control" id="Down Payment" placeholder="Down Payment" name="Down Payment" />
+                      <p
+                        className="pt-3"
+                        style={{ fontSize: "1.5rem", color: "black" }}
+                      >
+                        Payment Terms
+                      </p>
+                      <div className="row">
+                        <div className="col">
+                          <input
+                            type="text"
+                            className="form-control"
+                            id="Down Payment"
+                            placeholder="Down Payment"
+                            name="Down Payment"
+                          />
                         </div>
-                        <div class="col">
-                          <select class="form-select mb-3" aria-label="Default select example">
+                        <div className="col">
+                          <select
+                            className="form-select mb-3"
+                            aria-label="Default select example"
+                          >
                             <option selected>Payment Duration</option>
+                            <option value="1month">1 Month</option>
                           </select>
                         </div>
                       </div>
-                      <div class="form-check pt-2" style={{ marginLeft: '1rem' }}>
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
-                        <label class="form-check-label" for="flexRadioDefault1">
+                      <div
+                        className="form-check pt-2"
+                        style={{ marginLeft: "1rem" }}
+                      >
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          value="loan"
+                          checked={selectOption === "loan"}
+                          onChange={handleRadio}
+                          name="flexRadioDefault"
+                          id="flexRadioDefault1"
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="flexRadioDefault1"
+                        >
                           Loan
                         </label>
+                        {selectOption === "loan" && (
+                          <>
+                            <div className="row pt-3">
+                              <div className="col">
+                                <input
+                                  type="number"
+                                  className="form-control"
+                                  id="loanAmount"
+                                  value={loanAmount}
+                                  onChange={(e) =>
+                                    setLoanAmount(e.target.value)
+                                  }
+                                  placeholder="Loan Amount"
+                                />
+                              </div>
+                              <div className="col">
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  id="bankDetails"
+                                  value={bankDetails}
+                                  onChange={(e) =>
+                                    setBankDetails(e.target.value)
+                                  }
+                                  placeholder="Bank Details"
+                                />
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
-                      <div class="form-check pt-2" style={{ marginLeft: '1rem' }}>
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
-                        <label class="form-check-label" for="flexRadioDefault1">
+                      <div
+                        className="form-check pt-2"
+                        style={{ marginLeft: "1rem" }}
+                      >
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="flexRadioDefault"
+                          id="flexRadioDefault2"
+                          checked={selectOption === "installment"}
+                          value="installment"
+                          onChange={handleRadio}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="flexRadioDefault2"
+                        >
                           Installment
                         </label>
+                        {selectOption === "installment" && (
+                          <>
+                            <div className="row pt-3">
+                              <div className="col">
+                                <select
+                                  className="form-select mb-2"
+                                  aria-label="Payment Frequency"
+                                  value={paymentFrequence}
+                                  onChange={(e) =>
+                                    setPaymentFrequence(e.target.value)
+                                  }
+                                >
+                                  <option value="">
+                                    Select Payment Frequency
+                                  </option>
+                                  <option value="monthly">Monthly</option>
+                                  <option value="quarterly">Quarterly</option>
+                                  <option value="yearly">Yearly</option>
+                                </select>
+                              </div>
+                              <div className="col">
+                                <input
+                                  type="number"
+                                  className="form-control"
+                                  id="amount"
+                                  value={amount}
+                                  onChange={(e) => setAmount(e.target.value)}
+                                  placeholder="Amount"
+                                />
+                              </div>
+                            </div>
+                            <div className="row pt-3">
+                              <div className="col">
+                                <input
+                                  type="number"
+                                  className="form-control"
+                                  id="totalInstallments"
+                                  value={totalInstallments}
+                                  onChange={(e) =>
+                                    setTotalInstallments(e.target.value)
+                                  }
+                                  placeholder="Total Installments"
+                                />
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
-                      <div class="form-check pt-3">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                        <label class="form-check-label" for="flexCheckDefault">
-                        Installment Notify
+
+                      <div className="form-check pt-3">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value=""
+                          id="flexCheckDefault"
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="flexCheckDefault"
+                        >
+                          Installment Notify
                         </label>
                       </div>
-                      <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                      <button type="submit" className="btn btn-primary mt-3">
+                        Submit
+                      </button>
                     </form>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <Footer />
         </div>
-        <Footer />
       </div>
     </>
-  )
+  );
 }
 
-export default Booking
+export default Booking;

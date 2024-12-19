@@ -1,15 +1,27 @@
-import React, { useState,useRef } from "react";
+// src/Pages/Add/Add.js
+import React, { useState, useRef } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
+import { Helmet } from 'react-helmet';
 import "react-toastify/dist/ReactToastify.css";
 
-function AddProjects() {
+const AddProjects = () => {
   const [name, setName] = useState("");
   const [unit, setUnit] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isTopbarOpen, setIsTopbarOpen] = useState(false);
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+
+  const toggleTopbar = () => {
+    setIsTopbarOpen(!isTopbarOpen);
+  };
   const files = useRef(null);
 
   const handleSubmit = (e) => {
@@ -45,76 +57,88 @@ function AddProjects() {
       toast.error("File Does Not Support. You Must Use .png or .jpg ");
       return;
     }
-    console.log(files);
     setName("");
-    files.current.value=null;
+    files.current.value = null;
   };
 
   return (
     <>
       <ToastContainer />
-      <Sidebar />
-      <div className="content">
-        <Topbar />
-        <div className="container-fluid pt-4 px-4">
-          <div className="row g-4">
-            <div className="col-sm-12 col-xl-12">
-              <div className="bg-light rounded h-100 p-4">
-                <div className="row justify-content-center mx-0">
-                  <div className="col-lg-10 col-md-12">
-                    <div className="d-flex justify-content-between mb-3">
-                      <div className="p-2 ">
-                        <h4>Add Project</h4>
-                      </div>
-                      <div className="p-2 ">
-                        <Link to="/Projects" className="btn">
-                          <i className="bi bi-arrow-left-circle-fill"></i>
-                          &nbsp; Back
-                        </Link>
-                      </div>
+      <Helmet>
+        <title>React Estate | Add Projects</title>
+      </Helmet>
+      <div className="container-fluid position-relative bg-white d-flex p-0">
+        <Sidebar isSidebarOpen={isSidebarOpen} />
+
+        <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
+          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
+
+          <div className="container-fluid pt-4 px-4">
+            <div className="row g-4">
+              <div className="col-sm-12 col-xl-12">
+                <div className="bg-light rounded h-100 p-4">
+                  <div className="d-flex justify-content-between mb-3">
+                    <div className="">
+                      <h6 className="">Add Projects</h6>
                     </div>
-                    <form onSubmit={handleSubmit}>
-                      <div className="mb-3">
-                        <label htmlFor="name" className="form-label">
-                          Name :{" "}
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="name"
-                          aria-describedby="name"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label htmlFor="file" className="form-label">
-                          Upload Unit :{" "}
-                        </label>
-                        <input
-                          type="file"
-                          className="form-control"
-                          accept="image/png, image/jpeg"
-                          id="unit"
-                          aria-describedby="unit"
-                          ref={files}
-                          onChange={(e) => setUnit(e.target.files[0])}
-                        />
-                      </div>
-                      <button type="submit" className="btn btn-primary">
-                        Submit
-                      </button>
-                    </form>
+                    <div class="">
+                      <Link to="/projects" className="btn">
+                        <i className="bi bi-arrow-left-circle-fill"></i>
+                        &nbsp; Back
+                      </Link>
+                    </div>
                   </div>
+                  {/* <div className="d-flex justify-content-between mb-3">
+                                            <div className="p-3 w-30">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text bg-white">
+                                                        <i class="bi bi-search"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control border-start-0" placeholder="Search" aria-label="Search" />
+                                                </div>
+                                            </div>
+                                        </div> */}
+                  <form onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                      <label htmlFor="name" className="form-label">
+                        Name :{" "}
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="name"
+                        aria-describedby="name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="file" className="form-label">
+                        Upload Unit :{" "}
+                      </label>
+                      <input
+                        type="file"
+                        className="form-control"
+                        accept="image/png, image/jpeg"
+                        id="unit"
+                        aria-describedby="unit"
+                        ref={files}
+                        onChange={(e) => setUnit(e.target.files[0])}
+                      />
+                    </div>
+                    <button type="submit" className="btn btn-primary">
+                      Submit
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>
           </div>
+          <Footer />
         </div>
-        <Footer />
       </div>
     </>
   );
-}
+};
 
 export default AddProjects;

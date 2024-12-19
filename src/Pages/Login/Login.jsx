@@ -1,37 +1,61 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { Spinner, Form } from 'react-bootstrap';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { login } from '../../Api/Api';
 
 const Login = () => {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [passcode, setPasscode] = useState('');
     const navigate = useNavigate();
 
-    const handleLogin = () => {
+    // const handleLogin = async () => {
+    //     if (!email) {
+    //         toast.error('Email is required');
+    //         return;
+    //     }
+
+    //     if (!passcode) {
+    //         toast.error('Passcode is required');
+    //         return;
+    //     }
+
+    //     try {
+    //         setLoading(true);
+    //         const data = { email, passcode };
+    //         const response = await axios.post(login, data);
+
+    //         if (response.data.status === true) {
+    //             toast.success('Login successful');
+    //             setTimeout(() => navigate('/view-user'), 1000);
+    //         } else {
+    //             toast.error(response.data.message || 'Login failed');
+    //         }
+    //     } catch (error) {
+    //         console.error('Login error:', error);
+    //         toast.error(error.response?.data?.message || 'Something went wrong');
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    const handleLogin = async () => {
         if (!email) {
             toast.error('Email is required');
             return;
         }
 
-        if (!password) {
-            toast.error('Password is required');
+        if (!passcode) {
+            toast.error('Passcode is required');
             return;
         }
-
-        setError('');
-        setLoading(true);
         toast.success('Login successful');
+        setTimeout(() => navigate('/view-user'), 1000);
 
-        setTimeout(() => {
-            setLoading(false);
-            navigate('/add-user');
-        }, 2000);
-    };
+    }
 
     return (
         <>
@@ -44,7 +68,7 @@ const Login = () => {
                         <div className="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
                             <div className="bg-light rounded p-4 p-sm-5 my-4 mx-3">
                                 <div className="d-flex align-items-center justify-content-between mb-3">
-                                    <a href="index.html">
+                                    <a href="/">
                                         <h3 className="text-primary"><i className="fa fa-hashtag me-2"></i>React Estate</h3>
                                     </a>
                                     <h3>Login</h3>
@@ -68,11 +92,11 @@ const Login = () => {
                                             type="password"
                                             className="form-control"
                                             id="floatingPassword"
-                                            placeholder="Password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
+                                            placeholder="Passcode"
+                                            value={passcode}
+                                            onChange={(e) => setPasscode(e.target.value)}
                                         />
-                                        <label htmlFor="floatingPassword">Password</label>
+                                        <label htmlFor="floatingPassword">Passcode</label>
                                     </div>
 
                                     <button
@@ -90,7 +114,6 @@ const Login = () => {
                 </div>
             </div>
 
-            {/* Toast Container */}
             <ToastContainer />
         </>
     );
