@@ -97,25 +97,25 @@ const AddCustomerIncome = () => {
                         </div>
                       </div>
                       <div className="col pt-3">
-                      <input
-                            type="date"
-                            id="date"
-                            className="form-control"
-                            placeholder="dd-mm-yyyy"
-                            onFocus={(e) => e.target.showPicker()}
-                          />
-                          <label
-                            htmlFor="date"
-                            className="placeholder-label"
-                            style={{
-                              position: "absolute",
-                              paddingLeft:'0.8rem',
-                              transform: "translateY(-140%)",
-                              pointerEvents: "none",
-                            }}
-                          >
-                            Deposit Date
-                          </label>
+                        <input
+                          type="date"
+                          id="date"
+                          className="form-control"
+                          placeholder="dd-mm-yyyy"
+                          onFocus={(e) => e.target.showPicker()}
+                        />
+                        <label
+                          htmlFor="date"
+                          className="placeholder-label"
+                          style={{
+                            position: "absolute",
+                            paddingLeft: '0.8rem',
+                            transform: "translateY(-140%)",
+                            pointerEvents: "none",
+                          }}
+                        >
+                          Deposit Date
+                        </label>
                       </div>
                     </div>
                     <div className="row pt-3">
@@ -180,7 +180,7 @@ input[type="date"] {
       padding-left: 33rem;
     }
                     `}</style >
-                    </form>
+                  </form>
                 </div>
               </div>
             </div>
