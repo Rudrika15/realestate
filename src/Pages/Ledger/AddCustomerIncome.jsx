@@ -74,7 +74,7 @@ const AddCustomerIncome = () => {
                     </div>
                     <div className="row pt-3">
                       <div className="col">
-                        <div className="input-wrapper position-relative">
+                        <div className="input-wrapper position-relative ">
                           <input
                             type="date"
                             id="date"
