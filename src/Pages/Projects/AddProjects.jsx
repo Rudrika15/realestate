@@ -1,11 +1,11 @@
 // src/Pages/Add/Add.js
-import React, { useState, useRef,useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 
 const AddProjects = () => {
@@ -14,10 +14,9 @@ const AddProjects = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
 
-
-  const nameRef = useRef(null)
+  const nameRef = useRef(null);
   const files = useRef(null);
-  const submitRef = useRef(null)
+  const submitRef = useRef(null);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -27,10 +26,10 @@ const AddProjects = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
 
-    // focus
-    useEffect(() => {
-      nameRef.current.focus();
-    }, []);
+  // focus
+  useEffect(() => {
+    nameRef.current.focus();
+  }, []);
 
   const handleEnter = (e, nextField) => {
     if (e.key === "Enter" && nextField.current) {
@@ -38,6 +37,20 @@ const AddProjects = () => {
       nextField.current.focus();
     }
   };
+
+  const handleKey = useCallback((event) => {
+    if (event.key === "F4") {
+      console.log(`form submit`);
+      handleSubmit(event);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [handleKey]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -85,21 +98,26 @@ const AddProjects = () => {
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
-        <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
-          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
+        <div className={`content ${isSidebarOpen ? "open" : ""}`}>
+          <Topbar
+            toggleSidebar={toggleSidebar}
+            isTopbarOpen={isTopbarOpen}
+            toggleTopbar={toggleTopbar}
+          />
 
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
-                    <div className="">
-                      <h6 className="">Add Projects</h6>
+                    <div className="p-2 ">
+                      <h6 className="mb-4">Add Projects</h6>
                     </div>
-                    <div class="">
-                      <Link to="/projects" className="btn">
-                        <i className="bi bi-arrow-left-circle-fill"></i>
-                        &nbsp; Back
+                    <div className="p-2 ">
+                      <Link to="/projects" className="">
+                        <h6 className="mb-4">
+                          <i className="bi bi-arrow-left-circle-fill"></i> Back
+                        </h6>
                       </Link>
                     </div>
                   </div>
@@ -125,7 +143,7 @@ const AddProjects = () => {
                         aria-describedby="name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        onKeyPress={(e)=>handleEnter(e,files)}
+                        onKeyPress={(e) => handleEnter(e, files)}
                         ref={nameRef}
                       />
                     </div>
@@ -139,12 +157,16 @@ const AddProjects = () => {
                         accept="image/png, image/jpeg"
                         id="unit"
                         aria-describedby="unit"
-                        onKeyPress={(e)=>handleEnter(e,submitRef)}
+                        onKeyPress={(e) => handleEnter(e, submitRef)}
                         ref={files}
                         onChange={(e) => setUnit(e.target.files[0])}
                       />
                     </div>
-                    <button type="submit" className="btn btn-primary" ref={submitRef}>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      ref={submitRef}
+                    >
                       Submit
                     </button>
                   </form>
