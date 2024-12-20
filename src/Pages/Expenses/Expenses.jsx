@@ -65,12 +65,12 @@ const Expenses = () => {
                         <td></td>
                         <td></td>
                         <td>
-                          <button className="btn btn-warning btn-sm me-2">
-                            <i className="fas fa-edit"></i>
-                          </button>
-                          <button className="btn btn-danger btn-sm">
-                            <i className="fas fa-trash"></i>
-                          </button>
+                          <Link to="" className="btn btn-warning btn-sm me-2">
+                                                      <i className="fas fa-edit"></i>
+                                                    </Link>
+                                                    <Link to="" className="btn btn-danger btn-sm">
+                                                      <i className="fas fa-trash"></i>
+                                                    </Link>
                         </td>
                       </tr>
                       <tr>
@@ -80,12 +80,12 @@ const Expenses = () => {
                         <td></td>
                         <td></td>
                         <td>
-                          <button className="btn btn-warning btn-sm me-2">
+                          <Link to="" className="btn btn-warning btn-sm me-2">
                             <i className="fas fa-edit"></i>
-                          </button>
-                          <button className="btn btn-danger btn-sm">
+                          </Link>
+                          <Link to="" className="btn btn-danger btn-sm">
                             <i className="fas fa-trash"></i>
-                          </button>
+                          </Link>
                         </td>
                       </tr>
                       <tr>
@@ -95,12 +95,12 @@ const Expenses = () => {
                         <td></td>
                         <td></td>
                         <td>
-                          <button className="btn btn-warning btn-sm me-2">
+                          <Link to="" className="btn btn-warning btn-sm me-2">
                             <i className="fas fa-edit"></i>
-                          </button>
-                          <button className="btn btn-danger btn-sm">
+                          </Link>
+                          <Link to="" className="btn btn-danger btn-sm">
                             <i className="fas fa-trash"></i>
-                          </button>
+                          </Link>
                         </td>
                       </tr>
                     </tbody>

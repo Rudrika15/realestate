@@ -12,7 +12,8 @@ const AddCustomerIncome = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [check, setCheck] = useState(null);
-
+  const [incomeDate, setIncomeDate] = useState("");
+  const [depositDate, setDepositDate] = useState("");
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -62,7 +63,7 @@ const AddCustomerIncome = () => {
                     </div>
                     <div className="row w-75">
                       <div className="col pt-3">
-                          <textarea className="form-control" placeholder="Address" id="floatingTextarea"></textarea>
+                        <textarea className="form-control" placeholder="Address" id="floatingTextarea"></textarea>
                       </div>
                     </div>
                     <div className="row pt-3">
@@ -77,47 +78,56 @@ const AddCustomerIncome = () => {
                       <div className="col pt-3">
                         <div className="input-wrapper position-relative">
                           <input
-                            type="date"
+                            type="text"
                             id="date"
                             className="form-control"
-                            placeholder="dd-mm-yyyy"
-                            onFocus={(e) => e.target.showPicker()}
-                          />
-                          <label
-                            htmlFor="date"
-                            className="placeholder-label"
-                            style={{
-                              position: "absolute",
-                              top: "50%",
-                              left: "13px",
-                              transform: "translateY(-50%)",
-                              pointerEvents: "none",
+                            value={
+                              incomeDate
+                                ? new Date(incomeDate).toLocaleDateString("en-GB", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "2-digit",
+                                })
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const inputDate = e.target.value;
+                              const [day, month, year] = inputDate.split("-");
+                              const formattedDate = `${year}-` + `${month}-` + `${day}`;
+                              setIncomeDate(new Date(formattedDate).toISOString().slice(0, 10));
                             }}
-                          >
-                            Income Date
-                          </label>
+                            placeholder="Income Date"
+                            onFocus={(e) => (e.target.type = "date")}
+                            onBlur={(e) => (e.target.type = "text")}
+                          />
                         </div>
                       </div>
                       <div className="col pt-3">
-                        <input
-                          type="date"
-                          id="date"
-                          className="form-control"
-                          placeholder="dd-mm-yyyy"
-                          onFocus={(e) => e.target.showPicker()}
-                        />
-                        <label
-                          htmlFor="date"
-                          className="placeholder-label"
-                          style={{
-                            position: "absolute",
-                            paddingLeft: '0.8rem',
-                            transform: "translateY(-140%)",
-                            pointerEvents: "none",
-                          }}
-                        >
-                          Deposit Date
-                        </label>
+                        <div className="input-wrapper position-relative">
+                          <input
+                            type="text"
+                            id="date"
+                            className="form-control"
+                            value={
+                              depositDate
+                                ? new Date(depositDate).toLocaleDateString("en-GB", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "2-digit",
+                                })
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const inputDate = e.target.value;
+                              const [day, month, year] = inputDate.split("-");
+                              const formattedDate = `${year}-` + `${month}-` + `${day}`;
+                              setDepositDate(new Date(formattedDate).toISOString().slice(0, 10));
+                            }}
+                            placeholder="Deposit Date"
+                            onFocus={(e) => (e.target.type = "date")}
+                            onBlur={(e) => (e.target.type = "text")}
+                          />
+                        </div>
                       </div>
                     </div>
                     <div className="row pt-3">

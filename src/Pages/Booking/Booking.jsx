@@ -111,7 +111,7 @@ function Booking() {
                     </div>
                   </div>
                   <form onSubmit={handleSubmit}>
-                    <p style={{ fontSize: "1.5rem", color: "black" }}>
+                    <p style={{ fontSize: "1.1rem", color: "black" }}>
                       Project Details
                     </p>
                     <div className="row">
@@ -142,36 +142,35 @@ function Booking() {
                       <div className="col pt-2">
                         <div className="input-wrapper position-relative">
                           <input
-                            type="date"
+                            type="text"
                             id="date"
                             className="form-control"
-                            value={bookingDate}
-                            placeholder="dd-mm-yyyy"
-                            onChange={(e) => setBookingDate(e.target.value)}
-                            onFocus={(e) => e.target.showPicker()}
+                            value={
+                              bookingDate
+                                ? new Date(bookingDate).toLocaleDateString("en-GB", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "2-digit",
+                                })
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const inputDate = e.target.value;
+                              const [day, month, year] = inputDate.split("-");
+                              const formattedDate = `${year}-` + `${month}-` + `${day}`;
+                              setBookingDate(new Date(formattedDate).toISOString().slice(0, 10));
+                            }}
+                            placeholder="Booking Date"
+                            onFocus={(e) => (e.target.type = "date")} 
+                            onBlur={(e) => (e.target.type = "text")} 
                           />
-                          {!bookingDate && (
-                            <label
-                              htmlFor="date"
-                              className="placeholder-label"
-                              style={{
-                                position: "absolute",
-                                top: "50%",
-                                left: "13px",
-                                transform: "translateY(-50%)",
-                                pointerEvents: "none",
-                              }}
-                            >
-                              Booking Date
-                            </label>
-                          )}
                         </div>
                       </div>
                       <div className="col"></div>
                     </div>
                     <p
                       className="pt-3"
-                      style={{ fontSize: "1.5rem", color: "black" }}
+                      style={{ fontSize: "1.1rem", color: "black" }}
                     >
                       Customer Details
                     </p>
@@ -201,20 +200,20 @@ function Booking() {
                     </div>
                     <div className="row w-75">
                       <div className="col pt-4">
-                          <textarea
-                            className="form-control"
-                            placeholder="Address"
-                            id="floatingTextarea"
-                            value={customerAddress}
-                            onChange={(e) =>
-                              setCustomerAddress(e.target.value)
-                            }
-                          ></textarea>
+                        <textarea
+                          className="form-control"
+                          placeholder="Address"
+                          id="floatingTextarea"
+                          value={customerAddress}
+                          onChange={(e) =>
+                            setCustomerAddress(e.target.value)
+                          }
+                        ></textarea>
                       </div>
                     </div>
                     <p
                       className="pt-3"
-                      style={{ fontSize: "1.5rem", color: "black" }}
+                      style={{ fontSize: "1.1rem", color: "black" }}
                     >
                       Payment Details
                     </p>
@@ -252,7 +251,7 @@ function Booking() {
                     </div>
                     <p
                       className="pt-3"
-                      style={{ fontSize: "1.5rem", color: "black" }}
+                      style={{ fontSize: "1.1rem", color: "black" }}
                     >
                       Payment Terms
                     </p>
@@ -314,15 +313,15 @@ function Booking() {
                           </div>
                           <div className="row w-75">
                             <div className="col pt-3">
-                                <textarea
-                                  className="form-control"
-                                  placeholder="Bank Details"
-                                  id="floatingTextarea"
-                                  value={bankDetails}
-                                  onChange={(e) =>
-                                    setBankDetails(e.target.value)
-                                  }
-                                ></textarea>
+                              <textarea
+                                className="form-control"
+                                placeholder="Bank Details"
+                                id="floatingTextarea"
+                                value={bankDetails}
+                                onChange={(e) =>
+                                  setBankDetails(e.target.value)
+                                }
+                              ></textarea>
                             </div>
                           </div>
                         </>
@@ -414,27 +413,6 @@ function Booking() {
                     <button type="submit" className="btn btn-primary mt-3">
                       Submit
                     </button>
-                    <style jsx="true">{`
-input[type="date"] {
-      appearance: none; 
-      -webkit-appearance: none; 
-      -moz-appearance: none; 
-      border: 1px solid #ccc; 
-      border-radius: 5px; 
-      padding: 10px 15px; 
-      color: #333; 
-      background-color: #f9f9f9; 
-      cursor: pointer; 
-    }
-
-    input[type="date"]::-webkit-datetime-edit {
-      display: none; 
-    }
-
-    input[type="date"] {
-      padding-left: 33rem;
-    }
-                    `}</style >
                   </form>
                 </div>
               </div>

@@ -5,16 +5,19 @@ import Footer from '../../Components/Footer/Footer';
 import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import { getUsers } from '../../Api/Api';
+import { Link } from 'react-router-dom';
 
-const Add = () => {
+const View = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
     const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const getData = async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             const res = await axios.get(getUsers);
+            console.log(res.data);
+
             if (res.data.status === true) {
                 setData(res.data.data);
             } else {
@@ -23,7 +26,7 @@ const Add = () => {
         } catch (error) {
             console.error('Error:', error);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
@@ -42,7 +45,7 @@ const Add = () => {
     return (
         <>
             <Helmet>
-                <title>React Estate | Add User</title>
+                <title>React Estate | User</title>
             </Helmet>
             <div className="container-fluid position-relative bg-white d-flex p-0">
                 <Sidebar isSidebarOpen={isSidebarOpen} />
@@ -59,28 +62,60 @@ const Add = () => {
                                             <h6 className="mb-4">User List</h6>
                                         </div>
                                         <div class="p-2 ">
-                                            <h6 className="mb-4">Add new user</h6>
+                                            <Link to="/add-user" className="">
+                                                <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add new user</h6>
+                                            </Link>
                                         </div>
                                     </div>
-                                    {loading ? (
+                                    {/* {loading ? (
                                         <div className="text-center">
                                             <div className="spinner-border text-primary" role="status">
                                                 <span className="visually-hidden">Loading...</span>
                                             </div>
                                         </div>
-                                    ) : (
-                                        <table className="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col">Name</th>
-                                                    <th scope="col">Email</th>
-                                                    <th scope="col">Role</th>
-                                                    <th scope="col">Status</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {data.length > 0 ? (
+                                   ) : ( */}
+                                    <table className="table table-bordered text-center">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Username</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <Link to="/edit-user" className="btn btn-warning btn-sm me-2">
+                                                        <i className="fas fa-edit"></i>
+                                                    </Link>
+                                                    <Link to="" className="btn btn-danger btn-sm">
+                                                        <i className="fas fa-trash"></i>
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <Link to="/edit-user" className="btn btn-warning btn-sm me-2">
+                                                        <i className="fas fa-edit"></i>
+                                                    </Link>
+                                                    <Link to="" className="btn btn-danger btn-sm">
+                                                        <i className="fas fa-trash"></i>
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <Link to="/edit-user" className="btn btn-warning btn-sm me-2">
+                                                        <i className="fas fa-edit"></i>
+                                                    </Link>
+                                                    <Link to="" className="btn btn-danger btn-sm">
+                                                        <i className="fas fa-trash"></i>
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                            {/* {data.length > 0 ? (
                                                     data.map((user, index) => (
                                                         <tr key={user.id}>
                                                             <th scope="row">{index + 1}</th>
@@ -96,10 +131,10 @@ const Add = () => {
                                                             No users found.
                                                         </td>
                                                     </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    )}
+                                                )} */}
+                                        </tbody>
+                                    </table>
+                                    {/* )} */}
                                 </div>
                             </div>
                         </div>
@@ -111,4 +146,4 @@ const Add = () => {
     );
 };
 
-export default Add;
+export default View;
