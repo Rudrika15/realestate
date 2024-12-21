@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Add from "./Pages/User/View";
 import Login from "./Pages/Login/Login";
 import Projects from "./Pages/Projects/Projects";
 import AddProjects from "./Pages/Projects/AddProjects";
@@ -25,6 +24,13 @@ import PartnerIncome from "./Pages/Ledger/PartnerIncome";
 import CustomerIncome from "./Pages/Ledger/CustomerIncome";
 import PartnerReimbursement from "./Pages/Ledger/PartnerReimbursement";
 import ViewCancelledBooking from "./Pages/Booking/ViewCancelledBooking";
+import Role from "./Pages/Role/Role";
+import AddRole from "./Pages/Role/AddRole";
+import Permission from "./Pages/Permission/Permission";
+import EditRole from "./Pages/Role/EditRole";
+import AddUser from "./Pages/User/AddUser";
+import EditUser from "./Pages/User/EditUser";
+import View from "./Pages/User/View";
 
 const App = () => {
   return (
@@ -32,7 +38,12 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Login />}></Route>
-          <Route path="/view-user" element={<Add />}></Route>
+          <Route path="/view-user" element={<View />}></Route>
+          <Route path="/edit-user" element={<EditUser />}></Route>
+          <Route path="/add-user" element={<AddUser />}></Route>
+          <Route path="/role" element={<Role />}></Route>
+          <Route path="/add-role" element={<AddRole />}></Route>
+          <Route path="/edit-role" element={<EditRole />}></Route>
           <Route
             path="/booking-authorization"
             element={<BookingAuthorization />}
@@ -46,6 +57,7 @@ const App = () => {
           ></Route>
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />
+          <Route path="/permission" element={<Permission />} />
           <Route path="/add-projects" element={<AddProjects />} />
           <Route path="/unit" element={<Unit />} />
           <Route path="/edit-unit" element={<EditUnit />} />

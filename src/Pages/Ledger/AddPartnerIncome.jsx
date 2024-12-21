@@ -11,6 +11,8 @@ import "react-toastify/dist/ReactToastify.css";
 const AddPartnerIncome = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+  const [incomeDate, setIncomeDate] = useState("");
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -58,29 +60,33 @@ const AddPartnerIncome = () => {
                       <div className="col pt-2">
                         <div className="input-wrapper position-relative">
                           <input
-                            type="date"
+                            type="text"
                             id="date"
                             className="form-control"
-                            placeholder="dd-mm-yyyy"
-                            onFocus={(e) => e.target.showPicker()}
-                          />
-                          <label
-                            htmlFor="date"
-                            className="placeholder-label"
-                            style={{
-                              position: "absolute",
-                              top: "50%",
-                              left: "13px",
-                              transform: "translateY(-50%)",
-                              pointerEvents: "none",
+                            value={
+                              incomeDate
+                                ? new Date(incomeDate).toLocaleDateString("en-GB", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "2-digit",
+                                })
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const inputDate = e.target.value;
+                              const [day, month, year] = inputDate.split("-");
+                              const formattedDate = `${year}-` + `${month}-` + `${day}`;
+                              setIncomeDate(new Date(formattedDate).toISOString().slice(0, 10));
                             }}
-                          >
-                            Income Date
-                          </label>
+                            placeholder="Income Date"
+                            onFocus={(e) => (e.target.type = "date")}
+                            onBlur={(e) => (e.target.type = "text")}
+                          />
                         </div>
                       </div>
                       <div className="col"></div>
                     </div>
+
                     <div className="row pt-3">
                       <p>Payment Mode</p>
                       <div className="form-check" style={{ marginLeft: '1rem' }}>
@@ -107,27 +113,6 @@ const AddPartnerIncome = () => {
                       </div>
                     </div>
                     <button type="submit" className="btn btn-primary mt-3">Save</button>
-                    <style jsx="true">{`
-input[type="date"] {
-      appearance: none; 
-      -webkit-appearance: none; 
-      -moz-appearance: none; 
-      border: 1px solid #ccc; 
-      border-radius: 5px; 
-      padding: 10px 15px; 
-      color: #333; 
-      background-color: #f9f9f9; 
-      cursor: pointer; 
-    }
-
-    input[type="date"]::-webkit-datetime-edit {
-      display: none; 
-    }
-
-    input[type="date"] {
-      padding-left: 33rem;
-    }
-                    `}</style >
                   </form>
                 </div>
               </div>

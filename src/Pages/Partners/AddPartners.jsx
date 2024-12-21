@@ -151,6 +151,16 @@ function AddPartners() {
                           value={percentage1}
                           onChange={(e) => setPercentage1(e.target.value)}
                         />
+                        {/* <i
+                          className="bi bi-x-circle-fill"
+                          style={{
+                            position: 'absolute',
+                            right: '27px',
+                            transform: 'translateY(-135%)',
+                            color: '#eb3423',
+                            cursor: 'pointer',
+                          }}
+                        ></i> */}
                       </div>
                       {/* <<<<<<< HEAD */}
                     </div>
@@ -175,28 +185,16 @@ function AddPartners() {
                           value={percentage2}
                           onChange={(e) => setPercentage2(e.target.value)}
                         />
-                      </div>
-                    </div>
-                    <div className="row pt-4">
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="name3"
-                          placeholder="Name"
-                          value={name3}
-                          onChange={(e) => setName3(e.target.value)}
-                        />
-                      </div>
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="percentage3"
-                          placeholder="Percentage"
-                          value={percentage3}
-                          onChange={(e) => setPercentage3(e.target.value)}
-                        />
+                        <i
+                          className="bi bi-plus-circle-fill"
+                          style={{
+                            position: 'absolute',
+                            right: '27px',
+                            transform: 'translateY(-135%)',
+                            color: 'black',
+                            cursor: 'pointer',
+                          }}
+                        ></i>
                       </div>
                     </div>
                     <button type="submit" className="btn btn-primary mt-3">

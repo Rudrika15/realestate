@@ -83,7 +83,7 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
                             alt="User"
                             style={{ width: '40px', height: '40px' }}
                         />
-                        <span className="d-none d-lg-inline-flex">John Doe</span>
+                        <span className="d-none d-lg-inline-flex">Admin</span>
                     </a>
                     <div
                         className={`dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0${isTopbarOpen ? ' show' : ''}`}
