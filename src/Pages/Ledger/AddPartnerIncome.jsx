@@ -60,28 +60,35 @@ const AddPartnerIncome = () => {
                       <div className="col pt-2">
                         <div className="input-wrapper position-relative">
                           <input
-                            type="text"
-                            id="date"
-                            className="form-control"
-                            value={
-                              incomeDate
-                                ? new Date(incomeDate).toLocaleDateString("en-GB", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "2-digit",
-                                })
-                                : ""
+                          type="text"
+                          id="date"
+                          className="form-control"
+                          value={
+                            incomeDate
+                              ? new Date(incomeDate).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "2-digit",
+                              })
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const inputDate = e.target.value;
+                            const [day, month, year] = inputDate.split("-");
+                            if (day && month && year) {
+                              const formattedDate = `${day}-${month}-${year}`;
+                              const parsedDate = new Date(formattedDate);
+                              if (!isNaN(parsedDate)) {
+                                setIncomeDate(parsedDate.toISOString().slice(0, 10));
+                              } else {
+                                console.error("Invalid date format");
+                              }
                             }
-                            onChange={(e) => {
-                              const inputDate = e.target.value;
-                              const [day, month, year] = inputDate.split("-");
-                              const formattedDate = `${year}-` + `${month}-` + `${day}`;
-                              setIncomeDate(new Date(formattedDate).toISOString().slice(0, 10));
-                            }}
-                            placeholder="Income Date"
-                            onFocus={(e) => (e.target.type = "date")}
-                            onBlur={(e) => (e.target.type = "text")}
-                          />
+                          }}
+                          placeholder="Income Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                        />
                         </div>
                       </div>
                       <div className="col"></div>

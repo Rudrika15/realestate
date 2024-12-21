@@ -19,6 +19,8 @@ function Booking() {
   const [projectName, setProjectName] = useState(""); // validation
   const [unit, setUnit] = useState("");
   const [bookingDate, setBookingDate] = useState("");
+  const [tokenpaymentDate, setTokenPaymentDate] = useState("");
+  const [pendingpaymentDate, setPendingPaymentDate] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
@@ -257,34 +259,39 @@ function Booking() {
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col pt-2">
-                        <div className="input-wrapper position-relative">
-                          <input
-                            type="text"
-                            id="date"
-                            className="form-control"
-                            value={
-                              bookingDate
-                                ? new Date(bookingDate).toLocaleDateString("en-GB", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "2-digit",
-                                })
-                                : ""
+                      <div className="col">
+                        <input
+                          type="text"
+                          id="date"
+                          className="form-control"
+                          value={
+                            bookingDate
+                              ? new Date(bookingDate).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "2-digit",
+                              })
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const inputDate = e.target.value;
+                            const [day, month, year] = inputDate.split("-");
+                            if (day && month && year) {
+                              const formattedDate = `${day}-${month}-${year}`;
+                              const parsedDate = new Date(formattedDate);
+                              if (!isNaN(parsedDate)) {
+                                setBookingDate(parsedDate.toISOString().slice(0, 10));
+                              } else {
+                                console.error("Invalid date format");
+                              }
                             }
-                            onChange={(e) => {
-                              const inputDate = e.target.value;
-                              const [day, month, year] = inputDate.split("-");
-                              const formattedDate = `${year}-` + `${month}-` + `${day}`;
-                              setBookingDate(new Date(formattedDate).toISOString().slice(0, 10));
-                            }}
-                            placeholder="Booking Date"
-                            onFocus={(e) => (e.target.type = "date")}
-                            onBlur={(e) => (e.target.type = "text")}
-                          />
-                        </div>
-                        <div className="col"></div>
+                          }}
+                          placeholder="Booking Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                        />
                       </div>
+                      <div className="col"></div>
                     </div>
                     <hr />
                     <p
@@ -293,7 +300,7 @@ function Booking() {
                       Customer Details
                     </p>
                     <div className="row">
-                      <div className="col">
+                      <div className="col position-relative">
                         <input
                           type="text"
                           className="form-control"
@@ -304,19 +311,20 @@ function Booking() {
                           onChange={(e) => setCustomerName(e.target.value)}
                           onKeyPress={(e) => handleEnter(e, customerContactRef)}
                           ref={customerNameRef}
-
                         />
                         <i
                           className="bi bi-plus-circle-fill"
                           style={{
                             position: 'absolute',
-                            right: '39.2rem',
-                            transform: 'translateY(-130%)',
+                            right: '-0.4rem',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
                             color: 'black',
                             cursor: 'pointer',
                           }}
                         ></i>
                       </div>
+
                       <div className="col">
                         <input
                           type="number"
@@ -400,282 +408,109 @@ function Booking() {
                     </p>
                     <div className="row">
                       <div className="col">
-                        <input
+                        <select
+                          className="form-select mb-3"
+                          value={projectName}
+                          onChange={(e) => setProjectName(e.target.value)}
+                          onKeyPress={(e) => handleEnter(e, unitRef)}
+                          ref={inputRef}
+                        >
+                          <option value="">Payment Plan</option>
+                          <option value="fullamount">Full Amount</option>
+                          <option value="installment">Installment</option>
+                          <option value="loan">Loan</option>
+                        </select>
+                      </div>
+                      <div className="col"></div>
+                    </div>
+                    <div className="row">
+                      <div className="col">
+                      <input
                           type="text"
                           className="form-control"
-                          id="Down Payment"
-                          placeholder="Down Payment"
-                          name="Down Payment"
+                          id="tokenamount"
+                          placeholder="Token Amount"
+                          name="tokenamount"
+                          // value="tokenamount"
                         />
                       </div>
                       <div className="col">
-                        <select
-                          className="form-select mb-3"
-                          aria-label="Default select example"
-                        >
-                          <option selected>Payment Duration</option>
-                          <option value="1month">1 Month</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div
-                      className="form-check pt-2"
-                      style={{ marginLeft: "1rem" }}
-                    >
                       <input
-                        className="form-check-input"
-                        type="radio"
-                        value="loan"
-                        checked={selectOption === "loan"}
-                        onChange={handleRadio}
-                        name="flexRadioDefault"
-                        id="flexRadioDefault1"
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="flexRadioDefault1"
-                      >
-                        Payment Details
-                      </label>
-                      <div className="row">
-                        <div className="col">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="Sale Deed Amount"
-                            placeholder="Sale Deed Amount"
-                            value={saleAmount}
-                            onChange={(e) => setSaleAmount(e.target.value)}
-                            onKeyPress={(e) => handleEnter(e, extraRef)}
-                            ref={saleAmountRef}
-                          />
-                        </div>
-                        <div className="col">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="Extra Work Amount"
-                            placeholder="Extra Work Amount"
-                            value={extra}
-                            onChange={(e) => setExtra(e.target.value)}
-                            onKeyPress={(e) => handleEnter(e, workRef)}
-                            ref={extraRef}
-                          />
-                        </div>
-                      </div>
-                      <div className="row pt-4">
-                        <div className="col">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="Other Work Amount"
-                            placeholder="Other Work Amount"
-                            value={work}
-                            onChange={(e) => setWork(e.target.value)}
-                            onKeyPress={(e) => handleEnter(e, downPaymentRef)}
-                            ref={workRef}
-                          />
-                        </div>
-                      </div>
-                      <p
-                        className="pt-3"
-                        style={{ fontSize: "1.5rem", color: "black" }}
-                      >
-                        Payment Terms
-                      </p>
-                      <div className="row">
-                        <div className="col">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="Down Payment"
-                            placeholder="Down Payment"
-                            value={downPayment}
-                            onChange={(e) => setDownPayment(e.target.value)}
-                            onKeyPress={(e) =>
-                              handleEnter(e, paymentDurationRef)
+                          type="text"
+                          id="date"
+                          className="form-control"
+                          value={
+                            tokenpaymentDate
+                              ? new Date(tokenpaymentDate).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "2-digit",
+                              })
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const inputDate = e.target.value;
+                            const [day, month, year] = inputDate.split("-");
+                            if (day && month && year) {
+                              const formattedDate = `${day}-${month}-${year}`;
+                              const parsedDate = new Date(formattedDate);
+                              if (!isNaN(parsedDate)) {
+                                setTokenPaymentDate(parsedDate.toISOString().slice(0, 10));
+                              } else {
+                                console.error("Invalid date format");
+                              }
                             }
-                            ref={downPaymentRef}
-                          />
-                        </div>
-                        <div className="col">
-                          <select
-                            className="form-select mb-3"
-                            value={paymentDuration}
-                            onChange={(e) => setPaymentDuration(e.target.value)}
-                            onKeyPress={(e) => handleEnter(e, loanRef)}
-                            ref={paymentDurationRef}
-                          >
-                            <option value="">Payment Duration</option>
-                            <option value="1month">1 Month</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div
-                        className="form-check pt-2"
-                        style={{ marginLeft: "1rem" }}
-                      >
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          value="loan"
-                          checked={selectOption === "loan"}
-                          onChange={handleRadio}
-                          name="flexRadioDefault"
-                          id="flexRadioDefault1"
-                          onKeyPress={(e) => handleEnter(e, installmentRef)}
-                          ref={loanRef}
+                          }}
+                          placeholder="Token Payment Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
                         />
-                        <label
-                          className="form-check-label"
-                          htmlFor="flexRadioDefault1"
-                        >
-                          Loan
-                        </label>
-                      </div>
-
-                      <div
-                        className="form-check pt-2"
-                        style={{ marginLeft: "1rem" }}
-                      >
-                        {selectOption === "loan" && (
-                          <>
-                            <div className="row pt-3">
-                              <div className="col">
-                                <input
-                                  type="number"
-                                  className="form-control"
-                                  id="loanAmount"
-                                  value={loanAmount}
-                                  onChange={(e) =>
-                                    setLoanAmount(e.target.value)
-                                  }
-                                  placeholder="Loan Amount"
-                                  ref={loanAmountRef}
-                                  onKeyPress={(e) => handleEnter(e, bankDetailsRef)}
-
-                                />
-                              </div>
-                              <div className="col"></div>
-                            </div>
-                            <div className="row w-75">
-                              <div className="col pt-3">
-                                <textarea
-                                  className="form-control"
-                                  placeholder="Bank Details"
-                                  id="floatingTextarea"
-                                  value={bankDetails}
-                                  onChange={(e) =>
-                                    setBankDetails(e.target.value)
-                                  }
-                                ></textarea>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                      <div
-                        className="form-check pt-2"
-                        style={{ marginLeft: "1rem" }}
-                      >
-                        <div>
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            value="installment"
-                            checked={selectOption === "installment"}
-                            onChange={handleRadio}
-                            name="flexRadioDefault"
-                            id="flexRadioDefault2"
-                            onKeyPress={(e) => handleEnter(e, submitRef)}
-                            ref={installmentRef}
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="flexRadioDefault2"
-                          >
-                            Installment
-                          </label>
-                          {selectOption === "installment" && (
-                            <>
-                              <div className="row pt-3">
-                                <div className="col">
-                                  <select
-                                    className="form-select"
-                                    value={paymentFrequence}
-                                    onChange={(e) =>
-                                      setPaymentFrequence(e.target.value)
-                                    }
-                                    onKeyPress={(e) =>
-                                      handleEnter(e, amountRef)
-                                    }
-                                    ref={paymentFrequenceRef}
-                                  >
-                                    <option value="">Select Frequency</option>
-                                    <option value="monthly">Monthly</option>
-                                  </select>
-                                </div>
-                                <div className="col">
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    value={amount}
-                                    onChange={(e) => setAmount(e.target.value)}
-                                    placeholder="Amount"
-                                    onKeyPress={(e) =>
-                                      handleEnter(e, totalInstallmentsRef)
-                                    }
-                                    ref={amountRef}
-                                  />
-                                </div>
-                              </div>
-                              <div className="row pt-3">
-                                <div className="col">
-                                  <input
-                                    type="number"
-                                    className="form-control"
-                                    value={totalInstallments}
-                                    onChange={(e) =>
-                                      setTotalInstallments(e.target.value)
-                                    }
-                                    placeholder="Total Installments"
-                                    onKeyPress={(e) =>
-                                      handleEnter(e, submitRef)
-                                    }
-                                    ref={totalInstallmentsRef}
-                                  />
-                                </div>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                        <div className="form-check pt-3">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="flexCheckDefault"
-                          >
-                            Installment Notify
-                          </label>
-                        </div>
-                        <div className="pt-4 d-flex justify-content-center">
-                          <button
-                            type="submit"
-                            className="btn btn-success"
-                            ref={submitRef}
-                          >
-                            Submit
-                          </button>
-                        </div>
                       </div>
                     </div>
-
+                    <div className="row pt-3">
+                      <div className="col">
+                      <input
+                          type="text"
+                          className="form-control"
+                          id="pendingamount"
+                          placeholder="Pending Amount"
+                          name="pendingamount"
+                          // value="pendingamount"
+                        />
+                      </div>
+                      <div className="col">
+                      <input
+                          type="text"
+                          id="date"
+                          className="form-control"
+                          value={
+                            pendingpaymentDate
+                              ? new Date(pendingpaymentDate).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "2-digit",
+                              })
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const inputDate = e.target.value;
+                            const [day, month, year] = inputDate.split("-");
+                            if (day && month && year) {
+                              const formattedDate = `${day}-${month}-${year}`;
+                              const parsedDate = new Date(formattedDate);
+                              if (!isNaN(parsedDate)) {
+                                setPendingPaymentDate(parsedDate.toISOString().slice(0, 10));
+                              } else {
+                                console.error("Invalid date format");
+                              }
+                            }
+                          }}
+                          placeholder="Pending Payment Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                        />
+                      </div>
+                    </div>
                     <div className="form-check pt-3">
                       <input
                         className="form-check-input"
@@ -694,28 +529,6 @@ function Booking() {
                       Submit
                     </button>
                   </form>
-
-                  <style jsx="true">{`
-                    input[type="date"] {
-                      appearance: none;
-                      -webkit-appearance: none;
-                      -moz-appearance: none;
-                      border: 1px solid #ccc;
-                      border-radius: 5px;
-                      padding: 10px 15px;
-                      color: #333;
-                      background-color: #f9f9f9;
-                      cursor: pointer;
-                    }
-
-                    input[type="date"]::-webkit-datetime-edit {
-                      display: none;
-                    }
-
-                    input[type="date"] {
-                      padding-left: 33rem;
-                    }
-                  `}</style>
                 </div>
               </div>
             </div>
@@ -723,7 +536,6 @@ function Booking() {
           <Footer />
         </div >
       </div >
-      <style></style>
     </>
   );
 }

@@ -48,6 +48,12 @@ const Sidebar = ({ isSidebarOpen }) => {
                 </div>
                 <div className="navbar-nav w-100">
                     <Link
+                        to="/view-user"
+                        className={`nav-item nav-link ${isActive('/view-user') ? 'active' : ''}`}
+                    >
+                        <i class="bi bi-person-square"></i> User
+                    </Link>
+                    <Link
                         to="/projects"
                         className={`nav-item nav-link ${isActive('/projects') ? 'active' : ''}`}
                     >
@@ -177,12 +183,6 @@ const Sidebar = ({ isSidebarOpen }) => {
                         className={`nav-item nav-link ${isActive('/role') ? 'active' : ''}`}
                     >
                         <i class="bi bi-person"></i> Role
-                    </Link>
-                    <Link
-                        to="/view-user"
-                        className={`nav-item nav-link ${isActive('/view-user') ? 'active' : ''}`}
-                    >
-                        <i class="bi bi-person-square"></i> User
                     </Link>
                 </div>
             </nav>
