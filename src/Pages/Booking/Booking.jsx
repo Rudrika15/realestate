@@ -11,7 +11,6 @@ function Booking() {
   const [selectOption, setSelectOption] = useState(""); // loan
   const [loanAmount, setLoanAmount] = useState("");
   const [bankDetails, setBankDetails] = useState("");
-
   const [paymentFrequence, setPaymentFrequence] = useState(""); //installments
   const [amount, setAmount] = useState("");
   const [totalInstallments, setTotalInstallments] = useState("");
@@ -25,9 +24,10 @@ function Booking() {
   const [saleAmount, setSaleAmount] = useState("");
   const [extra, setExtra] = useState("");
   const [work, setWork] = useState("");
-
   const [downPayment, setDownPayment] = useState("");
   const [paymentDuration, setPaymentDuration] = useState("");
+
+  const [errors, setErrors] = useState({});
 
   const inputRef = useRef(null);
   const unitRef = useRef(null);
@@ -40,17 +40,13 @@ function Booking() {
   const workRef = useRef(null);
   const downPaymentRef = useRef(null);
   const paymentDurationRef = useRef(null);
-
   const loanRef = useRef(null);
   const installmentRef = useRef(null);
-
   const loanAmountRef = useRef(null);
   const bankDetailsRef = useRef(null);
-
   const paymentFrequenceRef = useRef(null);
   const amountRef = useRef(null);
   const totalInstallmentsRef = useRef(null);
-
   const submitRef = useRef(null);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -67,6 +63,7 @@ function Booking() {
   const handleRadio = (e) => {
     setSelectOption(e.target.value);
   };
+
   // focus
   useEffect(() => {
     inputRef.current.focus();
@@ -79,103 +76,86 @@ function Booking() {
       nextField.current.focus();
     }
   };
-  // shortcut Key //
-  const handleKey = useCallback((event) => {
-    if (event.key === "F4") {
-      handleSubmit(event);
-    }
-  }, []);
-  useEffect(() => {
-    document.addEventListener("keydown", handleKey);
-    return () => {
-      document.removeEventListener("keydown", handleKey);
-    };
-  }, [handleKey]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const validationError = {};
 
     if (!projectName) {
-      toast.error(" select a project!");
-      return;
+      validationError.projectName = "Please select a project.";
     }
     if (!unit) {
-      toast.error(" select a Unit!");
-      return;
+      validationError.unit = "Please select a unit.";
     }
     if (!bookingDate) {
-      toast.error("select a Date!");
-      return;
+      validationError.bookingDate = "Please select a date.";
     }
     if (!customerName) {
-      toast.error("Enter Name!");
-      return;
-    }
-    if (!/^[A-Za-z ]+$/.test(customerName)) {
-      toast.error("Names can only contain letters and spaces");
-      return;
+      validationError.customerName = "Please enter the customer's name.";
+    } else if (!/^[A-Za-z ]+$/.test(customerName)) {
+      validationError.customerName =
+        "Names can only contain letters and spaces.";
     }
     if (!customerContact) {
-      toast.error("Enter Contact Number!");
-      return;
-    }
-    if (customerContact.length < 10 || customerContact.length > 10) {
-      toast.error("Enter 10 Digit Number!");
-      return;
+      validationError.customerContact = "Please enter a contact number.";
+    } else if (customerContact.length !== 10) {
+      validationError.customerContact = "Contact number must be 10 digits.";
     }
 
     if (!customerAddress) {
-      toast.error("Enter Address");
-      return;
-    }
-    if (customerAddress.length < 20) {
-      toast.error("Enter Valid Address!");
-      return;
+      validationError.customerAddress = "Please enter the customer's address.";
+    } else if (customerAddress.length < 13) {
+      validationError.customerAddress =
+        "Address must be at least 13 characters.";
     }
     if (isNaN(saleAmount) || isNaN(extra) || isNaN(work)) {
-      toast.error("Only Number Enter");
-      return;
+      validationError.amounts =
+        "Only numeric values are allowed for sale, extra, and work amounts.";
     }
     if (!saleAmount || !saleAmount.trim()) {
-      toast.error("Enter Sale Deed Amount!");
-      return;
+      validationError.saleAmount = "Please enter the sale deed amount.";
     }
     if (!extra || !extra.trim()) {
-      toast.error("Enter Extra  Work Amount!");
-      return;
+      validationError.extra = "Please enter the extra work amount.";
     }
-
     if (!work || !work.trim()) {
-      toast.error("Enter  Other Amount!");
-      return;
+      validationError.work = "Please enter the other work amount.";
     }
     if (!downPayment || isNaN(downPayment) || !downPayment.trim()) {
-      toast.error("Enter Down Payment !");
-      return;
+      validationError.downPayment = "Please enter a valid down payment amount.";
     }
     if (!paymentDuration) {
-      toast.error("Select Payment Duration !");
-      return;
+      validationError.paymentDuration = "Please select the payment duration.";
     }
-
     if (!selectOption) {
-      toast.error("Select Any One!");
-      return;
+      validationError.selectOption = "Please select a payment option.";
     }
-    if (selectOption === "loan" && (!loanAmount || !bankDetails)) {
-      toast.error("Enter Loan Amount and Bank Details!");
-      return;
+    if (selectOption === "loan" && !loanAmount) {
+      validationError.loanDetails = "Please enter loan amount.";
     }
-    if (
-      selectOption === "installment" &&
-      (!paymentFrequence || !amount || !totalInstallments)
-    ) {
-      toast.error(" Enter All Installment Details!");
-      return;
+    if (selectOption === "loan" && !bankDetails) {
+      validationError.bankDetails = "Please enter Bank Details.";
     }
-    toast.success("Successfully!");
+    if (selectOption === "installment" && !paymentFrequence) {
+      validationError.paymentFrequence =
+        "Please enter Payment Frequence details.";
+    }
+    if (selectOption === "installment" && !amount) {
+      validationError.amount = "Please enter Amount details.";
+    }
+    if (selectOption === "installment" && !totalInstallments) {
+      validationError.totalInstallments =
+        "Please enter all installment details.";
+    }
 
-    // Reset all fields
+    if (Object.keys(validationError).length > 0) {
+      setErrors(validationError);
+      return;
+    }
+
+    setErrors({});
+    toast.success("Successfully submitted!");
+
     setProjectName("");
     setUnit("");
     setBookingDate("");
@@ -199,7 +179,7 @@ function Booking() {
     <>
       <ToastContainer />
       <Helmet>
-        <title>React Estate |View Booking</title>
+        <title>React Estate | View Booking</title>
       </Helmet>
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
@@ -233,7 +213,7 @@ function Booking() {
                     <div className="row">
                       <div className="col">
                         <select
-                          className="form-select mb-3"
+                          className="form-select mb-1"
                           value={projectName}
                           onChange={(e) => setProjectName(e.target.value)}
                           onKeyPress={(e) => handleEnter(e, unitRef)}
@@ -242,10 +222,18 @@ function Booking() {
                           <option value="">Project Name</option>
                           <option value="demo">demo</option>
                         </select>
+                        {errors.projectName && (
+                          <p
+                            style={{ color: "red", fontSize: "0.9rem" }}
+                            className="ms-3"
+                          >
+                            {errors.projectName}
+                          </p>
+                        )}
                       </div>
                       <div className="col">
                         <select
-                          className="form-select mb-3"
+                          className="form-select mb-1"
                           value={unit}
                           onChange={(e) => setUnit(e.target.value)}
                           onKeyPress={(e) => handleEnter(e, dateRef)}
@@ -254,6 +242,14 @@ function Booking() {
                           <option value="">Unit No</option>
                           <option value="1">1</option>
                         </select>
+                        {errors.unit && (
+                          <p
+                            style={{ color: "red", fontSize: "0.9rem" }}
+                            className="ms-3"
+                          >
+                            {errors.unit}
+                          </p>
+                        )}
                       </div>
                       <div className="row">
                         <div className="col pt-2">
@@ -261,10 +257,12 @@ function Booking() {
                             <input
                               type="date"
                               id="date"
-                              className="form-control"
+                              className="form-control "
                               value={bookingDate}
                               ref={dateRef}
-                              onKeyPress={(e) => handleEnter(e, customerNameRef)}
+                              onKeyPress={(e) =>
+                                handleEnter(e, customerNameRef)
+                              }
                               placeholder="dd-mm-yyyy"
                               onChange={(e) => setBookingDate(e.target.value)}
                               onFocus={(e) => e.target.showPicker()}
@@ -272,7 +270,7 @@ function Booking() {
                             {!bookingDate && (
                               <label
                                 htmlFor="date"
-                                className="placeholder-label"
+                                className="placeholder-label "
                                 style={{
                                   position: "absolute",
                                   top: "50%",
@@ -283,6 +281,14 @@ function Booking() {
                               >
                                 Booking Date
                               </label>
+                            )}
+                            {errors.bookingDate && (
+                              <p
+                                style={{ color: "red", fontSize: "0.9rem" }}
+                                className="ms-3"
+                              >
+                                {errors.bookingDate}
+                              </p>
                             )}
                           </div>
                         </div>
@@ -300,7 +306,7 @@ function Booking() {
                       <div className="col">
                         <input
                           type="text"
-                          className="form-control"
+                          className="form-control mb-1"
                           id="name"
                           placeholder="Name"
                           name="name"
@@ -308,13 +314,20 @@ function Booking() {
                           onChange={(e) => setCustomerName(e.target.value)}
                           onKeyPress={(e) => handleEnter(e, customerContactRef)}
                           ref={customerNameRef}
-
                         />
+                        {errors.customerName && (
+                          <p
+                            style={{ color: "red", fontSize: "0.9rem" }}
+                            className="ms-3"
+                          >
+                            {errors.customerName}
+                          </p>
+                        )}
                       </div>
                       <div className="col">
                         <input
                           type="text"
-                          className="form-control"
+                          className="form-control mb-1"
                           id="Contact No"
                           placeholder="Contact No"
                           name="Contact No"
@@ -323,22 +336,35 @@ function Booking() {
                           onKeyPress={(e) => handleEnter(e, customerAddressRef)}
                           ref={customerContactRef}
                         />
+                        {errors.customerContact && (
+                          <p
+                            style={{ color: "red", fontSize: "0.9rem" }}
+                            className="ms-3"
+                          >
+                            {errors.customerContact}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <div className="row w-75">
-                      <div className="col pt-4">
-                          <textarea
-                            className="form-control"
-                            placeholder="Address"
-                            id="floatingTextarea"
-                            value={customerAddress}
-                            ref={customerAddressRef}
+                      <div className="col pt-4 ">
+                        <textarea
+                          className="form-control mb-1"
+                          placeholder="Address"
+                          id="floatingTextarea"
+                          value={customerAddress}
+                          ref={customerAddressRef}
                           onKeyPress={(e) => handleEnter(e, saleAmountRef)}
-                            
-                            onChange={(e) =>
-                              setCustomerAddress(e.target.value)
-                            }
-                          ></textarea>
+                          onChange={(e) => setCustomerAddress(e.target.value)}
+                        ></textarea>
+                        {errors.customerAddress && (
+                          <p
+                            style={{ color: "red", fontSize: "0.9rem" }}
+                            className="ms-3"
+                          >
+                            {errors.customerAddress}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <div className="row">
@@ -353,7 +379,7 @@ function Booking() {
                         <div className="col">
                           <input
                             type="text"
-                            className="form-control"
+                            className="form-control mb-1"
                             id="Sale Deed Amount"
                             placeholder="Sale Deed Amount"
                             value={saleAmount}
@@ -361,11 +387,19 @@ function Booking() {
                             onKeyPress={(e) => handleEnter(e, extraRef)}
                             ref={saleAmountRef}
                           />
+                          {errors.saleAmount && (
+                            <p
+                              style={{ color: "red", fontSize: "0.9rem" }}
+                              className="ms-3"
+                            >
+                              {errors.saleAmount}
+                            </p>
+                          )}
                         </div>
                         <div className="col">
                           <input
                             type="text"
-                            className="form-control"
+                            className="form-control mb-1  "
                             id="Extra Work Amount"
                             placeholder="Extra Work Amount"
                             value={extra}
@@ -373,13 +407,21 @@ function Booking() {
                             onKeyPress={(e) => handleEnter(e, workRef)}
                             ref={extraRef}
                           />
+                          {errors.extra && (
+                            <p
+                              style={{ color: "red", fontSize: "0.9rem" }}
+                              className="ms-3"
+                            >
+                              {errors.extra}
+                            </p>
+                          )}
                         </div>
                       </div>
                       <div className="row pt-4">
                         <div className="col">
                           <input
                             type="text"
-                            className="form-control"
+                            className="form-control mb-1"
                             id="Other Work Amount"
                             placeholder="Other Work Amount"
                             value={work}
@@ -387,7 +429,16 @@ function Booking() {
                             onKeyPress={(e) => handleEnter(e, downPaymentRef)}
                             ref={workRef}
                           />
+                          {errors.work && (
+                            <p
+                              style={{ color: "red", fontSize: "0.9rem" }}
+                              className="ms-3"
+                            >
+                              {errors.work}
+                            </p>
+                          )}
                         </div>
+                        <div className="col"></div>
                       </div>
                       <p
                         className="pt-3"
@@ -399,7 +450,7 @@ function Booking() {
                         <div className="col">
                           <input
                             type="text"
-                            className="form-control"
+                            className="form-control mb-1"
                             id="Down Payment"
                             placeholder="Down Payment"
                             value={downPayment}
@@ -409,10 +460,18 @@ function Booking() {
                             }
                             ref={downPaymentRef}
                           />
+                          {errors.downPayment && (
+                            <p
+                              style={{ color: "red", fontSize: "0.9rem" }}
+                              className="ms-3"
+                            >
+                              {errors.downPayment}
+                            </p>
+                          )}
                         </div>
                         <div className="col">
                           <select
-                            className="form-select mb-3"
+                            className="form-select mb-1"
                             value={paymentDuration}
                             onChange={(e) => setPaymentDuration(e.target.value)}
                             onKeyPress={(e) => handleEnter(e, loanRef)}
@@ -421,6 +480,14 @@ function Booking() {
                             <option value="">Payment Duration</option>
                             <option value="1month">1 Month</option>
                           </select>
+                          {errors.paymentDuration && (
+                            <p
+                              style={{ color: "red", fontSize: "0.9rem" }}
+                              className="ms-3"
+                            >
+                              {errors.paymentDuration}
+                            </p>
+                          )}
                         </div>
                       </div>
 
@@ -453,28 +520,37 @@ function Booking() {
                       >
                         {selectOption === "loan" && (
                           <>
-                          <div className="row pt-3">
-                            <div className="col">
-                              <input
-                                type="number"
-                                className="form-control"
-                                id="loanAmount"
-                                value={loanAmount}
-                                onChange={(e) =>
-                                  setLoanAmount(e.target.value)
-                                }
-                                placeholder="Loan Amount"
-                                ref={loanAmountRef}
-                                onKeyPress={(e) => handleEnter(e, bankDetailsRef)}
-
-                              />
+                            <div className="row pt-3">
+                              <div className="col">
+                                <input
+                                  type="number"
+                                  className="form-control mb-1"
+                                  id="loanAmount"
+                                  value={loanAmount}
+                                  onChange={(e) =>
+                                    setLoanAmount(e.target.value)
+                                  }
+                                  placeholder="Loan Amount"
+                                  ref={loanAmountRef}
+                                  onKeyPress={(e) =>
+                                    handleEnter(e, bankDetailsRef)
+                                  }
+                                />
+                                {errors.loanDetails && (
+                                  <p
+                                    style={{ color: "red", fontSize: "0.9rem" }}
+                                    className="ms-3"
+                                  >
+                                    {errors.loanDetails}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="col"></div>
                             </div>
-                            <div className="col"></div>
-                          </div>
-                          <div className="row w-75">
-                            <div className="col pt-3">
+                            <div className="row w-75">
+                              <div className="col pt-3">
                                 <textarea
-                                  className="form-control"
+                                  className="form-control mb-1"
                                   placeholder="Bank Details"
                                   id="floatingTextarea"
                                   value={bankDetails}
@@ -482,12 +558,19 @@ function Booking() {
                                     setBankDetails(e.target.value)
                                   }
                                   ref={bankDetailsRef}
-                                onKeyPress={(e) => handleEnter(e, submitRef)}
-                                  
+                                  onKeyPress={(e) => handleEnter(e, submitRef)}
                                 ></textarea>
+                                {errors.bankDetails && (
+                                  <p
+                                    style={{ color: "red", fontSize: "0.9rem" }}
+                                    className="ms-3"
+                                  >
+                                    {errors.bankDetails}
+                                  </p>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        </>
+                          </>
                         )}
                       </div>
                       <div
@@ -517,7 +600,7 @@ function Booking() {
                               <div className="row pt-3">
                                 <div className="col">
                                   <select
-                                    className="form-select"
+                                    className="form-select mb-1"
                                     value={paymentFrequence}
                                     onChange={(e) =>
                                       setPaymentFrequence(e.target.value)
@@ -530,6 +613,14 @@ function Booking() {
                                     <option value="">Select Frequency</option>
                                     <option value="monthly">Monthly</option>
                                   </select>
+                                  {errors.paymentFrequence && (
+                                  <p
+                                    style={{ color: "red", fontSize: "0.9rem" }}
+                                    className="ms-3"
+                                  >
+                                    {errors.paymentFrequence}
+                                  </p>
+                                )}
                                 </div>
                                 <div className="col">
                                   <input
@@ -563,6 +654,11 @@ function Booking() {
                                 </div>
                               </div>
                             </>
+                          )}
+                          {errors.selectOption && (
+                            <p style={{ color: "red", fontSize: "0.9rem" }}>
+                              {errors.selectOption}
+                            </p>
                           )}
                         </div>
                         <div className="form-check pt-3">

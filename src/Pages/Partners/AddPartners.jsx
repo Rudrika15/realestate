@@ -1,10 +1,8 @@
-// src/Pages/Add/Add.js
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
-import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -16,64 +14,94 @@ function AddPartners() {
   const [percentage2, setPercentage2] = useState("");
   const [name3, setName3] = useState("");
   const [percentage3, setPercentage3] = useState("");
-  const [unit, setUnit] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+  const [error, setErrors] = useState({});
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+  const selectprojectRef = useRef(null);
+  const name1Ref = useRef(null);
+  const percentage1Ref = useRef(null);
+  const name2Ref = useRef(null);
+  const percentage2Ref = useRef(null);
+  const name3Ref = useRef(null);
+  const percentage3Ref = useRef(null);
+  const submitRef = useRef(null);
+
+   // focus
+    useEffect(() => {
+      selectprojectRef.current.focus();
+    }, []);
+
+  const handleEnter = (e, nextField) => {
+    if (e.key === "Enter" && nextField.current) {
+      e.preventDefault();
+      nextField.current.focus();
+    }
   };
 
-  const toggleTopbar = () => {
-    setIsTopbarOpen(!isTopbarOpen);
-  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    const validationError = {};
+    setErrors({}); 
 
-    if (!selectproject || selectproject === " ") {
-      toast.error("Please select a project!");
+    if (!selectproject) {
+      validationError.selectproject = "Please select a project.";
+    }
+
+    if (!name1) {
+      validationError.name1 = "Please enter Name";
+    }
+    if (!name2) {
+      validationError.name2 = "Please enter Name";
+    }
+    if (!name3) {
+      validationError.name3 = "Please enter Name";
+    }
+
+    if (!/^[A-Za-z ]+$/.test(name1)) {
+      validationError.name1 = "Name can only contain letters and spaces";
+    }
+    if (!/^[A-Za-z ]+$/.test(name2)) {
+      validationError.name2 = "Name can only contain letters and spaces";
+    }
+    if (!/^[A-Za-z ]+$/.test(name3)) {
+      validationError.name3 = "Name can only contain letters and spaces";
+    }
+
+    if (!percentage1) {
+      validationError.percentage1 = "Please enter Percentage";
+    }
+    if (!percentage2) {
+      validationError.percentage2 = "Please enter Percentage";
+    }
+    if (!percentage3) {
+      validationError.percentage3 = "Please enter Percentage";
+    }
+
+    if (isNaN(percentage1)) {
+      validationError.percentage1 = "Percentage must be a valid number!";
+    }
+    if (isNaN(percentage2)) {
+      validationError.percentage2 = "Percentage must be a valid number!";
+    }
+    if (isNaN(percentage3)) {
+      validationError.percentage3 = "Percentage must be a valid number!";
+    }
+
+    if (parseFloat(percentage1) < 0 || parseFloat(percentage1) > 100) {
+      validationError.percentage1 = "Percentage must be between 0 and 100!";
+    }
+    if (parseFloat(percentage2) < 0 || parseFloat(percentage2) > 100) {
+      validationError.percentage2 = "Percentage must be between 0 and 100!";
+    }
+    if (parseFloat(percentage3) < 0 || parseFloat(percentage3) > 100) {
+      validationError.percentage3 = "Percentage must be between 0 and 100!";
+    }
+
+    if (Object.keys(validationError).length > 0) {
+      setErrors(validationError);
       return;
     }
 
-    if (
-      !name1 ||
-      !percentage1 ||
-      !name2 ||
-      !percentage2 ||
-      !name3 ||
-      !percentage3
-    ) {
-      toast.error("All Fields Must Be Filled!");
-      return;
-    }
-
-    if (
-      !/^[A-Za-z ]+$/.test(name1) ||
-      !/^[A-Za-z ]+$/.test(name2) ||
-      !/^[A-Za-z ]+$/.test(name3)
-    ) {
-      toast.error("Names can only contain letters and spaces");
-      return;
-    }
-
-    if (isNaN(percentage1) || isNaN(percentage2) || isNaN(percentage3)) {
-      toast.error("Percentage must be a valid number!");
-      return;
-    }
-
-    if (
-      parseFloat(percentage1) < 0 ||
-      parseFloat(percentage1) > 100 ||
-      parseFloat(percentage2) < 0 ||
-      parseFloat(percentage2) > 100 ||
-      parseFloat(percentage3) < 0 ||
-      parseFloat(percentage3) > 100
-    ) {
-      toast.error("Percentage must be between 0 and 100!");
-      return;
-    }
-
-    toast.success("Successfully added partners!");
     setselectproject("");
     setName1("");
     setPercentage1("");
@@ -81,24 +109,18 @@ function AddPartners() {
     setPercentage2("");
     setName3("");
     setPercentage3("");
+
   };
 
   return (
     <>
-      <ToastContainer />
       <Helmet>
         <title>React Estate | Add Partners</title>
       </Helmet>
       <div className="container-fluid position-relative bg-white d-flex p-0">
-        <Sidebar isSidebarOpen={isSidebarOpen} />
-
-        <div className={`content ${isSidebarOpen ? "open" : ""}`}>
-          <Topbar
-            toggleSidebar={toggleSidebar}
-            isTopbarOpen={isTopbarOpen}
-            toggleTopbar={toggleTopbar}
-          />
-
+        <Sidebar />
+        <div className="content">
+          <Topbar />
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
@@ -108,7 +130,7 @@ function AddPartners() {
                       <h6 className="mb-4">Add Partners</h6>
                     </div>
                     <div className="p-2 ">
-                      <Link to="/partners" className="">
+                      <Link to="/partners">
                         <h6 className="mb-4">
                           <i className="bi bi-arrow-left-circle-fill"></i> Back
                         </h6>
@@ -116,90 +138,132 @@ function AddPartners() {
                     </div>
                   </div>
                   <form onSubmit={handleSubmit}>
-                    {/* <<<<<<< HEAD */}
                     <div className="row">
                       <div className="col">
                         <select
-                          className="form-select form-select-sm mb-4 w-50"
-                          aria-label=".form-select-sm example"
+                          className="form-select form-select-sm mb-1 w-50"
                           value={selectproject}
                           onChange={(e) => setselectproject(e.target.value)}
+                          ref={selectprojectRef}
+                          onKeyPress={(e) => handleEnter(e, name1Ref)}
                         >
-                          <option selected>Select Project</option>
+                          <option value="">Select Project</option>
                           <option value="demo">Demo</option>
                         </select>
+                        {error.selectproject && (
+                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
+                            {error.selectproject}
+                          </p>
+                        )}
                       </div>
                     </div>
-                    <div className="row">
+
+                    <div className="row pt-4">
                       <div className="col">
                         <input
                           type="text"
-                          className="form-control"
-                          id="name2"
+                          className="form-control mb-1"
                           placeholder="Name"
-                          value={name2}
+                          value={name1}
                           onChange={(e) => setName1(e.target.value)}
+                          ref={name1Ref}
+                          onKeyPress={(e) => handleEnter(e, percentage1Ref)}
                         />
-                        {/* >>>>>>> 695a7733ee7c51396e342251dc247c96890eb34f */}
+                        {error.name1 && (
+                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
+                            {error.name1}
+                          </p>
+                        )}
                       </div>
                       <div className="col">
                         <input
                           type="text"
-                          className="form-control"
-                          id="percentage1"
+                          className="form-control mb-1"
                           placeholder="Percentage"
                           value={percentage1}
                           onChange={(e) => setPercentage1(e.target.value)}
+                          ref={percentage1Ref}
+                          onKeyPress={(e) => handleEnter(e, name2Ref)}
                         />
+                        {error.percentage1 && (
+                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
+                            {error.percentage1}
+                          </p>
+                        )}
                       </div>
-                      {/* <<<<<<< HEAD */}
                     </div>
-                    {/* >>>>>>> 695a7733ee7c51396e342251dc247c96890eb34f */}
+
                     <div className="row pt-4">
                       <div className="col">
                         <input
                           type="text"
-                          className="form-control"
-                          id="name2"
+                          className="form-control mb-1"
                           placeholder="Name"
                           value={name2}
                           onChange={(e) => setName2(e.target.value)}
+                          ref={name2Ref}
+                          onKeyPress={(e) => handleEnter(e, percentage2Ref)}
                         />
+                        {error.name2 && (
+                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
+                            {error.name2}
+                          </p>
+                        )}
                       </div>
                       <div className="col">
                         <input
                           type="text"
-                          className="form-control"
-                          id="percentage2"
+                          className="form-control mb-1"
                           placeholder="Percentage"
                           value={percentage2}
                           onChange={(e) => setPercentage2(e.target.value)}
+                          ref={percentage2Ref}
+                          onKeyPress={(e) => handleEnter(e, name3Ref)}
                         />
+                        {error.percentage2 && (
+                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
+                            {error.percentage2}
+                          </p>
+                        )}
                       </div>
                     </div>
+
                     <div className="row pt-4">
                       <div className="col">
                         <input
                           type="text"
-                          className="form-control"
-                          id="name3"
+                          className="form-control mb-1"
                           placeholder="Name"
                           value={name3}
                           onChange={(e) => setName3(e.target.value)}
+                          ref={name3Ref}
+                          onKeyPress={(e) => handleEnter(e, percentage3Ref)}
                         />
+                        {error.name3 && (
+                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
+                            {error.name3}
+                          </p>
+                        )}
                       </div>
                       <div className="col">
                         <input
                           type="text"
-                          className="form-control"
-                          id="percentage3"
+                          className="form-control mb-1"
                           placeholder="Percentage"
                           value={percentage3}
                           onChange={(e) => setPercentage3(e.target.value)}
+                          ref={percentage3Ref}
+                          onKeyPress={(e) => handleEnter(e, submitRef)}
                         />
+                        {error.percentage3 && (
+                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
+                            {error.percentage3}
+                          </p>
+                        )}
                       </div>
                     </div>
-                    <button type="submit" className="btn btn-primary mt-3">
+
+                    <button type="submit" className="btn btn-primary mt-3" ref={submitRef}>
                       Submit
                     </button>
                   </form>
