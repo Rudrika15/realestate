@@ -63,7 +63,7 @@ const View = () => {
                                         </div>
                                         <div class="p-2 ">
                                             <Link to="/add-user" className="">
-                                                <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add new user</h6>
+                                                <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add New User</h6>
                                             </Link>
                                         </div>
                                     </div>

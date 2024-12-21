@@ -74,6 +74,7 @@ const AddCustomerIncome = () => {
                         <input type="text" className="form-control" id="Status" placeholder="Status" name="Status" />
                       </div>
                     </div>
+                    <hr/>
                     <div className="row">
                       <div className="col pt-3">
                         <div className="input-wrapper position-relative">

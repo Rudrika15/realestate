@@ -24,7 +24,7 @@ const ViewCancelledBooking = () => {
         <>
             <ToastContainer />
             <Helmet>
-                <title>React Estate |View Booking</title>
+                <title>React Estate | View Cancelled Booking</title>
             </Helmet>
             <div className="container-fluid position-relative bg-white d-flex p-0">
                 <Sidebar isSidebarOpen={isSidebarOpen} />
@@ -62,7 +62,8 @@ const ViewCancelledBooking = () => {
                                             </div>
                                             <div className="col"></div>
                                         </div>
-                                        <p className='pt-3' style={{ fontSize: '1.1rem', color: 'black' }}>Customer Details</p>
+                                        <hr/>
+                                        <p style={{ fontSize: '1.1rem', color: 'black' }}>Customer Details</p>
                                         <div className="row">
                                             <div className="col">
                                                 <input type="text" className="form-control" id="name" placeholder="Name" name="name" />
@@ -76,7 +77,8 @@ const ViewCancelledBooking = () => {
                                                 <textarea className="form-control" placeholder="Address" id="floatingTextarea"></textarea>
                                             </div>
                                         </div>
-                                        <p className='pt-3' style={{ fontSize: '1.1rem', color: 'black' }}>Payment Details</p>
+                                        <hr/>
+                                        <p style={{ fontSize: '1.1rem', color: 'black' }}>Payment Details</p>
                                         <table className="table table-bordered text-center">
                                             <thead>
                                                 <tr>
@@ -107,7 +109,8 @@ const ViewCancelledBooking = () => {
                                                 </tr>
                                             </tbody>
                                         </table>
-                                        <p className='pt-3' style={{ fontSize: '1.1rem', color: 'black' }}>Payment Terms</p>
+                                        <hr/>
+                                        <p style={{ fontSize: '1.1rem', color: 'black' }}>Payment Terms</p>
                                         <div className="row">
                                             <div className="col">
                                                 <input type="text" className="form-control" id="Down Payment" placeholder="Down Payment" name="Down Payment" />

@@ -161,15 +161,15 @@ function Booking() {
                               setBookingDate(new Date(formattedDate).toISOString().slice(0, 10));
                             }}
                             placeholder="Booking Date"
-                            onFocus={(e) => (e.target.type = "date")} 
-                            onBlur={(e) => (e.target.type = "text")} 
+                            onFocus={(e) => (e.target.type = "date")}
+                            onBlur={(e) => (e.target.type = "text")}
                           />
                         </div>
                       </div>
                       <div className="col"></div>
                     </div>
+                    <hr/>
                     <p
-                      className="pt-3"
                       style={{ fontSize: "1.1rem", color: "black" }}
                     >
                       Customer Details
@@ -185,10 +185,20 @@ function Booking() {
                           value={customerName}
                           onChange={(e) => setCustomerName(e.target.value)}
                         />
+                        <i
+                          className="bi bi-plus-circle-fill"
+                          style={{
+                            position: 'absolute',
+                            right: '39.2rem',
+                            transform: 'translateY(-130%)',
+                            color: 'black',
+                            cursor: 'pointer',
+                          }}
+                        ></i>
                       </div>
                       <div className="col">
                         <input
-                          type="text"
+                          type="number"
                           className="form-control"
                           id="Contact No"
                           placeholder="Contact No"
@@ -196,6 +206,16 @@ function Booking() {
                           value={customerContact}
                           onChange={(e) => setCustomerContact(e.target.value)}
                         />
+                        <i
+                          className="bi bi-plus-circle-fill"
+                          style={{
+                            position: 'absolute',
+                            right: '27px',
+                            transform: 'translateY(-135%)',
+                            color: 'black',
+                            cursor: 'pointer',
+                          }}
+                        ></i>
                       </div>
                     </div>
                     <div className="row w-75">
@@ -211,8 +231,8 @@ function Booking() {
                         ></textarea>
                       </div>
                     </div>
+                    <hr/>
                     <p
-                      className="pt-3"
                       style={{ fontSize: "1.1rem", color: "black" }}
                     >
                       Payment Details
@@ -249,8 +269,8 @@ function Booking() {
                       </div>
                       <div className="col"></div>
                     </div>
+                    <hr/>
                     <p
-                      className="pt-3"
                       style={{ fontSize: "1.1rem", color: "black" }}
                     >
                       Payment Terms
@@ -419,8 +439,8 @@ function Booking() {
             </div>
           </div>
           <Footer />
-        </div>
-      </div>
+        </div >
+      </div >
       <style></style>
     </>
   );
