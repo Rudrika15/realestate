@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import React, { useState } from "react";
 import { Spinner, Form } from "react-bootstrap";
@@ -6,6 +5,7 @@ import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { login } from "../../Api/Api";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -13,6 +13,35 @@ const Login = () => {
   const [passcode, setPasscode] = useState("");
   const navigate = useNavigate();
 
+  // const handleLogin = async () => {
+  //     if (!email) {
+  //         toast.error('Email is required');
+  //         return;
+  //     }
+
+  //     if (!passcode) {
+  //         toast.error('Passcode is required');
+  //         return;
+  //     }
+
+  //     try {
+  //         setLoading(true);
+  //         const data = { email, passcode };
+  //         const response = await axios.post(login, data);
+
+  //         if (response.data.status === true) {
+  //             toast.success('Login successful');
+  //             setTimeout(() => navigate('/view-user'), 1000);
+  //         } else {
+  //             toast.error(response.data.message || 'Login failed');
+  //         }
+  //     } catch (error) {
+  //         console.error('Login error:', error);
+  //         toast.error(error.response?.data?.message || 'Something went wrong');
+  //     } finally {
+  //         setLoading(false);
+  //     }
+  // };
   const handleLogin = async () => {
     if (!email) {
       toast.error("Email is required");
@@ -23,22 +52,8 @@ const Login = () => {
       toast.error("Passcode is required");
       return;
     }
-
-    try {
-      const response = await axios.post(
-        "https://api.escuelajs.co/api/v1/auth/login",
-        { email, password: passcode },
-      );
-
-      if (response.data ) {
-        toast.success("Login successful");
-        setTimeout(() => navigate("/view-user"), 1000);
-      } else {
-        toast.error(response.data.message || "Login failed");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-    } 
+    toast.success("Login successful");
+    setTimeout(() => navigate('/view-user'), 1000);
   };
 
   return (

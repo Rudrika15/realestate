@@ -74,7 +74,7 @@ const AddCustomerIncome = () => {
                         <input type="text" className="form-control" id="Status" placeholder="Status" name="Status" />
                       </div>
                     </div>
-                    <hr/>
+                    <hr />
                     <div className="row">
                       <div className="col pt-3">
                         <div className="input-wrapper position-relative">
@@ -139,13 +139,13 @@ const AddCustomerIncome = () => {
                     </div>
                     <div className="row pt-3">
                       <p>Payment Mode</p>
-                      <div className="form-check" style={{ marginLeft: '1rem' }}>
+                      <div className="form-check">
                         <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
                         <label className="form-check-label" for="flexRadioDefault1">
                           Cash
                         </label>
                       </div>
-                      <div className="form-check pt-2" style={{ marginLeft: '1rem' }}>
+                      <div className="form-check pt-2">
                         <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
                         <label className="form-check-label" for="flexRadioDefault1">
                           Cheque
@@ -180,34 +180,9 @@ const AddCustomerIncome = () => {
                     </div>
                     <button type="submit" className="btn btn-primary">Save</button>
                     <style jsx="true">{`
-                    .input-wrapper {
-  position: absolute;
-}
-
-.input-wrapper input[type="date"] {
-  padding-left: 1.5rem; /* Adds space for the label */
-  padding-right: 1rem;  /* Adds space for the calendar icon */
-  font-size: 1rem;
-  border: 1px solid #ced4da;
-  border-radius: 0.375rem;
-  background-color: #fff;
-  width: 100%;
-  height: 2.5rem;
-}
-
-   .placeholder-label {
-  font-size: 1rem;
-  color: #6c757d;
-}
-
-
-.input-wrapper input[type="date"]:focus {
-  outline: none;
-}
-
-
-}
-    }
+                   .form-check {
+                      margin-left: 1rem;
+                    }
                     `}</style >
                   </form>
                 </div>
