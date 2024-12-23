@@ -74,14 +74,8 @@ const AddExpenses = () => {
                           <input type="text" className="form-control" value="Expense For Purchasing....." />
                         </td>
                         <td><input type="text" className="form-control" value="15,00,000" /></td>
-                        <td><i
-                          className="bi bi-x-circle-fill"
-                          style={{
-                            color: '#eb3423',
-                            cursor: 'pointer',
-                            fontSize: '1.3rem'
-                          }}>
-                        </i>
+                        <td>
+                          <i className="bi bi-x-circle-fill"></i>
                         </td>
                       </tr>
                       <tr>
@@ -102,13 +96,7 @@ const AddExpenses = () => {
                         <td><input type="text" className="form-control" value="5,00,000" /></td>
                         <td className="text-center action-buttons">
                           <i
-                            className="bi bi-x-circle-fill"
-                            style={{
-                              color: '#eb3423',
-                              cursor: 'pointer',
-                              fontSize: '1.3rem'
-                            }}>
-                          </i>
+                            className="bi bi-x-circle-fill"></i>
                         </td>
                       </tr>
                       <tr>
@@ -128,23 +116,8 @@ const AddExpenses = () => {
                         </td>
                         <td><input type="text" className="form-control" value="14,00,000" /></td>
                         <td className="text-center action-buttons">
-                          <i
-                            className="bi bi-x-circle-fill"
-                            style={{
-                              color: '#eb3423',
-                              cursor: 'pointer',
-                              fontSize: '1.3rem',
-                              marginRight: '7px'
-                            }}>
-                          </i>
-                          <i
-                            className="bi bi-plus-circle-fill"
-                            style={{
-                              color: 'black',
-                              cursor: 'pointer',
-                              fontSize: '1.3rem'
-                            }}
-                          ></i>
+                          <i className="bi bi-x-circle-fill"></i>
+                          <i className="bi bi-plus-circle-fill"></i>
                         </td>
                       </tr>
                     </tbody>
@@ -156,6 +129,19 @@ const AddExpenses = () => {
           <Footer />
         </div>
       </div>
+      <style jsx="true">{`
+        .bi-plus-circle-fill {
+           color: black;
+            cursor: pointer;
+            fontSize: 1.3rem;
+          }
+        .bi-x-circle-fill{
+            color: #eb3423;
+            cursor: pointer;
+            fontSize: 1.3rem;
+            margin-right:0.5rem;
+          }
+      `}</style >
     </>
   );
 };

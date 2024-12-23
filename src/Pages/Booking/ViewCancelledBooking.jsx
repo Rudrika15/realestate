@@ -47,7 +47,7 @@ const ViewCancelledBooking = () => {
                                         </div>
                                     </div>
                                     <form>
-                                        <p style={{ fontSize: '1.1rem', color: 'black' }}>Project Details</p>
+                                        <p class="text-dark fs-5">Project Details</p>
                                         <div className="row">
                                             <div className="col">
                                                 <input type="text" className="form-control" id="" placeholder="" name="" />
@@ -62,8 +62,8 @@ const ViewCancelledBooking = () => {
                                             </div>
                                             <div className="col"></div>
                                         </div>
-                                        <hr/>
-                                        <p style={{ fontSize: '1.1rem', color: 'black' }}>Customer Details</p>
+                                        <hr />
+                                        <p class="text-dark fs-5">Customer Details</p>
                                         <div className="row">
                                             <div className="col">
                                                 <input type="text" className="form-control" id="name" placeholder="Name" name="name" />
@@ -77,8 +77,8 @@ const ViewCancelledBooking = () => {
                                                 <textarea className="form-control" placeholder="Address" id="floatingTextarea"></textarea>
                                             </div>
                                         </div>
-                                        <hr/>
-                                        <p style={{ fontSize: '1.1rem', color: 'black' }}>Payment Details</p>
+                                        <hr />
+                                        <p class="text-dark fs-5">Payment Details</p>
                                         <table className="table table-bordered text-center">
                                             <thead>
                                                 <tr>
@@ -109,8 +109,8 @@ const ViewCancelledBooking = () => {
                                                 </tr>
                                             </tbody>
                                         </table>
-                                        <hr/>
-                                        <p style={{ fontSize: '1.1rem', color: 'black' }}>Payment Terms</p>
+                                        <hr />
+                                        <p class="text-dark fs-5">Payment Terms</p>
                                         <div className="row">
                                             <div className="col">
                                                 <input type="text" className="form-control" id="Down Payment" placeholder="Down Payment" name="Down Payment" />
@@ -137,7 +137,7 @@ const ViewCancelledBooking = () => {
                                         </div>
                                         <div className="d-flex justify-content-center pt-4">
                                             <button type="submit" className="btn btn-secondary">Cancel Booking</button>
-                                            <button type="submit" className="btn btn-secondary" style={{ marginLeft: '1rem' }}>Transfer Booking</button>
+                                            <button type="submit" className="btn btn-secondary">Transfer Booking</button>
                                         </div>
                                     </form>
                                 </div>
@@ -147,6 +147,11 @@ const ViewCancelledBooking = () => {
                     <Footer />
                 </div>
             </div>
+            <style jsx="true">{`
+                .btn{
+                    margin-left:0.5rem;
+                }
+            `}</style >
         </>
     );
 };

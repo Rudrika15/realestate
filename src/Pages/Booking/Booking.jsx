@@ -229,9 +229,7 @@ function Booking() {
                     </div>
                   </div>
                   <form onSubmit={handleSubmit}>
-                    <p style={{ fontSize: "1.1rem", color: "black" }}>
-                      Project Details
-                    </p>
+                    <p class="text-dark fs-5">Project Details</p>
                     <div className="row">
                       <div className="col">
                         <select
@@ -294,11 +292,7 @@ function Booking() {
                       <div className="col"></div>
                     </div>
                     <hr />
-                    <p
-                      style={{ fontSize: "1.1rem", color: "black" }}
-                    >
-                      Customer Details
-                    </p>
+                    <p class="text-dark fs-5">Customer Details</p>
                     <div className="row">
                       <div className="col position-relative">
                         <input
@@ -312,19 +306,8 @@ function Booking() {
                           onKeyPress={(e) => handleEnter(e, customerContactRef)}
                           ref={customerNameRef}
                         />
-                        <i
-                          className="bi bi-plus-circle-fill"
-                          style={{
-                            position: 'absolute',
-                            right: '-0.4rem',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            color: 'black',
-                            cursor: 'pointer',
-                          }}
-                        ></i>
+                        <i className="bi bi-plus-circle-fill icon-1"></i>
                       </div>
-
                       <div className="col">
                         <input
                           type="number"
@@ -337,16 +320,7 @@ function Booking() {
                           onKeyPress={(e) => handleEnter(e, customerAddressRef)}
                           ref={customerContactRef}
                         />
-                        <i
-                          className="bi bi-plus-circle-fill"
-                          style={{
-                            position: 'absolute',
-                            right: '27px',
-                            transform: 'translateY(-135%)',
-                            color: 'black',
-                            cursor: 'pointer',
-                          }}
-                        ></i>
+                        <i className="bi bi-plus-circle-fill icon-2"></i>
                       </div>
                     </div>
                     <div className="row w-75">
@@ -363,11 +337,7 @@ function Booking() {
                       </div>
                     </div>
                     <hr />
-                    <p
-                      style={{ fontSize: "1.1rem", color: "black" }}
-                    >
-                      Payment Details
-                    </p>
+                    <p class="text-dark fs-5">Payment Details</p>
                     <div className="row">
                       <div className="col">
                         <input
@@ -401,11 +371,7 @@ function Booking() {
                       <div className="col"></div>
                     </div>
                     <hr />
-                    <p
-                      style={{ fontSize: "1.1rem", color: "black" }}
-                    >
-                      Payment Terms
-                    </p>
+                    <p class="text-dark fs-5">Payment Terms</p>
                     <div className="row">
                       <div className="col">
                         <select
@@ -425,17 +391,17 @@ function Booking() {
                     </div>
                     <div className="row">
                       <div className="col">
-                      <input
+                        <input
                           type="text"
                           className="form-control"
                           id="tokenamount"
                           placeholder="Token Amount"
                           name="tokenamount"
-                          // value="tokenamount"
+                        // value="tokenamount"
                         />
                       </div>
                       <div className="col">
-                      <input
+                        <input
                           type="text"
                           id="date"
                           className="form-control"
@@ -469,17 +435,17 @@ function Booking() {
                     </div>
                     <div className="row pt-3">
                       <div className="col">
-                      <input
+                        <input
                           type="text"
                           className="form-control"
                           id="pendingamount"
                           placeholder="Pending Amount"
                           name="pendingamount"
-                          // value="pendingamount"
+                        // value="pendingamount"
                         />
                       </div>
                       <div className="col">
-                      <input
+                        <input
                           type="text"
                           id="date"
                           className="form-control"
@@ -536,6 +502,22 @@ function Booking() {
           <Footer />
         </div >
       </div >
+      <style jsx="true">{`
+        .icon-1{
+          position: absolute;
+          right: -0.4rem;
+          transform: translateY(-130%);
+          color: black;
+          cursor: pointer;
+        }
+        .icon-2{
+          position: absolute;
+          cursor: pointer;
+          right: 1.7rem;
+          transform: translateY(-130%);
+          color: black;
+        }
+       `}</style >
     </>
   );
 }

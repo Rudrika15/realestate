@@ -116,7 +116,6 @@ function AddPartners() {
                     </div>
                   </div>
                   <form onSubmit={handleSubmit}>
-                    {/* <<<<<<< HEAD */}
                     <div className="row">
                       <div className="col">
                         <select
@@ -140,7 +139,6 @@ function AddPartners() {
                           value={name2}
                           onChange={(e) => setName1(e.target.value)}
                         />
-                        {/* >>>>>>> 695a7733ee7c51396e342251dc247c96890eb34f */}
                       </div>
                       <div className="col">
                         <input
@@ -151,20 +149,9 @@ function AddPartners() {
                           value={percentage1}
                           onChange={(e) => setPercentage1(e.target.value)}
                         />
-                        {/* <i
-                          className="bi bi-x-circle-fill"
-                          style={{
-                            position: 'absolute',
-                            right: '27px',
-                            transform: 'translateY(-135%)',
-                            color: '#eb3423',
-                            cursor: 'pointer',
-                          }}
-                        ></i> */}
+                        <i className="bi bi-x-circle-fill"></i>
                       </div>
-                      {/* <<<<<<< HEAD */}
                     </div>
-                    {/* >>>>>>> 695a7733ee7c51396e342251dc247c96890eb34f */}
                     <div className="row pt-4">
                       <div className="col">
                         <input
@@ -185,16 +172,7 @@ function AddPartners() {
                           value={percentage2}
                           onChange={(e) => setPercentage2(e.target.value)}
                         />
-                        <i
-                          className="bi bi-plus-circle-fill"
-                          style={{
-                            position: 'absolute',
-                            right: '27px',
-                            transform: 'translateY(-135%)',
-                            color: 'black',
-                            cursor: 'pointer',
-                          }}
-                        ></i>
+                        <i className="bi bi-plus-circle-fill"></i>
                       </div>
                     </div>
                     <button type="submit" className="btn btn-primary mt-3">
@@ -208,6 +186,22 @@ function AddPartners() {
           <Footer />
         </div>
       </div>
+      <style jsx="true">{`
+        .bi-plus-circle-fill {
+            position: absolute;
+            right: 27px;
+            transform: translateY(-135%);
+            color: black;
+            cursor: pointer;
+          }
+        .bi-x-circle-fill{
+            position: absolute;
+            right: 27px;
+            transform: translateY(-135%);
+            color: #eb3423;
+            cursor: pointer;
+          }
+    `}</style >
     </>
   );
 }

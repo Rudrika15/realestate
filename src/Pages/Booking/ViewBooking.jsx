@@ -87,12 +87,7 @@ const ViewBooking = () => {
                             <Link to="/view-cancelled-booking">
                               <button
                                 type="button"
-                                className="btn shadow-sm"
-                                style={{
-                                  backgroundColor: "#a2bdba",
-                                  color: "black",
-                                }}
-                              >
+                                className="btn shadow-sm text-dark">
                                 Action
                               </button>
                             </Link>
@@ -115,12 +110,7 @@ const ViewBooking = () => {
                             <Link to="/view-cancelled-booking">
                               <button
                                 type="button"
-                                className="btn shadow-sm"
-                                style={{
-                                  backgroundColor: "#a2bdba",
-                                  color: "black",
-                                }}
-                              >
+                                className="btn shadow-sm text-dark">
                                 Action
                               </button>
                             </Link>
@@ -143,12 +133,7 @@ const ViewBooking = () => {
                             <Link to="/view-cancelled-booking">
                               <button
                                 type="button"
-                                className="btn shadow-sm"
-                                style={{
-                                  backgroundColor: "#a2bdba",
-                                  color: "black",
-                                }}
-                              >
+                                className="btn shadow-sm text-dark">
                                 Action
                               </button>
                             </Link>
@@ -157,7 +142,6 @@ const ViewBooking = () => {
                       </tbody>
                     </table>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -165,6 +149,11 @@ const ViewBooking = () => {
           <Footer />
         </div>
       </div>
+      <style jsx="true">{`
+        .btn{
+          background-color: #a2bdba;
+        }
+      `}</style >
     </>
   );
 };

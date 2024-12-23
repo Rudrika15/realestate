@@ -95,13 +95,13 @@ const AddPartnerReimbursment = () => {
                     </div>
                     <div className="row pt-2">
                       <p>Payment Mode</p>
-                      <div className="form-check" style={{ marginLeft: '1rem' }}>
+                      <div className="form-check">
                         <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
                         <label className="form-check-label" for="flexRadioDefault1">
                           Cash
                         </label>
                       </div>
-                      <div className="form-check pt-2" style={{ marginLeft: '1rem' }}>
+                      <div className="form-check pt-2">
                         <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
                         <label className="form-check-label" for="flexRadioDefault1">
                           Cheque
@@ -126,6 +126,11 @@ const AddPartnerReimbursment = () => {
                       </div>
                     </div>
                     <button type="submit" className="btn btn-primary mt-3">Save</button>
+                    <style jsx="true">{`
+                   .form-check {
+                      margin-left: 1rem;
+                    }
+                    `}</style >
                   </form>
                 </div>
               </div>
