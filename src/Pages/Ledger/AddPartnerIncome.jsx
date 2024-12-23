@@ -75,8 +75,15 @@ const AddPartnerIncome = () => {
                             onChange={(e) => {
                               const inputDate = e.target.value;
                               const [day, month, year] = inputDate.split("-");
-                              const formattedDate = `${year}-` + `${month}-` + `${day}`;
-                              setIncomeDate(new Date(formattedDate).toISOString().slice(0, 10));
+                              if (day && month && year) {
+                                const formattedDate = `${day}-${month}-${year}`;
+                                const parsedDate = new Date(formattedDate);
+                                if (!isNaN(parsedDate)) {
+                                  setIncomeDate(parsedDate.toISOString().slice(0, 10));
+                                } else {
+                                  console.error("Invalid date format");
+                                }
+                              }
                             }}
                             placeholder="Income Date"
                             onFocus={(e) => (e.target.type = "date")}
@@ -89,13 +96,13 @@ const AddPartnerIncome = () => {
 
                     <div className="row pt-3">
                       <p>Payment Mode</p>
-                      <div className="form-check" style={{ marginLeft: '1rem' }}>
+                      <div className="form-check">
                         <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
                         <label className="form-check-label" for="flexRadioDefault1">
                           Cash
                         </label>
                       </div>
-                      <div className="form-check pt-2" style={{ marginLeft: '1rem' }}>
+                      <div className="form-check pt-2">
                         <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
                         <label className="form-check-label" for="flexRadioDefault1">
                           Cheque
@@ -113,6 +120,11 @@ const AddPartnerIncome = () => {
                       </div>
                     </div>
                     <button type="submit" className="btn btn-primary mt-3">Save</button>
+                    <style jsx="true">{`
+                   .form-check {
+                      margin-left: 1rem;
+                    }
+                    `}</style >
                   </form>
                 </div>
               </div>

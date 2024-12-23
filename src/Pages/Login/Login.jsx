@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Spinner, Form } from 'react-bootstrap';
 import { Helmet } from 'react-helmet';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { login } from '../../Api/Api';
@@ -68,9 +68,9 @@ const Login = () => {
                         <div className="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
                             <div className="bg-light rounded p-4 p-sm-5 my-4 mx-3">
                                 <div className="d-flex align-items-center justify-content-between mb-3">
-                                    <a href="/">
+                                    <Link to="/">
                                         <h3 className="text-primary"><i className="fa fa-hashtag me-2"></i>React Estate</h3>
-                                    </a>
+                                    </Link>
                                     <h3>Login</h3>
                                 </div>
 

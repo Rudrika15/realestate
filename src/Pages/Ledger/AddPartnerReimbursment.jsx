@@ -60,41 +60,48 @@ const AddPartnerReimbursment = () => {
                       <div className="col pt-2">
                         <div className="input-wrapper position-relative">
                           <input
-                            type="text"
-                            id="date"
-                            className="form-control"
-                            value={
-                              reimbursmentDate
-                                ? new Date(reimbursmentDate).toLocaleDateString("en-GB", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "2-digit",
-                                })
-                                : ""
+                          type="text"
+                          id="date"
+                          className="form-control"
+                          value={
+                            reimbursmentDate
+                              ? new Date(reimbursmentDate).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "2-digit",
+                              })
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const inputDate = e.target.value;
+                            const [day, month, year] = inputDate.split("-");
+                            if (day && month && year) {
+                              const formattedDate = `${day}-${month}-${year}`;
+                              const parsedDate = new Date(formattedDate);
+                              if (!isNaN(parsedDate)) {
+                                setReimbursmentDate(parsedDate.toISOString().slice(0, 10));
+                              } else {
+                                console.error("Invalid date format");
+                              }
                             }
-                            onChange={(e) => {
-                              const inputDate = e.target.value;
-                              const [day, month, year] = inputDate.split("-");
-                              const formattedDate = `${year}-` + `${month}-` + `${day}`;
-                              setReimbursmentDate(new Date(formattedDate).toISOString().slice(0, 10));
-                            }}
-                            placeholder="Reimbursment Date"
-                            onFocus={(e) => (e.target.type = "date")}
-                            onBlur={(e) => (e.target.type = "text")}
-                          />
+                          }}
+                          placeholder="Reimbursment Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                        />
                         </div>
                       </div>
                       <div className="col"></div>
                     </div>
                     <div className="row pt-2">
                       <p>Payment Mode</p>
-                      <div className="form-check" style={{ marginLeft: '1rem' }}>
+                      <div className="form-check">
                         <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
                         <label className="form-check-label" for="flexRadioDefault1">
                           Cash
                         </label>
                       </div>
-                      <div className="form-check pt-2" style={{ marginLeft: '1rem' }}>
+                      <div className="form-check pt-2">
                         <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
                         <label className="form-check-label" for="flexRadioDefault1">
                           Cheque
@@ -119,6 +126,11 @@ const AddPartnerReimbursment = () => {
                       </div>
                     </div>
                     <button type="submit" className="btn btn-primary mt-3">Save</button>
+                    <style jsx="true">{`
+                   .form-check {
+                      margin-left: 1rem;
+                    }
+                    `}</style >
                   </form>
                 </div>
               </div>

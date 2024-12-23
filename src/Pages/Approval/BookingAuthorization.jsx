@@ -5,6 +5,7 @@ import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from 'react-helmet';
 import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
 
 const BookingAuthorization = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -41,77 +42,95 @@ const BookingAuthorization = () => {
                     <table className="table table-bordered text-center">
                       <thead>
                         <tr>
-                        <th scope="col"></th>
-                        <th scope="col">Project Name</th>
-                        <th scope="col">Unit No</th>
-                        <th scope="col">Customer Name</th>
-                        <th scope="col">Sale Deed Amount</th>
-                        <th scope="col">Extra Work Amount</th>
-                        <th scope="col">Changes</th>
-                        <th scope="col">Action</th>
+                          <th scope="col"></th>
+                          <th scope="col">Project Name</th>
+                          <th scope="col">Unit No</th>
+                          <th scope="col">Customer Name</th>
+                          <th scope="col">Sale Deed Amount</th>
+                          <th scope="col">Extra Work Amount</th>
+                          <th scope="col">Changes</th>
+                          <th scope="col">Action</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                        <td>
-                          <div className="form-check1">
-                            <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
-                          </div>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <div className="btn-group" role="group" aria-label="Action Buttons">
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#f0e4ee', color: "black" }}>Accept</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#e4edd1', color: "black", marginLeft: '0.5rem' }}>Reject</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#ccdedc', color: "black", marginLeft: '0.5rem' }}>View</button>
-                          </div>
-                        </td>
-                      </tr>
+                          <td>
+                            <div className="form-check1">
+                              <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
+                            </div>
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <div className="btn-group" role="group" aria-label="Action Buttons">
+                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
+                                Accept
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
+                                Reject
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
+                                View
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
                         <tr>
-                        <td>
-                          <div className="form-check1">
-                            <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
-                          </div>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <div className="btn-group" role="group" aria-label="Action Buttons">
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#f0e4ee', color: "black" }}>Accept</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#e4edd1', color: "black", marginLeft: '0.5rem' }}>Reject</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#ccdedc', color: "black", marginLeft: '0.5rem' }}>View</button>
-                          </div>
-                        </td>
-                      </tr>
+                          <td>
+                            <div className="form-check1">
+                              <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
+                            </div>
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <div className="btn-group" role="group" aria-label="Action Buttons">
+                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
+                                Accept
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
+                                Reject
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
+                                View
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
                         <tr>
-                        <td>
-                          <div className="form-check1">
-                            <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
-                          </div>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <div className="btn-group" role="group" aria-label="Action Buttons">
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#f0e4ee', color: "black" }}>Accept</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#e4edd1', color: "black", marginLeft: '0.5rem' }}>Reject</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#ccdedc', color: "black", marginLeft: '0.5rem' }}>View</button>
-                          </div>
-                        </td>
-                      </tr>
+                          <td>
+                            <div className="form-check1">
+                              <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
+                            </div>
+                          </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <div className="btn-group" role="group" aria-label="Action Buttons">
+                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
+                                Accept
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
+                                Reject
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
+                                View
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -122,6 +141,26 @@ const BookingAuthorization = () => {
           <Footer />
         </div>
       </div>
+      <style jsx="true">{`
+        .btn-group {
+          display: flex;
+          gap: 5px; 
+        }
+        .btn-group .btn {
+          font-size: 0.9rem;
+          border-radius: 0.25rem;
+          cursor: pointer;
+        }
+        .accept-btn {
+          background-color: #f0e4ee;
+        }
+        .reject-btn {
+          background-color: #e4edd1;
+        }
+        .view-btn {
+          background-color: #ccdedc;
+        }
+      `}</style >
     </>
   );
 };
