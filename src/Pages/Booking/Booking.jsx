@@ -11,6 +11,7 @@ function Booking() {
   const [selectOption, setSelectOption] = useState(""); // loan
   const [loanAmount, setLoanAmount] = useState("");
   const [bankDetails, setBankDetails] = useState("");
+
   const [paymentFrequence, setPaymentFrequence] = useState(""); //installments
   const [amount, setAmount] = useState("");
   const [totalInstallments, setTotalInstallments] = useState("");
@@ -26,10 +27,9 @@ function Booking() {
   const [saleAmount, setSaleAmount] = useState("");
   const [extra, setExtra] = useState("");
   const [work, setWork] = useState("");
+
   const [downPayment, setDownPayment] = useState("");
   const [paymentDuration, setPaymentDuration] = useState("");
-
-  const [errors, setErrors] = useState({});
 
   const inputRef = useRef(null);
   const unitRef = useRef(null);
@@ -42,13 +42,17 @@ function Booking() {
   const workRef = useRef(null);
   const downPaymentRef = useRef(null);
   const paymentDurationRef = useRef(null);
+
   const loanRef = useRef(null);
   const installmentRef = useRef(null);
+
   const loanAmountRef = useRef(null);
   const bankDetailsRef = useRef(null);
+
   const paymentFrequenceRef = useRef(null);
   const amountRef = useRef(null);
   const totalInstallmentsRef = useRef(null);
+
   const submitRef = useRef(null);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -65,7 +69,6 @@ function Booking() {
   const handleRadio = (e) => {
     setSelectOption(e.target.value);
   };
-
   // focus
   useEffect(() => {
     inputRef.current.focus();
@@ -78,86 +81,103 @@ function Booking() {
       nextField.current.focus();
     }
   };
+  // shortcut Key //
+  const handleKey = useCallback((event) => {
+    if (event.key === "F4") {
+      handleSubmit(event);
+    }
+  }, []);
+  useEffect(() => {
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [handleKey]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const validationError = {};
 
     if (!projectName) {
-      validationError.projectName = "Please select a project.";
+      toast.error(" select a project!");
+      return;
     }
     if (!unit) {
-      validationError.unit = "Please select a unit.";
+      toast.error(" select a Unit!");
+      return;
     }
     if (!bookingDate) {
-      validationError.bookingDate = "Please select a date.";
+      toast.error("select a Date!");
+      return;
     }
     if (!customerName) {
-      validationError.customerName = "Please enter the customer's name.";
-    } else if (!/^[A-Za-z ]+$/.test(customerName)) {
-      validationError.customerName =
-        "Names can only contain letters and spaces.";
+      toast.error("Enter Name!");
+      return;
+    }
+    if (!/^[A-Za-z ]+$/.test(customerName)) {
+      toast.error("Names can only contain letters and spaces");
+      return;
     }
     if (!customerContact) {
-      validationError.customerContact = "Please enter a contact number.";
-    } else if (customerContact.length !== 10) {
-      validationError.customerContact = "Contact number must be 10 digits.";
+      toast.error("Enter Contact Number!");
+      return;
     }
-
-    if (!customerAddress) {
-      validationError.customerAddress = "Please enter the customer's address.";
-    } else if (customerAddress.length < 13) {
-      validationError.customerAddress =
-        "Address must be at least 13 characters.";
-    }
-    if (isNaN(saleAmount) || isNaN(extra) || isNaN(work)) {
-      validationError.amounts =
-        "Only numeric values are allowed for sale, extra, and work amounts.";
-    }
-    if (!saleAmount || !saleAmount.trim()) {
-      validationError.saleAmount = "Please enter the sale deed amount.";
-    }
-    if (!extra || !extra.trim()) {
-      validationError.extra = "Please enter the extra work amount.";
-    }
-    if (!work || !work.trim()) {
-      validationError.work = "Please enter the other work amount.";
-    }
-    if (!downPayment || isNaN(downPayment) || !downPayment.trim()) {
-      validationError.downPayment = "Please enter a valid down payment amount.";
-    }
-    if (!paymentDuration) {
-      validationError.paymentDuration = "Please select the payment duration.";
-    }
-    if (!selectOption) {
-      validationError.selectOption = "Please select a payment option.";
-    }
-    if (selectOption === "loan" && !loanAmount) {
-      validationError.loanDetails = "Please enter loan amount.";
-    }
-    if (selectOption === "loan" && !bankDetails) {
-      validationError.bankDetails = "Please enter Bank Details.";
-    }
-    if (selectOption === "installment" && !paymentFrequence) {
-      validationError.paymentFrequence =
-        "Please enter Payment Frequence details.";
-    }
-    if (selectOption === "installment" && !amount) {
-      validationError.amount = "Please enter Amount details.";
-    }
-    if (selectOption === "installment" && !totalInstallments) {
-      validationError.totalInstallments =
-        "Please enter all installment details.";
-    }
-
-    if (Object.keys(validationError).length > 0) {
-      setErrors(validationError);
+    if (customerContact.length < 10 || customerContact.length > 10) {
+      toast.error("Enter 10 Digit Number!");
       return;
     }
 
-    setErrors({});
-    toast.success("Successfully submitted!");
+    if (!customerAddress) {
+      toast.error("Enter Address");
+      return;
+    }
+    if (customerAddress.length < 20) {
+      toast.error("Enter Valid Address!");
+      return;
+    }
+    if (isNaN(saleAmount) || isNaN(extra) || isNaN(work)) {
+      toast.error("Only Number Enter");
+      return;
+    }
+    if (!saleAmount || !saleAmount.trim()) {
+      toast.error("Enter Sale Deed Amount!");
+      return;
+    }
+    if (!extra || !extra.trim()) {
+      toast.error("Enter Extra  Work Amount!");
+      return;
+    }
 
+    if (!work || !work.trim()) {
+      toast.error("Enter  Other Amount!");
+      return;
+    }
+    if (!downPayment || isNaN(downPayment) || !downPayment.trim()) {
+      toast.error("Enter Down Payment !");
+      return;
+    }
+    if (!paymentDuration) {
+      toast.error("Select Payment Duration !");
+      return;
+    }
+
+    if (!selectOption) {
+      toast.error("Select Any One!");
+      return;
+    }
+    if (selectOption === "loan" && (!loanAmount || !bankDetails)) {
+      toast.error("Enter Loan Amount and Bank Details!");
+      return;
+    }
+    if (
+      selectOption === "installment" &&
+      (!paymentFrequence || !amount || !totalInstallments)
+    ) {
+      toast.error(" Enter All Installment Details!");
+      return;
+    }
+    toast.success("Successfully!");
+
+    // Reset all fields
     setProjectName("");
     setUnit("");
     setBookingDate("");
@@ -181,7 +201,7 @@ function Booking() {
     <>
       <ToastContainer />
       <Helmet>
-        <title>React Estate | View Booking</title>
+        <title>React Estate |View Booking</title>
       </Helmet>
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
@@ -213,7 +233,7 @@ function Booking() {
                     <div className="row">
                       <div className="col">
                         <select
-                          className="form-select mb-1"
+                          className="form-select mb-3"
                           value={projectName}
                           onChange={(e) => setProjectName(e.target.value)}
                           onKeyPress={(e) => handleEnter(e, unitRef)}
@@ -222,18 +242,10 @@ function Booking() {
                           <option value="">Project Name</option>
                           <option value="demo">demo</option>
                         </select>
-                        {errors.projectName && (
-                          <p
-                            style={{ color: "red", fontSize: "0.9rem" }}
-                            className="ms-3"
-                          >
-                            {errors.projectName}
-                          </p>
-                        )}
                       </div>
                       <div className="col">
                         <select
-                          className="form-select mb-1"
+                          className="form-select mb-3"
                           value={unit}
                           onChange={(e) => setUnit(e.target.value)}
                           onKeyPress={(e) => handleEnter(e, dateRef)}
@@ -242,17 +254,9 @@ function Booking() {
                           <option value="">Unit No</option>
                           <option value="1">1</option>
                         </select>
-                        {errors.unit && (
-                          <p
-                            style={{ color: "red", fontSize: "0.9rem" }}
-                            className="ms-3"
-                          >
-                            {errors.unit}
-                          </p>
-                        )}
                       </div>
                     </div>
-                    <div className="row">
+                    <div className="row pt-2">
                       <div className="col">
                         <input
                           type="text"
@@ -293,7 +297,7 @@ function Booking() {
                       <div className="col position-relative">
                         <input
                           type="text"
-                          className="form-control mb-1"
+                          className="form-control"
                           id="name"
                           placeholder="Name"
                           name="name"
@@ -306,8 +310,8 @@ function Booking() {
                       </div>
                       <div className="col">
                         <input
-                          type="text"
-                          className="form-control mb-1"
+                          type="number"
+                          className="form-control"
                           id="Contact No"
                           placeholder="Contact No"
                           name="Contact No"
@@ -320,24 +324,16 @@ function Booking() {
                       </div>
                     </div>
                     <div className="row w-75">
-                      <div className="col pt-4 ">
+                      <div className="col pt-4">
                         <textarea
-                          className="form-control mb-1"
+                          className="form-control"
                           placeholder="Address"
                           id="floatingTextarea"
                           value={customerAddress}
-                          ref={customerAddressRef}
-                          onKeyPress={(e) => handleEnter(e, saleAmountRef)}
-                          onChange={(e) => setCustomerAddress(e.target.value)}
+                          onChange={(e) =>
+                            setCustomerAddress(e.target.value)
+                          }
                         ></textarea>
-                        {errors.customerAddress && (
-                          <p
-                            style={{ color: "red", fontSize: "0.9rem" }}
-                            className="ms-3"
-                          >
-                            {errors.customerAddress}
-                          </p>
-                        )}
                       </div>
                     </div>
                     <hr />

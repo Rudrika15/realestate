@@ -51,7 +51,7 @@ const Sidebar = ({ isSidebarOpen }) => {
     }, []);
 
     return (
-        <div className={`sidebar pe-4 pb-3 ${isSidebarOpen ? 'open' : ''}`}>
+        <div className={`sidebar pe-4 ${isSidebarOpen ? 'open' : ''}`}>
             <nav className="navbar bg-light navbar-light">
                 <a href="#" className="navbar-brand mx-4 mb-3">
                     <h3 className="text-primary">REAL-ESTATE</h3>
@@ -96,12 +96,12 @@ const Sidebar = ({ isSidebarOpen }) => {
                         >
                             <Link
                                 to="/view-booking"
-                                className={`dropdown-item ms-4 ${isActive('/view-booking') ? 'active' : ''}`}                        >
+                                className={`dropdown-item ms-3 ${isActive('/view-booking') ? 'active' : ''}`}                        >
                                 <i className="bi bi-eye me-2"></i> View Bookings
                             </Link>
                             <Link
                                 to="/cancelled-booking"
-                                className={`dropdown-item ms-4 ${isActive('/cancelled-booking') ? 'active' : ''}`}                        >
+                                className={`dropdown-item ms-3 ${isActive('/cancelled-booking') ? 'active' : ''}`}                        >
                                 <i className="bi bi-x-circle me-2"></i> Cancelled Bookings
                             </Link>
                         </div>
@@ -131,12 +131,12 @@ const Sidebar = ({ isSidebarOpen }) => {
                         >
                             <Link
                                 to="/partner-income"
-                                className={`dropdown-item ms-4 ${isActive('/partner-income') ? 'active' : ''}`}                        >
+                                className={`dropdown-item ms-3 ${isActive('/partner-income') ? 'active' : ''}`}                        >
                                 <i className="bi bi-person-circle me-2"></i> Partner
                             </Link>
                             <Link
                                 to="/customer-income"
-                                className={`dropdown-item ms-4 ${isActive('/customer-income') ? 'active' : ''}`}                        >
+                                className={`dropdown-item ms-3 ${isActive('/customer-income') ? 'active' : ''}`}                        >
                                 <i className="bi bi-person-lines-fill me-2"></i> Customer
                             </Link>
                         </div>
@@ -154,17 +154,17 @@ const Sidebar = ({ isSidebarOpen }) => {
                         >
                             <Link
                                 to="/cash-deposit"
-                                className={`dropdown-item ms-4 ${isActive('/cash-deposit') ? 'active' : ''}`}                        >
+                                className={`dropdown-item ms-3 ${isActive('/cash-deposit') ? 'active' : ''}`}                        >
                                 <i className="bi bi-cash-stack me-2"></i> Cash Deposit
                             </Link>
                             <Link
                                 to="/cheque-deposit"
-                                className={`dropdown-item ms-4 ${isActive('/cheque-deposit') ? 'active' : ''}`}                        >
+                                className={`dropdown-item ms-3 ${isActive('/cheque-deposit') ? 'active' : ''}`}                        >
                                 <i className="bi bi-credit-card me-2"></i> Cheque Deposit
                             </Link>
                             <Link
                                 to="/booking-authorization"
-                                className={`dropdown-item ms-4 ${isActive('/booking-authorization') ? 'active' : ''}`}                        >
+                                className={`dropdown-item ms-3 ${isActive('/booking-authorization') ? 'active' : ''}`}                        >
                                 <i className="bi bi-check-circle me-2"></i> Booking Authorization
                             </Link>
                         </div>

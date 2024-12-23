@@ -157,7 +157,7 @@ function AddPartners() {
                         )}
                       </div>
                     </div>
-                    <div className="row">
+                    <div className="row pt-4">
                       <div className="col">
                         <input
                           type="text"
@@ -180,41 +180,6 @@ function AddPartners() {
                         <i className="bi bi-x-circle-fill"></i>
                       </div>
                     </div>
-                    <div className="row pt-4">
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control mb-1"
-                          placeholder="Name"
-                          value={name1}
-                          onChange={(e) => setName1(e.target.value)}
-                          ref={name1Ref}
-                          onKeyPress={(e) => handleEnter(e, percentage1Ref)}
-                        />
-                        {error.name1 && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.name1}
-                          </p>
-                        )}
-                      </div>
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control mb-1"
-                          placeholder="Percentage"
-                          value={percentage1}
-                          onChange={(e) => setPercentage1(e.target.value)}
-                          ref={percentage1Ref}
-                          onKeyPress={(e) => handleEnter(e, name2Ref)}
-                        />
-                        {error.percentage1 && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.percentage1}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
                     <div className="row pt-4">
                       <div className="col">
                         <input
@@ -245,42 +210,6 @@ function AddPartners() {
                         <i className="bi bi-plus-circle-fill"></i>
                       </div>
                     </div>
-
-                    <div className="row pt-4">
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control mb-1"
-                          placeholder="Name"
-                          value={name3}
-                          onChange={(e) => setName3(e.target.value)}
-                          ref={name3Ref}
-                          onKeyPress={(e) => handleEnter(e, percentage3Ref)}
-                        />
-                        {error.name3 && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.name3}
-                          </p>
-                        )}
-                      </div>
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control mb-1"
-                          placeholder="Percentage"
-                          value={percentage3}
-                          onChange={(e) => setPercentage3(e.target.value)}
-                          ref={percentage3Ref}
-                          onKeyPress={(e) => handleEnter(e, submitRef)}
-                        />
-                        {error.percentage3 && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.percentage3}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
                     <button type="submit" className="btn btn-primary mt-3" ref={submitRef}>
                       Submit
                     </button>
