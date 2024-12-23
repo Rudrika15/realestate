@@ -24,7 +24,7 @@ const Sidebar = ({ isSidebarOpen }) => {
     const toggleApprovalDropdown = () => setIsApprovalOpen(!isApprovalOpen);
 
     return (
-        <div className={`sidebar pe-4 pb-3 ${isSidebarOpen ? 'open' : ''}`}>
+        <div className={`sidebar pe-5 pb-2 ${isSidebarOpen ? 'open' : ''}`}>
             <nav className="navbar bg-light navbar-light">
                 <a href="" className="navbar-brand mx-4 mb-3">
                     <h3 className="text-primary">
