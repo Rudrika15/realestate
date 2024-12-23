@@ -18,11 +18,9 @@ function AddPartners() {
 
   const selectprojectRef = useRef(null);
   const name1Ref = useRef(null);
-  const percentage1Ref = useRef(null);
   const name2Ref = useRef(null);
   const percentage2Ref = useRef(null);
   const name3Ref = useRef(null);
-  const percentage3Ref = useRef(null);
   const submitRef = useRef(null);
 
   // focus
@@ -36,7 +34,6 @@ function AddPartners() {
       nextField.current.focus();
     }
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -109,7 +106,6 @@ function AddPartners() {
     setPercentage2("");
     setName3("");
     setPercentage3("");
-
   };
 
   return (
@@ -151,8 +147,8 @@ function AddPartners() {
                           <option value="demo">Demo</option>
                         </select>
                         {error.selectproject && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.selectproject}
+                          <p className=" error-message">
+                            {error.selectproject}{" "}
                           </p>
                         )}
                       </div>
@@ -192,9 +188,7 @@ function AddPartners() {
                           onKeyPress={(e) => handleEnter(e, percentage2Ref)}
                         />
                         {error.name2 && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.name2}
-                          </p>
+                          <p className="error-message">{error.name2}</p>
                         )}
                       </div>
                       <div className="col">
@@ -223,20 +217,25 @@ function AddPartners() {
       </div>
       <style jsx="true">{`
         .bi-plus-circle-fill {
-            position: absolute;
-            right: 27px;
-            transform: translateY(-135%);
-            color: black;
-            cursor: pointer;
-          }
-        .bi-x-circle-fill{
-            position: absolute;
-            right: 27px;
-            transform: translateY(-135%);
-            color: #eb3423;
-            cursor: pointer;
-          }
-    `}</style >
+          position: absolute;
+          right: 27px;
+          transform: translateY(-135%);
+          color: black;
+          cursor: pointer;
+        }
+        .bi-x-circle-fill {
+          position: absolute;
+          right: 27px;
+          transform: translateY(-135%);
+          color: #eb3423;
+          cursor: pointer;
+        }
+        .error-message {
+          color: rgb(255, 21, 0);
+          font-size: 0.9rem;
+          margin-left: 10px;
+        }
+      `}</style>
     </>
   );
 }

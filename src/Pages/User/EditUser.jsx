@@ -61,7 +61,6 @@ function EditUser() {
                             </div>
                         </div>
                     </div>
-                    <Footer />
                 </div>
             </div>
         </>

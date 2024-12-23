@@ -12,13 +12,13 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
             <a href="#" className="sidebar-toggler flex-shrink-0" onClick={toggleSidebar}>
                 <i className="fa fa-bars"></i>
             </a>
-            <form className="d-none d-md-flex ms-4">
+            {/* <form className="d-none d-md-flex ms-4">
                 <input
                     className="form-control border-0"
                     type="search"
                     placeholder="Search"
                 />
-            </form>
+            </form> */}
             <div className="navbar-nav align-items-center ms-auto">
                 {/* <div className="nav-item dropdown">
                     <a
@@ -88,8 +88,8 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
                     <div
                         className={`dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0${isTopbarOpen ? ' show' : ''}`}
                     >
-                        <a href="#" className="dropdown-item">My Profile</a>
-                        <a href="#" className="dropdown-item">Settings</a>
+                        {/* <a href="#" className="dropdown-item">My Profile</a>
+                        <a href="#" className="dropdown-item">Settings</a> */}
                         <a href="#" className="dropdown-item">Log Out</a>
                     </div>
                 </div>
