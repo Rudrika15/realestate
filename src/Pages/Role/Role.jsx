@@ -1,13 +1,14 @@
 // src/Pages/Add/Add.js
-import React, { useState } from 'react';
-import Sidebar from '../../Components/Sidebar/Sidebar';
-import Topbar from '../../Components/Topbar/Topbar';
-import Footer from '../../Components/Footer/Footer';
+import React, { useState, useRef } from "react";
+import Sidebar from "../../Components/Sidebar/Sidebar";
+import Topbar from "../../Components/Topbar/Topbar";
+import { Link } from "react-router-dom";
+import Footer from "../../Components/Footer/Footer";
+import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
-// import Pagination from '../../Components/Pagination/Pagination';
+import "react-toastify/dist/ReactToastify.css";
 
-const Projects = () => {
+const Role = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
 
@@ -20,10 +21,10 @@ const Projects = () => {
     };
 
     return (
-
         <>
+            <ToastContainer />
             <Helmet>
-                <title>React Estate | Projects</title>
+                <title>React Estate | Role</title>
             </Helmet>
             <div className="container-fluid position-relative bg-white d-flex p-0">
                 <Sidebar isSidebarOpen={isSidebarOpen} />
@@ -37,31 +38,29 @@ const Projects = () => {
                                 <div className="bg-light rounded h-100 p-4">
                                     <div className="d-flex justify-content-between   mb-3">
                                         <div className="p-2 ">
-                                            <h6 className="mb-4">Projects</h6>
+                                            <h6 className="mb-4">Role</h6>
                                         </div>
-                                        <div className="p-2">
-                                            <Link to="/add-projects" className="">
-                                                <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add New Project</h6>
+                                        <div className="p-2 ">
+                                            <Link to="/add-role" className="">
+                                                <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add New Role</h6>
                                             </Link>
                                         </div>
                                     </div>
                                     <table className="table table-bordered text-center">
                                         <thead>
                                             <tr>
-                                                <th scope="col">Project Name</th>
-                                                <th scope="col">Total Units</th>
+                                                <th scope="col">Role Name</th>
                                                 <th scope="col">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
                                                 <td></td>
-                                                <td></td>
                                                 <td>
-                                                    <Link to="/unit" className="btn btn-info btn-sm me-2">
+                                                    <Link to="/permission" className="btn btn-info btn-sm me-2">
                                                         <i className="fas fa-eye"></i>
                                                     </Link>
-                                                    <Link to="" className="btn btn-warning btn-sm me-2">
+                                                    <Link to="/edit-role" className="btn btn-warning btn-sm me-2">
                                                         <i className="fas fa-edit"></i>
                                                     </Link>
                                                     <Link to="" className="btn btn-danger btn-sm">
@@ -71,12 +70,11 @@ const Projects = () => {
                                             </tr>
                                             <tr>
                                                 <td></td>
-                                                <td></td>
                                                 <td>
-                                                    <Link to="/unit" className="btn btn-info btn-sm me-2">
+                                                    <Link to="/permission" className="btn btn-info btn-sm me-2">
                                                         <i className="fas fa-eye"></i>
                                                     </Link>
-                                                    <Link to="" className="btn btn-warning btn-sm me-2">
+                                                    <Link to="/edit-role" className="btn btn-warning btn-sm me-2">
                                                         <i className="fas fa-edit"></i>
                                                     </Link>
                                                     <Link to="" className="btn btn-danger btn-sm">
@@ -86,12 +84,11 @@ const Projects = () => {
                                             </tr>
                                             <tr>
                                                 <td></td>
-                                                <td></td>
                                                 <td>
-                                                    <Link to="/unit" className="btn btn-info btn-sm me-2">
+                                                    <Link to="/permission" className="btn btn-info btn-sm me-2">
                                                         <i className="fas fa-eye"></i>
                                                     </Link>
-                                                    <Link to="" className="btn btn-warning btn-sm me-2">
+                                                    <Link to="/edit-role" className="btn btn-warning btn-sm me-2">
                                                         <i className="fas fa-edit"></i>
                                                     </Link>
                                                     <Link to="" className="btn btn-danger btn-sm">
@@ -112,4 +109,4 @@ const Projects = () => {
     );
 };
 
-export default Projects;
+export default Role;

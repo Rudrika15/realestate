@@ -207,7 +207,7 @@ function Booking() {
                     </div>
                   </div>
                   <form onSubmit={handleSubmit}>
-                    <p style={{ fontSize: "1.5rem", color: "black" }}>
+                    <p style={{ fontSize: "1.1rem", color: "black" }}>
                       Project Details
                     </p>
                     <div className="row">
@@ -251,54 +251,40 @@ function Booking() {
                           </p>
                         )}
                       </div>
-                      <div className="row">
-                        <div className="col pt-2">
-                          <div className="input-wrapper position-relative">
-                            <input
-                              type="date"
-                              id="date"
-                              className="form-control "
-                              value={bookingDate}
-                              ref={dateRef}
-                              onKeyPress={(e) =>
-                                handleEnter(e, customerNameRef)
-                              }
-                              placeholder="dd-mm-yyyy"
-                              onChange={(e) => setBookingDate(e.target.value)}
-                              onFocus={(e) => e.target.showPicker()}
-                            />
-                            {!bookingDate && (
-                              <label
-                                htmlFor="date"
-                                className="placeholder-label "
-                                style={{
-                                  position: "absolute",
-                                  top: "50%",
-                                  left: "13px",
-                                  transform: "translateY(-50%)",
-                                  pointerEvents: "none",
-                                }}
-                              >
-                                Booking Date
-                              </label>
-                            )}
-                            {errors.bookingDate && (
-                              <p
-                                style={{ color: "red", fontSize: "0.9rem" }}
-                                className="ms-3"
-                              >
-                                {errors.bookingDate}
-                              </p>
-                            )}
-                          </div>
+                    </div>
+                    <div className="row">
+                      <div className="col pt-2">
+                        <div className="input-wrapper position-relative">
+                          <input
+                            type="text"
+                            id="date"
+                            className="form-control"
+                            value={
+                              bookingDate
+                                ? new Date(bookingDate).toLocaleDateString("en-GB", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "2-digit",
+                                })
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const inputDate = e.target.value;
+                              const [day, month, year] = inputDate.split("-");
+                              const formattedDate = `${year}-` + `${month}-` + `${day}`;
+                              setBookingDate(new Date(formattedDate).toISOString().slice(0, 10));
+                            }}
+                            placeholder="Booking Date"
+                            onFocus={(e) => (e.target.type = "date")}
+                            onBlur={(e) => (e.target.type = "text")}
+                          />
                         </div>
                         <div className="col"></div>
                       </div>
                     </div>
-                    <div className="row w-50"></div>
+                    <hr />
                     <p
-                      className="pt-3"
-                      style={{ fontSize: "1.5rem", color: "black" }}
+                      style={{ fontSize: "1.1rem", color: "black" }}
                     >
                       Customer Details
                     </p>
@@ -315,19 +301,21 @@ function Booking() {
                           onKeyPress={(e) => handleEnter(e, customerContactRef)}
                           ref={customerNameRef}
                         />
-                        {errors.customerName && (
-                          <p
-                            style={{ color: "red", fontSize: "0.9rem" }}
-                            className="ms-3"
-                          >
-                            {errors.customerName}
-                          </p>
-                        )}
+                        <i
+                          className="bi bi-plus-circle-fill"
+                          style={{
+                            position: 'absolute',
+                            right: '39.2rem',
+                            transform: 'translateY(-130%)',
+                            color: 'black',
+                            cursor: 'pointer',
+                          }}
+                        ></i>
                       </div>
                       <div className="col">
                         <input
-                          type="text"
-                          className="form-control mb-1"
+                          type="number"
+                          className="form-control"
                           id="Contact No"
                           placeholder="Contact No"
                           name="Contact No"
@@ -367,14 +355,89 @@ function Booking() {
                         )}
                       </div>
                     </div>
+                    <hr />
+                    <p
+                      style={{ fontSize: "1.1rem", color: "black" }}
+                    >
+                      Payment Details
+                    </p>
                     <div className="row">
-                      <div className="col pt-2"></div>
-                      <p
-                        className="pt-3"
-                        style={{ fontSize: "1.5rem", color: "black" }}
+                      <div className="col">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="Sale Deed Amount"
+                          placeholder="Sale Deed Amount"
+                          name="Sale Deed Amount"
+                        />
+                      </div>
+                      <div className="col">
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="Extra Work Amount"
+                          placeholder="Extra Work Amount"
+                          name="Extra Work Amount"
+                        />
+                      </div>
+                    </div>
+                    <div className="row pt-4">
+                      <div className="col">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="Other Work Amount"
+                          placeholder="Other Work Amount"
+                          name="Other Work Amount"
+                        />
+                      </div>
+                      <div className="col"></div>
+                    </div>
+                    <hr />
+                    <p
+                      style={{ fontSize: "1.1rem", color: "black" }}
+                    >
+                      Payment Terms
+                    </p>
+                    <div className="row">
+                      <div className="col">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="Down Payment"
+                          placeholder="Down Payment"
+                          name="Down Payment"
+                        />
+                      </div>
+                      <div className="col">
+                        <select
+                          className="form-select mb-3"
+                          aria-label="Default select example"
+                        >
+                          <option selected>Payment Duration</option>
+                          <option value="1month">1 Month</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div
+                      className="form-check pt-2"
+                      style={{ marginLeft: "1rem" }}
+                    >
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        value="loan"
+                        checked={selectOption === "loan"}
+                        onChange={handleRadio}
+                        name="flexRadioDefault"
+                        id="flexRadioDefault1"
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="flexRadioDefault1"
                       >
                         Payment Details
-                      </p>
+                      </label>
                       <div className="row">
                         <div className="col">
                           <input
@@ -524,7 +587,7 @@ function Booking() {
                               <div className="col">
                                 <input
                                   type="number"
-                                  className="form-control mb-1"
+                                  className="form-control"
                                   id="loanAmount"
                                   value={loanAmount}
                                   onChange={(e) =>
@@ -532,18 +595,9 @@ function Booking() {
                                   }
                                   placeholder="Loan Amount"
                                   ref={loanAmountRef}
-                                  onKeyPress={(e) =>
-                                    handleEnter(e, bankDetailsRef)
-                                  }
+                                  onKeyPress={(e) => handleEnter(e, bankDetailsRef)}
+
                                 />
-                                {errors.loanDetails && (
-                                  <p
-                                    style={{ color: "red", fontSize: "0.9rem" }}
-                                    className="ms-3"
-                                  >
-                                    {errors.loanDetails}
-                                  </p>
-                                )}
                               </div>
                               <div className="col"></div>
                             </div>
@@ -557,17 +611,7 @@ function Booking() {
                                   onChange={(e) =>
                                     setBankDetails(e.target.value)
                                   }
-                                  ref={bankDetailsRef}
-                                  onKeyPress={(e) => handleEnter(e, submitRef)}
                                 ></textarea>
-                                {errors.bankDetails && (
-                                  <p
-                                    style={{ color: "red", fontSize: "0.9rem" }}
-                                    className="ms-3"
-                                  >
-                                    {errors.bankDetails}
-                                  </p>
-                                )}
                               </div>
                             </div>
                           </>
@@ -686,6 +730,24 @@ function Booking() {
                         </div>
                       </div>
                     </div>
+
+                    <div className="form-check pt-3">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value=""
+                        id="flexCheckDefault"
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="flexCheckDefault"
+                      >
+                        Installment Notify
+                      </label>
+                    </div>
+                    <button type="submit" className="btn btn-primary mt-3">
+                      Submit
+                    </button>
                   </form>
 
                   <style jsx="true">{`
@@ -713,9 +775,9 @@ function Booking() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <Footer />
+          <Footer />
+        </div >
+      </div >
       <style></style>
     </>
   );
