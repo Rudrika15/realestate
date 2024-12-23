@@ -25,10 +25,10 @@ function AddPartners() {
   const percentage3Ref = useRef(null);
   const submitRef = useRef(null);
 
-   // focus
-    useEffect(() => {
-      selectprojectRef.current.focus();
-    }, []);
+  // focus
+  useEffect(() => {
+    selectprojectRef.current.focus();
+  }, []);
 
   const handleEnter = (e, nextField) => {
     if (e.key === "Enter" && nextField.current) {
@@ -41,7 +41,7 @@ function AddPartners() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationError = {};
-    setErrors({}); 
+    setErrors({});
 
     if (!selectproject) {
       validationError.selectproject = "Please select a project.";
@@ -157,7 +157,29 @@ function AddPartners() {
                         )}
                       </div>
                     </div>
-
+                    <div className="row">
+                      <div className="col">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="name2"
+                          placeholder="Name"
+                          value={name2}
+                          onChange={(e) => setName1(e.target.value)}
+                        />
+                      </div>
+                      <div className="col">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="percentage1"
+                          placeholder="Percentage"
+                          value={percentage1}
+                          onChange={(e) => setPercentage1(e.target.value)}
+                        />
+                        <i className="bi bi-x-circle-fill"></i>
+                      </div>
+                    </div>
                     <div className="row pt-4">
                       <div className="col">
                         <input
@@ -220,11 +242,7 @@ function AddPartners() {
                           ref={percentage2Ref}
                           onKeyPress={(e) => handleEnter(e, name3Ref)}
                         />
-                        {error.percentage2 && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.percentage2}
-                          </p>
-                        )}
+                        <i className="bi bi-plus-circle-fill"></i>
                       </div>
                     </div>
 
@@ -274,6 +292,22 @@ function AddPartners() {
           <Footer />
         </div>
       </div>
+      <style jsx="true">{`
+        .bi-plus-circle-fill {
+            position: absolute;
+            right: 27px;
+            transform: translateY(-135%);
+            color: black;
+            cursor: pointer;
+          }
+        .bi-x-circle-fill{
+            position: absolute;
+            right: 27px;
+            transform: translateY(-135%);
+            color: #eb3423;
+            cursor: pointer;
+          }
+    `}</style >
     </>
   );
 }

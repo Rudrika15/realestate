@@ -66,11 +66,11 @@ const Expenses = () => {
                         <td></td>
                         <td>
                           <Link to="" className="btn btn-warning btn-sm me-2">
-                                                      <i className="fas fa-edit"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-danger btn-sm">
-                                                      <i className="fas fa-trash"></i>
-                                                    </Link>
+                            <i className="fas fa-edit"></i>
+                          </Link>
+                          <Link to="" className="btn btn-danger btn-sm">
+                            <i className="fas fa-trash"></i>
+                          </Link>
                         </td>
                       </tr>
                       <tr>

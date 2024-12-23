@@ -5,6 +5,7 @@ import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from 'react-helmet';
 import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
 
 const ChequeDeposit = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -67,12 +68,18 @@ const ChequeDeposit = () => {
                           <td></td>
                           <td></td>
                           <td>
-                          <div className="btn-group" role="group" aria-label="Action Buttons">
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#f0e4ee', color: "black" }}>Accept</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#e4edd1', color: "black", marginLeft: '0.5rem' }}>Reject</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#ccdedc', color: "black", marginLeft: '0.5rem' }}>View</button>
-                          </div>
-                        </td>
+                            <div className="btn-group" role="group" aria-label="Action Buttons">
+                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
+                                Accept
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
+                                Reject
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
+                                View
+                              </Link>
+                            </div>
+                          </td>
                         </tr>
                         <tr>
                           <td>
@@ -88,12 +95,18 @@ const ChequeDeposit = () => {
                           <td></td>
                           <td></td>
                           <td>
-                          <div className="btn-group" role="group" aria-label="Action Buttons">
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#f0e4ee', color: "black" }}>Accept</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#e4edd1', color: "black", marginLeft: '0.5rem' }}>Reject</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#ccdedc', color: "black", marginLeft: '0.5rem' }}>View</button>
-                          </div>
-                        </td>
+                            <div className="btn-group" role="group" aria-label="Action Buttons">
+                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
+                                Accept
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
+                                Reject
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
+                                View
+                              </Link>
+                            </div>
+                          </td>
                         </tr>
                         <tr>
                           <td>
@@ -109,12 +122,18 @@ const ChequeDeposit = () => {
                           <td></td>
                           <td></td>
                           <td>
-                          <div className="btn-group" role="group" aria-label="Action Buttons">
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#f0e4ee', color: "black" }}>Accept</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#e4edd1', color: "black", marginLeft: '0.5rem' }}>Reject</button>
-                            <button type="button" className="btn shadow-sm" style={{ backgroundColor: '#ccdedc', color: "black", marginLeft: '0.5rem' }}>View</button>
-                          </div>
-                        </td>
+                            <div className="btn-group" role="group" aria-label="Action Buttons">
+                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
+                                Accept
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
+                                Reject
+                              </Link>
+                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
+                                View
+                              </Link>
+                            </div>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -126,6 +145,26 @@ const ChequeDeposit = () => {
           <Footer />
         </div>
       </div>
+      <style jsx="true">{`
+        .btn-group {
+          display: flex;
+          gap: 5px; 
+        }
+        .btn-group .btn {
+          font-size: 0.9rem;
+          border-radius: 0.25rem;
+          cursor: pointer;
+        }
+        .accept-btn {
+          background-color: #f0e4ee;
+        }
+        .reject-btn {
+          background-color: #e4edd1;
+        }
+        .view-btn {
+          background-color: #ccdedc;
+        }
+      `}</style >
     </>
   );
 };
