@@ -1,14 +1,18 @@
 import React, { useState, useRef } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from 'react-helmet';
 import "react-toastify/dist/ReactToastify.css";
+import { Spinner } from "react-bootstrap";
 function EditUser() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -17,6 +21,17 @@ function EditUser() {
     const toggleTopbar = () => {
         setIsTopbarOpen(!isTopbarOpen);
     };
+
+    const handleEdit = async (e) => {
+        e.preventDefault();
+        let isValid = true;
+        if (isValid) {
+            setLoading(true);
+            setTimeout(() => {
+                navigate("/view-user");
+            }, 1000);
+        }
+    }
     return (
         <>
             <Helmet>
@@ -53,15 +68,25 @@ function EditUser() {
                                                 <input type="password" class="form-control" id="passcode" placeholder="" name="passcode" />
                                             </div>
                                         </div>
-                                        <Link to="" type="submit" className="btn btn-primary">
-                                            Submit
+                                        <Link to="/view-user"
+                                            type="submit"
+                                            className="btn btn-primary"
+                                            onClick={handleEdit}
+                                            disabled={loading}
+                                        >
+                                            {loading ? (
+                                                <div className="d-flex justify-content-center align-items-center">
+                                                    <Spinner animation="border" size="sm" />
+                                                </div>
+                                            ) : (
+                                                "Submit"
+                                            )}
                                         </Link>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <Footer />
                 </div>
             </div>
         </>

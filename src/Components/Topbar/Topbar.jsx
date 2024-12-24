@@ -12,14 +12,19 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
             </Link>
             <Link to="#" className="sidebar-toggler flex-shrink-0" onClick={toggleSidebar}>
                 <i className="fa fa-bars"></i>
+<<<<<<< HEAD
             </Link>
             <form className="d-none d-md-flex ms-4">
+=======
+            </a>
+            {/* <form className="d-none d-md-flex ms-4">
+>>>>>>> f49b0cc13fc01790e2456f19c987c88078d4c9e9
                 <input
                     className="form-control border-0"
                     type="search"
                     placeholder="Search"
                 />
-            </form>
+            </form> */}
             <div className="navbar-nav align-items-center ms-auto">
                 {/* <div className="nav-item dropdown">
                     <a
@@ -82,16 +87,25 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
                             className="rounded-circle me-lg-2"
                             src="img/user.jpg"
                             alt="User"
+<<<<<<< HEAD
                         
+=======
+>>>>>>> f49b0cc13fc01790e2456f19c987c88078d4c9e9
                         />
                         <span className="d-none d-lg-inline-flex">Admin</span>
                     </Link>
                     <div
                         className={`dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0${isTopbarOpen ? ' show' : ''}`}
                     >
+<<<<<<< HEAD
                         <Link to="#" className="dropdown-item">My Profile</Link>
                         <Link to="#" className="dropdown-item">Settings</Link>
                         <Link to="#" className="dropdown-item">Log Out</Link>
+=======
+                        {/* <a href="#" className="dropdown-item">My Profile</a>
+                        <a href="#" className="dropdown-item">Settings</a> */}
+                        <a href="#" className="dropdown-item">Log Out</a>
+>>>>>>> f49b0cc13fc01790e2456f19c987c88078d4c9e9
                     </div>
                 </div>
             </div>

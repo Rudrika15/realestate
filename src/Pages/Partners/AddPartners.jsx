@@ -18,11 +18,9 @@ function AddPartners() {
 
   const selectprojectRef = useRef(null);
   const name1Ref = useRef(null);
-  const percentage1Ref = useRef(null);
   const name2Ref = useRef(null);
   const percentage2Ref = useRef(null);
   const name3Ref = useRef(null);
-  const percentage3Ref = useRef(null);
   const submitRef = useRef(null);
 
   // focus
@@ -36,7 +34,6 @@ function AddPartners() {
       nextField.current.focus();
     }
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -109,7 +106,6 @@ function AddPartners() {
     setPercentage2("");
     setName3("");
     setPercentage3("");
-
   };
 
   return (
@@ -151,13 +147,13 @@ function AddPartners() {
                           <option value="demo">Demo</option>
                         </select>
                         {error.selectproject && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.selectproject}
+                          <p className=" error-message">
+                            {error.selectproject}{" "}
                           </p>
                         )}
                       </div>
                     </div>
-                    <div className="row">
+                    <div className="row pt-4">
                       <div className="col">
                         <input
                           type="text"
@@ -186,50 +182,13 @@ function AddPartners() {
                           type="text"
                           className="form-control mb-1"
                           placeholder="Name"
-                          value={name1}
-                          onChange={(e) => setName1(e.target.value)}
-                          ref={name1Ref}
-                          onKeyPress={(e) => handleEnter(e, percentage1Ref)}
-                        />
-                        {error.name1 && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.name1}
-                          </p>
-                        )}
-                      </div>
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control mb-1"
-                          placeholder="Percentage"
-                          value={percentage1}
-                          onChange={(e) => setPercentage1(e.target.value)}
-                          ref={percentage1Ref}
-                          onKeyPress={(e) => handleEnter(e, name2Ref)}
-                        />
-                        {error.percentage1 && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.percentage1}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="row pt-4">
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control mb-1"
-                          placeholder="Name"
                           value={name2}
                           onChange={(e) => setName2(e.target.value)}
                           ref={name2Ref}
                           onKeyPress={(e) => handleEnter(e, percentage2Ref)}
                         />
                         {error.name2 && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.name2}
-                          </p>
+                          <p className="error-message">{error.name2}</p>
                         )}
                       </div>
                       <div className="col">
@@ -245,42 +204,6 @@ function AddPartners() {
                         <i className="bi bi-plus-circle-fill"></i>
                       </div>
                     </div>
-
-                    <div className="row pt-4">
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control mb-1"
-                          placeholder="Name"
-                          value={name3}
-                          onChange={(e) => setName3(e.target.value)}
-                          ref={name3Ref}
-                          onKeyPress={(e) => handleEnter(e, percentage3Ref)}
-                        />
-                        {error.name3 && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.name3}
-                          </p>
-                        )}
-                      </div>
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control mb-1"
-                          placeholder="Percentage"
-                          value={percentage3}
-                          onChange={(e) => setPercentage3(e.target.value)}
-                          ref={percentage3Ref}
-                          onKeyPress={(e) => handleEnter(e, submitRef)}
-                        />
-                        {error.percentage3 && (
-                          <p style={{ color: "red", fontSize: "0.9rem" }} className="ms-3">
-                            {error.percentage3}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
                     <button type="submit" className="btn btn-primary mt-3" ref={submitRef}>
                       Submit
                     </button>
@@ -294,20 +217,25 @@ function AddPartners() {
       </div>
       <style jsx="true">{`
         .bi-plus-circle-fill {
-            position: absolute;
-            right: 27px;
-            transform: translateY(-135%);
-            color: black;
-            cursor: pointer;
-          }
-        .bi-x-circle-fill{
-            position: absolute;
-            right: 27px;
-            transform: translateY(-135%);
-            color: #eb3423;
-            cursor: pointer;
-          }
-    `}</style >
+          position: absolute;
+          right: 27px;
+          transform: translateY(-135%);
+          color: black;
+          cursor: pointer;
+        }
+        .bi-x-circle-fill {
+          position: absolute;
+          right: 27px;
+          transform: translateY(-135%);
+          color: #eb3423;
+          cursor: pointer;
+        }
+        .error-message {
+          color: rgb(255, 21, 0);
+          font-size: 0.9rem;
+          margin-left: 10px;
+        }
+      `}</style>
     </>
   );
 }

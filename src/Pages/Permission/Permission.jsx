@@ -115,6 +115,23 @@ function Permission() {
                                                     </label>
                                                 </div>
                                             </td>
+                                            {data.length > 0 ? (
+                                                    data.map((user, index) => (
+                                                        <tr key={user.id}>
+                                                            <th scope="row">{index + 1}</th>
+                                                            <td>{user.name}</td>
+                                                            <td>{user.email}</td>
+                                                            <td>{user.Role?.role_name || 'N/A'}</td>
+                                                            <td>{user.status}</td>
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan="5" className="text-center">
+                                                            No users found.
+                                                        </td>
+                                                    </tr>
+                                                )}
                                         </tbody>
                                     </table>
                                     <div className="text-center pt-4">

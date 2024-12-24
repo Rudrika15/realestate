@@ -179,11 +179,6 @@ const AddCustomerIncome = () => {
                       />
                     </div>
                     <button type="submit" className="btn btn-primary">Save</button>
-                    <style jsx="true">{`
-                   .form-check {
-                      margin-left: 1rem;
-                    }
-                    `}</style >
                   </form>
                 </div>
               </div>
@@ -191,7 +186,7 @@ const AddCustomerIncome = () => {
           </div>
           <Footer />
         </div >
-      </div >
+      </div>
     </>
   );
 };
