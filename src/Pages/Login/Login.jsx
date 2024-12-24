@@ -1,34 +1,23 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { Spinner, Form } from "react-bootstrap";
 import { Helmet } from "react-helmet";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { login } from "../../Api/Api";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [passcode, setPasscode] = useState("");
+  const [emailError, setEmailError] = useState(false);
+  const [passcodeError, setPasscodeError] = useState(false);
   const navigate = useNavigate();
 
   // const handleLogin = async () => {
-  //     if (!email) {
-  //         toast.error('Email is required');
-  //         return;
-  //     }
-
-  //     if (!passcode) {
-  //         toast.error('Passcode is required');
-  //         return;
-  //     }
-
   //     try {
   //         setLoading(true);
   //         const data = { email, passcode };
   //         const response = await axios.post(login, data);
-
   //         if (response.data.status === true) {
   //             toast.success('Login successful');
   //             setTimeout(() => navigate('/view-user'), 1000);
@@ -42,18 +31,47 @@ const Login = () => {
   //         setLoading(false);
   //     }
   // };
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    let isValid = true;
+
     if (!email) {
-      toast.error("Email is required");
-      return;
+      setEmailError(true);
+      isValid = false;
+    } else {
+      setEmailError(false);
     }
 
     if (!passcode) {
-      toast.error("Passcode is required");
-      return;
+      setPasscodeError(true);
+      isValid = false;
+    } else {
+      setPasscodeError(false);
     }
-    toast.success("Login successful");
-    setTimeout(() => navigate('/view-user'), 1000);
+
+    if (isValid) {
+      console.log("form submitted with:", { email, passcode });
+      setEmail('');
+      setPasscode('');
+      setLoading(true);
+      setTimeout(() => {
+        navigate("/view-user");
+      }, 1000);
+    }
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    if (e.target.value) {
+      setEmailError(false);
+    }
+  };
+
+  const handlePasscodeChange = (e) => {
+    setPasscode(e.target.value);
+    if (e.target.value) {
+      setPasscodeError(false);
+    }
   };
 
   return (
@@ -63,10 +81,7 @@ const Login = () => {
       </Helmet>
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <div className="container-fluid">
-          <div
-            className="row h-100 align-items-center justify-content-center"
-            style={{ minHeight: "100vh" }}
-          >
+          <div className="row min-vh-100 align-items-center justify-content-center">
             <div className="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
               <div className="bg-light rounded p-4 p-sm-5 my-4 mx-3">
                 <div className="d-flex align-items-center justify-content-between mb-3">
@@ -77,51 +92,51 @@ const Login = () => {
                   </a>
                   <h3>Login</h3>
                 </div>
-
                 <Form>
                   <div className="form-floating mb-3">
                     <input
                       type="email"
-                      className="form-control"
+                      className={`form-control ${emailError ? 'is-invalid' : ''}`}
                       id="floatingInput"
-                      placeholder="name@example.com"
+                      placeholder="Email address"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={handleEmailChange}
                     />
+                    {emailError && <div className="invalid-feedback">Enter a valid Email</div>}
                     <label htmlFor="floatingInput">Email address</label>
                   </div>
-
                   <div className="form-floating mb-4">
                     <input
                       type="password"
-                      className="form-control"
+                      className={`form-control ${passcodeError ? 'is-invalid' : ''}`}
                       id="floatingPassword"
                       placeholder="Passcode"
                       value={passcode}
-                      onChange={(e) => setPasscode(e.target.value)}
+                      onChange={handlePasscodeChange}
                     />
+                    {passcodeError && <div className="invalid-feedback">Enter a valid Passcode</div>}
                     <label htmlFor="floatingPassword">Passcode</label>
                   </div>
-
-                  <button
+                  <Link to="/view-user"
                     type="button"
                     className="btn btn-primary py-3 w-100 mb-4"
                     onClick={handleLogin}
                     disabled={loading}
                   >
                     {loading ? (
-                      <Spinner animation="border" size="sm" />
+                      <div className="d-flex justify-content-center align-items-center">
+                        <Spinner animation="border" size="sm" />
+                      </div>
                     ) : (
                       "Login"
                     )}
-                  </button>
+                  </Link>
                 </Form>
               </div>
             </div>
           </div>
         </div>
       </div>
-
       <ToastContainer />
     </>
   );
