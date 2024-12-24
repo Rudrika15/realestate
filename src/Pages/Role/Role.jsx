@@ -102,7 +102,7 @@ const Role = () => {
                             </div>
                         </div>
                     </div>
-                    <Footer />
+                
                 </div>
             </div>
         </>
