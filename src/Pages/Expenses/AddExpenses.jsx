@@ -129,19 +129,6 @@ const AddExpenses = () => {
           <Footer />
         </div>
       </div>
-      <style jsx="true">{`
-        .bi-plus-circle-fill {
-           color: black;
-            cursor: pointer;
-            fontSize: 1.3rem;
-          }
-        .bi-x-circle-fill{
-            color: #eb3423;
-            cursor: pointer;
-            fontSize: 1.3rem;
-            margin-right:0.5rem;
-          }
-      `}</style >
     </>
   );
 };

@@ -81,7 +81,6 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
                             className="rounded-circle me-lg-2"
                             src="img/user.jpg"
                             alt="User"
-                            style={{ width: '40px', height: '40px' }}
                         />
                         <span className="d-none d-lg-inline-flex">Admin</span>
                     </a>

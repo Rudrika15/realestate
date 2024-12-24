@@ -502,22 +502,6 @@ function Booking() {
           <Footer />
         </div >
       </div >
-      <style jsx="true">{`
-        .icon-1{
-          position: absolute;
-          right: -0.4rem;
-          transform: translateY(-130%);
-          color: black;
-          cursor: pointer;
-        }
-        .icon-2{
-          position: absolute;
-          cursor: pointer;
-          right: 1.7rem;
-          transform: translateY(-130%);
-          color: black;
-        }
-       `}</style >
     </>
   );
 }
