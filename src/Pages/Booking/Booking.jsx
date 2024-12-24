@@ -213,7 +213,7 @@ function Booking() {
                     <div className="row">
                       <div className="col">
                         <select
-                          className="form-select mb-1"
+                          className="form-select mb-3"
                           value={projectName}
                           onChange={(e) => setProjectName(e.target.value)}
                           onKeyPress={(e) => handleEnter(e, unitRef)}

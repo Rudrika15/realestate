@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
-import Footer from '../../Components/Footer/Footer';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 // import Pagination from '../../Components/Pagination/Pagination';
@@ -20,7 +19,6 @@ const Projects = () => {
     };
 
     return (
-
         <>
             <Helmet>
                 <title>React Estate | Projects</title>
@@ -56,12 +54,13 @@ const Projects = () => {
                                         <tbody>
                                             <tr>
                                                 <td></td>
+                         
                                                 <td></td>
                                                 <td>
                                                     <Link to="/unit" className="btn btn-info btn-sm me-2">
                                                         <i className="fas fa-eye"></i>
                                                     </Link>
-                                                    <Link to="" className="btn btn-warning btn-sm me-2">
+                                                    <Link to="/edit-unit" className="btn btn-warning btn-sm me-2">
                                                         <i className="fas fa-edit"></i>
                                                     </Link>
                                                     <Link to="" className="btn btn-danger btn-sm">
@@ -69,44 +68,14 @@ const Projects = () => {
                                                     </Link>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                    <Link to="/unit" className="btn btn-info btn-sm me-2">
-                                                        <i className="fas fa-eye"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-warning btn-sm me-2">
-                                                        <i className="fas fa-edit"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-danger btn-sm">
-                                                        <i className="fas fa-trash"></i>
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                    <Link to="/unit" className="btn btn-info btn-sm me-2">
-                                                        <i className="fas fa-eye"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-warning btn-sm me-2">
-                                                        <i className="fas fa-edit"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-danger btn-sm">
-                                                        <i className="fas fa-trash"></i>
-                                                    </Link>
-                                                </td>
-                                            </tr>
+                                           
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <Footer />
-                </div>
+                    </div>
             </div>
         </>
     );

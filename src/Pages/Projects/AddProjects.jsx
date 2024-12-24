@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
-import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
@@ -74,17 +73,20 @@ const AddProjects = () => {
       return;
     }
 
-    if (unit.size > 2 * 1024 * 1024) {
-      toast.error("Image Is Larger Than 2MB");
-      return;
-    }
+    const file = unit[0]; // Get the first file
 
-    if (unit.type == "image/jpeg" || unit.type == "image/png") {
-      toast.success("successfully");
-    } else {
-      toast.error("File Does Not Support. You Must Use .png or .jpg ");
-      return;
-    }
+  if (file.size > 2 * 1024 * 1024) {
+    toast.error("Image Is Larger Than 2MB");
+    return;
+  }
+
+  // Check for valid image MIME types
+  if (file.type === "image/jpeg" || file.type === "image/png") {
+    toast.success("successfully");
+  } else {
+    toast.error("File Does Not Support. You Must Use .png or .jpg ");
+    return;
+  }
     setName("");
     files.current.value = null;
   };
@@ -175,7 +177,7 @@ const AddProjects = () => {
               </div>
             </div>
           </div>
-          <Footer />
+         
         </div>
       </div>
     </>

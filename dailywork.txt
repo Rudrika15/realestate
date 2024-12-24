@@ -1,0 +1,13 @@
+--update unit page and projects page edit button click redirection
+--add new proj page validation done-- solved error while uploading jpeg file.
+--removed manual addition of row(td,tr)
+--replaced td values with input tags
+--onclick add unit button,the data is displayed in the row and one row is added below.
+--same data dispalyed in row should be sent to edit-unit page on clicking edit button 
+
+
+--to do--user changes something in edit unit data,then on clicking save button,that data should be sent to unit page 
+	and replaced for that particular row
+--to do--when back button is clicked,the data should stay on that page
+--to do--data in a row can be erased only when delete button is clicked.
+--to do--add delete butto in each row..

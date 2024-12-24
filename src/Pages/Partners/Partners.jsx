@@ -35,7 +35,7 @@ const Partners = () => {
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
-                <div className="bg-light rounded h-100 p-4">
+                <div className="bg-light rounded h-100 p-4">  
                   <div className="d-flex justify-content-between   mb-3">
                     <div className="p-2 ">
                       <h6 className="mb-4">Partners</h6>
