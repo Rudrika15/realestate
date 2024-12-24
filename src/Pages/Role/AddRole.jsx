@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
+import { Spinner } from "react-bootstrap";
 
 function AddRole() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [roleName, setRoleName] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); 
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -33,7 +36,15 @@ function AddRole() {
       setError("Role Name is required.");
       return;
     }
-    toast.success("Role added successfully!");
+
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      toast.success("Role added successfully!");
+      setRoleName(""); 
+      navigate("/role"); 
+    }, 2000);
   };
 
   return (
@@ -82,20 +93,27 @@ function AddRole() {
                           onChange={handleRoleNameChange}
                           name="roleName"
                         />
-                        {error && (
-                          <div className="invalid-feedback">{error}</div>
-                        )}
+                        {error && <div className="invalid-feedback">{error}</div>}
                       </div>
                     </div>
-                    <button type="submit" className="btn btn-primary">
-                      Submit
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <div className="d-flex justify-content-center align-items-center">
+                          <Spinner animation="border" size="sm" />
+                        </div>
+                      ) : (
+                        "Submit"
+                      )}
                     </button>
                   </form>
                 </div>
               </div>
             </div>
           </div>
-          
         </div>
       </div>
     </>

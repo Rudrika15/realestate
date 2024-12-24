@@ -51,11 +51,7 @@ const Sidebar = ({ isSidebarOpen }) => {
     }, []);
 
     return (
-<<<<<<< HEAD
-        <div className={`sidebar pe-5 pb-2 ${isSidebarOpen ? 'open' : ''}`}>
-=======
         <div className={`sidebar pe-4 ${isSidebarOpen ? 'open' : ''}`}>
->>>>>>> f49b0cc13fc01790e2456f19c987c88078d4c9e9
             <nav className="navbar bg-light navbar-light">
                 <a href="#" className="navbar-brand mx-4 mb-3">
                     <h3 className="text-primary">REAL-ESTATE</h3>

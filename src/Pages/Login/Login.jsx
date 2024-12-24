@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // import axios from 'axios';
 import React, { useState } from 'react';
 import { Spinner, Form } from 'react-bootstrap';
@@ -7,14 +6,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { login } from '../../Api/Api';
-=======
-import React, { useState } from "react";
-import { Spinner, Form } from "react-bootstrap";
-import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
->>>>>>> f49b0cc13fc01790e2456f19c987c88078d4c9e9
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -53,31 +44,12 @@ const Login = () => {
       setEmailError(false);
     }
 
-<<<<<<< HEAD
-    return (
-        <>
-            <Helmet>
-                <title>React Estate | Login</title>
-            </Helmet>
-            <div className="container-fluid position-relative bg-white d-flex p-0">
-                <div className="container-fluid">
-                    <div className="row h-100 align-items-center justify-content-center" style={{ minHeight: "100vh" }}>
-                        <div className="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
-                            <div className="bg-light rounded p-4 p-sm-5 my-4 mx-3">
-                                <div className="d-flex align-items-center justify-content-between mb-3">
-                                    <Link to="/">
-                                        <h3 className="text-primary"><i className="fa fa-hashtag me-2"></i>React Estate</h3>
-                                    </Link>
-                                    <h3>Login</h3>
-                                </div>
-=======
     if (!passcode) {
       setPasscodeError(true);
       isValid = false;
     } else {
       setPasscodeError(false);
     }
->>>>>>> f49b0cc13fc01790e2456f19c987c88078d4c9e9
 
     if (isValid) {
       console.log("form submitted with:", { email, passcode });
