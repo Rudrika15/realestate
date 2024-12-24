@@ -145,26 +145,6 @@ const ChequeDeposit = () => {
           <Footer />
         </div>
       </div>
-      <style jsx="true">{`
-        .btn-group {
-          display: flex;
-          gap: 5px; 
-        }
-        .btn-group .btn {
-          font-size: 0.9rem;
-          border-radius: 0.25rem;
-          cursor: pointer;
-        }
-        .accept-btn {
-          background-color: #f0e4ee;
-        }
-        .reject-btn {
-          background-color: #e4edd1;
-        }
-        .view-btn {
-          background-color: #ccdedc;
-        }
-      `}</style >
     </>
   );
 };

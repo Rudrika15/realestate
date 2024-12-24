@@ -56,8 +56,8 @@ const CashDeposit = () => {
                     <tbody>
                       <tr>
                         <td>
-                          <div className="form-check1">
-                            <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
+                          <div className="form-check">
+                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
                           </div>
                         </td>
                         <td></td>
@@ -81,8 +81,8 @@ const CashDeposit = () => {
                       </tr>
                       <tr>
                         <td>
-                          <div className="form-check1">
-                            <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
+                          <div className="form-check">
+                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
                           </div>
                         </td>
                         <td></td>
@@ -106,8 +106,8 @@ const CashDeposit = () => {
                       </tr>
                       <tr>
                         <td>
-                          <div className="form-check1">
-                            <input className="form-check-input1" type="checkbox" value="" id="flexCheckDefault" />
+                          <div className="form-check">
+                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
                           </div>
                         </td>
                         <td></td>
@@ -138,26 +138,6 @@ const CashDeposit = () => {
           <Footer />
         </div>
       </div>
-      <style jsx="true">{`
-        .btn-group {
-          display: flex;
-          gap: 5px; 
-        }
-        .btn-group .btn {
-          font-size: 0.9rem;
-          border-radius: 0.25rem;
-          cursor: pointer;
-        }
-        .accept-btn {
-          background-color: #f0e4ee;
-        }
-        .reject-btn {
-          background-color: #e4edd1;
-        }
-        .view-btn {
-          background-color: #ccdedc;
-        }
-      `}</style >
     </>
   );
 };
