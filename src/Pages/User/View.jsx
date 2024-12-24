@@ -93,28 +93,6 @@ const View = () => {
                                                     </Link>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td>
-                                                    <Link to="/edit-user" className="btn btn-warning btn-sm me-2">
-                                                        <i className="fas fa-edit"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-danger btn-sm">
-                                                        <i className="fas fa-trash"></i>
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td>
-                                                    <Link to="/edit-user" className="btn btn-warning btn-sm me-2">
-                                                        <i className="fas fa-edit"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-danger btn-sm">
-                                                        <i className="fas fa-trash"></i>
-                                                    </Link>
-                                                </td>
-                                            </tr>
                                             {/* {data.length > 0 ? (
                                                     data.map((user, index) => (
                                                         <tr key={user.id}>

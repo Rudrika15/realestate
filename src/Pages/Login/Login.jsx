@@ -54,7 +54,7 @@ const Login = () => {
       setEmail('');
       setPasscode('');
       setLoading(true);
-      toast.success("Login Sucesfully!")
+      toast.success("Login Sucessfully!");
       setTimeout(() => {
         navigate("/view-user");
       }, 2000);
