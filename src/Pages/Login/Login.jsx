@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Spinner, Form } from "react-bootstrap";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,6 +12,8 @@ const Login = () => {
   const [emailError, setEmailError] = useState(false);
   const [passcodeError, setPasscodeError] = useState(false);
   const navigate = useNavigate();
+  const emailRef = useRef(null);
+  const passcodeRef = useRef(null);
 
   // const handleLogin = async () => {
   //     try {
@@ -54,7 +56,7 @@ const Login = () => {
       setEmail('');
       setPasscode('');
       setLoading(true);
-      toast.success("Login Sucessfully!");
+      toast.success("Login Successfully!");
       setTimeout(() => {
         navigate("/view-user");
       }, 2000);
@@ -75,6 +77,13 @@ const Login = () => {
     }
   };
 
+  const handleEnter = (e, nextField) => {
+    if (e.key === "Enter" && nextField?.current) {
+      e.preventDefault();
+      nextField.current.focus();
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -86,22 +95,24 @@ const Login = () => {
             <div className="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
               <div className="bg-light rounded p-4 p-sm-5 my-4 mx-3">
                 <div className="d-flex align-items-center justify-content-between mb-3">
-                  <a href="/">
+                  <Link to="/">
                     <h3 className="text-primary">
                       <i className="fa fa-hashtag me-2"></i>React Estate
                     </h3>
-                  </a>
+                  </Link>
                   <h3>Login</h3>
                 </div>
-                <Form>
+                <form onSubmit={handleLogin}>
                   <div className="form-floating mb-3">
                     <input
                       type="email"
                       className={`form-control ${emailError ? 'is-invalid' : ''}`}
                       id="floatingInput"
-                      placeholder="Email address"
+                      placeholder=""
                       value={email}
                       onChange={handleEmailChange}
+                      onKeyDown={(e) => handleEnter(e, passcodeRef)}
+                      ref={emailRef}
                     />
                     {emailError && <div className="invalid-feedback">Enter a valid Email</div>}
                     <label htmlFor="floatingInput">Email address</label>
@@ -111,9 +122,11 @@ const Login = () => {
                       type="password"
                       className={`form-control ${passcodeError ? 'is-invalid' : ''}`}
                       id="floatingPassword"
-                      placeholder="Passcode"
+                      placeholder=""
                       value={passcode}
+                      ref={passcodeRef}
                       onChange={handlePasscodeChange}
+                      onKeyDown={(e) => handleEnter(e, null)}
                     />
                     {passcodeError && <div className="invalid-feedback">Enter a valid Passcode</div>}
                     <label htmlFor="floatingPassword">Passcode</label>
@@ -132,7 +145,7 @@ const Login = () => {
                       "Login"
                     )}
                   </Link>
-                </Form>
+                </form>
               </div>
             </div>
           </div>
