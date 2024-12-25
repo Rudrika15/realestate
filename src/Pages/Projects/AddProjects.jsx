@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,6 +16,8 @@ const AddProjects = () => {
   const nameRef = useRef(null);
   const files = useRef(null);
   const submitRef = useRef(null);
+
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -81,14 +83,17 @@ const AddProjects = () => {
   }
 
   // Check for valid image MIME types
-  if (file.type === "image/jpeg" || file.type === "image/png") {
-    toast.success("successfully");
+  if (file.type === 'application/vnd.ms-excel' || 
+    file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        
   } else {
-    toast.error("File Does Not Support. You Must Use .png or .jpg ");
+    toast.error("File type Does Not Support. Upload only excel files ");
     return;
   }
     setName("");
     files.current.value = null;
+
+    navigate("/projects");
   };
 
   return (
@@ -149,6 +154,9 @@ const AddProjects = () => {
                         ref={nameRef}
                       />
                     </div>
+                    <div className="row">
+                      <div className="col">
+
                     <div className="mb-3">
                       <label htmlFor="file" className="form-label">
                         Upload Unit:
@@ -164,6 +172,28 @@ const AddProjects = () => {
                         ref={files}
                         onChange={(e) => setUnit(e.target.files)}
                       />
+                    </div>
+                      </div>
+
+                      <div className="col">
+
+                    <div className="mb-3">
+                      <label htmlFor="file" className="form-label">
+                        Upload Template:
+                      </label>
+                      <input
+                        type="file"
+                        accept=".jpg, .jpeg, .png, .pdf, .docx" 
+                        className="form-control"
+                        multiple
+                        id="unit"
+                        aria-describedby="unit"
+                        onKeyPress={(e) => handleEnter(e, submitRef)}
+                        ref={files}
+                        onChange={(e) => setUnit(e.target.files)}
+                      />
+                    </div>
+                      </div>
                     </div>
                     <button
                       type="submit"

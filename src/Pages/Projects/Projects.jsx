@@ -63,9 +63,29 @@ const Projects = () => {
                                                     <Link to="/edit-unit" className="btn btn-warning btn-sm me-2">
                                                         <i className="fas fa-edit"></i>
                                                     </Link>
-                                                    <Link to="" className="btn btn-danger btn-sm">
-                                                        <i className="fas fa-trash"></i>
-                                                    </Link>
+                                                                                                       
+                                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    <i className="fas fa-trash"></i>
+                                                    </button>
+
+                                                    {/* <!-- Modal --> */}
+                                                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                        Are you sure you want to delete the project? It may affect projects as well.
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yes</button>
+                                                            <button type="button" class="btn btn-secondary">No</button>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                            
