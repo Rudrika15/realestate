@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
-import Footer from '../../Components/Footer/Footer';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 // import Pagination from '../../Components/Pagination/Pagination';
@@ -20,7 +19,6 @@ const Projects = () => {
     };
 
     return (
-
         <>
             <Helmet>
                 <title>React Estate | Projects</title>
@@ -56,57 +54,48 @@ const Projects = () => {
                                         <tbody>
                                             <tr>
                                                 <td></td>
+                         
                                                 <td></td>
                                                 <td>
                                                     <Link to="/unit" className="btn btn-info btn-sm me-2">
                                                         <i className="fas fa-eye"></i>
                                                     </Link>
-                                                    <Link to="" className="btn btn-warning btn-sm me-2">
+                                                    <Link to="/edit-unit" className="btn btn-warning btn-sm me-2">
                                                         <i className="fas fa-edit"></i>
                                                     </Link>
-                                                    <Link to="" className="btn btn-danger btn-sm">
-                                                        <i className="fas fa-trash"></i>
-                                                    </Link>
+                                                                                                       
+                                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    <i className="fas fa-trash"></i>
+                                                    </button>
+
+                                                    {/* <!-- Modal --> */}
+                                                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                        Are you sure you want to delete the project? It may affect projects as well.
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yes</button>
+                                                            <button type="button" class="btn btn-secondary">No</button>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                    </div>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                    <Link to="/unit" className="btn btn-info btn-sm me-2">
-                                                        <i className="fas fa-eye"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-warning btn-sm me-2">
-                                                        <i className="fas fa-edit"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-danger btn-sm">
-                                                        <i className="fas fa-trash"></i>
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                    <Link to="/unit" className="btn btn-info btn-sm me-2">
-                                                        <i className="fas fa-eye"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-warning btn-sm me-2">
-                                                        <i className="fas fa-edit"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-danger btn-sm">
-                                                        <i className="fas fa-trash"></i>
-                                                    </Link>
-                                                </td>
-                                            </tr>
+                                           
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <Footer />
-                </div>
+                    </div>
             </div>
         </>
     );

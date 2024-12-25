@@ -2,13 +2,24 @@
 import React, { useState, useRef } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link } from "react-router-dom";
-import Footer from "../../Components/Footer/Footer";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from 'react-helmet';
 import "react-toastify/dist/ReactToastify.css";
 
 const EditUnit = () => {
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { unitData, index } = location.state || {};
+
+  const [wing, setWing] = useState(unitData?.wing || '');
+  const [flatName, setFlatName] = useState(unitData?.flatName || '');
+  const [size, setSize] = useState(unitData?.size || '');
+  const [extraWork, setExtraWork] = useState(unitData?.extraWork || '');
+  const [unitType, setUnitType] = useState(unitData?.unitType || '');
+  const [salesDeed, setSalesDeed] = useState(unitData?.salesDeed || '');
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
 
@@ -18,6 +29,13 @@ const EditUnit = () => {
 
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
+  };
+
+  const handleSave = () => {
+    // Update the unit data in the parent component (Unit.js)
+    const updatedUnit = { wing, flatName, size, extraWork, unitType, salesDeed };
+    // Go back to the Unit page and pass updated data to the parent
+    navigate("/unit", { state: { updatedUnit, index } });
   };
 
   return (
@@ -59,36 +77,41 @@ const EditUnit = () => {
                   <form>
                     <div className="row pt-3">
                       <div className="col">
-                        <input type="text" className="form-control" id="wing" placeholder="Wing" name="wing" />
+                        <input type="text" className="form-control" id="wing" placeholder="Wing" name="wing" value={wing}
+                          onChange={(e) => setWing(e.target.value)}/>
                       </div>
                       <div className="col">
-                        <input type="text" className="form-control" id="flat name" placeholder="Flat Name" name="flat name" />
+                        <input type="text" className="form-control" id="flat name" placeholder="Flat Name" name="flat name" value={flatName}
+                          onChange={(e) => setFlatName(e.target.value)} />
                       </div>
                     </div>
                     <div className="row pt-4">
                       <div className="col">
-                        <input type="text" className="form-control" id="Size" placeholder="Size" name="Size" />
+                        <input type="text" className="form-control" id="Size" placeholder="Size" name="Size" value={size}
+                          onChange={(e) => setSize(e.target.value)}/>
                       </div>
                       <div className="col">
-                        <input type="text" className="form-control" id="Extra Work Amount" placeholder="Extra Work Amount" name="Extra Work Amount" />
+                        <input type="text" className="form-control" id="Extra Work Amount" placeholder="Extra Work Amount" name="Extra Work Amount" value={extraWork}
+                          onChange={(e) => setExtraWork(e.target.value)} />
                       </div>
                     </div>
                     <div className="row pt-4">
                       <div className="col">
-                        <input type="text" className="form-control" id="Unit Type" placeholder="Unit Type" name="Unit Type" />
+                        <input type="text" className="form-control" id="Unit Type" placeholder="Unit Type" name="Unit Type" value={unitType}
+                          onChange={(e) => setUnitType(e.target.value)}/>
                       </div>
                       <div className="col">
-                        <input type="text" className="form-control" id="Sale Deed Amount" placeholder="Sale Deed Amount" name="Sale Deed Amount" />
+                        <input type="text" className="form-control" id="Sale Deed Amount" placeholder="Sale Deed Amount" name="Sale Deed Amount" value={salesDeed}
+                          onChange={(e) => setSalesDeed(e.target.value)} />
                       </div>
                     </div>
-                    <button type="submit" className="btn btn-primary mt-3">Save</button>
+                    <button type="button" className="btn btn-primary mt-3" onClick={handleSave}>Save</button>
                   </form>
                 </div>
               </div>
             </div>
           </div>
-          <Footer />
-        </div>
+          </div>
       </div>
     </>
   );
