@@ -6,33 +6,34 @@ import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import { getUsers } from '../../Api/Api';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const View = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState([
+        { id: 1, name: 'Bob Johnson' },
+        { id: 2, name: 'John Doe' },
+        { id: 3, name: 'Alice Smith' },
+    ].sort((a, b) => a.name.localeCompare(b.name)));
     // const [loading, setLoading] = useState(true);
     const getData = async () => {
         try {
-            // setLoading(true);
             const res = await axios.get(getUsers);
-            console.log(res.data);
-
             if (res.data.status === true) {
-                setData(res.data.data);
+                const sortedData = res.data.data.sort((a, b) => a.name.localeCompare(b.name));
+                setData(sortedData);
             } else {
                 console.error('Error fetching data:', res.data.message);
             }
         } catch (error) {
             console.error('Error:', error);
-        } finally {
-            // setLoading(false);
         }
     };
-
+    
     useEffect(() => {
         getData();
-    }, []);
+    }, [data]);
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -40,6 +41,34 @@ const View = () => {
 
     const toggleTopbar = () => {
         setIsTopbarOpen(!isTopbarOpen);
+    };
+
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: 'Are You Sure You Want to Delete?',
+            text: 'Once you delete, all the data related to this user will be deleted.',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#c4c4c4',
+            customClass: {
+                title: 'swal-title',
+                text: 'swal-text',
+                confirmButton: 'swal-confirm-btn',
+                cancelButton: 'swal-cancel-btn',
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'The user has been deleted.',
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6',
+                });
+            }
+        });
     };
 
     return (
@@ -63,7 +92,7 @@ const View = () => {
                                         </div>
                                         <div class="p-2 ">
                                             <Link to="/add-user" className="">
-                                                <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add New User</h6>
+                                                <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> New User</h6>
                                             </Link>
                                         </div>
                                     </div>
@@ -74,26 +103,31 @@ const View = () => {
                                             </div>
                                         </div>
                                    ) : ( */}
-                                    <table className="table table-bordered text-center">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Username</th>
-                                                <th scope="col">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td></td>
-                                                <td>
-                                                    <Link to="/edit-user" className="btn btn-warning btn-sm me-2">
-                                                        <i className="fas fa-edit"></i>
-                                                    </Link>
-                                                    <Link to="" className="btn btn-danger btn-sm">
-                                                        <i className="fas fa-trash"></i>
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                            {/* {data.length > 0 ? (
+                                    {data.length > 0 ? (
+                                        <table className="table table-bordered text-center">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" className="w-25">UserId</th>
+                                                    <th scope="col">UserName</th>
+                                                    <th scope="col" className="w-25">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {data.map((user) => (
+                                                    <tr>
+                                                        <td>{user.id}</td>
+                                                        <td>{user.name}</td>
+                                                        <td>
+                                                            <Link to="/edit-user" className="btn btn-warning btn-sm me-2">
+                                                                <i className="fas fa-edit"></i>
+                                                            </Link>
+                                                            <Link onClick={() => handleDelete()} className="btn btn-danger btn-sm">
+                                                                <i className="fas fa-trash"></i>
+                                                            </Link>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                {/* {data.length > 0 ? (
                                                     data.map((user, index) => (
                                                         <tr key={user.id}>
                                                             <th scope="row">{index + 1}</th>
@@ -110,8 +144,14 @@ const View = () => {
                                                         </td>
                                                     </tr>
                                                 )} */}
-                                        </tbody>
-                                    </table>
+                                            </tbody>
+                                        </table>
+                                    ) : (
+                                        <div className="text-center">
+                                            <img src="img/Screenshot_2024-12-25_105853-removebg-preview.png" alt="No Users" className="img-fluid w-25 h-25" />
+                                            <p className="text-dark">No Users Found</p>
+                                        </div>
+                                    )}
                                     {/* )} */}
                                 </div>
                             </div>

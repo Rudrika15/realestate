@@ -88,7 +88,7 @@ function EditUser() {
                                 <div className="bg-light rounded h-100 p-4">
                                     <div className="d-flex justify-content-between mb-3">
                                         <div className="p-2">
-                                            <h6 className="mb-4">Edit User</h6>
+                                            <h6 className="mb-4">User</h6>
                                         </div>
                                         <div className="p-2">
                                             <Link to="/view-user" className="">
@@ -125,7 +125,7 @@ function EditUser() {
                                                 {passcodeError && <div className="invalid-feedback">Passcode is required.</div>}
                                             </div>
                                         </div>
-                                        <Link to=""
+                                        <button
                                             type="submit"
                                             className="btn btn-primary"
                                             disabled={loading}
@@ -135,7 +135,7 @@ function EditUser() {
                                             ) : (
                                                 "Submit"
                                             )}
-                                        </Link>
+                                        </button>
                                     </form>
                                 </div>
                             </div>
