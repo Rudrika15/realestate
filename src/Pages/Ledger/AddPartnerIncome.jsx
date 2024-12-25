@@ -120,11 +120,6 @@ const AddPartnerIncome = () => {
                       </div>
                     </div>
                     <button type="submit" className="btn btn-primary mt-3">Save</button>
-                    <style jsx="true">{`
-                   .form-check {
-                      margin-left: 1rem;
-                    }
-                    `}</style >
                   </form>
                 </div>
               </div>
