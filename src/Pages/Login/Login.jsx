@@ -1,11 +1,9 @@
-// import axios from 'axios';
-import React, { useState } from 'react';
-import { Spinner, Form } from 'react-bootstrap';
-import { Helmet } from 'react-helmet';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { login } from '../../Api/Api';
+import React, { useState } from "react";
+import { Spinner, Form } from "react-bootstrap";
+import { Helmet } from "react-helmet";
+import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -58,10 +56,9 @@ const Login = () => {
       setEmail('');
       setPasscode('');
       setLoading(true);
-      toast.success("Login Successfully!");
       setTimeout(() => {
         navigate("/view-user");
-      }, 2000);
+      }, 1000);
     }
   };
 
@@ -76,13 +73,6 @@ const Login = () => {
     setPasscode(e.target.value);
     if (e.target.value) {
       setPasscodeError(false);
-    }
-  };
-
-  const handleEnter = (e, nextField) => {
-    if (e.key === "Enter" && nextField?.current) {
-      e.preventDefault();
-      nextField.current.focus();
     }
   };
 
@@ -104,17 +94,15 @@ const Login = () => {
                   </Link>
                   <h3>Login</h3>
                 </div>
-                <form onSubmit={handleLogin}>
+                <Form>
                   <div className="form-floating mb-3">
                     <input
                       type="email"
                       className={`form-control ${emailError ? 'is-invalid' : ''}`}
                       id="floatingInput"
-                      placeholder=""
+                      placeholder="Email address"
                       value={email}
                       onChange={handleEmailChange}
-                      onKeyDown={(e) => handleEnter(e, passcodeRef)}
-                      ref={emailRef}
                     />
                     {emailError && <div className="invalid-feedback">Enter a valid Email</div>}
                     <label htmlFor="floatingInput">Email address</label>
@@ -126,9 +114,7 @@ const Login = () => {
                       id="floatingPassword"
                       placeholder=""
                       value={passcode}
-                      ref={passcodeRef}
                       onChange={handlePasscodeChange}
-                      onKeyDown={(e) => handleEnter(e, null)}
                     />
                     {passcodeError && <div className="invalid-feedback">Enter a valid Passcode</div>}
                     <label htmlFor="floatingPassword">Passcode</label>
@@ -147,7 +133,7 @@ const Login = () => {
                       "Login"
                     )}
                   </Link>
-                </form>
+                </Form>
               </div>
             </div>
           </div>
@@ -159,4 +145,3 @@ const Login = () => {
 };
 
 export default Login;
-

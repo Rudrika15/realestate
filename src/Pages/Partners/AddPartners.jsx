@@ -2,28 +2,20 @@ import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
-import Footer from "../../Components/Footer/Footer";
+// import Footer from "../../Components/Footer/Footer";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 
 function AddPartners() {
   const [selectproject, setselectproject] = useState("");
-  const [name1, setName1] = useState("");
-  const [percentage1, setPercentage1] = useState("");
-  const [name2, setName2] = useState("");
-  const [percentage2, setPercentage2] = useState("");
-  const [name3, setName3] = useState("");
-  const [percentage3, setPercentage3] = useState("");
+  const [partners, setPartners] = useState([{ name: "", percentage: "" }]);
   const [error, setErrors] = useState({});
 
   const selectprojectRef = useRef(null);
-  const name1Ref = useRef(null);
-  const name2Ref = useRef(null);
-  const percentage2Ref = useRef(null);
-  const name3Ref = useRef(null);
+  const nameRef = useRef(null);
+  const partnersRef = useRef(null);
   const submitRef = useRef(null);
 
-  // focus
   useEffect(() => {
     selectprojectRef.current.focus();
   }, []);
@@ -35,77 +27,83 @@ function AddPartners() {
     }
   };
 
+  const handleAddPartner = () => {
+    setPartners([...partners, { name: "", percentage: "" }]);
+  };
+
+  const handleRemovePartner = (index) => {
+    const updatedPartners = [...partners];
+    updatedPartners.splice(index, 1);
+    setPartners(updatedPartners);
+  };
+
+  const handleInputChange = (index, e) => {
+    const updatedPartners = [...partners];
+    updatedPartners[index][e.target.name] = e.target.value;
+    setPartners(updatedPartners);
+
+    const updatedErrors = { ...error };
+    delete updatedErrors[`${e.target.name}${index}`];
+    setErrors(updatedErrors);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    let isValid = true;
     const validationError = {};
-    setErrors({});
 
     if (!selectproject) {
       validationError.selectproject = "Please select a project.";
+      isValid = false;
     }
 
-    if (!name1) {
-      validationError.name1 = "Please enter Name";
-    }
-    if (!name2) {
-      validationError.name2 = "Please enter Name";
-    }
-    if (!name3) {
-      validationError.name3 = "Please enter Name";
-    }
+    partners.forEach((partner, index) => {
+      if (!partner.name) {
+        validationError[`name${index}`] = `Please enter Name for partner ${
+          index + 1
+        }`;
+        isValid = false;
+      }
 
-    if (!/^[A-Za-z ]+$/.test(name1)) {
-      validationError.name1 = "Name can only contain letters and spaces";
-    }
-    if (!/^[A-Za-z ]+$/.test(name2)) {
-      validationError.name2 = "Name can only contain letters and spaces";
-    }
-    if (!/^[A-Za-z ]+$/.test(name3)) {
-      validationError.name3 = "Name can only contain letters and spaces";
-    }
+      if (!/^[A-Za-z ]+$/.test(partner.name)) {
+        validationError[`name${index}`] = `Name for partner ${
+          index + 1
+        } can only contain letters and spaces`;
+        isValid = false;
+      }
 
-    if (!percentage1) {
-      validationError.percentage1 = "Please enter Percentage";
-    }
-    if (!percentage2) {
-      validationError.percentage2 = "Please enter Percentage";
-    }
-    if (!percentage3) {
-      validationError.percentage3 = "Please enter Percentage";
-    }
+      if (!partner.percentage) {
+        validationError[
+          `percentage${index}`
+        ] = `Please enter Percentage for partner ${index + 1}`;
+        isValid = false;
+      }
 
-    if (isNaN(percentage1)) {
-      validationError.percentage1 = "Percentage must be a valid number!";
-    }
-    if (isNaN(percentage2)) {
-      validationError.percentage2 = "Percentage must be a valid number!";
-    }
-    if (isNaN(percentage3)) {
-      validationError.percentage3 = "Percentage must be a valid number!";
-    }
+      if (isNaN(partner.percentage)) {
+        validationError[`percentage${index}`] = `Percentage for partner ${
+          index + 1
+        } must be a valid number!`;
+        isValid = false;
+      }
 
-    if (parseFloat(percentage1) < 0 || parseFloat(percentage1) > 100) {
-      validationError.percentage1 = "Percentage must be between 0 and 100!";
-    }
-    if (parseFloat(percentage2) < 0 || parseFloat(percentage2) > 100) {
-      validationError.percentage2 = "Percentage must be between 0 and 100!";
-    }
-    if (parseFloat(percentage3) < 0 || parseFloat(percentage3) > 100) {
-      validationError.percentage3 = "Percentage must be between 0 and 100!";
-    }
+      if (
+        parseFloat(partner.percentage) < 0 ||
+        parseFloat(partner.percentage) > 100
+      ) {
+        validationError[`percentage${index}`] = `Percentage for partner ${
+          index + 1
+        } must be between 0 and 100!`;
+        isValid = false;
+      }
+    });
 
-    if (Object.keys(validationError).length > 0) {
+    if (!isValid) {
       setErrors(validationError);
       return;
     }
 
     setselectproject("");
-    setName1("");
-    setPercentage1("");
-    setName2("");
-    setPercentage2("");
-    setName3("");
-    setPercentage3("");
+    setPartners([{ name: "", percentage: "" }]);
   };
 
   return (
@@ -122,10 +120,10 @@ function AddPartners() {
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
-                    <div className="p-2 ">
+                    <div className="p-2">
                       <h6 className="mb-4">Add Partners</h6>
                     </div>
-                    <div className="p-2 ">
+                    <div className="p-2">
                       <Link to="/partners">
                         <h6 className="mb-4">
                           <i className="bi bi-arrow-left-circle-fill"></i> Back
@@ -137,74 +135,93 @@ function AddPartners() {
                     <div className="row">
                       <div className="col">
                         <select
-                          className="form-select form-select-sm mb-1 w-50"
+                          className={`form-select form-select-sm mb-1 w-50 ${
+                            error.selectproject ? "is-invalid" : ""
+                          }`}
                           value={selectproject}
                           onChange={(e) => setselectproject(e.target.value)}
                           ref={selectprojectRef}
-                          onKeyPress={(e) => handleEnter(e, name1Ref)}
+                          onKeyPress={(e) => handleEnter(e, nameRef)}
                         >
                           <option value="">Select Project</option>
                           <option value="demo">Demo</option>
                         </select>
                         {error.selectproject && (
-                          <p className=" error-message">
-                            {error.selectproject}{" "}
-                          </p>
+                          <div className="invalid-feedback">
+                            {error.selectproject}
+                          </div>
                         )}
                       </div>
                     </div>
-                    <div className="row pt-4">
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="name2"
-                          placeholder="Name"
-                          value={name2}
-                          onChange={(e) => setName1(e.target.value)}
-                        />
+
+                    {partners.map((partner, index) => (
+                      <div className="row pt-4" key={index}>
+                        <div className="col">
+                          <div className="input-container">
+                            <input
+                              type="text"
+                              className={`form-control mb-1 ${
+                                error[`name${index}`] ? "is-invalid" : ""
+                              }`}
+                              placeholder="Name"
+                              value={partner.name}
+                              onChange={(e) => handleInputChange(index, e)}
+                              name="name"
+                              ref={nameRef}
+                              onKeyPress={(e) => handleEnter(e, partnersRef)}
+                            />
+                            {error[`name${index}`] && (
+                              <div className="invalid-feedback">
+                                {error[`name${index}`]}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="col position-relative">
+                          <div className="input-container">
+                            <input
+                              type="text"
+                              className={`form-control mb-1 ${
+                                error[`percentage${index}`] ? "is-invalid" : ""
+                              }`}
+                              placeholder="Percentage"
+                              value={partner.percentage}
+                              onChange={(e) => handleInputChange(index, e)}
+                              name="percentage"
+                              ref={partnersRef}
+                              onKeyPress={(e) => handleEnter(e, submitRef)}
+                            />
+                            {error[`percentage${index}`] && (
+                              <div className="invalid-feedback">
+                                {error[`percentage${index}`]}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="col-1">
+                          {index === 0 && (
+                            <i
+                              className="bi bi-plus-circle-fill"
+                              onClick={handleAddPartner}
+                            ></i>
+                          )}
+                          {partners.length > 1 && index !== 0 && (
+                            <i
+                              className="bi-x-circle-fill"
+                              onClick={() => handleRemovePartner(index)}
+                            ></i>
+                          )}
+                        </div>
                       </div>
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="percentage1"
-                          placeholder="Percentage"
-                          value={percentage1}
-                          onChange={(e) => setPercentage1(e.target.value)}
-                        />
-                        <i className="bi bi-x-circle-fill"></i>
-                      </div>
-                    </div>
-                    <div className="row pt-4">
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control mb-1"
-                          placeholder="Name"
-                          value={name2}
-                          onChange={(e) => setName2(e.target.value)}
-                          ref={name2Ref}
-                          onKeyPress={(e) => handleEnter(e, percentage2Ref)}
-                        />
-                        {error.name2 && (
-                          <p className="error-message">{error.name2}</p>
-                        )}
-                      </div>
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control mb-1"
-                          placeholder="Percentage"
-                          value={percentage2}
-                          onChange={(e) => setPercentage2(e.target.value)}
-                          ref={percentage2Ref}
-                          onKeyPress={(e) => handleEnter(e, name3Ref)}
-                        />
-                        <i className="bi bi-plus-circle-fill"></i>
-                      </div>
-                    </div>
-                    <button type="submit" className="btn btn-primary mt-3" ref={submitRef}>
+                    ))}
+
+                    <button
+                      type="submit"
+                      className="btn btn-primary mt-3"
+                      ref={submitRef}
+                      // onKeyPress={(e) => handleEnter(e, selectprojectRef)}
+                    >
                       Submit
                     </button>
                   </form>
@@ -212,28 +229,22 @@ function AddPartners() {
               </div>
             </div>
           </div>
-          <Footer />
+          {/* <Footer />   */}
         </div>
       </div>
+
       <style jsx="true">{`
         .bi-plus-circle-fill {
-          position: absolute;
-          right: 27px;
-          transform: translateY(-135%);
-          color: black;
           cursor: pointer;
+          color: black;
+          display: inline-block;
+          padding-top: 6px;
         }
         .bi-x-circle-fill {
-          position: absolute;
-          right: 27px;
-          transform: translateY(-135%);
           color: #eb3423;
           cursor: pointer;
-        }
-        .error-message {
-          color: rgb(255, 21, 0);
-          font-size: 0.9rem;
-          margin-left: 10px;
+          display: inline-block;
+          padding-top: 6px;
         }
       `}</style>
     </>
