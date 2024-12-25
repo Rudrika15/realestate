@@ -12,6 +12,8 @@ const Login = () => {
   const [emailError, setEmailError] = useState(false);
   const [passcodeError, setPasscodeError] = useState(false);
   const navigate = useNavigate();
+  const emailRef = useRef(null);
+  const passcodeRef = useRef(null);
 
   // const handleLogin = async () => {
   //     try {
@@ -54,10 +56,9 @@ const Login = () => {
       setEmail('');
       setPasscode('');
       setLoading(true);
-      toast.success("Login Sucesfully!")
       setTimeout(() => {
         navigate("/view-user");
-      }, 2000);
+      }, 1000);
     }
   };
 
@@ -86,11 +87,11 @@ const Login = () => {
             <div className="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
               <div className="bg-light rounded p-4 p-sm-5 my-4 mx-3">
                 <div className="d-flex align-items-center justify-content-between mb-3">
-                  <a href="/">
+                  <Link to="/">
                     <h3 className="text-primary">
                       <i className="fa fa-hashtag me-2"></i>React Estate
                     </h3>
-                  </a>
+                  </Link>
                   <h3>Login</h3>
                 </div>
                 <Form>
@@ -111,7 +112,7 @@ const Login = () => {
                       type="password"
                       className={`form-control ${passcodeError ? 'is-invalid' : ''}`}
                       id="floatingPassword"
-                      placeholder="Passcode"
+                      placeholder=""
                       value={passcode}
                       onChange={handlePasscodeChange}
                     />

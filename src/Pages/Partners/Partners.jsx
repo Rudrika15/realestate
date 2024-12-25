@@ -34,14 +34,14 @@ const Partners = () => {
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
-                <div className="bg-light rounded h-100 p-4">
+                <div className="bg-light rounded h-100 p-4">  
                   <div className="d-flex justify-content-between   mb-3">
                     <div className="p-2 ">
                       <h6 className="mb-4">Partners</h6>
                     </div>
                     <div className="p-2 ">
                       <Link to="/add-partners" className="">
-                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add New Partner</h6>
+                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> New Partner</h6>
                       </Link>
                     </div>
                   </div>

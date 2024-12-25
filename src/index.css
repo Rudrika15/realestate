@@ -57,13 +57,13 @@ code {
   color: black;
   cursor: pointer;
   font-size: 1.1rem;
- }
-.bi-x-circle-fill{
+}
+.bi-x-circle-fill {
   color: #eb3423;
   cursor: pointer;
   font-size: 1.1rem;
-  margin-right:0.5rem;
- }
-  .form-check {
-    margin-left: 1rem;
-  }
+  margin-right: 0.5rem;
+}
+.form-check {
+  margin-left: 1rem;
+}

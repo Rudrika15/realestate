@@ -58,7 +58,7 @@ function EditRole() {
                             </div>
                         </div>
                     </div>
-                    <Footer />
+                
                 </div>
             </div>
         </>

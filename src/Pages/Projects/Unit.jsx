@@ -2,11 +2,25 @@
 import React, { useState } from 'react';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
-import Footer from '../../Components/Footer/Footer';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Unit = () => {
+
+   // Initial state for rows of units
+   const [units, setUnits] = useState([
+    {
+      wing: '',
+      flatName: '',
+      size: '',
+      extraWork: '',
+      unitType: '',
+      salesDeed: '',
+    }
+  ]);
+
+  const navigate = useNavigate(); // For navigation
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
 
@@ -17,6 +31,35 @@ const Unit = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
+
+
+    // Handle input change
+    const handleInputChange = (e, index) => {
+      const { name, value } = e.target;
+      const updatedUnits = [...units];
+      updatedUnits[index] = { ...updatedUnits[index], [name]: value };
+      setUnits(updatedUnits);
+    };
+
+    // Handle add unit click
+    const handleAddUnit = () => {
+      setUnits([
+        ...units,
+        {
+          wing: '',
+          flatName: '',
+          size: '',
+          extraWork: '',
+          unitType: '',
+          salesDeed: '',
+        }
+      ]);
+    };
+
+    const handleEditUnit = (index) => {
+      // Passing selected unit data to EditUnit page
+      navigate('/edit-unit', { state: { unitData: units[index], index: index } });
+    };
 
   return (
 
@@ -62,58 +105,34 @@ const Unit = () => {
                         <th scope="col">Size</th>
                         <th scope="col">Extra Work Amount</th>
                         <th scope="col">Unit Type</th>
-                        <th scope="col">Sale Deed Amount</th>
+                        <th scope="col">Sales Deed Amount</th>
                         <th scope="col">Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <Link to="/edit-unit" className="btn btn-warning btn-sm me-2">
-                            <i className="fas fa-edit"></i>
-                          </Link >
-                        </td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <Link to="/EditUnit" className="btn btn-warning btn-sm me-2">
-                            <i className="fas fa-edit"></i>
-                          </Link >
-                        </td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <Link to="/EditUnit" className="btn btn-warning btn-sm me-2">
-                            <i className="fas fa-edit"></i>
-                          </Link >
-                        </td>
-                      </tr>
+                        {units.map((unit, index) => (
+                        <tr key={index}>
+                          <td><input type="text" name="wing" className="form-control" value={unit.wing} onChange={(e) => handleInputChange(e, index)} /></td>
+                          <td><input type="text" name="flatName" className="form-control" value={unit.flatName} onChange={(e) => handleInputChange(e, index)} /></td>
+                          <td><input type="text" name="size" className="form-control" value={unit.size} onChange={(e) => handleInputChange(e, index)} /></td>
+                          <td><input type="text" name="extraWork" className="form-control" value={unit.extraWork} onChange={(e) => handleInputChange(e, index)} /></td>
+                          <td><input type="text" name="unitType" className="form-control" value={unit.unitType} onChange={(e) => handleInputChange(e, index)} /></td>
+                          <td><input type="text" name="salesDeed" className="form-control" value={unit.salesDeed} onChange={(e) => handleInputChange(e, index)} /></td>
+                          <td>
+                          <button onClick={() => handleEditUnit(index)} className="btn btn-warning btn-sm me-2">
+                              <i className="fas fa-edit"></i>
+                           </button>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
+                      <button type="submit" className="btn btn-primary mt-3" onClick={handleAddUnit}>Add Unit</button>
                 </div>
               </div>
             </div>
           </div>
-          <Footer />
-        </div>
+          </div>
       </div>
     </>
   );

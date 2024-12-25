@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+// import Footer from "../../Components/Footer/Footer";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -9,15 +10,13 @@ function AddPartners() {
   const [selectproject, setselectproject] = useState("");
   const [partners, setPartners] = useState([{ name: "", percentage: "" }]);
   const [error, setErrors] = useState({});
-  const [loading, setLoading] = useState(false); 
 
   const selectprojectRef = useRef(null);
   const nameRef = useRef(null);
   const partnersRef = useRef(null);
   const submitRef = useRef(null);
 
-  const navigate = useNavigate();
-
+  
   useEffect(() => {
     selectprojectRef.current.focus();
   }, []);
@@ -33,11 +32,11 @@ function AddPartners() {
     setPartners([...partners, { name: "", percentage: "" }]);
   };
 
-  const handleRemovePartner = (index) => {
-    const updatedPartners = [...partners];
-    updatedPartners.splice(index, 1);
-    setPartners(updatedPartners);
-  };
+  // const handleRemovePartner = (index) => {
+  //   const updatedPartners = [...partners];
+  //   updatedPartners.splice(index, 1);
+  //   setPartners(updatedPartners);
+  // };
 
   const handleInputChange = (index, e) => {
     const updatedPartners = [...partners];
@@ -61,27 +60,40 @@ function AddPartners() {
 
     partners.forEach((partner, index) => {
       if (!partner.name) {
-        validationError[`name${index}`] = `Please enter Name for partner ${index + 1}`;
+        validationError[`name${index}`] = `Please enter Name for partner ${
+          index + 1
+        }`;
         isValid = false;
       }
 
       if (!/^[A-Za-z ]+$/.test(partner.name)) {
-        validationError[`name${index}`] = `Name for partner ${index + 1} can only contain letters and spaces`;
+        validationError[`name${index}`] = `Name for partner ${
+          index + 1
+        } can only contain letters and spaces`;
         isValid = false;
       }
 
       if (!partner.percentage) {
-        validationError[`percentage${index}`] = `Please enter Percentage for partner ${index + 1}`;
+        validationError[
+          `percentage${index}`
+        ] = `Please enter Percentage for partner ${index + 1}`;
         isValid = false;
       }
 
       if (isNaN(partner.percentage)) {
-        validationError[`percentage${index}`] = `Percentage for partner ${index + 1} must be a valid number!`;
+        validationError[`percentage${index}`] = `Percentage for partner ${
+          index + 1
+        } must be a valid number!`;
         isValid = false;
       }
 
-      if (parseFloat(partner.percentage) < 0 || parseFloat(partner.percentage) > 100) {
-        validationError[`percentage${index}`] = `Percentage for partner ${index + 1} must be between 0 and 100!`;
+      if (
+        parseFloat(partner.percentage) < 0 ||
+        parseFloat(partner.percentage) > 100
+      ) {
+        validationError[`percentage${index}`] = `Percentage for partner ${
+          index + 1
+        } must be between 0 and 100!`;
         isValid = false;
       }
     });
@@ -90,14 +102,9 @@ function AddPartners() {
       setErrors(validationError);
       return;
     }
-    setLoading(true);
 
-    setTimeout(() => {
-      navigate("/partners",{ state: partners ,});
-      setselectproject("");
-      setPartners([{ name: "", percentage: "" }]);
-      setLoading(false); 
-    }, 1000);
+    setselectproject("");
+    setPartners([{ name: "", percentage: "" }]);
   };
 
   return (
@@ -129,7 +136,7 @@ function AddPartners() {
                     <div className="row">
                       <div className="col">
                         <select
-                          className={`form-select form-select-sm mb-1 w-50 ${
+                          className={`form-select form-select-sm p-2 ${
                             error.selectproject ? "is-invalid" : ""
                           }`}
                           value={selectproject}
@@ -146,6 +153,7 @@ function AddPartners() {
                           </div>
                         )}
                       </div>
+                      <div className="col"></div>
                     </div>
 
                     {partners.map((partner, index) => (
@@ -193,7 +201,7 @@ function AddPartners() {
                             )}
                           </div>
                         </div>
-                        <div className="col-1">
+                        {/* <div className="col-1">
                           {index === 0 && (
                             <i
                               className="bi bi-plus-circle-fill"
@@ -206,7 +214,7 @@ function AddPartners() {
                               onClick={() => handleRemovePartner(index)}
                             ></i>
                           )}
-                        </div>
+                        </div> */}
                       </div>
                     ))}
 
@@ -214,22 +222,15 @@ function AddPartners() {
                       type="submit"
                       className="btn btn-primary mt-3"
                       ref={submitRef}
-                      disabled={loading} 
                     >
-                      {loading ? (
-                        <div className="spinner-border spinner-border-sm" role="status">
-                          <span className="visually-hidden">Loading...</span>
-                        </div>
-                      ) : (
-                        "Submit"
-                      )}
+                      Submit
                     </button>
                   </form>
                 </div>
               </div>
             </div>
           </div>
-          {/* <Footer /> */}
+          {/* <Footer />   */}
         </div>
       </div>
 
@@ -245,12 +246,6 @@ function AddPartners() {
           cursor: pointer;
           display: inline-block;
           padding-top: 6px;
-        }
-        .spinner-border-sm {
-          width: 1rem;
-          height: 1rem;
-          border-width: 0.15em;
-          margin-right: 8px;
         }
       `}</style>
     </>
