@@ -69,7 +69,7 @@ function AddRole() {
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
                     <div className="p-2 ">
-                      <h6 className="mb-4">Add Role</h6>
+                      <h6 className="mb-4">Role</h6>
                     </div>
                     <div className="p-2 ">
                       <Link to="/role" className="">
