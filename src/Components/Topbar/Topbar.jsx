@@ -1,17 +1,18 @@
 // src/Components/Topbar/Topbar.js
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
     return (
         <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-5 py-0">
-            <a href="index.html" className="navbar-brand d-flex d-lg-none me-4">
+            <Link to="index.html" className="navbar-brand d-flex d-lg-none me-4">
                 <h2 className="text-primary mb-0">
                     <i className="fa fa-hashtag"></i>
                 </h2>
-            </a>
-            <a href="#" className="sidebar-toggler flex-shrink-0" onClick={toggleSidebar}>
+            </Link>
+            <Link to="#" className="sidebar-toggler flex-shrink-0" onClick={toggleSidebar}>
                 <i className="fa fa-bars"></i>
-            </a>
+            </Link>
             {/* <form className="d-none d-md-flex ms-4">
                 <input
                     className="form-control border-0"
@@ -71,8 +72,8 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
                     </div>
                 </div> */}
                 <div className="nav-item dropdown">
-                    <a
-                        href="#"
+                    <Link
+                        to="#"
                         className={`nav-link dropdown-toggle${isTopbarOpen ? ' show' : ''}`}
                         data-bs-toggle="dropdown"
                         onClick={toggleTopbar}
@@ -83,7 +84,7 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
                             alt="User"
                         />
                         <span className="d-none d-lg-inline-flex">Admin</span>
-                    </a>
+                    </Link>
                     <div
                         className={`dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0${isTopbarOpen ? ' show' : ''}`}
                     >
@@ -93,7 +94,19 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
                     </div>
                 </div>
             </div>
+            <style jsx="true">{`
+                .user-image {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                }
+                .dropdown-item{
+                    fontSize: 14px;
+                    fontFamily: Arial, sans-serif;
+                }
+            `}</style >
         </nav>
+
     );
 };
 

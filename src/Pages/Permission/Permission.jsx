@@ -40,143 +40,89 @@ function Permission() {
                                         <div className="p-2">
                                             <h6 className="mb-4">Permission</h6>
                                         </div>
-                                        <div className="p-2 ">
-                                            <Link to="/role" className="">
-                                                <h6 className="mb-4"><i className="bi bi-arrow-left-circle-fill"></i> Back</h6>
+                                        <div className="p-2">
+                                            <Link to="/role" className="btn btn-secondary">
+                                                <i className="bi bi-arrow-left-circle-fill"></i> Back
                                             </Link>
                                         </div>
                                     </div>
-                                    <div className="row">
-                                        <div className="col">
+                                    <div className="row mb-3 ">
+                                        <div className="col-12 col-md-12">
                                             <input
                                                 type="text"
                                                 className="form-control"
                                                 id="role"
-                                                placeholder=""
+                                                placeholder="Enter Role"
                                                 name="role"
                                             />
                                         </div>
                                     </div>
-                                    <table className="table mt-4" style={{ marginLeft: '3rem' }}>
-                                        <tbody>
-                                            <td>
-                                                <div className="form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="form-check-input"
-                                                        id="check1"
-                                                        name="option1"
-                                                        value="something"
-                                                    />
-                                                    <label className="form-check-label" htmlFor="check1">
-                                                        Option 1
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="form-check-input"
-                                                        id="check2"
-                                                        name="option2"
-                                                        value="something"
-                                                    />
-                                                    <label className="form-check-label" htmlFor="check2">
-                                                        Option 2
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="form-check-input"
-                                                        id="check3"
-                                                        name="option3"
-                                                        value="something"
-                                                    />
-                                                    <label className="form-check-label" htmlFor="check3">
-                                                        Option 3
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="form-check-input"
-                                                        id="check4"
-                                                        name="option4"
-                                                        value="something"
-                                                    />
-                                                    <label className="form-check-label" htmlFor="check4">
-                                                        Option 4
-                                                    </label>
-                                                </div>
-                                            </td>
-                                        </tbody>
-                                        <tbody>
-                                            <td>
-                                                <div className="form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="form-check-input"
-                                                        id="check1"
-                                                        name="option1"
-                                                        value="something"
-                                                    />
-                                                    <label className="form-check-label" htmlFor="check1">
-                                                        Option 1
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="form-check-input"
-                                                        id="check2"
-                                                        name="option2"
-                                                        value="something"
-                                                    />
-                                                    <label className="form-check-label" htmlFor="check2">
-                                                        Option 2
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="form-check-input"
-                                                        id="check3"
-                                                        name="option3"
-                                                        value="something"
-                                                    />
-                                                    <label className="form-check-label" htmlFor="check3">
-                                                        Option 3
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div className="form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="form-check-input"
-                                                        id="check4"
-                                                        name="option4"
-                                                        value="something"
-                                                    />
-                                                    <label className="form-check-label" htmlFor="check4">
-                                                        Option 4
-                                                    </label>
-                                                </div>
-                                            </td>
-                                        </tbody>
-                                    </table>
+                                    <div className="table-responsive">
+                                        <table className="table mt-4  ">
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div className="form-check ">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="form-check-input"
+                                                                id="check1"
+                                                                name="option1"
+                                                                value="something"
+                                                            />
+                                                            <label className="form-check-label" htmlFor="check1">
+                                                                Option 1
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div className="form-check">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="form-check-input"
+                                                                id="check2"
+                                                                name="option2"
+                                                                value="something"
+                                                            />
+                                                            <label className="form-check-label" htmlFor="check2">
+                                                                Option 2
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div className="form-check">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="form-check-input"
+                                                                id="check3"
+                                                                name="option3"
+                                                                value="something"
+                                                            />
+                                                            <label className="form-check-label" htmlFor="check3">
+                                                                Option 3
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div className="form-check">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="form-check-input"
+                                                                id="check4"
+                                                                name="option4"
+                                                                value="something"
+                                                            />
+                                                            <label className="form-check-label" htmlFor="check4">
+                                                                Option 4
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                     <div className="text-center pt-4">
-                                        <Link to="" type="submit" className="btn btn-primary">
+                                        <Link to="#" type="submit" className="btn btn-primary">
                                             Submit
                                         </Link>
                                     </div>
@@ -184,7 +130,6 @@ function Permission() {
                             </div>
                         </div>
                     </div>
-                    <Footer />
                 </div>
             </div>
         </>

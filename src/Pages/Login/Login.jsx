@@ -1,9 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Spinner, Form } from "react-bootstrap";
-import { Helmet } from "react-helmet";
-import { Link, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import axios from 'axios';
+import React, { useState } from 'react';
+import { Spinner, Form } from 'react-bootstrap';
+import { Helmet } from 'react-helmet';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { login } from '../../Api/Api';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
