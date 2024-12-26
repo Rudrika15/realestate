@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
-// import Footer from "../../Components/Footer/Footer";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -10,13 +10,15 @@ function AddPartners() {
   const [selectproject, setselectproject] = useState("");
   const [partners, setPartners] = useState([{ name: "", percentage: "" }]);
   const [error, setErrors] = useState({});
+  const [loading, setLoading] = useState(false); 
+
+  const navigate = useNavigate(); 
 
   const selectprojectRef = useRef(null);
   const nameRef = useRef(null);
   const partnersRef = useRef(null);
   const submitRef = useRef(null);
 
-  
   useEffect(() => {
     selectprojectRef.current.focus();
   }, []);
@@ -28,14 +30,8 @@ function AddPartners() {
     }
   };
 
-  const handleAddPartner = () => {
-    setPartners([...partners, { name: "", percentage: "" }]);
-  };
-
-  // const handleRemovePartner = (index) => {
-  //   const updatedPartners = [...partners];
-  //   updatedPartners.splice(index, 1);
-  //   setPartners(updatedPartners);
+  // const handleAddPartner = () => {
+  //   setPartners([...partners, { name: "", percentage: "" }]);
   // };
 
   const handleInputChange = (index, e) => {
@@ -60,40 +56,27 @@ function AddPartners() {
 
     partners.forEach((partner, index) => {
       if (!partner.name) {
-        validationError[`name${index}`] = `Please enter Name for partner ${
-          index + 1
-        }`;
+        validationError[`name${index}`] = " Please enter Name for partner" ;
         isValid = false;
       }
 
       if (!/^[A-Za-z ]+$/.test(partner.name)) {
-        validationError[`name${index}`] = `Name for partner ${
-          index + 1
-        } can only contain letters and spaces`;
+        validationError[`name${index}`] = "Name for partner  can only contain letters and spaces";
         isValid = false;
       }
 
       if (!partner.percentage) {
-        validationError[
-          `percentage${index}`
-        ] = `Please enter Percentage for partner ${index + 1}`;
+        validationError[`percentage${index}`] = "Please enter Percentage for partner ";
         isValid = false;
       }
 
       if (isNaN(partner.percentage)) {
-        validationError[`percentage${index}`] = `Percentage for partner ${
-          index + 1
-        } must be a valid number!`;
+        validationError[`percentage${index}`] = "Percentage for partner  must be a valid number!";
         isValid = false;
       }
 
-      if (
-        parseFloat(partner.percentage) < 0 ||
-        parseFloat(partner.percentage) > 100
-      ) {
-        validationError[`percentage${index}`] = `Percentage for partner ${
-          index + 1
-        } must be between 0 and 100!`;
+      if (parseFloat(partner.percentage) < 0 || parseFloat(partner.percentage) > 100) {
+        validationError[`percentage${index}`] = "Percentage for partner  must be between 0 and 100!";
         isValid = false;
       }
     });
@@ -103,8 +86,16 @@ function AddPartners() {
       return;
     }
 
-    setselectproject("");
-    setPartners([{ name: "", percentage: "" }]);
+    setLoading(true);  
+
+    setTimeout(() => {
+      setLoading(false);  
+      setselectproject("");
+      setPartners([{ name: "", percentage: "" }]);
+      setErrors({});  
+      localStorage.setItem('partnersData', JSON.stringify(partners));
+      navigate("/partners");  
+    }, 2000);  
   };
 
   return (
@@ -136,9 +127,7 @@ function AddPartners() {
                     <div className="row">
                       <div className="col">
                         <select
-                          className={`form-select form-select-sm p-2 ${
-                            error.selectproject ? "is-invalid" : ""
-                          }`}
+                          className={`form-select form-select-sm p-2 ${error.selectproject ? "is-invalid" : ""}`}
                           value={selectproject}
                           onChange={(e) => setselectproject(e.target.value)}
                           ref={selectprojectRef}
@@ -162,9 +151,7 @@ function AddPartners() {
                           <div className="input-container">
                             <input
                               type="text"
-                              className={`form-control mb-1 ${
-                                error[`name${index}`] ? "is-invalid" : ""
-                              }`}
+                              className={`form-control mb-1 ${error[`name${index}`] ? "is-invalid" : ""}`}
                               placeholder="Name"
                               value={partner.name}
                               onChange={(e) => handleInputChange(index, e)}
@@ -184,9 +171,7 @@ function AddPartners() {
                           <div className="input-container">
                             <input
                               type="text"
-                              className={`form-control mb-1 ${
-                                error[`percentage${index}`] ? "is-invalid" : ""
-                              }`}
+                              className={`form-control mb-1 ${error[`percentage${index}`] ? "is-invalid" : ""}`}
                               placeholder="Percentage"
                               value={partner.percentage}
                               onChange={(e) => handleInputChange(index, e)}
@@ -201,6 +186,21 @@ function AddPartners() {
                             )}
                           </div>
                         </div>
+                      </div>
+                    ))}
+
+                    <button
+                      type="submit"
+                      className="btn btn-primary mt-3"
+                      ref={submitRef}
+                      disabled={loading}  
+                    >
+                      {loading ? (
+                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      ) : (
+                        "Submit"
+                      )}
+                    </button>
                         {/* <div className="col-1">
                           {index === 0 && (
                             <i
@@ -215,22 +215,11 @@ function AddPartners() {
                             ></i>
                           )}
                         </div> */}
-                      </div>
-                    ))}
-
-                    <button
-                      type="submit"
-                      className="btn btn-primary mt-3"
-                      ref={submitRef}
-                    >
-                      Submit
-                    </button>
                   </form>
                 </div>
               </div>
             </div>
           </div>
-          {/* <Footer />   */}
         </div>
       </div>
 

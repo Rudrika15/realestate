@@ -1,16 +1,40 @@
-// src/Pages/Add/Add.js
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
-import Footer from "../../Components/Footer/Footer";
+
 import { toast, ToastContainer } from "react-toastify";
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 
 const AddExpenses = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+  const [expense, setExpense] = useState("");
+
+  const [expenses, setExpenses] = useState([
+    {
+      project: "Shiv",
+      name: "Khilen Maniyar",
+      expenseHead: "Construction Materials",
+      narration: "Expense For Purchasing.....",
+      amount: "15,00,000"
+    },
+    {
+      project: "Mahadev",
+      name: "Jigar Parmar",
+      expenseHead: "Utilities",
+      narration: "Expense For Purchasing.....",
+      amount: "5,00,000"
+    },
+    {
+      project: "Ganesh",
+      name: "Jinal Pujara",
+      expenseHead: "Site Preparation",
+      narration: "Expense For Purchasing.....",
+      amount: "14,00,000"
+    }
+  ]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -18,6 +42,22 @@ const AddExpenses = () => {
 
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
+  };
+
+  const addNewExpense = () => {
+    const newExpense = {
+      project: "",
+      name: "",
+      expenseHead: "",
+      narration: "",
+      amount: ""
+    };
+    setExpenses([...expenses, newExpense]);
+  };
+
+  const removeExpense = (index) => {
+    const updatedExpenses = expenses.filter((_, i) => i !== index);
+    setExpenses(updatedExpenses);
   };
 
   return (
@@ -29,8 +69,12 @@ const AddExpenses = () => {
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
-        <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
-          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
+        <div className={`content ${isSidebarOpen ? "open" : ""}`}>
+          <Topbar
+            toggleSidebar={toggleSidebar}
+            isTopbarOpen={isTopbarOpen}
+            toggleTopbar={toggleTopbar}
+          />
 
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
@@ -42,10 +86,55 @@ const AddExpenses = () => {
                     </div>
                     <div className="p-2 ">
                       <Link to="/expenses" className="">
-                        <h6 className="mb-4"><i className="bi bi-arrow-left-circle-fill"></i> Back</h6>
+                        <h6 className="mb-4">
+                          <i className="bi bi-arrow-left-circle-fill"></i> Back
+                        </h6>
                       </Link>
                     </div>
                   </div>
+                  <div className="row pt-1 pb-5 border-bottom">
+                    <div className="col">
+                      <input
+                        type="text"
+                        id="date"
+                        className="form-control"
+                        value={
+                          expense
+                            ? new Date(expense).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "2-digit",
+                            })
+                            : ""
+                        }
+                        onChange={(e) => {
+                          const inputDate = e.target.value;
+                          const [day, month, year] = inputDate.split("-");
+                          if (day && month && year) {
+                            const formattedDate = `${day}-${month}-${year}`;
+                            const parsedDate = new Date(formattedDate);
+                            setExpense(parsedDate);
+                          }
+                        }}
+                        placeholder="Voucher Expense"
+                        onFocus={(e) => (e.target.type = "date")}
+                        onBlur={(e) => (e.target.type = "text")}
+                      />
+                    </div>
+                    <div className="col">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Voucher No"
+                      />
+                    </div>
+                    <div className="col"></div>
+                  </div>
+
+                  <div className="col">
+                    <h6 className="pt-3 pb-2 ps-3">Project Details</h6>
+                  </div>
+
                   <table className="table table-bordered text-center">
                     <thead>
                       <tr>
@@ -58,67 +147,77 @@ const AddExpenses = () => {
                       </tr>
                     </thead>
                     <tbody>
+                      {expenses.map((expense, index) => (
+                        <tr key={index}>
+                          <td>
+                            <select className="form-select">
+                              <option selected>{expense.project}</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={expense.name}
+                              onChange={(e) => {
+                                const updatedExpenses = [...expenses];
+                                updatedExpenses[index].name = e.target.value;
+                                setExpenses(updatedExpenses);
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <select className="form-select">
+                              <option selected>{expense.expenseHead}</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={expense.narration}
+                              onChange={(e) => {
+                                const updatedExpenses = [...expenses];
+                                updatedExpenses[index].narration = e.target.value;
+                                setExpenses(updatedExpenses);
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={expense.amount}
+                              onChange={(e) => {
+                                const updatedExpenses = [...expenses];
+                                updatedExpenses[index].amount = e.target.value;
+                                setExpenses(updatedExpenses);
+                              }}
+                            />
+                          </td>
+                          <td className="text-center action-buttons">
+                            <i
+                              className="bi bi-x-circle-fill"
+                              onClick={() => removeExpense(index)}
+                            ></i>
+                            {index === expenses.length - 1 && (
+                              <i
+                                className="bi bi-plus-circle-fill"
+                                onClick={addNewExpense}
+                              ></i>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
                       <tr>
-                        <td>
-                          <select className="form-select">
-                            <option selected>Shiv</option>
-                          </select>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td className="text-end ">
+                          Total Amount <br />
+                          Amount In Word
                         </td>
-                        <td><input type="text" className="form-control" value="Khilen Maniyar" /></td>
-                        <td>
-                          <select className="form-select">
-                            <option selected>Construction Materials</option>
-                          </select>
-                        </td>
-                        <td>
-                          <input type="text" className="form-control" value="Expense For Purchasing....." />
-                        </td>
-                        <td><input type="text" className="form-control" value="15,00,000" /></td>
-                        <td>
-                          <i className="bi bi-x-circle-fill"></i>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <select className="form-select">
-                            <option selected>Mahadev</option>
-                          </select>
-                        </td>
-                        <td><input type="text" className="form-control" value="Jigar Parmar" /></td>
-                        <td>
-                          <select className="form-select">
-                            <option selected>Utilities</option>
-                          </select>
-                        </td>
-                        <td>
-                          <input type="text" className="form-control" value="Expense For Purchasing....." />
-                        </td>
-                        <td><input type="text" className="form-control" value="5,00,000" /></td>
-                        <td className="text-center action-buttons">
-                          <i
-                            className="bi bi-x-circle-fill"></i>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <select className="form-select">
-                            <option selected>Ganesh</option>
-                          </select>
-                        </td>
-                        <td><input type="text" className="form-control" value="Jinal Pujara" /></td>
-                        <td>
-                          <select className="form-select">
-                            <option selected>Site Preparation</option>
-                          </select>
-                        </td>
-                        <td>
-                          <input type="text" className="form-control" value="Expense For Purchasing....." />
-                        </td>
-                        <td><input type="text" className="form-control" value="14,00,000" /></td>
-                        <td className="text-center action-buttons">
-                          <i className="bi bi-x-circle-fill"></i>
-                          <i className="bi bi-plus-circle-fill"></i>
-                        </td>
+                        <td colSpan={2}></td>
                       </tr>
                     </tbody>
                   </table>
@@ -126,7 +225,6 @@ const AddExpenses = () => {
               </div>
             </div>
           </div>
-          <Footer />
         </div>
       </div>
     </>
