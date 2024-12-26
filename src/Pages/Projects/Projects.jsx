@@ -39,7 +39,7 @@ const Projects = () => {
                                         </div>
                                         <div className="p-2">
                                             <Link to="/add-projects" className="">
-                                                <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add New Project</h6>
+                                                <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> New Project</h6>
                                             </Link>
                                         </div>
                                     </div>
