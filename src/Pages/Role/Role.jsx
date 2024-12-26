@@ -9,7 +9,7 @@ import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { getUsers } from '../../Api/Api';
 import axios from "axios";
-
+import Swal from "sweetalert2";
 
 
 const Role = () => {
@@ -49,6 +49,35 @@ const Role = () => {
   useEffect(() => {
     getData();
   }, [data]);
+
+  const handleDelete = (id) => {
+          Swal.fire({
+              title: 'Are You Sure You Want to Delete?',
+              text: 'Once you delete, all the data related to this user will be deleted.',
+              icon: 'error',
+              showCancelButton: true,
+              confirmButtonText: 'Delete',
+              cancelButtonText: 'Cancel',
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#c4c4c4',
+              customClass: {
+                  title: 'swal-title',
+                  text: 'swal-text',
+                  confirmButton: 'swal-confirm-btn',
+                  cancelButton: 'swal-cancel-btn',
+              },
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  Swal.fire({
+                      title: 'Deleted!',
+                      text: 'The user has been deleted.',
+                      icon: 'success',
+                      confirmButtonColor: '#3085d6',
+                  });
+              }
+          });
+      };
+
   return (
     <>
       <ToastContainer />
@@ -112,7 +141,7 @@ const Role = () => {
                           >
                             <i className="fas fa-edit"></i>
                           </Link>
-                          <Link to="" className="btn btn-danger btn-sm">
+                          <Link onClick={() => handleDelete()} className="btn btn-danger btn-sm">
                             <i className="fas fa-trash"></i>
                           </Link>
                         </td>
