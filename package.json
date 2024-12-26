@@ -10,8 +10,12 @@
     "react-bootstrap": "^2.10.6",
     "react-dom": "^19.0.0",
     "react-helmet": "^6.1.0",
+<<<<<<< HEAD
     "react-icons": "^5.4.0",
     "react-router-dom": "^7.0.2",
+=======
+    "react-router-dom": "^7.1.1",
+>>>>>>> 724347accd1d4f613f526a5516118e956cb1bfbc
     "react-scripts": "5.0.1",
     "react-toastify": "^10.0.6",
     "sweetalert2": "^11.15.3",

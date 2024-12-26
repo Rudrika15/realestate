@@ -1,5 +1,5 @@
 // src/Pages/Add/Add.js
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
@@ -16,8 +16,8 @@ const Role = () => {
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [data, setData] = useState(
     [
-      { id: 1, name: "Bob Johnson" },
-      { id: 2, name: "John Doe" },
+      // { id: 1, name: "Bob Johnson" },
+      // { id: 2, name: "John Doe" },
       // { id: 3, name: 'Alice Smith' },
     ].sort((a, b) => a.name.localeCompare(b.name))
   );
@@ -50,32 +50,32 @@ const Role = () => {
   }, [data]);
 
   const handleDelete = (id) => {
-          Swal.fire({
-              title: 'Are You Sure You Want to Delete?',
-              text: 'Once you delete, all the data related to this user will be deleted.',
-              icon: 'error',
-              showCancelButton: true,
-              confirmButtonText: 'Delete',
-              cancelButtonText: 'Cancel',
-              confirmButtonColor: '#d33',
-              cancelButtonColor: '#c4c4c4',
-              customClass: {
-                  title: 'swal-title',
-                  text: 'swal-text',
-                  confirmButton: 'swal-confirm-btn',
-                  cancelButton: 'swal-cancel-btn',
-              },
-          }).then((result) => {
-              if (result.isConfirmed) {
-                  Swal.fire({
-                      title: 'Deleted!',
-                      text: 'The user has been deleted.',
-                      icon: 'success',
-                      confirmButtonColor: '#3085d6',
-                  });
-              }
-          });
-      };
+    Swal.fire({
+      title: 'Are You Sure You Want to Delete?',
+      text: 'Once you delete, all the data related to this user will be deleted.',
+      icon: 'error',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#c4c4c4',
+      customClass: {
+        title: 'swal-title',
+        text: 'swal-text',
+        confirmButton: 'swal-confirm-btn',
+        cancelButton: 'swal-cancel-btn',
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'The user has been deleted.',
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+        });
+      }
+    });
+  };
 
   return (
     <>
@@ -110,50 +110,50 @@ const Role = () => {
                     </div>
                   </div>
                   {data.length > 0 ? (
-                  <table className="table table-bordered text-center">
-                    <thead>
-                      <tr>
-                        <th scope="col" className="w-25">
-                          Role Id
-                        </th>
-                        <th scope="col">Role Name</th>
-                        <th scope="col" className="w-25">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.map((user) =>(
-                      <tr>
-                        <td>{user.id}</td>
-                        <td>{user.name}</td>
-                        <td>
-                          <Link
-                            to="/permission"
-                            className="btn btn-info btn-sm me-2"
-                          >
-                            <i className="fas fa-eye"></i>
-                          </Link>
-                          <Link
-                            to="/edit-role"
-                            className="btn btn-warning btn-sm me-2"
-                          >
-                            <i className="fas fa-edit"></i>
-                          </Link>
-                          <Link onClick={() => handleDelete()} className="btn btn-danger btn-sm">
-                            <i className="fas fa-trash"></i>
-                          </Link>
-                        </td>
-                      </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                    <table className="table table-bordered text-center">
+                      <thead>
+                        <tr>
+                          <th scope="col" className="w-25">
+                            Role Id
+                          </th>
+                          <th scope="col">Role Name</th>
+                          <th scope="col" className="w-25">
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.map((user) => (
+                          <tr>
+                            <td>{user.id}</td>
+                            <td>{user.name}</td>
+                            <td>
+                              <Link
+                                to="/permission"
+                                className="btn btn-info btn-sm me-2"
+                              >
+                                <i className="fas fa-eye"></i>
+                              </Link>
+                              <Link
+                                to="/edit-role"
+                                className="btn btn-warning btn-sm me-2"
+                              >
+                                <i className="fas fa-edit"></i>
+                              </Link>
+                              <Link onClick={() => handleDelete()} className="btn btn-danger btn-sm">
+                                <i className="fas fa-trash"></i>
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   ) : (
                     <div className="text-center">
-                        <img src="img/image_2024_12_26T09_33_16_035Z.png" alt="No Users" className="img-fluid w-25 h-25" />
-                        <p className="text-dark">No Users Found</p>
+                      <img src="img/image_2024_12_26T09_23_33_935Z.png" alt="No Users" className="img-fluid w-25 h-25" />
+                      <p className="text-dark">No Users Found</p>
                     </div>
-                )}
+                  )}
                 </div>
               </div>
             </div>

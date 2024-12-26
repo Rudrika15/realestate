@@ -38,11 +38,11 @@ const Expenses = () => {
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between   mb-3">
                     <div className="p-2 ">
-                      <h6 className="mb-4">Expenses</h6>
+                      <h6 className="mb-4">Expenses List</h6>
                     </div>
                     <div className="p-2 ">
                       <Link to="/add-expenses" className="">
-                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add New Expense</h6>
+                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i>  New Expense</h6>
                       </Link>
                     </div>
                   </div>
