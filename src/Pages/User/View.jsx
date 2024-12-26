@@ -12,10 +12,11 @@ const View = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
     const [data, setData] = useState([
-        { id: 1, name: 'Bob Johnson' },
-        { id: 2, name: 'John Doe' },
-        // { id: 3, name: 'Alice Smith' },
+        // { id: 1, name: 'Bob Johnson', email: 'Bob@gmail.com'},
+        // { id: 2, name: 'John Doe', email: 'John@gmail.com' },
+        // { id: 3, name: 'Alice Smith', email: 'Alice@gmail.com'},
     ].sort((a, b) => a.name.localeCompare(b.name)));
+    
     // const [loading, setLoading] = useState(true);
     const getData = async () => {
         try {
@@ -107,9 +108,10 @@ const View = () => {
                                         <table className="table table-bordered text-center">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" className="w-25">UserId</th>
+                                                    <th scope="col">UserId</th>
                                                     <th scope="col">UserName</th>
-                                                    <th scope="col" className="w-25">Action</th>
+                                                    <th scope="col">Email</th>
+                                                    <th scope="col">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -117,6 +119,7 @@ const View = () => {
                                                     <tr>
                                                         <td>{user.id}</td>
                                                         <td>{user.name}</td>
+                                                        <td>{user.email}</td>
                                                         <td>
                                                             <Link to="/edit-user" className="btn btn-warning btn-sm me-2">
                                                                 <i className="fas fa-edit"></i>
@@ -148,7 +151,8 @@ const View = () => {
                                         </table>
                                     ) : (
                                         <div className="text-center">
-                                            <img src="img/Screenshot_2024-12-25_105853-removebg-preview.png" alt="No Users" className="img-fluid w-25 h-25" />
+                                            {/* <img src="img/image_2024_12_26T07_40_34_439Z.png" alt="No Users" className="img-fluid w-25 h-25" /> */}
+                                            <img src="img/image_2024_12_26T09_23_33_935Z.png" alt="No Users" className="img-fluid w-25 h-25" />
                                             <p className="text-dark">No Users Found</p>
                                         </div>
                                     )}

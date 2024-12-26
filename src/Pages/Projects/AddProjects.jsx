@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
+import { BiSolidDownload } from "react-icons/bi";
 
 const AddProjects = () => {
   const [name, setName] = useState("");
@@ -179,19 +180,15 @@ const AddProjects = () => {
 
                     <div className="mb-3">
                       <label htmlFor="file" className="form-label">
-                        Upload Template:
+                        Template:
                       </label>
-                      <input
-                        type="file"
-                        accept=".jpg, .jpeg, .png, .pdf, .docx" 
-                        className="form-control"
-                        multiple
-                        id="unit"
-                        aria-describedby="unit"
-                        onKeyPress={(e) => handleEnter(e, submitRef)}
-                        ref={files}
-                        onChange={(e) => setUnit(e.target.files)}
-                      />
+
+                      <div className="row">
+                        <div className="col-2" style={{textAlign:"center"}}>
+
+                      <BiSolidDownload style={{fontSize:"30px"}} />
+                        </div>
+                      </div>
                     </div>
                       </div>
                     </div>
