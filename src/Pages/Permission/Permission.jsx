@@ -5,10 +5,11 @@ import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import Footer from "../../Components/Footer/Footer";
 
+
 function Permission() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-
+       
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
@@ -16,6 +17,7 @@ function Permission() {
     const toggleTopbar = () => {
         setIsTopbarOpen(!isTopbarOpen);
     };
+    
 
     return (
         <>
@@ -41,8 +43,8 @@ function Permission() {
                                             <h6 className="mb-4">Permission</h6>
                                         </div>
                                         <div className="p-2">
-                                            <Link to="/role" className="btn btn-secondary">
-                                                <i className="bi bi-arrow-left-circle-fill"></i> Back
+                                            <Link to="/role" className="">
+                                            <h6 className="mb-4"><i className="bi bi-arrow-left-circle-fill"></i> Back</h6>
                                             </Link>
                                         </div>
                                     </div>

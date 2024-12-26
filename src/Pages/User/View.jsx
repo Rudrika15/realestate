@@ -16,7 +16,7 @@ const View = () => {
         // { id: 2, name: 'John Doe', email: 'John@gmail.com' },
         // { id: 3, name: 'Alice Smith', email: 'Alice@gmail.com'},
     ].sort((a, b) => a.name.localeCompare(b.name)));
-    
+
     // const [loading, setLoading] = useState(true);
     const getData = async () => {
         try {
