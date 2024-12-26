@@ -1,21 +1,12 @@
---sholk work:
--Add partner page navigation
 
 My work:
-- Add Project-> It should navigate to the add new project screen.
--If it is in edit mode, then the project name should be pre-filled.
-- Once the project is added, it should redirect to the project list.
--delete button popup.(replace BS modelpopup with sweet alert dependency).
---change upload file validation to xslx.
---add upload template button,validation for excel done.
- 
+- -delte button-sweetlert replace
+-remove and update with "download template"
+3. If No data -> Image with No Data - 
 
 To-do:-
 
 On Submit -> Show Error based on API response.
-3. If No data -> Image with No Data - 
--delte button-sweetlert replace
--project list and unit list display(API pending)
--remove and update with "download template"
+
 
 
