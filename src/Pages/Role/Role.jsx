@@ -11,7 +11,6 @@ import { getUsers } from '../../Api/Api';
 import axios from "axios";
 import Swal from "sweetalert2";
 
-
 const Role = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
@@ -19,7 +18,7 @@ const Role = () => {
     [
       { id: 1, name: "Bob Johnson" },
       { id: 2, name: "John Doe" },
-      { id: 3, name: 'Alice Smith' },
+      // { id: 3, name: 'Alice Smith' },
     ].sort((a, b) => a.name.localeCompare(b.name))
   );
 
@@ -151,7 +150,7 @@ const Role = () => {
                   </table>
                   ) : (
                     <div className="text-center">
-                        <img src="img/Screenshot_2024-12-25_105853-removebg-preview.png" alt="No Users" className="img-fluid w-25 h-25" />
+                        <img src="img/image_2024_12_26T09_33_16_035Z.png" alt="No Users" className="img-fluid w-25 h-25" />
                         <p className="text-dark">No Users Found</p>
                     </div>
                 )}
@@ -166,3 +165,4 @@ const Role = () => {
 };
 
 export default Role;
+//data are alfabetic and change id autometic 

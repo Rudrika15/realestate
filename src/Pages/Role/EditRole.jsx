@@ -86,19 +86,19 @@ function EditRole() {
                       </Link>
                     </div>
                   </div>
-                  <form>
+                  <form onSubmit={handleEdit}>
                     <div className="row mb-3 w-50">
                       <div className="col">
                         <input
-                          type="email"
+                        
                           className={`form-control ${
                             rolenameerror ? "is-invalid" : ""
                           }`}
                           value={rolename}
                           ref={rolenameRef}
-                          id="email"
+                        
                           placeholder="Rolename"
-                          name="email"
+                        
                           onKeyDown={(e) => handleEnter(e, null)}
                           onChange={handleRolenameChange}
                         />
