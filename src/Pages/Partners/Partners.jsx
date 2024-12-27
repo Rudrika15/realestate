@@ -5,13 +5,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Swal from "sweetalert2"; 
+import Swal from "sweetalert2";
 
 const Partners = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [partners, setPartners] = useState([]);
-
   const navigate = useNavigate();
 
   const toggleSidebar = () => {
@@ -28,10 +27,6 @@ const Partners = () => {
       setPartners(storedPartnersData);
     }
   }, []);
-
-  const handleEdit = (index) => {
-    navigate(`/add-partners`, { state: { partner: partners[index] } });
-  };
 
   const deletePartner = (index) => {
     Swal.fire({
@@ -52,6 +47,11 @@ const Partners = () => {
     });
   };
 
+  const handleEditClick = (partner) => {
+    // Navigate to the EditPartners page and pass the partner data
+    navigate("/edit-partners", { state: { partner } });
+  };
+
   return (
     <>
       <ToastContainer />
@@ -62,7 +62,11 @@ const Partners = () => {
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
-          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
+          <Topbar
+            toggleSidebar={toggleSidebar}
+            isTopbarOpen={isTopbarOpen}
+            toggleTopbar={toggleTopbar}
+          />
 
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
@@ -70,7 +74,7 @@ const Partners = () => {
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
                     <div className="p-2">
-                      <h6 className="mb-4">Partners</h6>
+                      <h6 className="mb-4">Partners List</h6>
                     </div>
                     <div className="p-2">
                       <Link to="/add-partners">
@@ -101,7 +105,7 @@ const Partners = () => {
                             <td>{partner.percentage}</td>
                             <td>
                               <button
-                                onClick={() => handleEdit(index)} 
+                                onClick={() => handleEditClick(partner)} // Pass partner data to EditPartners page
                                 className="btn btn-warning btn-sm me-2"
                               >
                                 <i className="fas fa-edit"></i>
@@ -119,12 +123,12 @@ const Partners = () => {
                     </table>
                   ) : (
                     <div className="text-center">
-                      {/* <img
-                        src="img/nodata.png"
-                        alt="No Partners"
+                      <img
+                        src="img/image_2024_12_26T09_23_33_935Z.png"
+                        alt="No Users"
                         className="img-fluid w-25 h-25"
                       />
-                      <p className="text-dark">No Partners Found</p> */}
+                      <p className="text-dark">No Partners Found</p>
                     </div>
                   )}
                 </div>
