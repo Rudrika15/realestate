@@ -38,7 +38,12 @@ const Login = () => {
     e.preventDefault();
     let isValid = true;
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!email) {
+      setEmailError(true);
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
       setEmailError(true);
       isValid = false;
     } else {
@@ -106,17 +111,17 @@ const Login = () => {
                 <Form>
                   <div className="form-floating mb-3">
                     <input
-                      type="email"
+                      type="text"
                       className={`form-control ${emailError ? 'is-invalid' : ''}`}
                       id="floatingInput"
-                      placeholder="Email address"
+                      placeholder="User Name"
                       value={email}
                       ref={emailRef}
                       onChange={handleEmailChange}
                       onKeyDown={(e) => handleEnter(e, passcodeRef)}
                     />
-                    {emailError && <div className="invalid-feedback">Enter a valid Email</div>}
-                    <label htmlFor="floatingInput">Email address</label>
+                    {emailError && <div className="invalid-feedback">Enter a valid Username</div>}
+                    <label htmlFor="floatingInput">UserName</label>
                   </div>
                   <div className="form-floating mb-4">
                     <input

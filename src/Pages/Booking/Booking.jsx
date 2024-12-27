@@ -2,36 +2,47 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import Footer from "../../Components/Footer/Footer";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Helmet } from "react-helmet";
+import { Spinner } from "react-bootstrap";
 
 function Booking() {
-  const [selectOption, setSelectOption] = useState(""); // loan
-  const [loanAmount, setLoanAmount] = useState("");
-  const [bankDetails, setBankDetails] = useState("");
+  // const [selectOption, setSelectOption] = useState("");
+  // const [loanAmount, setLoanAmount] = useState("");
+  // const [bankDetails, setBankDetails] = useState("");
+  // const [paymentFrequence, setPaymentFrequence] = useState(""); 
+  // const [amount, setAmount] = useState("");
+  // const [totalInstallments, setTotalInstallments] = useState("");
+  // const [tokenpaymentDate, setTokenPaymentDate] = useState("");
+  // const [pendingpaymentDate, setPendingPaymentDate] = useState("");
+  // const [downPayment, setDownPayment] = useState("");
+  // const [paymentDuration, setPaymentDuration] = useState("");
 
-  const [paymentFrequence, setPaymentFrequence] = useState(""); //installments
-  const [amount, setAmount] = useState("");
-  const [totalInstallments, setTotalInstallments] = useState("");
-
-  const [projectName, setProjectName] = useState(""); // validation
+  const [projectName, setProjectName] = useState("");
   const [unit, setUnit] = useState("");
   const [bookingDate, setBookingDate] = useState("");
-  const [tokenpaymentDate, setTokenPaymentDate] = useState("");
-  const [pendingpaymentDate, setPendingPaymentDate] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
   const [saleAmount, setSaleAmount] = useState("");
   const [extra, setExtra] = useState("");
   const [work, setWork] = useState("");
+  const [installment, setInstallment] = useState("");
 
-  const [downPayment, setDownPayment] = useState("");
-  const [paymentDuration, setPaymentDuration] = useState("");
+  const [projectError, setProjectError] = useState(false);
+  const [unitError, setUnitError] = useState("");
+  const [bookingError, setBookingError] = useState("");
+  const [customerNameError, setCustomerNameError] = useState("");
+  const [customerContactError, setCustomerContactError] = useState("");
+  const [customerAddressError, setCustomerAddressError] = useState("");
+  const [saleAmountError, setSaleAmountError] = useState("");
+  const [extraError, setExtraError] = useState("");
+  const [workError, setWorkError] = useState("");
+  const [installmentError, setInstallmentError] = useState("");
 
-  const inputRef = useRef(null);
+  const projectRef = useRef(null);
   const unitRef = useRef(null);
   const dateRef = useRef(null);
   const customerNameRef = useRef(null);
@@ -40,23 +51,13 @@ function Booking() {
   const saleAmountRef = useRef(null);
   const extraRef = useRef(null);
   const workRef = useRef(null);
-  const downPaymentRef = useRef(null);
-  const paymentDurationRef = useRef(null);
-
-  const loanRef = useRef(null);
   const installmentRef = useRef(null);
-
-  const loanAmountRef = useRef(null);
-  const bankDetailsRef = useRef(null);
-
-  const paymentFrequenceRef = useRef(null);
-  const amountRef = useRef(null);
-  const totalInstallmentsRef = useRef(null);
-
   const submitRef = useRef(null);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -66,135 +67,146 @@ function Booking() {
     setIsTopbarOpen(!isTopbarOpen);
   };
 
-  const handleRadio = (e) => {
-    setSelectOption(e.target.value);
-  };
-  // focus
-  useEffect(() => {
-    inputRef.current.focus();
-  }, []);
-
-  // enter to focus
   const handleEnter = (e, nextField) => {
-    if (e.key === "Enter" && nextField.current) {
+    if (e.key === "Enter" && nextField?.current) {
       e.preventDefault();
       nextField.current.focus();
     }
   };
-  // shortcut Key //
-  const handleKey = useCallback((event) => {
-    if (event.key === "F4") {
-      handleSubmit(event);
-    }
-  }, []);
-  useEffect(() => {
-    document.addEventListener("keydown", handleKey);
-    return () => {
-      document.removeEventListener("keydown", handleKey);
-    };
-  }, [handleKey]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    let isValid = true;
 
     if (!projectName) {
-      toast.error(" select a project!");
-      return;
+      setProjectError(true);
+      isValid = false;
+    } else {
+      setProjectError(false);
     }
+
     if (!unit) {
-      toast.error(" select a Unit!");
-      return;
+      setUnitError(true);
+      isValid = false;
+    } else {
+      setUnitError(false);
     }
+
     if (!bookingDate) {
-      toast.error("select a Date!");
-      return;
+      setBookingError(true);
+      isValid = false;
+    } else {
+      setBookingError(false);
     }
+
     if (!customerName) {
-      toast.error("Enter Name!");
-      return;
+      setCustomerNameError(true);
+      isValid = false;
+    } else {
+      setCustomerNameError(false);
     }
-    if (!/^[A-Za-z ]+$/.test(customerName)) {
-      toast.error("Names can only contain letters and spaces");
-      return;
-    }
+
     if (!customerContact) {
-      toast.error("Enter Contact Number!");
-      return;
-    }
-    if (customerContact.length < 10 || customerContact.length > 10) {
-      toast.error("Enter 10 Digit Number!");
-      return;
+      setCustomerContactError(true);
+      isValid = false;
+    } else {
+      setCustomerContactError(false);
     }
 
     if (!customerAddress) {
-      toast.error("Enter Address");
-      return;
-    }
-    if (customerAddress.length < 20) {
-      toast.error("Enter Valid Address!");
-      return;
-    }
-    if (isNaN(saleAmount) || isNaN(extra) || isNaN(work)) {
-      toast.error("Only Number Enter");
-      return;
-    }
-    if (!saleAmount || !saleAmount.trim()) {
-      toast.error("Enter Sale Deed Amount!");
-      return;
-    }
-    if (!extra || !extra.trim()) {
-      toast.error("Enter Extra  Work Amount!");
-      return;
+      setCustomerAddressError(true);
+      isValid = false;
+    } else {
+      setCustomerAddressError(false);
     }
 
-    if (!work || !work.trim()) {
-      toast.error("Enter  Other Amount!");
-      return;
-    }
-    if (!downPayment || isNaN(downPayment) || !downPayment.trim()) {
-      toast.error("Enter Down Payment !");
-      return;
-    }
-    if (!paymentDuration) {
-      toast.error("Select Payment Duration !");
-      return;
+    if (!saleAmount) {
+      setSaleAmountError(true);
+      isValid = false;
+    } else {
+      setSaleAmountError(false);
     }
 
-    if (!selectOption) {
-      toast.error("Select Any One!");
-      return;
+    if (!extra) {
+      setExtraError(true);
+      isValid = false;
+    } else {
+      setExtraError(false);
     }
-    if (selectOption === "loan" && (!loanAmount || !bankDetails)) {
-      toast.error("Enter Loan Amount and Bank Details!");
-      return;
-    }
-    if (
-      selectOption === "installment" &&
-      (!paymentFrequence || !amount || !totalInstallments)
-    ) {
-      toast.error(" Enter All Installment Details!");
-      return;
-    }
-    toast.success("Successfully!");
 
-    // Reset all fields
-    setProjectName("");
-    setUnit("");
-    setBookingDate("");
-    setCustomerName("");
-    setCustomerContact("");
-    setCustomerAddress("");
-    setSaleAmount("");
-    setExtra("");
-    setWork("");
-    setDownPayment("");
-    setPaymentDuration("");
-    setSelectOption("");
-    setLoanAmount("");
-    setBankDetails("");
-    setPaymentFrequence("");
-    setAmount("");
-    setTotalInstallments("");
+    if (!work) {
+      setWorkError(true);
+      isValid = false;
+    } else {
+      setWorkError(false);
+    }
+
+    if (!installment) {
+      setInstallmentError(true);
+      isValid = false;
+    } else {
+      setInstallmentError(false);
+    }
+
+    if (isValid) {
+      setLoading(true);
+      toast.success("Booking Added Successfully!");
+      setTimeout(() => {
+        setLoading(false);
+        navigate("/view-booking");
+      }, 2000);
+    }
+  };
+
+  const handleProjectChange = (e) => {
+    setProjectName(e.target.value);
+    if (e.target.value) setProjectError(false);
+  };
+
+  const handleUnitChange = (e) => {
+    setUnit(e.target.value);
+    if (e.target.value) setUnitError(false);
+  };
+
+  const handleBookingDateChange = (e) => {
+    setBookingDate(e.target.value);
+    if (e.target.value) setBookingError(false);
+  };
+
+  const handleCustomerNameChange = (e) => {
+    setCustomerName(e.target.value);
+    if (e.target.value) setCustomerNameError(false);
+  };
+
+  const handleCustomerContactChange = (e) => {
+    setCustomerContact(e.target.value);
+    if (e.target.value) setCustomerContactError
+      (false);
+  };
+
+  const handleCustomerAddressChange = (e) => {
+    setCustomerAddress(e.target.value);
+    if (e.target.value) setCustomerAddressError(false);
+  };
+
+  const handleSaleAmountChange = (e) => {
+    setSaleAmount(e.target.value);
+    if (e.target.value) setSaleAmountError(false);
+  };
+
+  const handleExtraChange = (e) => {
+    setExtra(e.target.value);
+    if (e.target.value) setExtraError(false);
+  };
+
+  const handleWorkChange = (e) => {
+    setWork(e.target.value);
+    if (e.target.value) setWorkError(false);
+  };
+
+  const handleInstallmentChange = (e) => {
+    setInstallment(e.target.value);
+    if (e.target.value) setInstallmentError(false);
   };
 
   return (
@@ -233,35 +245,42 @@ function Booking() {
                     <div className="row">
                       <div className="col">
                         <select
-                          className="form-select mb-3"
+                          className={`form-control bg-white ${projectError ? "is-invalid" : ""}`}
                           value={projectName}
-                          onChange={(e) => setProjectName(e.target.value)}
-                          onKeyPress={(e) => handleEnter(e, unitRef)}
-                          ref={inputRef}
+                          ref={projectRef}
+                          onChange={handleProjectChange}
+                          onKeyDown={(e) => handleEnter(e, unitRef)}
                         >
                           <option value="">Project Name</option>
                           <option value="demo">demo</option>
                         </select>
+                        {projectError && (
+                          <div className="invalid-feedback">Please select a Project</div>
+                        )}
                       </div>
                       <div className="col">
                         <select
-                          className="form-select mb-3"
+                          className={`form-control bg-white ${unitError ? "is-invalid" : ""}`}
                           value={unit}
-                          onChange={(e) => setUnit(e.target.value)}
-                          onKeyPress={(e) => handleEnter(e, dateRef)}
                           ref={unitRef}
+                          onChange={handleUnitChange}
+                          onKeyDown={(e) => handleEnter(e, dateRef)}
                         >
                           <option value="">Unit No</option>
                           <option value="1">1</option>
                         </select>
+                        {unitError && (
+                          <div className="invalid-feedback">Please select a Unit</div>
+                        )}
                       </div>
                     </div>
-                    <div className="row pt-2">
+                    <div className="row pt-4">
                       <div className="col">
                         <input
                           type="text"
                           id="date"
-                          className="form-control"
+                          ref={dateRef}
+                          className={`form-control bg-white ${bookingError ? "is-invalid" : ""}`}
                           value={
                             bookingDate
                               ? new Date(bookingDate).toLocaleDateString("en-GB", {
@@ -272,10 +291,11 @@ function Booking() {
                               : ""
                           }
                           onChange={(e) => {
+                            handleBookingDateChange(e);
                             const inputDate = e.target.value;
                             const [day, month, year] = inputDate.split("-");
                             if (day && month && year) {
-                              const formattedDate = `${day}-${month}-${year}`;
+                              const formattedDate = `${year}-${month}-${day}`;
                               const parsedDate = new Date(formattedDate);
                               if (!isNaN(parsedDate)) {
                                 setBookingDate(parsedDate.toISOString().slice(0, 10));
@@ -284,56 +304,69 @@ function Booking() {
                               }
                             }
                           }}
+                          onKeyDown={(e) => handleEnter(e, customerNameRef)}
                           placeholder="Booking Date"
                           onFocus={(e) => (e.target.type = "date")}
                           onBlur={(e) => (e.target.type = "text")}
                         />
+                        {bookingError && (
+                          <div className="invalid-feedback">Please select a Booking Date</div>
+                        )}
                       </div>
                       <div className="col"></div>
                     </div>
                     <hr />
-                    <p class="text-dark fs-5">Customer Details</p>
+                    <p className="text-dark fs-5">Customer Details</p>
                     <div className="row">
                       <div className="col position-relative">
                         <input
                           type="text"
-                          className="form-control"
+                          className={`form-control ${customerNameError ? "is-invalid" : ""}`}
                           id="name"
                           placeholder="Name"
                           name="name"
                           value={customerName}
-                          onChange={(e) => setCustomerName(e.target.value)}
-                          onKeyPress={(e) => handleEnter(e, customerContactRef)}
                           ref={customerNameRef}
+                          onChange={handleCustomerNameChange}
+                          onKeyDown={(e) => handleEnter(e, customerContactRef)}
                         />
                         <i className="bi bi-plus-circle-fill icon-1"></i>
+                        {customerNameError && (
+                          <div className="invalid-feedback">Enter a Customer Name</div>
+                        )}
                       </div>
                       <div className="col">
                         <input
                           type="number"
-                          className="form-control"
+                          className={`form-control ${customerContactError ? "is-invalid" : ""}`}
                           id="Contact No"
                           placeholder="Contact No"
                           name="Contact No"
                           value={customerContact}
-                          onChange={(e) => setCustomerContact(e.target.value)}
-                          onKeyPress={(e) => handleEnter(e, customerAddressRef)}
+                          onChange={handleCustomerContactChange}
+                          onKeyDown={(e) => handleEnter(e, customerAddressRef)}
                           ref={customerContactRef}
                         />
                         <i className="bi bi-plus-circle-fill icon-2"></i>
+                        {customerContactError && (
+                          <div className="invalid-feedback">Enter a Customer Contact Number</div>
+                        )}
                       </div>
                     </div>
                     <div className="row w-75">
                       <div className="col pt-4">
                         <textarea
-                          className="form-control"
+                          className={`form-control ${customerAddressError ? "is-invalid" : ""}`}
                           placeholder="Address"
                           id="floatingTextarea"
                           value={customerAddress}
-                          onChange={(e) =>
-                            setCustomerAddress(e.target.value)
-                          }
+                          onChange={handleCustomerAddressChange}
+                          onKeyDown={(e) => handleEnter(e, saleAmountRef)}
+                          ref={customerAddressRef}
                         ></textarea>
+                        {customerAddressError && (
+                          <div className="invalid-feedback">Enter a Customer Address</div>
+                        )}
                       </div>
                     </div>
                     <hr />
@@ -341,167 +374,79 @@ function Booking() {
                     <div className="row">
                       <div className="col">
                         <input
-                          type="text"
-                          className="form-control"
+                          type="number"
+                          className={`form-control ${saleAmountError ? "is-invalid" : ""}`}
                           id="Sale Deed Amount"
                           placeholder="Sale Deed Amount"
                           name="Sale Deed Amount"
+                          value={saleAmount}
+                          onChange={handleSaleAmountChange}
+                          onKeyDown={(e) => handleEnter(e, extraRef)}
+                          ref={saleAmountRef}
                         />
+                        {saleAmountError && (
+                          <div className="invalid-feedback">Enter a Sale Deed Amount</div>
+                        )}
                       </div>
                       <div className="col">
                         <input
                           type="number"
-                          className="form-control"
+                          className={`form-control ${extraError ? "is-invalid" : ""}`}
                           id="Extra Work Amount"
                           placeholder="Extra Work Amount"
                           name="Extra Work Amount"
+                          value={extra}
+                          onChange={handleExtraChange}
+                          onKeyDown={(e) => handleEnter(e, workRef)}
+                          ref={extraRef}
                         />
+                        {extraError && (
+                          <div className="invalid-feedback">Enter an Extra Work Amount</div>
+                        )}
                       </div>
                     </div>
                     <div className="row pt-4">
                       <div className="col">
                         <input
-                          type="text"
-                          className="form-control"
-                          id="Other Work Amount"
-                          placeholder="Other Work Amount"
-                          name="Other Work Amount"
+                          type="number"
+                          className={`form-control ${workError ? "is-invalid" : ""}`}
+                          id="Work Amount"
+                          placeholder="Work Amount"
+                          name="Work Amount"
+                          value={work}
+                          onChange={handleWorkChange}
+                          onKeyDown={(e) => handleEnter(e, submitRef)}
+                          ref={workRef}
                         />
+                        {workError && (
+                          <div className="invalid-feedback">Enter Work Amount</div>
+                        )}
                       </div>
                       <div className="col"></div>
                     </div>
-                    <hr />
-                    <p class="text-dark fs-5">Payment Terms</p>
-                    <div className="row">
+                    <div className="row pt-4">
                       <div className="col">
-                        <select
-                          className="form-select mb-3"
-                          value={projectName}
-                          onChange={(e) => setProjectName(e.target.value)}
-                          onKeyPress={(e) => handleEnter(e, unitRef)}
-                          ref={inputRef}
+                        <button
+                          type="submit"
+                          className="btn btn-primary"
+                          ref={submitRef}
+                          disabled={loading}
                         >
-                          <option value="">Payment Plan</option>
-                          <option value="fullamount">Full Amount</option>
-                          <option value="installment">Installment</option>
-                          <option value="loan">Loan</option>
-                        </select>
-                      </div>
-                      <div className="col"></div>
-                    </div>
-                    <div className="row">
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="tokenamount"
-                          placeholder="Token Amount"
-                          name="tokenamount"
-                        // value="tokenamount"
-                        />
-                      </div>
-                      <div className="col">
-                        <input
-                          type="text"
-                          id="date"
-                          className="form-control"
-                          value={
-                            tokenpaymentDate
-                              ? new Date(tokenpaymentDate).toLocaleDateString("en-GB", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "2-digit",
-                              })
-                              : ""
-                          }
-                          onChange={(e) => {
-                            const inputDate = e.target.value;
-                            const [day, month, year] = inputDate.split("-");
-                            if (day && month && year) {
-                              const formattedDate = `${day}-${month}-${year}`;
-                              const parsedDate = new Date(formattedDate);
-                              if (!isNaN(parsedDate)) {
-                                setTokenPaymentDate(parsedDate.toISOString().slice(0, 10));
-                              } else {
-                                console.error("Invalid date format");
-                              }
-                            }
-                          }}
-                          placeholder="Token Payment Date"
-                          onFocus={(e) => (e.target.type = "date")}
-                          onBlur={(e) => (e.target.type = "text")}
-                        />
+                          {loading ? (
+                            <Spinner animation="border" size="sm" />
+                          ) : (
+                            "Submit"
+                          )}
+                        </button>
                       </div>
                     </div>
-                    <div className="row pt-3">
-                      <div className="col">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="pendingamount"
-                          placeholder="Pending Amount"
-                          name="pendingamount"
-                        // value="pendingamount"
-                        />
-                      </div>
-                      <div className="col">
-                        <input
-                          type="text"
-                          id="date"
-                          className="form-control"
-                          value={
-                            pendingpaymentDate
-                              ? new Date(pendingpaymentDate).toLocaleDateString("en-GB", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "2-digit",
-                              })
-                              : ""
-                          }
-                          onChange={(e) => {
-                            const inputDate = e.target.value;
-                            const [day, month, year] = inputDate.split("-");
-                            if (day && month && year) {
-                              const formattedDate = `${day}-${month}-${year}`;
-                              const parsedDate = new Date(formattedDate);
-                              if (!isNaN(parsedDate)) {
-                                setPendingPaymentDate(parsedDate.toISOString().slice(0, 10));
-                              } else {
-                                console.error("Invalid date format");
-                              }
-                            }
-                          }}
-                          placeholder="Pending Payment Date"
-                          onFocus={(e) => (e.target.type = "date")}
-                          onBlur={(e) => (e.target.type = "text")}
-                        />
-                      </div>
-                    </div>
-                    <div className="form-check pt-3">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="flexCheckDefault"
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="flexCheckDefault"
-                      >
-                        Installment Notify
-                      </label>
-                    </div>
-                    <button type="submit" className="btn btn-primary mt-3">
-                      Submit
-                    </button>
                   </form>
                 </div>
               </div>
             </div>
           </div>
-          <Footer />
-        </div >
-      </div >
+        </div>
+      </div>
     </>
   );
 }

@@ -1,20 +1,56 @@
 // src/Pages/Add/Add.js
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import Footer from "../../Components/Footer/Footer";
 import { Helmet } from 'react-helmet';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 const CancelledBooking = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-
+  const [data,setData] = useState([
+    {
+      No: 1,
+      date: '12/2/2024',
+      customerName: 'Alice',
+      saleDeedAmount: '5,00,000',
+      receivedSdAmount: '2,50,000',
+      pendingSdAmount: '2,50,000',
+      refundSdAmount:'2,00,000',
+      extraWorkAmount: '10,000',
+      receivedEwAmount: '5,000',
+      pendingEwAmount: '5,000',
+      refundEwAmount:'50000',
+      otherWorkAmount: '1,000',
+      receivedOtAmount: '500',
+      pendingOtAmount: '500',
+      refundOtAmount:'50000'
+    },
+  ].sort((a, b) => a.name.localeCompare(b.name)));
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const getData = async () => {
+    try {
+      const res = await axios.get();
+      if (res.data.status === true) {
+        const sortedData = res.data.data.sort((a, b) => a.name.localeCompare(b.name));
+        setData(sortedData);
+      } else {
+        console.error('Error fetching data:', res.data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [data]);
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
@@ -40,6 +76,7 @@ const CancelledBooking = () => {
                   </div>
 
                   <div className="table-responsive">
+                    {data.length > 0 ?(
                     <table className="table table-bordered text-center">
                       <thead>
                         <tr>
@@ -61,65 +98,40 @@ const CancelledBooking = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
+                      {data
+                          .sort((a, b) => a.name.localeCompare(b.name))
+                          .map((book, index) => (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{book.date}</td>
+                              <td>{book.customerName}</td>
+                              <td>{book.saleDeedAmount}</td>
+                              <td>{book.receivedSdAmount}</td>
+                              <td>{book.pendingSdAmount}</td>
+                              <td>{book.refundSdAmount}</td>
+                              <td>{book.extraWorkAmount}</td>
+                              <td>{book.receivedEwAmount}</td>
+                              <td>{book.pendingEwAmount}</td>
+                              <td>{book.refundEwAmount}</td>
+                              <td>{book.otherWorkAmount}</td>
+                              <td>{book.receivedOtAmount}</td>
+                              <td>{book.pendingOtAmount}</td>
+                              <td>{book.refundOtAmount}</td>
+                        </tr> 
+                          ))}                     
                       </tbody>
                     </table>
+                    ) : (
+                      <div className="text-center">
+                        <img src="img/image_2024_12_26T09_23_33_935Z.png" alt="No Users" className="img-fluid w-25 h-25" />
+                        <p className="text-dark">No Cancel Booking Data Found</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <Footer />
         </div>
       </div>
     </>

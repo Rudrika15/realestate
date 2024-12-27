@@ -189,7 +189,7 @@ function EditUser() {
                                                 )}
                                             </div>
                                         </div>
-                                        <button
+                                        <Link
                                             type="submit"
                                             className="btn btn-primary"
                                             disabled={loading}
@@ -200,7 +200,7 @@ function EditUser() {
                                             ) : (
                                                 "Submit"
                                             )}
-                                        </button>
+                                        </Link>
                                     </form>
                                 </div>
                             </div>

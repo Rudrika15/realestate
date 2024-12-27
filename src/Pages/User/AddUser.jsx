@@ -146,16 +146,16 @@ function AddUser() {
                                             <div className="col">
                                                 <input
                                                     type="email"
-                                                    className={`form-control ${emailError ? "is-invalid" : ""}`}
-                                                    placeholder="Email"
+                                                    className={`form-control ${emailError ? 'is-invalid' : ''}`}
+                                                    id="floatingInput"
+                                                    placeholder="Email address"
                                                     value={email}
                                                     ref={emailRef}
                                                     onChange={handleEmailChange}
                                                     onKeyDown={(e) => handleEnter(e, passcodeRef)}
                                                 />
-                                                {emailError && (
-                                                    <div className="invalid-feedback">Enter a valid Email</div>
-                                                )}
+                                                {emailError && <div className="invalid-feedback">Enter a valid Email</div>}
+                                                <label htmlFor="floatingInput">Email address</label>
                                             </div>
                                         </div>
                                         <div className="row mb-3 w-50">
@@ -192,14 +192,14 @@ function AddUser() {
                                                 )}
                                             </div>
                                         </div>
-                                        <button
+                                        <Link
                                             type="submit"
                                             className="btn btn-primary"
                                             disabled={loading}
                                             ref={submitRef}
                                         >
                                             {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
-                                        </button>
+                                        </Link>
                                     </form>
                                 </div>
                             </div>

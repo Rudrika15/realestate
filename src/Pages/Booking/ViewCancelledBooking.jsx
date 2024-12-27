@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 const ViewCancelledBooking = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+    const [incomeDate, setIncomeDate] = useState("");
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -58,7 +59,36 @@ const ViewCancelledBooking = () => {
                                         </div>
                                         <div className="row pt-4">
                                             <div className="col">
-                                                <input type="text" className="form-control" id="" placeholder="" name="" />
+                                                <input
+                                                    type="text"
+                                                    id="date"
+                                                    className="form-control"
+                                                    value={
+                                                        incomeDate
+                                                            ? new Date(incomeDate).toLocaleDateString("en-GB", {
+                                                                day: "2-digit",
+                                                                month: "2-digit",
+                                                                year: "2-digit",
+                                                            })
+                                                            : ""
+                                                    }
+                                                    onChange={(e) => {
+                                                        const inputDate = e.target.value;
+                                                        const [day, month, year] = inputDate.split("-");
+                                                        if (day && month && year) {
+                                                            const formattedDate = `${day}-${month}-${year}`;
+                                                            const parsedDate = new Date(formattedDate);
+                                                            if (!isNaN(parsedDate)) {
+                                                                setIncomeDate(parsedDate.toISOString().slice(0, 10));
+                                                            } else {
+                                                                console.error("Invalid date format");
+                                                            }
+                                                        }
+                                                    }}
+                                                    placeholder=""
+                                                    onFocus={(e) => (e.target.type = "date")}
+                                                    onBlur={(e) => (e.target.type = "text")}
+                                                />
                                             </div>
                                             <div className="col"></div>
                                         </div>
@@ -69,7 +99,7 @@ const ViewCancelledBooking = () => {
                                                 <input type="text" className="form-control" id="name" placeholder="Name" name="name" />
                                             </div>
                                             <div className="col">
-                                                <input type="text" className="form-control" id="contact No" placeholder="Contact No" name="contact No" />
+                                                <input type="number" className="form-control" id="contact No" placeholder="Contact No" name="contact No" />
                                             </div>
                                         </div>
                                         <div className="row w-75">
@@ -121,7 +151,7 @@ const ViewCancelledBooking = () => {
                                         </div>
                                         <div className="row pt-4">
                                             <div className="col">
-                                                <input type="text" className="form-control" id="Installment Amount" placeholder="Installment Amount" name="Installment Amount" />
+                                                <input type="number" className="form-control" id="Installment Amount" placeholder="Installment Amount" name="Installment Amount" />
                                             </div>
                                             <div className="col">
                                                 <input type="text" className="form-control" id="Installment Frequence" placeholder="Installment Frequence" name="Installment Frequence" />
@@ -129,7 +159,7 @@ const ViewCancelledBooking = () => {
                                         </div>
                                         <div className="row pt-4">
                                             <div className="col">
-                                                <input type="text" className="form-control" id="Total Installments" placeholder="Total Installments" name="Total Installments" />
+                                                <input type="number" className="form-control" id="Total Installments" placeholder="Total Installments" name="Total Installments" />
                                             </div>
                                             <div className="col">
                                                 <input type="text" className="form-control" id="Payment Mode" placeholder="Payment Mode" name="Payment Mode" />
@@ -144,7 +174,6 @@ const ViewCancelledBooking = () => {
                             </div>
                         </div>
                     </div>
-                    <Footer />
                 </div>
             </div>
             <style jsx="true">{`
