@@ -31,6 +31,7 @@ import EditRole from "./Pages/Role/EditRole";
 import AddUser from "./Pages/User/AddUser";
 import EditUser from "./Pages/User/EditUser";
 import View from "./Pages/User/View";
+import EditPartners from "./Pages/Partners/EditPartners";
 
 const App = () => {
   return (
@@ -65,6 +66,8 @@ const App = () => {
           <Route path="/add-partners" element={<AddPartners />} />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />
+          <Route path="/edit-partners" element={<EditPartners />} />
+
           <Route path="/report" element={<Report />} />
           <Route path="/add-customer-income" element={<AddCustomerIncome />} />
           <Route path="/add-partner-income" element={<AddPartnerIncome />} />
