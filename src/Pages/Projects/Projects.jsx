@@ -1,14 +1,36 @@
 // src/Pages/Add/Add.js
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-// import Pagination from '../../Components/Pagination/Pagination';
+import { getUsers } from '../../Api/Api';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+
 
 const Projects = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+    const [data, setData] = useState([ ].sort((a, b) => a.name.localeCompare(b.name)));
+   
+    const getData = async () => {
+        try {
+            const res = await axios.get(getUsers);
+            if (res.data.status === true) {
+                const sortedData = res.data.data.sort((a, b) => a.name.localeCompare(b.name));
+                setData(sortedData);
+            } else {
+                console.error('Error fetching data:', res.data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+    
+    useEffect(() => {
+        getData();
+    }, [data]);
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -17,6 +39,26 @@ const Projects = () => {
     const toggleTopbar = () => {
         setIsTopbarOpen(!isTopbarOpen);
     };
+
+    const handleClick = () =>{
+        Swal.fire({
+            title: "Are you sure?",
+            text: " It may affect projects as well. ",
+            icon: "error",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your file has been deleted.",
+                icon: "success"
+              });
+            }
+          });
+    }
 
     return (
         <>
@@ -29,6 +71,7 @@ const Projects = () => {
                 <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
                     <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
 
+                    
                     <div className="container-fluid pt-4 px-4">
                         <div className="row g-4">
                             <div className="col-sm-12 col-xl-12">
@@ -39,10 +82,12 @@ const Projects = () => {
                                         </div>
                                         <div className="p-2">
                                             <Link to="/add-projects" className="">
-                                                <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add New Project</h6>
+                                                <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> New Project</h6>
                                             </Link>
                                         </div>
                                     </div>
+
+                                    {data.length > 0 ? (
                                     <table className="table table-bordered text-center">
                                         <thead>
                                             <tr>
@@ -54,7 +99,6 @@ const Projects = () => {
                                         <tbody>
                                             <tr>
                                                 <td></td>
-                         
                                                 <td></td>
                                                 <td>
                                                     <Link to="/unit" className="btn btn-info btn-sm me-2">
@@ -64,37 +108,25 @@ const Projects = () => {
                                                         <i className="fas fa-edit"></i>
                                                     </Link>
                                                                                                        
-                                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={handleClick}>
                                                     <i className="fas fa-trash"></i>
-                                                    </button>
-
-                                                    {/* <!-- Modal --> */}
-                                                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                        Are you sure you want to delete the project? It may affect projects as well.
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yes</button>
-                                                            <button type="button" class="btn btn-secondary">No</button>
-                                                        </div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
+                                                    </button>                         
                                                 </td>
                                             </tr>
                                            
                                         </tbody>
                                     </table>
+                                     ) : (
+                                        <div className="text-center">
+                                            <img src="img/image_2024_12_26T09_23_33_935Z.png" alt="No Users" className="img-fluid w-25 h-25" />
+                                            <p className="text-dark">No Users Found</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
+               
                     </div>
             </div>
         </>

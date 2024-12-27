@@ -14,6 +14,7 @@ const Login = () => {
   const navigate = useNavigate();
   const emailRef = useRef(null);
   const passcodeRef = useRef(null);
+  const loginButtonRef = useRef(null);
 
   // const handleLogin = async () => {
   //     try {
@@ -56,9 +57,17 @@ const Login = () => {
       setEmail('');
       setPasscode('');
       setLoading(true);
+      toast.success("Login Sucessfully!");
       setTimeout(() => {
         navigate("/view-user");
-      }, 1000);
+      }, 2000);
+    }
+  };
+
+  const handleEnter = (e, nextField) => {
+    if (e.key === "Enter" && nextField?.current) {
+      e.preventDefault();
+      nextField.current.focus();
     }
   };
 
@@ -102,7 +111,9 @@ const Login = () => {
                       id="floatingInput"
                       placeholder="Email address"
                       value={email}
+                      ref={emailRef}
                       onChange={handleEmailChange}
+                      onKeyDown={(e) => handleEnter(e, passcodeRef)}
                     />
                     {emailError && <div className="invalid-feedback">Enter a valid Email</div>}
                     <label htmlFor="floatingInput">Email address</label>
@@ -114,7 +125,9 @@ const Login = () => {
                       id="floatingPassword"
                       placeholder=""
                       value={passcode}
+                      ref={passcodeRef}
                       onChange={handlePasscodeChange}
+                      onKeyDown={(e) => handleEnter(e, loginButtonRef)}
                     />
                     {passcodeError && <div className="invalid-feedback">Enter a valid Passcode</div>}
                     <label htmlFor="floatingPassword">Passcode</label>
@@ -123,6 +136,7 @@ const Login = () => {
                     type="button"
                     className="btn btn-primary py-3 w-100 mb-4"
                     onClick={handleLogin}
+                    ref={loginButtonRef}
                     disabled={loading}
                   >
                     {loading ? (
