@@ -14,7 +14,7 @@ const Login = () => {
   const navigate = useNavigate();
   const emailRef = useRef(null);
   const passcodeRef = useRef(null);
-  const loginButtonRef = useRef(null);
+  const loginRef = useRef(null);
 
   // const handleLogin = async () => {
   //     try {
@@ -37,6 +37,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     let isValid = true;
+    
 
     if (!email) {
       setEmailError(true);
@@ -69,7 +70,13 @@ const Login = () => {
       e.preventDefault();
       nextField.current.focus();
     }
+    if (e.key === "Enter" && nextField?.current){
+      e.preventDefault();
+      handleLogin(e);
+    }
   };
+
+  
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -103,7 +110,7 @@ const Login = () => {
                   </Link>
                   <h3>Login</h3>
                 </div>
-                <Form>
+                <Form >
                   <div className="form-floating mb-3">
                     <input
                       type="email"
@@ -127,16 +134,17 @@ const Login = () => {
                       value={passcode}
                       ref={passcodeRef}
                       onChange={handlePasscodeChange}
-                      onKeyDown={(e) => handleEnter(e, loginButtonRef)}
+                      onKeyDown={(e) => handleEnter(e, loginRef)}
                     />
                     {passcodeError && <div className="invalid-feedback">Enter a valid Passcode</div>}
                     <label htmlFor="floatingPassword">Passcode</label>
                   </div>
+
                   <Link to="/view-user"
-                    type="button"
+                    type="submit"
                     className="btn btn-primary py-3 w-100 mb-4"
                     onClick={handleLogin}
-                    ref={loginButtonRef}
+                    ref={loginRef}
                     disabled={loading}
                   >
                     {loading ? (
