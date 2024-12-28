@@ -68,6 +68,10 @@ function AddUser() {
             toast.success("User Added Successfully!");
             setTimeout(() => {
                 setLoading(false);
+                setUsername("");
+                setEmail("");
+                setPasscode("");
+                setRole("");
                 navigate("/view-user");
             }, 2000);
         }
@@ -147,7 +151,6 @@ function AddUser() {
                                                 <input
                                                     type="email"
                                                     className={`form-control ${emailError ? 'is-invalid' : ''}`}
-                                                    id="floatingInput"
                                                     placeholder="Email address"
                                                     value={email}
                                                     ref={emailRef}
@@ -155,7 +158,6 @@ function AddUser() {
                                                     onKeyDown={(e) => handleEnter(e, passcodeRef)}
                                                 />
                                                 {emailError && <div className="invalid-feedback">Enter a valid Email</div>}
-                                                <label htmlFor="floatingInput">Email address</label>
                                             </div>
                                         </div>
                                         <div className="row mb-3 w-50">
@@ -167,7 +169,6 @@ function AddUser() {
                                                     value={passcode}
                                                     ref={passcodeRef}
                                                     onChange={handlePasscodeChange}
-                                                    onKeyDown={(e) => handleEnter(e, null)}
                                                 />
                                                 {passcodeError && (
                                                     <div className="invalid-feedback">Enter a Passcode</div>
@@ -192,14 +193,14 @@ function AddUser() {
                                                 )}
                                             </div>
                                         </div>
-                                        <Link
+                                        <button
                                             type="submit"
                                             className="btn btn-primary"
                                             disabled={loading}
                                             ref={submitRef}
                                         >
                                             {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
-                                        </Link>
+                                        </button>
                                     </form>
                                 </div>
                             </div>

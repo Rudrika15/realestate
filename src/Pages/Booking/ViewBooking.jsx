@@ -75,11 +75,11 @@ const ViewBooking = () => {
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
                     <div className="p-2 ">
-                      <h6 className="mb-4">Booking</h6>
+                      <h6 className="mb-4">Booking List</h6>
                     </div>
                     <div className="p-2 ">
                       <Link to="/booking" className="">
-                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add New Booking</h6>
+                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> New Booking</h6>
                       </Link>
                     </div>
                   </div>

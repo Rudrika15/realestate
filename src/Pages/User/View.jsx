@@ -12,10 +12,10 @@ const View = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
     const [data, setData] = useState([
-        // { id: 1, name: 'Zlice Smith', email: 'Zlice@gmail.com'},
-        // { id: 2, name: 'Bob Johnson', email: 'Bob@gmail.com'},
-        // { id: 3, name: 'John Doe', email: 'John@gmail.com' },
-        // { id: 4, name: 'Alice Smith', email: 'Alice@gmail.com'},
+        { id: 1, name: 'Zlice Smith', email: 'Zlice@gmail.com'},
+        { id: 2, name: 'Bob Johnson', email: 'Bob@gmail.com'},
+        { id: 3, name: 'John Doe', email: 'John@gmail.com' },
+        { id: 4, name: 'Alice Smith', email: 'Alice@gmail.com'},
     ].sort((a, b) => a.name.localeCompare(b.name)));
 
     // const [loading, setLoading] = useState(true);

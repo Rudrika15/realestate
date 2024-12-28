@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import Footer from "../../Components/Footer/Footer";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,17 +8,6 @@ import { Helmet } from "react-helmet";
 import { Spinner } from "react-bootstrap";
 
 function Booking() {
-  // const [selectOption, setSelectOption] = useState("");
-  // const [loanAmount, setLoanAmount] = useState("");
-  // const [bankDetails, setBankDetails] = useState("");
-  // const [paymentFrequence, setPaymentFrequence] = useState(""); 
-  // const [amount, setAmount] = useState("");
-  // const [totalInstallments, setTotalInstallments] = useState("");
-  // const [tokenpaymentDate, setTokenPaymentDate] = useState("");
-  // const [pendingpaymentDate, setPendingPaymentDate] = useState("");
-  // const [downPayment, setDownPayment] = useState("");
-  // const [paymentDuration, setPaymentDuration] = useState("");
-
   const [projectName, setProjectName] = useState("");
   const [unit, setUnit] = useState("");
   const [bookingDate, setBookingDate] = useState("");
@@ -29,7 +17,17 @@ function Booking() {
   const [saleAmount, setSaleAmount] = useState("");
   const [extra, setExtra] = useState("");
   const [work, setWork] = useState("");
+  const [paymentplan, setPaymentPlan] = useState("");
+  const [tokenAmount, setTokenAmount] = useState("");
+  const [tokenPaymentDate, setTokenPaymentDate] = useState("");
+  const [pendingAmount, setPendingAmount] = useState("");
+  const [pendingPaymentDate, setPendingPaymentDate] = useState("");
   const [installment, setInstallment] = useState("");
+  const [loanAmount, setLoanAmount] = useState("");
+  const [bankDetails, setBankDetails] = useState("");
+  const [loanPaymentDate, setLoanPaymentDate] = useState("");
+  const [downPayment, setDownPayment] = useState("");
+  const [downPaymentDate, setDownPaymentDate] = useState("");
 
   const [projectError, setProjectError] = useState(false);
   const [unitError, setUnitError] = useState("");
@@ -40,7 +38,17 @@ function Booking() {
   const [saleAmountError, setSaleAmountError] = useState("");
   const [extraError, setExtraError] = useState("");
   const [workError, setWorkError] = useState("");
+  const [paymentplanError, setPaymentPlanError] = useState("");
+  const [tokenAmountError, setTokenAmountError] = useState("");
+  const [tokenPaymentDateError, setTokenPaymentDateError] = useState("");
+  const [pendingAmountError, setPendingAmountError] = useState("");
+  const [pendingPaymentDateError, setPendingPaymentDateError] = useState("");
   const [installmentError, setInstallmentError] = useState("");
+  const [loanAmountError, setLoanAmountError] = useState("");
+  const [loanPaymentDateError, setLoanPaymentDateError] = useState("");
+  const [bankDetailsError, setBankDetailsError] = useState("");
+  const [downPaymentError, setDownPaymentError] = useState("");
+  const [downPaymentDateError, setDownPaymentDateError] = useState("");
 
   const projectRef = useRef(null);
   const unitRef = useRef(null);
@@ -51,8 +59,18 @@ function Booking() {
   const saleAmountRef = useRef(null);
   const extraRef = useRef(null);
   const workRef = useRef(null);
+  const paymentPlanRef = useRef(null);
+  const tokenAmountRef = useRef(null);
+  const pendingAmountRef = useRef(null);
+  const tokenPaymentDateRef = useRef(null);
+  const pendingPaymentDateRef = useRef(null);
   const installmentRef = useRef(null);
   const submitRef = useRef(null);
+  const loanAmountRef = useRef(null);
+  const loanPaymentDateRef = useRef(null);
+  const bankDetailsRef = useRef(null);
+  const downPaymentRef = useRef(null);
+  const downPaymentDateRef = useRef(null);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
@@ -148,6 +166,76 @@ function Booking() {
       setInstallmentError(false);
     }
 
+    if (!paymentplan) {
+      setPaymentPlanError(true);
+      isValid = false;
+    } else {
+      setPaymentPlanError(false);
+    }
+
+    if (!tokenAmount) {
+      setTokenAmountError(true);
+      isValid = false;
+    } else {
+      setTokenAmountError(false);
+    }
+
+    if (!tokenPaymentDate) {
+      setTokenPaymentDateError(true);
+      isValid = false;
+    } else {
+      setTokenPaymentDateError(false);
+    }
+
+    if (!pendingPaymentDate) {
+      setPendingPaymentDateError(true);
+      isValid = false;
+    } else {
+      setPendingPaymentDateError(false);
+    }
+
+    if (!pendingAmount) {
+      setPendingAmountError(true);
+      isValid = false;
+    } else {
+      setPendingAmountError(false);
+    }
+
+    if (!loanAmount) {
+      setLoanAmountError(true);
+      isValid = false;
+    } else {
+      setLoanAmountError(false);
+    }
+
+    if (!loanPaymentDate) {
+      setLoanPaymentDateError(true);
+      isValid = false;
+    } else {
+      setLoanPaymentDateError(false);
+    }
+
+    if (!bankDetails) {
+      setBankDetailsError(true);
+      isValid = false;
+    } else {
+      setBankDetailsError(false);
+    }
+
+    if (!downPayment) {
+      setDownPaymentError(true);
+      isValid = false;
+    } else {
+      setDownPaymentError(false);
+    }
+
+    if (!downPaymentDate) {
+      setDownPaymentDateError(true);
+      isValid = false;
+    } else {
+      setDownPaymentDateError(false);
+    }
+
     if (isValid) {
       setLoading(true);
       toast.success("Booking Added Successfully!");
@@ -204,9 +292,60 @@ function Booking() {
     if (e.target.value) setWorkError(false);
   };
 
+  const handlePaymentPlanChange = (e) => {
+    setPaymentPlan(e.target.value);
+    if (e.target.value) setPaymentPlanError(false);
+  };
+
+  const handleTokenAmountChange = (e) => {
+    setTokenAmount(e.target.value);
+    if (e.target.value) setTokenAmountError(false);
+  };
+
+  const handleTokenPaymentDateChange = (e) => {
+    setTokenPaymentDate(e.target.value);
+    if (e.target.value) setTokenPaymentDateError(false);
+  };
+
+  const handlePendingPaymentDateChange = (e) => {
+    setPendingPaymentDate(e.target.value);
+    if (e.target.value) setPendingPaymentDateError(false);
+  };
+
+  const handlePendingAmountChange = (e) => {
+    setPendingAmount(e.target.value);
+    if (e.target.value) setPendingAmountError(false);
+  };
+
+  const handleLoanAmountChange = (e) => {
+    setLoanAmount(e.target.value);
+    if (e.target.value) setLoanAmountError(false);
+  };
+
+  const handleLoanPaymentDateChange = (e) => {
+    setLoanPaymentDate(e.target.value);
+    if (e.target.value) setLoanPaymentDateError(false);
+  };
+
+  const handleBankDetailsChange = (e) => {
+    setBankDetails(e.target.value);
+    if (e.target.value) setBankDetailsError(false);
+  };
+
   const handleInstallmentChange = (e) => {
-    setInstallment(e.target.value);
-    if (e.target.value) setInstallmentError(false);
+    const isChecked = e.target.checked;
+    setInstallment(isChecked);
+    setInstallmentError(!isChecked);
+  };
+
+  const handleDownPaymentChange = (e) => {
+    setDownPayment(e.target.value);
+    if (e.target.value) setDownPaymentError(false);
+  };
+
+  const handleDownPaymentDateChange = (e) => {
+    setDownPaymentDate(e.target.value);
+    if (e.target.value) setDownPaymentDateError(false);
   };
 
   return (
@@ -267,7 +406,7 @@ function Booking() {
                           onKeyDown={(e) => handleEnter(e, dateRef)}
                         >
                           <option value="">Unit No</option>
-                          <option value="1">1</option>
+                          <option value="demo">1</option>
                         </select>
                         {unitError && (
                           <div className="invalid-feedback">Please select a Unit</div>
@@ -415,7 +554,7 @@ function Booking() {
                           name="Work Amount"
                           value={work}
                           onChange={handleWorkChange}
-                          onKeyDown={(e) => handleEnter(e, submitRef)}
+                          onKeyDown={(e) => handleEnter(e, paymentPlanRef)}
                           ref={workRef}
                         />
                         {workError && (
@@ -423,6 +562,283 @@ function Booking() {
                         )}
                       </div>
                       <div className="col"></div>
+                    </div>
+                    <hr />
+                    <p class="text-dark fs-5">Payment Terms</p>
+                    <div className="row">
+                      <div className="col">
+                        <select
+                          className={`form-control bg-white ${paymentplanError ? "is-invalid" : ""}`}
+                          value={paymentplan}
+                          onChange={handlePaymentPlanChange}
+                          onKeyDown={(e) => handleEnter(e, tokenAmountRef)}
+                          ref={paymentPlanRef}
+                        >
+                          <option value="">Payment Plan</option>
+                          <option value="fullamount">Full Amount</option>
+                          <option value="installment">Installment</option>
+                          <option value="loan">Loan</option>
+                        </select>
+                        {paymentplanError && (
+                          <div className="invalid-feedback">Please select a Payment Plan</div>
+                        )}
+                      </div>
+                      <div className="col"></div>
+                    </div>
+                    <div className="row pt-3">
+                      <div className="col">
+                        <input
+                          type="number"
+                          className={`form-control ${tokenAmountError ? "is-invalid" : ""}`}
+                          id="tokenamount"
+                          placeholder="Token Amount"
+                          name="tokenamount"
+                          value={tokenAmount}
+                          onChange={handleTokenAmountChange}
+                          onKeyDown={(e) => handleEnter(e, tokenPaymentDateRef)}
+                          ref={tokenAmountRef}
+                        />
+                        {tokenAmountError && (
+                          <div className="invalid-feedback">Enter Token Amount</div>
+                        )}
+                      </div>
+                      <div className="col">
+                        <input
+                          type="text"
+                          id="date"
+                          ref={tokenPaymentDateRef}
+                          className={`form-control ${tokenPaymentDateError ? "is-invalid" : ""}`}
+                          value={
+                            tokenPaymentDate
+                              ? new Date(tokenPaymentDate).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "2-digit",
+                              })
+                              : ""
+                          }
+                          onChange={(e) => {
+                            handleTokenPaymentDateChange(e);
+                            const inputDate = e.target.value;
+                            const [day, month, year] = inputDate.split("-");
+                            if (day && month && year) {
+                              const formattedDate = `${day}-${month}-${year}`;
+                              const parsedDate = new Date(formattedDate);
+                              if (!isNaN(parsedDate)) {
+                                setTokenPaymentDate(parsedDate.toISOString().slice(0, 10));
+                              } else {
+                                console.error("Invalid date format");
+                              }
+                            }
+                          }}
+                          onKeyDown={(e) => handleEnter(e, pendingAmountRef)}
+                          placeholder="Token Payment Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                        />
+                        {tokenPaymentDateError && (
+                          <div className="invalid-feedback">Please select a Token Payment Date</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="row pt-3">
+                      <div className="col">
+                        <input
+                          type="number"
+                          id="pendingamount"
+                          placeholder="Pending Amount"
+                          name="pendingamount"
+                          className={`form-control ${pendingAmountError ? "is-invalid" : ""}`}
+                          value={pendingAmount}
+                          onChange={handlePendingAmountChange}
+                          onKeyDown={(e) => handleEnter(e, pendingPaymentDateRef)}
+                          ref={pendingAmountRef}
+                        />
+                        {pendingAmountError && (
+                          <div className="invalid-feedback">Enter Pending Amount</div>
+                        )}
+                      </div>
+                      <div className="col">
+                        <input
+                          type="text"
+                          id="date"
+                          ref={pendingPaymentDateRef}
+                          className={`form-control ${pendingPaymentDateError ? "is-invalid" : ""}`}
+                          value={
+                            pendingPaymentDate
+                              ? new Date(pendingPaymentDate).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "2-digit",
+                              })
+                              : ""
+                          }
+                          onChange={(e) => {
+                            handlePendingPaymentDateChange(e);
+                            const inputDate = e.target.value;
+                            const [day, month, year] = inputDate.split("-");
+                            if (day && month && year) {
+                              const formattedDate = `${day}-${month}-${year}`;
+                              const parsedDate = new Date(formattedDate);
+                              if (!isNaN(parsedDate)) {
+                                setPendingPaymentDate(parsedDate.toISOString().slice(0, 10));
+                              } else {
+                                console.error("Invalid date format");
+                              }
+                            }
+                          }}
+                          onKeyDown={(e) => handleEnter(e, loanAmountRef)}
+                          placeholder="Pending Payment Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                        />
+                        {pendingPaymentDateError && (
+                          <div className="invalid-feedback">Please select a Pending Payment Date </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="row pt-3">
+                      <div className="col">
+                        <input
+                          type="number"
+                          id="loanamount"
+                          placeholder="Loan Amount"
+                          name="pendingamount"
+                          className={`form-control ${loanAmountError ? "is-invalid" : ""}`}
+                          value={loanAmount}
+                          onChange={handleLoanAmountChange}
+                          onKeyDown={(e) => handleEnter(e, loanPaymentDateRef)}
+                          ref={loanAmountRef}
+                        />
+                        {pendingAmountError && (
+                          <div className="invalid-feedback">Enter Loan Amount</div>
+                        )}
+                      </div>
+                      <div className="col">
+                        <input
+                          type="text"
+                          id="date"
+                          ref={loanPaymentDateRef}
+                          className={`form-control ${loanPaymentDateError ? "is-invalid" : ""}`}
+                          value={
+                            loanPaymentDate
+                              ? new Date(loanPaymentDate).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "2-digit",
+                              })
+                              : ""
+                          }
+                          onChange={(e) => {
+                            handleLoanPaymentDateChange(e);
+                            const inputDate = e.target.value;
+                            const [day, month, year] = inputDate.split("-");
+                            if (day && month && year) {
+                              const formattedDate = `${day}-${month}-${year}`;
+                              const parsedDate = new Date(formattedDate);
+                              if (!isNaN(parsedDate)) {
+                                setPendingPaymentDate(parsedDate.toISOString().slice(0, 10));
+                              } else {
+                                console.error("Invalid date format");
+                              }
+                            }
+                          }}
+                          onKeyDown={(e) => handleEnter(e, bankDetailsRef)}
+                          placeholder="Loan Payment Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                        />
+                        {loanPaymentDateError && (
+                          <div className="invalid-feedback">Please select a Loan Payment Date </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="row w-75">
+                      <div className="col pt-4">
+                        <textarea
+                          className={`form-control ${bankDetailsError ? "is-invalid" : ""}`}
+                          placeholder="Bank Details"
+                          id="floatingTextarea"
+                          value={bankDetails}
+                          onChange={handleBankDetailsChange}
+                          onKeyDown={(e) => handleEnter(e, downPaymentRef)}
+                          ref={bankDetailsRef}
+                        ></textarea>
+                        {bankDetailsError && (
+                          <div className="invalid-feedback">Enter a Bank Details</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="row pt-3">
+                      <div className="col">
+                        <input
+                          type="number"
+                          id="downpayment"
+                          placeholder="Down Payment"
+                          name="downpayment"
+                          className={`form-control ${downPaymentError ? "is-invalid" : ""}`}
+                          value={downPayment}
+                          onChange={handleDownPaymentChange}
+                          onKeyDown={(e) => handleEnter(e, downPaymentDateRef)}
+                          ref={downPaymentRef}
+                        />
+                        {downPaymentError && (
+                          <div className="invalid-feedback">Enter Down Payment</div>
+                        )}
+                      </div>
+                      <div className="col">
+                        <input
+                          type="text"
+                          id="date"
+                          ref={downPaymentDateRef}
+                          className={`form-control ${downPaymentDateError ? "is-invalid" : ""}`}
+                          value={
+                            downPaymentDate
+                              ? new Date(downPaymentDate).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "2-digit",
+                              })
+                              : ""
+                          }
+                          onChange={(e) => {
+                            handleDownPaymentDateChange(e);
+                            const inputDate = e.target.value;
+                            const [day, month, year] = inputDate.split("-");
+                            if (day && month && year) {
+                              const formattedDate = `${day}-${month}-${year}`;
+                              const parsedDate = new Date(formattedDate);
+                              if (!isNaN(parsedDate)) {
+                                setDownPaymentDate(parsedDate.toISOString().slice(0, 10));
+                              } else {
+                                console.error("Invalid date format");
+                              }
+                            }
+                          }}
+                          onKeyDown={(e) => handleEnter(e, installmentRef)}
+                          placeholder="Down Payment Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                        />
+                        {downPaymentDateError && (
+                          <div className="invalid-feedback">Please select a Down Payment Date </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="form-check pt-4">
+                      <input
+                        type="checkbox"
+                        className={`form-check-input ${installmentError ? "is-invalid" : ""}`}
+                        value={installment}
+                        onChange={handleInstallmentChange}
+                        onKeyDown={(e) => handleEnter(e, submitRef)}
+                        ref={installmentRef}
+                        id="installmentNotify"
+                      />
+                        Installment Notify
+                      {installmentError && (
+                        <div className="invalid-feedback">Please check the Installment Notify</div>
+                      )}
                     </div>
                     <div className="row pt-4">
                       <div className="col">
