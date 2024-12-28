@@ -124,7 +124,7 @@ const CancelledBooking = () => {
                     ) : (
                       <div className="text-center">
                         <img src="img/image_2024_12_26T09_23_33_935Z.png" alt="No Users" className="img-fluid w-25 h-25" />
-                        <p className="text-dark">No Booking Data Found</p>
+                        <p className="text-dark">No Cancel Booking Data Found</p>
                       </div>
                     )}
                   </div>
@@ -132,7 +132,6 @@ const CancelledBooking = () => {
               </div>
             </div>
           </div>
-          <Footer />
         </div>
       </div>
     </>

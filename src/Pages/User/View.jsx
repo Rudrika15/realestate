@@ -12,9 +12,10 @@ const View = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
     const [data, setData] = useState([
-        // { id: 1, name: 'Bob Johnson', email: 'Bob@gmail.com'},
-        // { id: 2, name: 'John Doe', email: 'John@gmail.com' },
-        // { id: 3, name: 'Alice Smith', email: 'Alice@gmail.com'},
+        { id: 1, name: 'Zlice Smith', email: 'Zlice@gmail.com'},
+        { id: 2, name: 'Bob Johnson', email: 'Bob@gmail.com'},
+        { id: 3, name: 'John Doe', email: 'John@gmail.com' },
+        { id: 4, name: 'Alice Smith', email: 'Alice@gmail.com'},
     ].sort((a, b) => a.name.localeCompare(b.name)));
 
     // const [loading, setLoading] = useState(true);
@@ -115,9 +116,11 @@ const View = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {data.map((user) => (
-                                                    <tr>
-                                                        <td>{user.id}</td>
+                                                {data
+                                                 .sort((a, b) => a.name.localeCompare(b.name))
+                                                 .map((user, index) => (
+                                                    <tr key={index}>
+                                                        <td>{index + 1}</td>
                                                         <td>{user.name}</td>
                                                         <td>{user.email}</td>
                                                         <td>
@@ -151,12 +154,10 @@ const View = () => {
                                         </table>
                                     ) : (
                                         <div className="text-center">
-                                            {/* <img src="img/image_2024_12_26T07_40_34_439Z.png" alt="No Users" className="img-fluid w-25 h-25" /> */}
                                             <img src="img/image_2024_12_26T09_23_33_935Z.png" alt="No Users" className="img-fluid w-25 h-25" />
                                             <p className="text-dark">No Users Found</p>
                                         </div>
                                     )}
-                                    {/* )} */}
                                 </div>
                             </div>
                         </div>

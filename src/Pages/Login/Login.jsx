@@ -7,12 +7,12 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [passcode, setPasscode] = useState("");
-  const [emailError, setEmailError] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
   const [passcodeError, setPasscodeError] = useState(false);
   const navigate = useNavigate();
-  const emailRef = useRef(null);
+  const usernameRef = useRef(null);
   const passcodeRef = useRef(null);
   const loginRef = useRef(null);
 
@@ -37,13 +37,14 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     let isValid = true;
-    
 
-    if (!email) {
-      setEmailError(true);
+
+
+    if (!username) {
+      setUsernameError(true);
       isValid = false;
     } else {
-      setEmailError(false);
+      setUsernameError(false);
     }
 
     if (!passcode) {
@@ -54,8 +55,8 @@ const Login = () => {
     }
 
     if (isValid) {
-      console.log("form submitted with:", { email, passcode });
-      setEmail('');
+      console.log("form submitted with:", { username, passcode });
+      setUsername('');
       setPasscode('');
       setLoading(true);
       toast.success("Login Sucessfully!");
@@ -70,18 +71,16 @@ const Login = () => {
       e.preventDefault();
       nextField.current.focus();
     }
-    if (e.key === "Enter" && nextField?.current){
+    if (e.key === "Enter" && nextField?.current) {
       e.preventDefault();
       handleLogin(e);
     }
   };
 
-  
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
     if (e.target.value) {
-      setEmailError(false);
+      setUsernameError(false);
     }
   };
 
@@ -113,17 +112,17 @@ const Login = () => {
                 <Form >
                   <div className="form-floating mb-3">
                     <input
-                      type="email"
-                      className={`form-control ${emailError ? 'is-invalid' : ''}`}
+                      type="text"
+                      className={`form-control ${usernameError ? 'is-invalid' : ''}`}
                       id="floatingInput"
-                      placeholder="Email address"
-                      value={email}
-                      ref={emailRef}
-                      onChange={handleEmailChange}
+                      placeholder="User Name"
+                      value={username}
+                      ref={usernameRef}
+                      onChange={handleUsernameChange}
                       onKeyDown={(e) => handleEnter(e, passcodeRef)}
                     />
-                    {emailError && <div className="invalid-feedback">Enter a valid Email</div>}
-                    <label htmlFor="floatingInput">Email address</label>
+                    {usernameError && <div className="invalid-feedback">Enter a valid Username</div>}
+                    <label htmlFor="floatingInput">UserName</label>
                   </div>
                   <div className="form-floating mb-4">
                     <input

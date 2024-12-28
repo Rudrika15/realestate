@@ -68,6 +68,10 @@ function AddUser() {
             toast.success("User Added Successfully!");
             setTimeout(() => {
                 setLoading(false);
+                setUsername("");
+                setEmail("");
+                setPasscode("");
+                setRole("");
                 navigate("/view-user");
             }, 2000);
         }
@@ -146,16 +150,14 @@ function AddUser() {
                                             <div className="col">
                                                 <input
                                                     type="email"
-                                                    className={`form-control ${emailError ? "is-invalid" : ""}`}
-                                                    placeholder="Email"
+                                                    className={`form-control ${emailError ? 'is-invalid' : ''}`}
+                                                    placeholder="Email address"
                                                     value={email}
                                                     ref={emailRef}
                                                     onChange={handleEmailChange}
                                                     onKeyDown={(e) => handleEnter(e, passcodeRef)}
                                                 />
-                                                {emailError && (
-                                                    <div className="invalid-feedback">Enter a valid Email</div>
-                                                )}
+                                                {emailError && <div className="invalid-feedback">Enter a valid Email</div>}
                                             </div>
                                         </div>
                                         <div className="row mb-3 w-50">
@@ -167,7 +169,6 @@ function AddUser() {
                                                     value={passcode}
                                                     ref={passcodeRef}
                                                     onChange={handlePasscodeChange}
-                                                    onKeyDown={(e) => handleEnter(e, null)}
                                                 />
                                                 {passcodeError && (
                                                     <div className="invalid-feedback">Enter a Passcode</div>
