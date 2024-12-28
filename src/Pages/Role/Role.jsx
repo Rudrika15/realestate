@@ -16,8 +16,8 @@ const Role = () => {
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [data, setData] = useState(
     [
-      // { id: 1, name: "Bob Johnson" },
-      // { id: 2, name: "John Doe" },
+      { id: 1, name: "Bob Johnson" },
+      { id: 2, name: "John Doe" },
       // { id: 3, name: 'Alice Smith' },
     ].sort((a, b) => a.name.localeCompare(b.name))
   );
@@ -99,7 +99,7 @@ const Role = () => {
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between   mb-3">
                     <div className="p-2 ">
-                      <h6 className="mb-4">Role</h6>
+                      <h6 className="mb-4">Role List</h6>
                     </div>
                     <div className="p-2 ">
                       <Link to="/add-role" className="">
