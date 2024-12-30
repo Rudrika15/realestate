@@ -30,13 +30,12 @@ const Partners = () => {
 
   const deletePartner = (index) => {
     Swal.fire({
-      title: "Are You sure You <br /> Want to Delete?",
-      text: "Once you delete all the data related to the project will be deleted.",
+      title: "Are You sure You Want to Delete?",
+      text: "Once you delete, all data related to the project will be deleted.",
       icon: "warning",
       showCancelButton: true,
-      cancelButtonColor: "#3085d6",
-      confirmButtonColor: "#d33",
       confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         const updatedPartners = partners.filter((_, i) => i !== index);
@@ -48,7 +47,6 @@ const Partners = () => {
   };
 
   const handleEditClick = (partner) => {
-    // Navigate to the EditPartners page and pass the partner data
     navigate("/edit-partners", { state: { partner } });
   };
 
@@ -62,11 +60,7 @@ const Partners = () => {
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
-          <Topbar
-            toggleSidebar={toggleSidebar}
-            isTopbarOpen={isTopbarOpen}
-            toggleTopbar={toggleTopbar}
-          />
+          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
 
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
@@ -104,16 +98,10 @@ const Partners = () => {
                             <td>{partner.name}</td>
                             <td>{partner.percentage}</td>
                             <td>
-                              <button
-                                onClick={() => handleEditClick(partner)} // Pass partner data to EditPartners page
-                                className="btn btn-warning btn-sm me-2"
-                              >
+                              <button onClick={() => handleEditClick(partner)} className="btn btn-warning btn-sm me-2">
                                 <i className="fas fa-edit"></i>
                               </button>
-                              <button
-                                onClick={() => deletePartner(index)}
-                                className="btn btn-danger btn-sm"
-                              >
+                              <button onClick={() => deletePartner(index)} className="btn btn-danger btn-sm">
                                 <i className="fas fa-trash"></i>
                               </button>
                             </td>
@@ -123,11 +111,7 @@ const Partners = () => {
                     </table>
                   ) : (
                     <div className="text-center">
-                      <img
-                        src="img/image_2024_12_26T09_23_33_935Z.png"
-                        alt="No Users"
-                        className="img-fluid w-25 h-25"
-                      />
+                      <img src="img/image_2024_12_26T09_23_33_935Z.png" alt="No Users" className="img-fluid w-25 h-25" />
                       <p className="text-dark">No Partners Found</p>
                     </div>
                   )}

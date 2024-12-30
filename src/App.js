@@ -32,6 +32,7 @@ import AddUser from "./Pages/User/AddUser";
 import EditUser from "./Pages/User/EditUser";
 import View from "./Pages/User/View";
 import EditPartners from "./Pages/Partners/EditPartners";
+import EditExpenses from "./Pages/Expenses/EditExpenses";
 
 const App = () => {
   return (
@@ -64,10 +65,10 @@ const App = () => {
           <Route path="/edit-unit" element={<EditUnit />} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/add-partners" element={<AddPartners />} />
+          <Route path="/edit-partners" element={<EditPartners />} />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />
-          <Route path="/edit-partners" element={<EditPartners />} />
-
+          <Route path="/edit-expenses/:id" element={<EditExpenses />} />
           <Route path="/report" element={<Report />} />
           <Route path="/add-customer-income" element={<AddCustomerIncome />} />
           <Route path="/add-partner-income" element={<AddPartnerIncome />} />

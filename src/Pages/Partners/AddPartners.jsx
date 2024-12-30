@@ -93,7 +93,7 @@ function AddPartners() {
       setselectproject("");
       setPartners([{ name: "", percentage: "" }]);
       setErrors({});  
-      localStorage.setItem('partnersData', JSON.stringify(partners));
+      localStorage.setItem('partnersData', JSON.stringify(partners),);
       navigate("/partners");  
     }, 2000);  
   };
@@ -170,7 +170,7 @@ function AddPartners() {
                         <div className="col position-relative">
                           <div className="input-container">
                             <input
-                              type="text"
+                              type="number"
                               className={`form-control mb-1 ${error[`percentage${index}`] ? "is-invalid" : ""}`}
                               placeholder="Percentage"
                               value={partner.percentage}
@@ -224,18 +224,18 @@ function AddPartners() {
       </div>
 
       <style jsx="true">{`
-        .bi-plus-circle-fill {
-          cursor: pointer;
-          color: black;
-          display: inline-block;
-          padding-top: 6px;
-        }
-        .bi-x-circle-fill {
-          color: #eb3423;
-          cursor: pointer;
-          display: inline-block;
-          padding-top: 6px;
-        }
+        // .bi-plus-circle-fill {
+        //   cursor: pointer;
+        //   color: black;
+        //   display: inline-block;
+        //   padding-top: 6px;
+        // }
+        // .bi-x-circle-fill {
+        //   color: #eb3423;
+        //   cursor: pointer;
+        //   display: inline-block;
+        //   padding-top: 6px;
+        // }
       `}</style>
     </>
   );

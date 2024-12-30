@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";  
+import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
@@ -13,27 +13,16 @@ const AddExpenses = () => {
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [expenseDate, setExpenseDate] = useState("");
+  const [voucherNo, setVoucherNo] = useState("");
   const [expenses, setExpenses] = useState([
     {
-      project: "Shiv",
-      name: "Khilen Maniyar",
-      expenseHead: "Construction Materials",
-      narration: "Expense For Purchasing.....",
-      amount: "15000",
-    },
-    {
-      project: "Mahadev",
-      name: "Jigar Parmar",
-      expenseHead: "Utilities",
-      narration: "Expense For Purchasing.....",
-      amount: "500000",
-    },
-    {
-      project: "Ganesh",
-      name: "Jinal Pujara",
-      expenseHead: "Site Preparation",
-      narration: "Expense For Purchasing.....",
-      amount: "1400000",
+      id: "1",
+      project: "",
+      name: "",
+      expenseHead: "",
+      narration: "",
+      amount: "",
+      showRemove: true, 
     },
   ]);
   const [expenseHeads, setExpenseHeads] = useState([
@@ -49,13 +38,15 @@ const AddExpenses = () => {
 
   const addNewExpense = () => {
     const newExpense = {
+      id: (expenses.length + 1).toString(),
       project: "",
       name: "",
       expenseHead: "",
       narration: "",
       amount: "",
+      showRemove: true, 
     };
-    setExpenses([...expenses, newExpense]);
+    setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
   };
 
   const removeExpense = (index) => {
@@ -79,11 +70,36 @@ const AddExpenses = () => {
     setNewOption(e.target.value);
   };
 
-  const addNewOption = () => {
-    if (newOption.trim()) {
+  const convertAmountToWords = (amount) => {
+    return numberToWords.toWords(amount).toUpperCase();
+  };
+
+  // const formatAmountInIndianStyle = (amount) => {
+  //   return new Intl.NumberFormat('en-IN').format(amount);
+  // };
+  
+  // const calculateTotalAmount = () => {
+  //   const totalAmount = expenses.reduce(
+  //     (total, expense) => total + (parseFloat(expense.amount) || 0),
+  //     0
+  //   );
+  //   return formatAmountInIndianStyle(totalAmount);
+  // };
+  
+
+  const calculateTotalAmount = () => {
+    return expenses.reduce(
+      (total, expense) => total + (parseFloat(expense.amount) || 0),
+      0
+    );
+  };
+
+  const handleNewOptionKeyDown = (e) => {
+    if (e.key === "Enter" && newOption.trim()) {
       setExpenseHeads([...expenseHeads, newOption]);
-      setNewOption(""); 
-    } 
+      setNewOption("");
+      e.preventDefault();
+    }
   };
 
   const handleSubmit = (e) => {
@@ -91,19 +107,20 @@ const AddExpenses = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      navigate("/expenses");
+      navigate("/expenses", {
+        state: {
+          expenses,
+          voucherDate: expenseDate,
+          voucherNo,
+        },
+      });
     }, 2000);
   };
 
-  const calculateTotalAmount = () => {
-    return expenses.reduce(
-      (total, expense) => total + Number(expense.amount),
-      0
-    );
-  };
-
-  const convertAmountToWords = (amount) => {
-    return numberToWords.toWords(amount).toUpperCase();
+  const preventFormSubmit = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
   };
 
   return (
@@ -141,39 +158,40 @@ const AddExpenses = () => {
 
                   <div className="row pt-1 pb-5 border-bottom">
                     <div className="col">
-                    <input
-                          type="text"
-                          id="date"
-                          className="form-control"
-                          value={
-                            expenseDate
-                              ? new Date(expenseDate).toLocaleDateString("en-GB", {
+                      <input
+                        type="text"
+                        id="date"
+                        className="form-control"
+                        value={
+                          expenseDate
+                            ? new Date(expenseDate).toLocaleDateString("en-GB", {
                                 day: "2-digit",
                                 month: "2-digit",
                                 year: "2-digit",
                               })
-                              : ""
-                          }
-                          onChange={(e) => {
-                            const inputDate = e.target.value;
-                            const [day, month, year] = inputDate.split("-");
-                            if (day && month && year) {
-                              const formattedDate = `${day}-${month}-${year}`;
-                              const parsedDate = new Date(formattedDate);
-                              if (!isNaN(parsedDate)) {
-                                setExpenseDate(parsedDate.toISOString().slice(0, 10));
-                              } else {
-                                console.error("Invalid date format");
-                              }
+                            : ""
+                        }
+                        onChange={(e) => {
+                          const inputDate = e.target.value;
+                          const [day, month, year] = inputDate.split("-");
+                          if (day && month && year) {
+                            const formattedDate = `${day}-${month}-${year}`;
+                            const parsedDate = new Date(formattedDate);
+                            if (!isNaN(parsedDate)) {
+                              setExpenseDate(parsedDate.toISOString().slice(0, 10));
+                            } else {
+                              console.error("Invalid date format");
                             }
-                          }}
-                          placeholder="Booking Date"
-                          onFocus={(e) => (e.target.type = "date")}
-                          onBlur={(e) => (e.target.type = "text")}
-                        />
+                          }
+                        }}
+                        placeholder="Booking Date"
+                        onFocus={(e) => (e.target.type = "date")}
+                        onBlur={(e) => (e.target.type = "text")}
+                      />
                     </div>
                     <div className="col">
                       <input
+                        onChange={(e) => setVoucherNo(e.target.value)}
                         type="text"
                         className="form-control"
                         placeholder="Voucher No"
@@ -186,7 +204,7 @@ const AddExpenses = () => {
                     <h6 className="pt-3 pb-2 ps-3">Project Details</h6>
                   </div>
 
-                  <form onSubmit={handleSubmit}>
+                  <form onSubmit={handleSubmit} onKeyDown={preventFormSubmit}>
                     <table className="table table-bordered text-center">
                       <thead>
                         <tr>
@@ -200,17 +218,13 @@ const AddExpenses = () => {
                       </thead>
                       <tbody>
                         {expenses.map((expense, index) => (
-                          <tr key={index}>
+                          <tr key={expense.id}>
                             <td>
                               <select
                                 className="form-select"
                                 value={expense.project}
                                 onChange={(e) =>
-                                  handleExpenseChange(
-                                    index,
-                                    "project",
-                                    e.target.value
-                                  )
+                                  handleExpenseChange(index, "project", e.target.value)
                                 }
                               >
                                 <option>Shiv</option>
@@ -224,11 +238,7 @@ const AddExpenses = () => {
                                 className="form-control"
                                 value={expense.name}
                                 onChange={(e) =>
-                                  handleExpenseChange(
-                                    index,
-                                    "name",
-                                    e.target.value
-                                  )
+                                  handleExpenseChange(index, "name", e.target.value)
                                 }
                               />
                             </td>
@@ -237,10 +247,7 @@ const AddExpenses = () => {
                                 className="form-select"
                                 value={expense.expenseHead}
                                 onChange={(e) =>
-                                  handleExpenseHeadChange(
-                                    index,
-                                    e.target.value
-                                  )
+                                  handleExpenseHeadChange(index, e.target.value)
                                 }
                               >
                                 {expenseHeads.map((head, idx) => (
@@ -259,15 +266,9 @@ const AddExpenses = () => {
                                     className="form-control"
                                     value={newOption}
                                     onChange={handleNewOptionChange}
+                                    onKeyDown={handleNewOptionKeyDown}
                                     placeholder="Enter new option"
                                   />
-                                  <button
-                                    type="button"
-                                    className="btn btn-primary mt-2"
-                                    onClick={addNewOption}
-                                  >
-                                    Add Option
-                                  </button>
                                 </div>
                               )}
                             </td>
@@ -277,11 +278,7 @@ const AddExpenses = () => {
                                 className="form-control"
                                 value={expense.narration}
                                 onChange={(e) =>
-                                  handleExpenseChange(
-                                    index,
-                                    "narration",
-                                    e.target.value
-                                  )
+                                  handleExpenseChange(index, "narration", e.target.value)
                                 }
                               />
                             </td>
@@ -291,19 +288,17 @@ const AddExpenses = () => {
                                 className="form-control"
                                 value={expense.amount}
                                 onChange={(e) =>
-                                  handleExpenseChange(
-                                    index,
-                                    "amount",
-                                    e.target.value
-                                  )
+                                  handleExpenseChange(index, "amount", e.target.value)
                                 }
                               />
                             </td>
                             <td className="text-center action-buttons">
-                              <i
-                                className="bi bi-x-circle-fill"
-                                onClick={() => removeExpense(index)}
-                              ></i>
+                              {expense.showRemove && index !== 0 && (
+                                <i
+                                  className="bi bi-x-circle-fill"
+                                  onClick={() => removeExpense(index)}
+                                ></i>
+                              )}
                               {index === expenses.length - 1 && (
                                 <i
                                   className="bi bi-plus-circle-fill"
@@ -322,7 +317,7 @@ const AddExpenses = () => {
                             Amount In Word
                           </td>
                           <td className="text-start" colSpan={2}>
-                            {calculateTotalAmount()} <br />{" "}
+                            {calculateTotalAmount()} <br />
                             {convertAmountToWords(calculateTotalAmount())}
                           </td>
                         </tr>
