@@ -67,4 +67,13 @@ code {
 .form-check {
   margin-left: 1rem;
 }
-
+.custom-modal {
+  max-width: 600px;
+}
+.icon-3 {
+  position: absolute;
+  right: 65rem;
+  transform: translateY(-10%);
+  color: lightblue;
+  cursor: pointer;
+}

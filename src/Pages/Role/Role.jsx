@@ -76,6 +76,10 @@ const Role = () => {
       }
     });
   };
+  // const handleRightClick = (event) => {
+  //   event.preventDefault();
+  //   toast.info("Right-click is disabled on this page!");
+  // };
 
   return (
     <>
@@ -83,14 +87,13 @@ const Role = () => {
       <Helmet>
         <title>React Estate | Role</title>
       </Helmet>
-      <div className="container-fluid position-relative bg-white d-flex p-0">
+      <div className="container-fluid position-relative bg-white d-flex p-0" >
+      {/* onContextMenu={handleRightClick} */}
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
           <Topbar
             toggleSidebar={toggleSidebar}
-            isTopbarOpen={isTopbarOpen}
-            toggleTopbar={toggleTopbar}
           />
 
           <div className="container-fluid pt-4 px-4">

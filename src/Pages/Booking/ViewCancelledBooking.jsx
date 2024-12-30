@@ -7,18 +7,64 @@ import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from 'react-helmet';
 import "react-toastify/dist/ReactToastify.css";
+import { Button, Modal } from "react-bootstrap";
+import Swal from 'sweetalert2';
 
 const ViewCancelledBooking = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
     const [incomeDate, setIncomeDate] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [modalType, setModalType] = useState("");
+    const [showFields, setShowFields] = useState(false);
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
+    const handleRadioChange = (e) => {
+        setShowFields(e.target.id === "flexRadioDefault2");
+    };
+
     const toggleTopbar = () => {
         setIsTopbarOpen(!isTopbarOpen);
+    };
+
+    const handleShowModal = (type) => {
+        setModalType(type);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
+    const handleCancel = () => {
+        Swal.fire({
+            title: 'Are You Sure You Want to Delete?',
+            text: 'Once you delete, all the data related to this booking will be deleted.',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#c4c4c4',
+            customClass: {
+                title: 'swal-title',
+                text: 'swal-text',
+                confirmButton: 'swal-confirm-btn',
+                cancelButton: 'swal-cancel-btn',
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'The user has been deleted.',
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6',
+                });
+            }
+        });
     };
 
     return (
@@ -166,8 +212,20 @@ const ViewCancelledBooking = () => {
                                             </div>
                                         </div>
                                         <div className="d-flex justify-content-center pt-4">
-                                            <button type="submit" className="btn btn-secondary">Cancel Booking</button>
-                                            <button type="submit" className="btn btn-secondary">Transfer Booking</button>
+                                            <Link
+                                                onClick={() => handleCancel()}
+                                                type="button"
+                                                className="btn btn-primary"
+                                            >
+                                                Cancel Booking
+                                            </Link>
+                                            <Link
+                                                type="button"
+                                                className="btn btn-secondary"
+                                                onClick={() => handleShowModal("Transfer")}
+                                            >
+                                                Transfer Booking
+                                            </Link>
                                         </div>
                                     </form>
                                 </div>
@@ -181,6 +239,122 @@ const ViewCancelledBooking = () => {
                     margin-left:0.5rem;
                 }
             `}</style >
+            <Modal show={showModal} onHide={handleCloseModal} dialogClassName="custom-modal">
+                <Modal.Header closeButton className="d-flex justify-content-center">
+                    <Modal.Title className="w-100 text-center">{modalType} Booking</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="row">
+                        <div className="col position-relative">
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="name"
+                                placeholder="Old Unit No"
+                                name="name"
+                            />
+                        </div>
+                        <div className="col">
+                            <input
+                                type="number"
+                                className="form-control"
+                                id="Contact No"
+                                placeholder="New Unit No"
+                                name="Contact No"
+                            />
+                        </div>
+                    </div>
+                    <div className="row pt-4">
+                        <p>Payment Terms</p>
+                        <div className="form-check">
+                            <input className="form-check-input"
+                                type="radio"
+                                name="flexRadioDefault"
+                                id="flexRadioDefault1"
+                                onChange={handleRadioChange}
+                                checked={!showFields}
+                            />
+                            <label className="form-check-label" for="flexRadioDefault1">
+                                Same As Old
+                            </label>
+                        </div>
+                        <div className="form-check pt-2">
+                            <input
+                                className="form-check-input"
+                                type="radio"
+                                name="flexRadioDefault"
+                                id="flexRadioDefault2"
+                                onChange={handleRadioChange}
+                                checked={showFields}
+                            />
+                            <label className="form-check-label" for="flexRadioDefault1">
+                                Want To Change
+                            </label>
+                        </div>
+                    </div>
+                    {showFields && (
+                        <>
+                            <div className="row pt-4">
+                                <div className="col">
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        id="Down Payment"
+                                        placeholder="Down Payment"
+                                        name="Down Payment"
+                                    />
+                                </div>
+                                <div className="col">
+                                    <select className="form-control bg-white" defaultValue="">
+                                        <option value="">Payment Duration</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="row pt-4">
+                                <div className="col">
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        id="Installment Amount"
+                                        placeholder="Installment Amount"
+                                        name="Installment Amount"
+                                    />
+                                </div>
+                                <div className="col">
+                                    <select className="form-control bg-white" defaultValue="">
+                                        <option value="">Payment Duration</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="row pt-4">
+                                <div className="col">
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        id="Total Installment"
+                                        placeholder="Total Installment"
+                                        name="Total Installment"
+                                    />
+                                </div>
+                                <div className="col">
+                                    <select className="form-control bg-white" defaultValue="">
+                                        <option value="">Payment Duration</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </Modal.Body>
+                <Modal.Footer className="d-flex justify-content-center">
+                    <Link
+                        type="button"
+                        className="btn btn-secondary w-25"
+                        onClick={handleCloseModal}
+                    >
+                        Submit
+                    </Link>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 };

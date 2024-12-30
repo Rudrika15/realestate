@@ -122,7 +122,7 @@ const Login = () => {
                       onKeyDown={(e) => handleEnter(e, passcodeRef)}
                     />
                     {usernameError && <div className="invalid-feedback">Enter a valid Username</div>}
-                    <label htmlFor="floatingInput">UserName</label>
+                    <label htmlFor="floatingInput">Username</label>
                   </div>
                   <div className="form-floating mb-4">
                     <input

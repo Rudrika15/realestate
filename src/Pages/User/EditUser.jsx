@@ -77,6 +77,10 @@ function EditUser() {
       e.preventDefault();
       nextField.current.focus();
     }
+    if (e.key === "Enter" && nextField?.current) {
+      e.preventDefault();
+      handleEdit(e);
+    }
   };
 
   const handleUsernameChange = (e) => {
@@ -134,9 +138,8 @@ function EditUser() {
                       <div className="col">
                         <input
                           type="text"
-                          className={`form-control ${
-                            usernameError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${usernameError ? "is-invalid" : ""
+                            }`}
                           placeholder="User Name"
                           value={username}
                           ref={usernameRef}
@@ -154,9 +157,8 @@ function EditUser() {
                       <div className="col">
                         <input
                           type="email"
-                          className={`form-control ${
-                            emailError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${emailError ? "is-invalid" : ""
+                            }`}
                           placeholder="Email"
                           value={email}
                           ref={emailRef}
@@ -174,9 +176,8 @@ function EditUser() {
                       <div className="col">
                         <input
                           type="password"
-                          className={`form-control ${
-                            passcodeError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${passcodeError ? "is-invalid" : ""
+                            }`}
                           placeholder="Passcode"
                           value={passcode}
                           ref={passcodeRef}
@@ -193,9 +194,8 @@ function EditUser() {
                     <div className="row mb-3 w-50">
                       <div className="col">
                         <select
-                          className={`form-control bg-white ${
-                            roleError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control bg-white ${roleError ? "is-invalid" : ""
+                            }`}
                           value={role}
                           ref={roleRef}
                           onChange={handleRoleChange}

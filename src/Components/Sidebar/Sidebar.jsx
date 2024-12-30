@@ -120,6 +120,12 @@ const Sidebar = ({ isSidebarOpen }) => {
                     >
                         <i className="bi bi-cash-stack"></i> Expenses
                     </Link>
+                    <Link
+                        to="/income"
+                        className={`nav-item nav-link ${isActive('/income') ? 'active' : ''}`}
+                    >
+                        <i class="bi bi-wallet"></i> Income
+                    </Link>
                     <div className="nav-item dropdown">
                         <Link
                             to=""

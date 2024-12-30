@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { Spinner } from "react-bootstrap";
@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 function AddUser() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+    const [users, setUsers] = useState([]);
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [passcode, setPasscode] = useState("");
@@ -35,21 +36,21 @@ function AddUser() {
         e.preventDefault();
         let isValid = true;
 
-        if (!username) {
+        if (!username.trim()) {
             setUsernameError(true);
             isValid = false;
         } else {
             setUsernameError(false);
         }
 
-        if (!email) {
+        if (!email.trim()) {
             setEmailError(true);
             isValid = false;
         } else {
             setEmailError(false);
         }
 
-        if (!passcode) {
+        if (!passcode.trim()) {
             setPasscodeError(true);
             isValid = false;
         } else {
@@ -65,6 +66,17 @@ function AddUser() {
 
         if (isValid) {
             setLoading(true);
+            const newUser = {
+                id: Date.now(),
+                name: username,
+                email: email,
+                passcode: passcode,
+                role: role,
+            };
+            const updatedUsers = [...users, newUser];
+            localStorage.setItem("usersData", JSON.stringify(updatedUsers));
+            setUsers(updatedUsers);
+
             toast.success("User Added Successfully!");
             setTimeout(() => {
                 setLoading(false);
@@ -76,6 +88,11 @@ function AddUser() {
             }, 2000);
         }
     };
+
+    useEffect(() => {
+        const storedUsers = JSON.parse(localStorage.getItem("usersData")) || [];
+        setUsers(storedUsers);
+    }, []);
 
     const handleUsernameChange = (e) => {
         setUsername(e.target.value);
@@ -94,13 +111,17 @@ function AddUser() {
 
     const handleRoleChange = (e) => {
         setRole(e.target.value);
-        setRoleError(false);
+        if (e.target.value) setRoleError(false);
     };
 
     const handleEnter = (e, nextField) => {
-        if (e.key === "Enter" && nextField?.current) {
+        if (e.key === "Enter") {
             e.preventDefault();
-            nextField.current.focus();
+            if (nextField?.current) {
+                nextField.current.focus();
+            } else {
+                handleAdd(e);
+            }
         }
     };
 
@@ -141,16 +162,14 @@ function AddUser() {
                                                     onChange={handleUsernameChange}
                                                     onKeyDown={(e) => handleEnter(e, emailRef)}
                                                 />
-                                                {usernameError && (
-                                                    <div className="invalid-feedback">Enter a Username</div>
-                                                )}
+                                                {usernameError && <div className="invalid-feedback">Enter a Username</div>}
                                             </div>
                                         </div>
                                         <div className="row mb-3 w-50">
                                             <div className="col">
                                                 <input
                                                     type="email"
-                                                    className={`form-control ${emailError ? 'is-invalid' : ''}`}
+                                                    className={`form-control ${emailError ? "is-invalid" : ""}`}
                                                     placeholder="Email address"
                                                     value={email}
                                                     ref={emailRef}
@@ -170,9 +189,7 @@ function AddUser() {
                                                     ref={passcodeRef}
                                                     onChange={handlePasscodeChange}
                                                 />
-                                                {passcodeError && (
-                                                    <div className="invalid-feedback">Enter a Passcode</div>
-                                                )}
+                                                {passcodeError && <div className="invalid-feedback">Enter a Passcode</div>}
                                             </div>
                                         </div>
                                         <div className="row mb-3 w-50">
@@ -188,9 +205,7 @@ function AddUser() {
                                                     <option value="admin">Admin</option>
                                                     <option value="user">User</option>
                                                 </select>
-                                                {roleError && (
-                                                    <div className="invalid-feedback">Please select a role.</div>
-                                                )}
+                                                {roleError && <div className="invalid-feedback">Please select a role.</div>}
                                             </div>
                                         </div>
                                         <button

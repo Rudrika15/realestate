@@ -22,7 +22,7 @@ function Booking() {
   const [tokenPaymentDate, setTokenPaymentDate] = useState("");
   const [pendingAmount, setPendingAmount] = useState("");
   const [pendingPaymentDate, setPendingPaymentDate] = useState("");
-  const [installment, setInstallment] = useState("");
+  // const [installment, setInstallment] = useState("");
   const [loanAmount, setLoanAmount] = useState("");
   const [bankDetails, setBankDetails] = useState("");
   const [loanPaymentDate, setLoanPaymentDate] = useState("");
@@ -46,7 +46,7 @@ function Booking() {
   const [tokenPaymentDateError, setTokenPaymentDateError] = useState("");
   const [pendingAmountError, setPendingAmountError] = useState("");
   const [pendingPaymentDateError, setPendingPaymentDateError] = useState("");
-  const [installmentError, setInstallmentError] = useState("");
+  // const [installmentError, setInstallmentError] = useState("");
   const [loanAmountError, setLoanAmountError] = useState("");
   const [loanPaymentDateError, setLoanPaymentDateError] = useState("");
   const [bankDetailsError, setBankDetailsError] = useState("");
@@ -70,7 +70,7 @@ function Booking() {
   const pendingAmountRef = useRef(null);
   const tokenPaymentDateRef = useRef(null);
   const pendingPaymentDateRef = useRef(null);
-  const installmentRef = useRef(null);
+  // const installmentRef = useRef(null);
   const submitRef = useRef(null);
   const loanAmountRef = useRef(null);
   const loanPaymentDateRef = useRef(null);
@@ -98,6 +98,10 @@ function Booking() {
     if (e.key === "Enter" && nextField?.current) {
       e.preventDefault();
       nextField.current.focus();
+    }
+    if (e.key === "Enter" && nextField?.current) {
+      e.preventDefault();
+      handleSubmit(e);
     }
   };
 
@@ -168,18 +172,18 @@ function Booking() {
       setWorkError(false);
     }
 
-    if (!installment) {
-      setInstallmentError(true);
-      isValid = false;
-    } else {
-      setInstallmentError(false);
-    }
+    // if (!installment) {
+    //   setInstallmentError(true);
+    //   isValid = false;
+    // } else {
+    //   setInstallmentError(false);
+    // }
 
     if (!noOfInstallment) {
-      setInstallmentError(true);
+      setNoOfInstallmentError(true);
       isValid = false;
     } else {
-      setInstallmentError(false);
+      setNoOfInstallmentError(false);
     }
 
     if (!paymentplan) {
@@ -377,11 +381,11 @@ function Booking() {
     if (e.target.value) setBankDetailsError(false);
   };
 
-  const handleInstallmentChange = (e) => {
-    const isChecked = e.target.checked;
-    setInstallment(isChecked);
-    setInstallmentError(!isChecked);
-  };
+  // const handleInstallmentChange = (e) => {
+  //   const isChecked = e.target.checked;
+  //   setInstallment(isChecked);
+  //   setInstallmentError(!isChecked);
+  // };
 
   const handleDownPaymentChange = (e) => {
     setDownPayment(e.target.value);
@@ -612,7 +616,7 @@ function Booking() {
                     <p class="text-dark fs-5">Payment Terms</p>
                     <div className="row">
                       <div className="col">
-                        <select
+                        {/* <select
                           className={`form-control bg-white ${paymentplanError ? "is-invalid" : ""}`}
                           value={paymentplan}
                           onChange={(e) => {
@@ -625,7 +629,8 @@ function Booking() {
                           <option value="fullamount">Full Amount</option>
                           <option value="installment">Installment</option>
                           <option value="loan">Loan</option>
-                        </select>
+                        </select> */}
+                        <p>Token Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
                         {paymentplanError && (
                           <div className="invalid-feedback">Please select a Payment Plan</div>
                         )}
@@ -667,6 +672,7 @@ function Booking() {
                                   : ""
                               }
                               onChange={(e) => handleTokenPaymentDateChange(e)}
+                              onKeyDown={(e) => handleEnter(e, pendingAmountRef)}
                               placeholder="Token Payment Date"
                               onFocus={(e) => (e.target.type = "date")}
                               onBlur={(e) => (e.target.type = "text")}
@@ -708,6 +714,7 @@ function Booking() {
                                   })
                                   : ""
                               }
+                              onKeyDown={(e) => handleEnter(e, submitRef)}
                               onChange={(e) => handlePendingPaymentDateChange(e)}
                               placeholder="Pending Payment Date"
                               onFocus={(e) => (e.target.type = "date")}
@@ -786,7 +793,7 @@ function Booking() {
                               id="floatingTextarea"
                               value={bankDetails}
                               onChange={handleBankDetailsChange}
-                              onKeyDown={(e) => handleEnter(e, downPaymentRef)}
+                              onKeyDown={(e) => handleEnter(e, submitRef)}
                               ref={bankDetailsRef}
                             ></textarea>
                             {bankDetailsError && (
@@ -922,7 +929,7 @@ function Booking() {
                               className={`form-control ${noOfInstallmentError ? "is-invalid" : ""}`}
                               value={noOfInstallment}
                               onChange={handleNoOfInstallmentChange}
-                              onKeyDown={(e) => handleEnter(e, installmentRef)}
+                              onKeyDown={(e) => handleEnter(e, submitRef)}
                               ref={noOfInstallmentRef}
                             />
                             {noOfInstallmentError && (
@@ -979,17 +986,14 @@ function Booking() {
                     <div className="form-check pt-4">
                       <input
                         type="checkbox"
-                        className={`form-check-input ${installmentError ? "is-invalid" : ""}`}
-                        value={installment}
-                        onChange={handleInstallmentChange}
-                        onKeyDown={(e) => handleEnter(e, submitRef)}
-                        ref={installmentRef}
+                        className="form-check-input"
+                        // checked={installment}
+                        // onChange={handleInstallmentChange}
+                        // onKeyDown={(e) => handleEnter(e, submitRef)}
+                        // ref={installmentRef}
                         id="installmentNotify"
                       />
-                      Installment Notify
-                      {installmentError && (
-                        <div className="invalid-feedback">Please check the Installment Notify</div>
-                      )}
+                      <label htmlFor="installmentNotify">Installment Notify</label>
                     </div>
                     <div className="row pt-4">
                       <div className="col">
@@ -1005,6 +1009,9 @@ function Booking() {
                             "Submit"
                           )}
                         </button>
+                        {!loading && (
+                          <Link to="/view-booking"></Link>
+                        )}
                       </div>
                     </div>
                   </form>

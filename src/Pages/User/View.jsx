@@ -3,49 +3,34 @@ import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
 import Footer from '../../Components/Footer/Footer';
 import { Helmet } from 'react-helmet';
-import axios from 'axios';
-import { getUsers } from '../../Api/Api';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 const View = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-    const [data, setData] = useState([
-        { id: 1, name: 'Zlice Smith', email: 'Zlice@gmail.com'},
-        { id: 2, name: 'Bob Johnson', email: 'Bob@gmail.com'},
-        { id: 3, name: 'John Doe', email: 'John@gmail.com' },
-        { id: 4, name: 'Alice Smith', email: 'Alice@gmail.com'},
-    ].sort((a, b) => a.name.localeCompare(b.name)));
+    const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
 
-    // const [loading, setLoading] = useState(true);
-    const getData = async () => {
-        try {
-            const res = await axios.get(getUsers);
-            if (res.data.status === true) {
-                const sortedData = res.data.data.sort((a, b) => a.name.localeCompare(b.name));
-                setData(sortedData);
-            } else {
-                console.error('Error fetching data:', res.data.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
+    const fetchUsers = () => {
+        const storedUsersData = JSON.parse(localStorage.getItem('usersData'));
+        if (storedUsersData) {
+            setUsers(storedUsersData);
         }
     };
-    
+
     useEffect(() => {
-        getData();
-    }, [data]);
+        const storedUsersData = JSON.parse(localStorage.getItem('usersData'));
+        if (storedUsersData) {
+            setUsers(storedUsersData);
+        }
+    }, []);
 
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
+    const handleEdit = (user) => {
+        navigate('/edit-user', { state: { user } });
     };
 
-    const toggleTopbar = () => {
-        setIsTopbarOpen(!isTopbarOpen);
-    };
-
-    const handleDelete = (id) => {
+    const handleDelete = (userId) => {
         Swal.fire({
             title: 'Are You Sure You Want to Delete?',
             text: 'Once you delete, all the data related to this user will be deleted.',
@@ -55,14 +40,11 @@ const View = () => {
             cancelButtonText: 'Cancel',
             confirmButtonColor: '#d33',
             cancelButtonColor: '#c4c4c4',
-            customClass: {
-                title: 'swal-title',
-                text: 'swal-text',
-                confirmButton: 'swal-confirm-btn',
-                cancelButton: 'swal-cancel-btn',
-            },
         }).then((result) => {
             if (result.isConfirmed) {
+                const updatedUsers = users.filter((user) => user.id !== userId);
+                setUsers(updatedUsers);
+                localStorage.setItem('usersData', JSON.stringify(updatedUsers));
                 Swal.fire({
                     title: 'Deleted!',
                     text: 'The user has been deleted.',
@@ -73,6 +55,14 @@ const View = () => {
         });
     };
 
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+
+    const toggleTopbar = () => {
+        setIsTopbarOpen(!isTopbarOpen);
+    };
+
     return (
         <>
             <Helmet>
@@ -80,7 +70,6 @@ const View = () => {
             </Helmet>
             <div className="container-fluid position-relative bg-white d-flex p-0">
                 <Sidebar isSidebarOpen={isSidebarOpen} />
-
                 <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
                     <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
 
@@ -89,67 +78,39 @@ const View = () => {
                             <div className="col-sm-12 col-xl-12">
                                 <div className="bg-light rounded h-100 p-4">
                                     <div className="d-flex justify-content-between mb-3">
-                                        <div className="p-2 ">
+                                        <div className="p-2">
                                             <h6 className="mb-4">User List</h6>
                                         </div>
-                                        <div className="p-2 ">
+                                        <div className="p-2">
                                             <Link to="/add-user" className="">
                                                 <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> New User</h6>
                                             </Link>
                                         </div>
                                     </div>
-                                    {/* {loading ? (
-                                        <div className="text-center">
-                                            <div className="spinner-border text-primary" role="status">
-                                                <span className="visually-hidden">Loading...</span>
-                                            </div>
-                                        </div>
-                                   ) : ( */}
-                                    {data.length > 0 ? (
+                                    {users.length > 0 ? (
                                         <table className="table table-bordered text-center">
                                             <thead>
                                                 <tr>
                                                     <th scope="col">UserId</th>
-                                                    <th scope="col">UserName</th>
-                                                    <th scope="col">Email</th>
+                                                    <th scope="col" className="w-75">UserName</th>
                                                     <th scope="col">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {data
-                                                 .sort((a, b) => a.name.localeCompare(b.name))
-                                                 .map((user, index) => (
-                                                    <tr key={index}>
-                                                        <td>{index + 1}</td>
+                                                {users.map((user) => (
+                                                    <tr key={user.id}>
+                                                        <td>{user.id}</td>
                                                         <td>{user.name}</td>
-                                                        <td>{user.email}</td>
                                                         <td>
-                                                            <Link to="/edit-user" className="btn btn-warning btn-sm me-2">
+                                                            <Link to="/edit-user" onClick={() => handleEdit(user.id)} className="btn btn-warning btn-sm me-2">
                                                                 <i className="fas fa-edit"></i>
                                                             </Link>
-                                                            <Link onClick={() => handleDelete()} className="btn btn-danger btn-sm">
+                                                            <Link onClick={() => handleDelete(user.id)} className="btn btn-danger btn-sm">
                                                                 <i className="fas fa-trash"></i>
                                                             </Link>
                                                         </td>
                                                     </tr>
                                                 ))}
-                                                {/* {data.length > 0 ? (
-                                                    data.map((user, index) => (
-                                                        <tr key={user.id}>
-                                                            <th scope="row">{index + 1}</th>
-                                                            <td>{user.name}</td>
-                                                            <td>{user.email}</td>
-                                                            <td>{user.Role?.role_name || 'N/A'}</td>
-                                                            <td>{user.status}</td>
-                                                        </tr>
-                                                    ))
-                                                ) : (
-                                                    <tr>
-                                                        <td colSpan="5" className="text-center">
-                                                            No users found.
-                                                        </td>
-                                                    </tr>
-                                                )} */}
                                             </tbody>
                                         </table>
                                     ) : (
