@@ -48,7 +48,7 @@ const App = () => {
           <Route
             path="/booking-authorization"
             element={<BookingAuthorization />}
-          ></Route>
+          ></Route> 
           <Route path="/cash-deposit" element={<CashDeposit />}></Route>
           <Route path="/cheque-deposit" element={<ChequeDeposit />}></Route>
           <Route path="/booking" element={<Booking />}></Route>
