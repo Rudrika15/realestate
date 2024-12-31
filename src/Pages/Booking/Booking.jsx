@@ -22,7 +22,11 @@ function Booking() {
   const [tokenPaymentDate, setTokenPaymentDate] = useState("");
   const [pendingAmount, setPendingAmount] = useState("");
   const [pendingPaymentDate, setPendingPaymentDate] = useState("");
-  // const [installment, setInstallment] = useState("");
+  const [showTokenFields, setShowTokenFields] = useState(false);
+  const [showTokenFields1, setShowTokenFields1] = useState(false);
+  const [showTokenFields2, setShowTokenFields2] = useState(false);
+  const [showTokenFields3, setShowTokenFields3] = useState(false);
+  const [installment, setInstallment] = useState("");
   const [loanAmount, setLoanAmount] = useState("");
   const [bankDetails, setBankDetails] = useState("");
   const [loanPaymentDate, setLoanPaymentDate] = useState("");
@@ -46,7 +50,7 @@ function Booking() {
   const [tokenPaymentDateError, setTokenPaymentDateError] = useState("");
   const [pendingAmountError, setPendingAmountError] = useState("");
   const [pendingPaymentDateError, setPendingPaymentDateError] = useState("");
-  // const [installmentError, setInstallmentError] = useState("");
+  const [installmentError, setInstallmentError] = useState("");
   const [loanAmountError, setLoanAmountError] = useState("");
   const [loanPaymentDateError, setLoanPaymentDateError] = useState("");
   const [bankDetailsError, setBankDetailsError] = useState("");
@@ -70,7 +74,7 @@ function Booking() {
   const pendingAmountRef = useRef(null);
   const tokenPaymentDateRef = useRef(null);
   const pendingPaymentDateRef = useRef(null);
-  // const installmentRef = useRef(null);
+  const installmentRef = useRef(null);
   const submitRef = useRef(null);
   const loanAmountRef = useRef(null);
   const loanPaymentDateRef = useRef(null);
@@ -94,6 +98,17 @@ function Booking() {
     setIsTopbarOpen(!isTopbarOpen);
   };
 
+  const formatDate = (date) => {
+    if (date) {
+      const d = new Date(date);
+      const day = ("0" + d.getDate()).slice(-2);
+      const month = ("0" + (d.getMonth() + 1)).slice(-2);
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+    return "";
+  };
+
   const handleEnter = (e, nextField) => {
     if (e.key === "Enter" && nextField?.current) {
       e.preventDefault();
@@ -102,6 +117,23 @@ function Booking() {
     if (e.key === "Enter" && nextField?.current) {
       e.preventDefault();
       handleSubmit(e);
+    }
+  };
+
+  const getFrequencyInMonths = (frequency) => {
+    switch (frequency) {
+      case "Monthly":
+        return 1;
+      case "Bi-monthly":
+        return 2;
+      case "Quarterly":
+        return 3;
+      case "Semi-Annually":
+        return 6;
+      case "Annually":
+        return 12;
+      default:
+        return 0;
     }
   };
 
@@ -172,12 +204,12 @@ function Booking() {
       setWorkError(false);
     }
 
-    // if (!installment) {
-    //   setInstallmentError(true);
-    //   isValid = false;
-    // } else {
-    //   setInstallmentError(false);
-    // }
+    if (!installment) {
+      setInstallmentError(true);
+      isValid = false;
+    } else {
+      setInstallmentError(false);
+    }
 
     if (!noOfInstallment) {
       setNoOfInstallmentError(true);
@@ -381,11 +413,11 @@ function Booking() {
     if (e.target.value) setBankDetailsError(false);
   };
 
-  // const handleInstallmentChange = (e) => {
-  //   const isChecked = e.target.checked;
-  //   setInstallment(isChecked);
-  //   setInstallmentError(!isChecked);
-  // };
+  const handleInstallmentChange = (e) => {
+    const isChecked = e.target.checked;
+    setInstallment(isChecked);
+    setInstallmentError(!isChecked);
+  };
 
   const handleDownPaymentChange = (e) => {
     setDownPayment(e.target.value);
@@ -468,32 +500,11 @@ function Booking() {
                           type="text"
                           id="date"
                           ref={dateRef}
-                          className={`form-control bg-white ${bookingError ? "is-invalid" : ""}`}
-                          value={
-                            bookingDate
-                              ? new Date(bookingDate).toLocaleDateString("en-GB", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "2-digit",
-                              })
-                              : ""
-                          }
-                          onChange={(e) => {
-                            handleBookingDateChange(e);
-                            const inputDate = e.target.value;
-                            const [day, month, year] = inputDate.split("-");
-                            if (day && month && year) {
-                              const formattedDate = `${year}-${month}-${day}`;
-                              const parsedDate = new Date(formattedDate);
-                              if (!isNaN(parsedDate)) {
-                                setBookingDate(parsedDate.toISOString().slice(0, 10));
-                              } else {
-                                console.error("Invalid date format");
-                              }
-                            }
-                          }}
+                          className={`form-control ${bookingError ? "is-invalid" : ""}`}
+                          value={formatDate(bookingDate)}
+                          onChange={(e) => handleBookingDateChange(e)}
                           onKeyDown={(e) => handleEnter(e, customerNameRef)}
-                          placeholder="Booking Date"
+                          placeholder="Boooking Date"
                           onFocus={(e) => (e.target.type = "date")}
                           onBlur={(e) => (e.target.type = "text")}
                         />
@@ -603,7 +614,7 @@ function Booking() {
                           name="Work Amount"
                           value={work}
                           onChange={handleWorkChange}
-                          onKeyDown={(e) => handleEnter(e, paymentPlanRef)}
+                          onKeyDown={(e) => handleEnter(e, null)}
                           ref={workRef}
                         />
                         {workError && (
@@ -614,32 +625,19 @@ function Booking() {
                     </div>
                     <hr />
                     <p class="text-dark fs-5">Payment Terms</p>
-                    <div className="row">
+                    {/* <div className="row">
                       <div className="col">
-                        {/* <select
-                          className={`form-control bg-white ${paymentplanError ? "is-invalid" : ""}`}
-                          value={paymentplan}
-                          onChange={(e) => {
-                            handlePaymentPlanChange(e);
-                            setPaymentPlan(e.target.value);
-                          }}
-                          ref={paymentPlanRef}
-                        >
-                          <option value="">Payment Plan</option>
-                          <option value="fullamount">Full Amount</option>
-                          <option value="installment">Installment</option>
-                          <option value="loan">Loan</option>
-                        </select> */}
-                        <p>Token Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
-                        {paymentplanError && (
-                          <div className="invalid-feedback">Please select a Payment Plan</div>
-                        )}
+                        <p className="text-gray" onClick={() => setShowTokenFields((prev) => !prev)}> Token Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
+                        <p className="text-gray" onClick={() => setShowTokenFields((prev) => !prev)}>Down Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
+                        <p className="text-gray">Installment Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
+                        <p className="text-gray">Construction Linked Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
                       </div>
                       <div className="col"></div>
-                    </div>
-                    {paymentplan === "fullamount" && (
-                      <>
-                        <div className="row pt-4">
+                    </div> */}
+                    <>
+                      <p className="text-gray" onClick={() => setShowTokenFields((prev) => !prev)}> Token Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
+                      {showTokenFields && (
+                        <div className="row pt-2 mb-4">
                           <div className="col">
                             <input
                               type="number"
@@ -662,17 +660,9 @@ function Booking() {
                               id="date"
                               ref={tokenPaymentDateRef}
                               className={`form-control ${tokenPaymentDateError ? "is-invalid" : ""}`}
-                              value={
-                                tokenPaymentDate
-                                  ? new Date(tokenPaymentDate).toLocaleDateString("en-GB", {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "2-digit",
-                                  })
-                                  : ""
-                              }
+                              value={formatDate(tokenPaymentDate)}
                               onChange={(e) => handleTokenPaymentDateChange(e)}
-                              onKeyDown={(e) => handleEnter(e, pendingAmountRef)}
+                              onKeyDown={(e) => handleEnter(e, submitRef)}
                               placeholder="Token Payment Date"
                               onFocus={(e) => (e.target.type = "date")}
                               onBlur={(e) => (e.target.type = "text")}
@@ -682,130 +672,129 @@ function Booking() {
                             )}
                           </div>
                         </div>
-                        <div className="row pt-4">
-                          <div className="col">
-                            <input
-                              type="number"
-                              id="pendingamount"
-                              placeholder="Pending Amount"
-                              name="pendingamount"
-                              className={`form-control ${pendingAmountError ? "is-invalid" : ""}`}
-                              value={pendingAmount}
-                              onChange={handlePendingAmountChange}
-                              onKeyDown={(e) => handleEnter(e, pendingPaymentDateRef)}
-                              ref={pendingAmountRef}
-                            />
-                            {pendingAmountError && (
-                              <div className="invalid-feedback">Enter Pending Amount</div>
-                            )}
-                          </div>
-                          <div className="col">
-                            <input
-                              type="text"
-                              id="date"
-                              ref={pendingPaymentDateRef}
-                              className={`form-control ${pendingPaymentDateError ? "is-invalid" : ""}`}
-                              value={
-                                pendingPaymentDate
-                                  ? new Date(pendingPaymentDate).toLocaleDateString("en-GB", {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "2-digit",
-                                  })
-                                  : ""
-                              }
-                              onKeyDown={(e) => handleEnter(e, submitRef)}
-                              onChange={(e) => handlePendingPaymentDateChange(e)}
-                              placeholder="Pending Payment Date"
-                              onFocus={(e) => (e.target.type = "date")}
-                              onBlur={(e) => (e.target.type = "text")}
-                            />
-                            {pendingPaymentDateError && (
-                              <div className="invalid-feedback">Please select a Pending Payment Date</div>
-                            )}
-                          </div>
+                      )}
+                      {/* <div className="row pt-4">
+                        <div className="col">
+                          <input
+                            type="number"
+                            id="pendingamount"
+                            placeholder="Pending Amount"
+                            name="pendingamount"
+                            className={`form-control ${pendingAmountError ? "is-invalid" : ""}`}
+                            value={pendingAmount}
+                            onChange={handlePendingAmountChange}
+                            onKeyDown={(e) => handleEnter(e, pendingPaymentDateRef)}
+                            ref={pendingAmountRef}
+                          />
+                          {pendingAmountError && (
+                            <div className="invalid-feedback">Enter Pending Amount</div>
+                          )}
                         </div>
-                      </>
-                    )}
-                    {paymentplan === "loan" && (
-                      <div>
-                        <div className="row pt-4">
-                          <div className="col">
-                            <input
-                              type="number"
-                              id="loanamount"
-                              placeholder="Loan Amount"
-                              name="pendingamount"
-                              className={`form-control ${loanAmountError ? "is-invalid" : ""}`}
-                              value={loanAmount}
-                              onChange={handleLoanAmountChange}
-                              onKeyDown={(e) => handleEnter(e, loanPaymentDateRef)}
-                              ref={loanAmountRef}
-                            />
-                            {loanAmountError && (
-                              <div className="invalid-feedback">Enter Loan Amount</div>
-                            )}
-                          </div>
-                          <div className="col">
-                            <input
-                              type="text"
-                              id="date"
-                              ref={loanPaymentDateRef}
-                              className={`form-control ${loanPaymentDateError ? "is-invalid" : ""}`}
-                              value={
-                                loanPaymentDate
-                                  ? new Date(loanPaymentDate).toLocaleDateString("en-GB", {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "2-digit",
-                                  })
-                                  : ""
-                              }
-                              onChange={(e) => {
-                                handleLoanPaymentDateChange(e);
-                                const inputDate = e.target.value;
-                                const [year, month, day] = inputDate.split("-");
-                                if (day && month && year) {
-                                  const formattedDate = `${year}-${month}-${day}`;
-                                  const parsedDate = new Date(formattedDate);
-                                  if (!isNaN(parsedDate)) {
-                                    setPendingPaymentDate(parsedDate.toISOString().slice(0, 10));
-                                  } else {
-                                    console.error("Invalid date format");
-                                  }
+                        <div className="col">
+                          <input
+                            type="text"
+                            id="date"
+                            ref={pendingPaymentDateRef}
+                            className={`form-control ${pendingPaymentDateError ? "is-invalid" : ""}`}
+                            value={
+                              pendingPaymentDate
+                                ? new Date(pendingPaymentDate).toLocaleDateString("en-GB", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "2-digit",
+                                })
+                                : ""
+                            }
+                            onKeyDown={(e) => handleEnter(e, submitRef)}
+                            onChange={(e) => handlePendingPaymentDateChange(e)}
+                            placeholder="Pending Payment Date"
+                            onFocus={(e) => (e.target.type = "date")}
+                            onBlur={(e) => (e.target.type = "text")}
+                          />
+                          {pendingPaymentDateError && (
+                            <div className="invalid-feedback">Please select a Pending Payment Date</div>
+                          )}
+                        </div>
+                      </div> */}
+                    </>
+                    {/* <div>
+                      <div className="row pt-4">
+                        <div className="col">
+                          <input
+                            type="number"
+                            id="loanamount"
+                            placeholder="Loan Amount"
+                            name="pendingamount"
+                            className={`form-control ${loanAmountError ? "is-invalid" : ""}`}
+                            value={loanAmount}
+                            onChange={handleLoanAmountChange}
+                            onKeyDown={(e) => handleEnter(e, loanPaymentDateRef)}
+                            ref={loanAmountRef}
+                          />
+                          {loanAmountError && (
+                            <div className="invalid-feedback">Enter Loan Amount</div>
+                          )}
+                        </div>
+                        <div className="col">
+                          <input
+                            type="text"
+                            id="date"
+                            ref={loanPaymentDateRef}
+                            className={`form-control ${loanPaymentDateError ? "is-invalid" : ""}`}
+                            value={
+                              loanPaymentDate
+                                ? new Date(loanPaymentDate).toLocaleDateString("en-GB", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "2-digit",
+                                })
+                                : ""
+                            }
+                            onChange={(e) => {
+                              handleLoanPaymentDateChange(e);
+                              const inputDate = e.target.value;
+                              const [year, month, day] = inputDate.split("-");
+                              if (day && month && year) {
+                                const formattedDate = `${year}-${month}-${day}`;
+                                const parsedDate = new Date(formattedDate);
+                                if (!isNaN(parsedDate)) {
+                                  setPendingPaymentDate(parsedDate.toISOString().slice(0, 10));
+                                } else {
+                                  console.error("Invalid date format");
                                 }
-                              }}
-                              onKeyDown={(e) => handleEnter(e, bankDetailsRef)}
-                              placeholder="Loan Payment Date"
-                              onFocus={(e) => (e.target.type = "date")}
-                              onBlur={(e) => (e.target.type = "text")}
-                            />
-                            {loanPaymentDateError && (
-                              <div className="invalid-feedback">Please select a Loan Payment Date</div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="row w-75">
-                          <div className="col pt-4">
-                            <textarea
-                              className={`form-control ${bankDetailsError ? "is-invalid" : ""}`}
-                              placeholder="Bank Details"
-                              id="floatingTextarea"
-                              value={bankDetails}
-                              onChange={handleBankDetailsChange}
-                              onKeyDown={(e) => handleEnter(e, submitRef)}
-                              ref={bankDetailsRef}
-                            ></textarea>
-                            {bankDetailsError && (
-                              <div className="invalid-feedback">Enter Bank Details</div>
-                            )}
-                          </div>
+                              }
+                            }}
+                            onKeyDown={(e) => handleEnter(e, bankDetailsRef)}
+                            placeholder="Loan Payment Date"
+                            onFocus={(e) => (e.target.type = "date")}
+                            onBlur={(e) => (e.target.type = "text")}
+                          />
+                          {loanPaymentDateError && (
+                            <div className="invalid-feedback">Please select a Loan Payment Date</div>
+                          )}
                         </div>
                       </div>
-                    )}
-                    {paymentplan === "installment" && (
-                      <div>
-                        <div className="row pt-4">
+                      <div className="row w-75">
+                        <div className="col pt-4">
+                          <textarea
+                            className={`form-control ${bankDetailsError ? "is-invalid" : ""}`}
+                            placeholder="Bank Details"
+                            id="floatingTextarea"
+                            value={bankDetails}
+                            onChange={handleBankDetailsChange}
+                            onKeyDown={(e) => handleEnter(e, submitRef)}
+                            ref={bankDetailsRef}
+                          ></textarea>
+                          {bankDetailsError && (
+                            <div className="invalid-feedback">Enter Bank Details</div>
+                          )}
+                        </div>
+                      </div>
+                    </div> */}
+                    <div>
+                      <p className="text-gray" onClick={() => setShowTokenFields1((prev) => !prev)}>Down Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
+                      {showTokenFields1 && (
+                        <div className="row pt-3 mb-4">
                           <div className="col">
                             <input
                               type="number"
@@ -828,30 +817,9 @@ function Booking() {
                               id="date"
                               ref={downPaymentDateRef}
                               className={`form-control ${downPaymentDateError ? "is-invalid" : ""}`}
-                              value={
-                                downPaymentDate
-                                  ? new Date(downPaymentDate).toLocaleDateString("en-GB", {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "2-digit",
-                                  })
-                                  : ""
-                              }
-                              onChange={(e) => {
-                                handleDownPaymentDateChange(e);
-                                const inputDate = e.target.value;
-                                const [day, month, year] = inputDate.split("-");
-                                if (day && month && year) {
-                                  const formattedDate = `${day}-${month}-${year}`;
-                                  const parsedDate = new Date(formattedDate);
-                                  if (!isNaN(parsedDate)) {
-                                    setDownPaymentDate(parsedDate.toISOString().slice(0, 10));
-                                  } else {
-                                    console.error("Invalid date format");
-                                  }
-                                }
-                              }}
-                              onKeyDown={(e) => handleEnter(e, paymentFrequencyRef)}
+                              value={formatDate(downPaymentDate)}
+                              onChange={(e) => handleDownPaymentDateChange(e)}
+                              onKeyDown={(e) => handleEnter(e, submitRef)}
                               placeholder="Down Payment Date"
                               onFocus={(e) => (e.target.type = "date")}
                               onBlur={(e) => (e.target.type = "text")}
@@ -861,157 +829,133 @@ function Booking() {
                             )}
                           </div>
                         </div>
-                        <div className="row pt-4">
-                          <div className="col">
-                            <select
-                              className={`form-control bg-white ${paymentFrequencyError ? "is-invalid" : ""}`}
-                              value={paymentFrequency}
-                              onChange={handlePaymentFrequencyChange}
-                              onKeyDown={(e) => handleEnter(e, dueDateRef)}
-                              ref={paymentFrequencyRef}
-                            >
-                              <option value="">Payment Frequency</option>
-                              <option value="1-month">1 Month</option>
-                              <option value="3-months">3 Months</option>
-                              <option value="6-months">6 Months</option>
-                              <option value="12-months">12 Months</option>
-                            </select>
-                            {paymentFrequencyError && (
-                              <div className="invalid-feedback">Please select a Payment Frequency</div>
-                            )}
+                      )}
+                      <p
+                        className="text-gray"
+                        onClick={() => setShowTokenFields2((prev) => !prev)}
+                      >
+                        Installment Payment <i className="bi bi-plus-circle-fill icon-3"></i>
+                      </p>
+                      {showTokenFields2 && (
+                        <>
+                          <div className="row pt-4">
+                            <div className="col">
+                              <select
+                                className={`form-control bg-white ${paymentFrequencyError ? "is-invalid" : ""}`}
+                                value={paymentFrequency}
+                                onChange={handlePaymentFrequencyChange}
+                                onKeyDown={(e) => handleEnter(e, dueDateRef)}
+                                ref={paymentFrequencyRef}
+                              >
+                                <option value="">Payment Frequency</option>
+                                <option value="Monthly">Monthly</option>
+                                <option value="Bi-monthly">Bi-monthly</option>
+                                <option value="Quarterly">Quarterly</option>
+                                <option value="Semi-Annually">Semi-Annually</option>
+                                <option value="Annually">Annually</option>
+                              </select>
+                              {paymentFrequencyError && (
+                                <div className="invalid-feedback">Please select a Payment Frequency</div>
+                              )}
+                            </div>
+                            <div className="col">
+                              <input
+                                type="text"
+                                id="date"
+                                ref={dueDateRef}
+                                className={`form-control ${dueDateError ? "is-invalid" : ""}`}
+                                value={formatDate(dueDate)}
+                                onChange={(e) => handleDueDateChange(e)}
+                                onKeyDown={(e) => handleEnter(e, noOfInstallmentRef)}
+                                placeholder="Due Date"
+                                onFocus={(e) => (e.target.type = "date")}
+                                onBlur={(e) => (e.target.type = "text")}
+                              />
+                              {dueDateError && (
+                                <div className="invalid-feedback">Please select a Due Date</div>
+                              )}
+                            </div>
                           </div>
-                          <div className="col">
-                            <input
-                              type="text"
-                              id="date"
-                              ref={dueDateRef}
-                              className={`form-control ${dueDateError ? "is-invalid" : ""}`}
-                              value={
-                                dueDate
-                                  ? new Date(dueDate).toLocaleDateString("en-GB", {
+                          <div className="row pt-4">
+                            <div className="col">
+                              <input
+                                type="number"
+                                id="noofinstallment"
+                                ref={noOfInstallmentRef}
+                                onKeyDown={(e) => handleEnter(e, submitRef)}
+                                placeholder="No Of Installments"
+                                className={`form-control ${noOfInstallmentError ? "is-invalid" : ""}`}
+                                value={noOfInstallment}
+                                onChange={handleNoOfInstallmentChange}
+                              />
+                              {noOfInstallmentError && (
+                                <div className="invalid-feedback">Enter No Of Installments</div>
+                              )}
+                            </div>
+                            <div className="col"></div>
+                          </div>
+                          <div className="pt-3 w-50 mb-4">
+                            <table className="table table-bordered text-center">
+                              <thead>
+                                <tr>
+                                  <th>Installment</th>
+                                  <th>Due Date</th>
+                                  <th>Amount</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {Array.from({ length: noOfInstallment }).map((_, idx) => {
+                                  const installmentDate = new Date(dueDate);
+                                  installmentDate.setMonth(installmentDate.getMonth() + idx * getFrequencyInMonths(paymentFrequency));
+                                  const formattedDate = installmentDate.toLocaleDateString("en-GB", {
                                     day: "2-digit",
                                     month: "2-digit",
-                                    year: "2-digit",
-                                  })
-                                  : ""
-                              }
-                              onChange={(e) => {
-                                handleDueDateChange(e);
-                                const inputDate = e.target.value;
-                                const [day, month, year] = inputDate.split("-");
-                                if (day && month && year) {
-                                  const formattedDate = `${day}-${month}-${year}`;
-                                  const parsedDate = new Date(formattedDate);
-                                  if (!isNaN(parsedDate)) {
-                                    setDueDate(parsedDate.toISOString().slice(0, 10));
-                                  } else {
-                                    console.error("Invalid date format");
-                                  }
-                                }
-                              }}
-                              onKeyDown={(e) => handleEnter(e, noOfInstallmentRef)}
-                              placeholder="Due Date"
-                              onFocus={(e) => (e.target.type = "date")}
-                              onBlur={(e) => (e.target.type = "text")}
-                            />
-                            {dueDateError && (
-                              <div className="invalid-feedback">Please select a Due Date</div>
-                            )}
+                                    year: "numeric",
+                                  });
+
+                                  return (
+                                    <tr key={idx}>
+                                      <td>Installment {idx + 1}</td>
+                                      <td>{formattedDate}</td>
+                                      <td>2,00,000</td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
                           </div>
-                        </div>
-                        <div className="row pt-4">
-                          <div className="col">
-                            <input
-                              type="number"
-                              id="noofinstallment"
-                              placeholder="No Of Installments"
-                              name="noofinstallment"
-                              className={`form-control ${noOfInstallmentError ? "is-invalid" : ""}`}
-                              value={noOfInstallment}
-                              onChange={handleNoOfInstallmentChange}
-                              onKeyDown={(e) => handleEnter(e, submitRef)}
-                              ref={noOfInstallmentRef}
-                            />
-                            {noOfInstallmentError && (
-                              <div className="invalid-feedback">Enter No Of Installments</div>
-                            )}
-                          </div>
-                          <div className="col"></div>
-                        </div>
-                        <div class="pt-4 w-50">
-                          <table class="table table-bordered text-center">
-                            <thead>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>Installment 1</td>
-                                <td>01-01-2025</td>
-                                <td>2,00,000</td>
-                              </tr>
-                              <tr>
-                                <td>Installment 2</td>
-                                <td>01-02-2025</td>
-                                <td>2,00,000</td>
-                              </tr>
-                              <tr>
-                                <td>Installment 3</td>
-                                <td>01-03-2025</td>
-                                <td>2,00,000</td>
-                              </tr>
-                              <tr>
-                                <td>Installment 4</td>
-                                <td>01-04-2025</td>
-                                <td>2,00,000</td>
-                              </tr>
-                              <tr>
-                                <td>Installment 5</td>
-                                <td>01-05-2025</td>
-                                <td>2,00,000</td>
-                              </tr>
-                              <tr>
-                                <td>Installment 6</td>
-                                <td>01-06-2025</td>
-                                <td>2,00,000</td>
-                              </tr>
-                              <tr>
-                                <td>Installment 7</td>
-                                <td>01-07-2025</td>
-                                <td>2,00,000</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
+                        </>
+                      )}
+                      <div>
+                        <p className="text-gray" onClick={() => setShowTokenFields3((prev) => !prev)}>Construction Linked Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
                       </div>
-                    )}
-                    <div className="form-check pt-4">
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        // checked={installment}
-                        // onChange={handleInstallmentChange}
-                        // onKeyDown={(e) => handleEnter(e, submitRef)}
-                        // ref={installmentRef}
-                        id="installmentNotify"
-                      />
-                      <label htmlFor="installmentNotify">Installment Notify</label>
-                    </div>
-                    <div className="row pt-4">
-                      <div className="col">
-                        <button
-                          type="submit"
-                          className="btn btn-primary"
-                          ref={submitRef}
-                          disabled={loading}
-                        >
-                          {loading ? (
-                            <Spinner animation="border" size="sm" />
-                          ) : (
-                            "Submit"
+                      <div className="form-check pt-4">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          checked={installment}
+                          onChange={handleInstallmentChange}
+                          onKeyDown={(e) => handleEnter(e, submitRef)}
+                          ref={installmentRef}
+                          id="installmentNotify"
+                        />
+                        <label htmlFor="installmentNotify">Installment Notify</label>
+                      </div>
+                      <div className="row pt-4">
+                        <div className="col">
+                          <button
+                            type="submit"
+                            className="btn btn-primary"
+                            ref={submitRef}
+                            disabled={loading}
+                          >
+                            {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
+                          </button>
+
+                          {!loading && (
+                            <Link to="/view-booking"></Link>
                           )}
-                        </button>
-                        {!loading && (
-                          <Link to="/view-booking"></Link>
-                        )}
+                        </div>
                       </div>
                     </div>
                   </form>
@@ -1019,7 +963,7 @@ function Booking() {
               </div>
             </div>
           </div>
-        </div>
+        </div >
       </div >
     </>
   );

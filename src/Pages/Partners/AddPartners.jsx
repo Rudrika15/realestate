@@ -10,9 +10,12 @@ function AddPartners() {
   const [selectproject, setselectproject] = useState("");
   const [partners, setPartners] = useState([{ name: "", percentage: "" }]);
   const [error, setErrors] = useState({});
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
+  
 
-  const navigate = useNavigate(); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const selectprojectRef = useRef(null);
   const nameRef = useRef(null);
@@ -23,16 +26,14 @@ function AddPartners() {
     selectprojectRef.current.focus();
   }, []);
 
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
   const handleEnter = (e, nextField) => {
     if (e.key === "Enter" && nextField.current) {
       e.preventDefault();
       nextField.current.focus();
     }
   };
-
-  // const handleAddPartner = () => {
-  //   setPartners([...partners, { name: "", percentage: "" }]);
-  // };
 
   const handleInputChange = (index, e) => {
     const updatedPartners = [...partners];
@@ -56,27 +57,27 @@ function AddPartners() {
 
     partners.forEach((partner, index) => {
       if (!partner.name) {
-        validationError[`name${index}`] = " Please enter Name for partner" ;
+        validationError[`name${index}`] = "Please enter Name for partner";
         isValid = false;
       }
 
       if (!/^[A-Za-z ]+$/.test(partner.name)) {
-        validationError[`name${index}`] = "Name for partner  can only contain letters and spaces";
+        validationError[`name${index}`] = "Name for partner can only contain letters and spaces";
         isValid = false;
       }
 
       if (!partner.percentage) {
-        validationError[`percentage${index}`] = "Please enter Percentage for partner ";
+        validationError[`percentage${index}`] = "Please enter Percentage for partner";
         isValid = false;
       }
 
       if (isNaN(partner.percentage)) {
-        validationError[`percentage${index}`] = "Percentage for partner  must be a valid number!";
+        validationError[`percentage${index}`] = "Percentage for partner must be a valid number!";
         isValid = false;
       }
 
       if (parseFloat(partner.percentage) < 0 || parseFloat(partner.percentage) > 100) {
-        validationError[`percentage${index}`] = "Percentage for partner  must be between 0 and 100!";
+        validationError[`percentage${index}`] = "Percentage for partner must be between 0 and 100!";
         isValid = false;
       }
     });
@@ -86,16 +87,16 @@ function AddPartners() {
       return;
     }
 
-    setLoading(true);  
+    setLoading(true);
 
     setTimeout(() => {
-      setLoading(false);  
+      setLoading(false);
       setselectproject("");
       setPartners([{ name: "", percentage: "" }]);
-      setErrors({});  
-      localStorage.setItem('partnersData', JSON.stringify(partners),);
-      navigate("/partners");  
-    }, 2000);  
+      setErrors({});
+      localStorage.setItem('partnersData', JSON.stringify(partners));
+      navigate("/partners");
+    }, 2000);
   };
 
   return (
@@ -104,9 +105,10 @@ function AddPartners() {
         <title>React Estate | Add Partners</title>
       </Helmet>
       <div className="container-fluid position-relative bg-white d-flex p-0">
-        <Sidebar />
-        <div className="content">
-          <Topbar />
+        <Sidebar isSidebarOpen={isSidebarOpen} />
+        <div className={`content ${isSidebarOpen ? "open" : ""}`}>
+          <Topbar toggleSidebar={toggleSidebar} />
+
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
@@ -193,7 +195,7 @@ function AddPartners() {
                       type="submit"
                       className="btn btn-primary mt-3"
                       ref={submitRef}
-                      disabled={loading}  
+                      disabled={loading}
                     >
                       {loading ? (
                         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -201,20 +203,6 @@ function AddPartners() {
                         "Submit"
                       )}
                     </button>
-                        {/* <div className="col-1">
-                          {index === 0 && (
-                            <i
-                              className="bi bi-plus-circle-fill"
-                              onClick={handleAddPartner}
-                            ></i>
-                          )}
-                          {partners.length > 1 && index !== 0 && (
-                            <i
-                              className="bi-x-circle-fill"
-                              onClick={() => handleRemovePartner(index)}
-                            ></i>
-                          )}
-                        </div> */}
                   </form>
                 </div>
               </div>
@@ -222,21 +210,6 @@ function AddPartners() {
           </div>
         </div>
       </div>
-
-      <style jsx="true">{`
-        // .bi-plus-circle-fill {
-        //   cursor: pointer;
-        //   color: black;
-        //   display: inline-block;
-        //   padding-top: 6px;
-        // }
-        // .bi-x-circle-fill {
-        //   color: #eb3423;
-        //   cursor: pointer;
-        //   display: inline-block;
-        //   padding-top: 6px;
-        // }
-      `}</style>
     </>
   );
 }

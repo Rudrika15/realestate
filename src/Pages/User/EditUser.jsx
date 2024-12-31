@@ -11,7 +11,6 @@ function EditUser() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [passcode, setPasscode] = useState("");
   const [role, setRole] = useState("");
   const [usernameError, setUsernameError] = useState(false);
@@ -22,7 +21,6 @@ function EditUser() {
   const navigate = useNavigate();
 
   const usernameRef = useRef(null);
-  const emailRef = useRef(null);
   const passcodeRef = useRef(null);
   const roleRef = useRef(null);
   const submitRef = useRef(null);
@@ -41,12 +39,6 @@ function EditUser() {
       setUsernameError(false);
     }
 
-    if (!email) {
-      setEmailError(true);
-      isValid = false;
-    } else {
-      setEmailError(false);
-    }
 
     if (!passcode) {
       setPasscodeError(true);
@@ -86,11 +78,6 @@ function EditUser() {
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
     if (e.target.value) setUsernameError(false);
-  };
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    if (e.target.value) setEmailError(false);
   };
 
   const handlePasscodeChange = (e) => {
@@ -143,31 +130,12 @@ function EditUser() {
                           placeholder="User Name"
                           value={username}
                           ref={usernameRef}
-                          onKeyDown={(e) => handleEnter(e, emailRef)}
+                          onKeyDown={(e) => handleEnter(e, passcodeRef)}
                           onChange={handleUsernameChange}
                         />
                         {usernameError && (
                           <div className="invalid-feedback">
                             Username is required.
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="row mb-3 w-50">
-                      <div className="col">
-                        <input
-                          type="email"
-                          className={`form-control ${emailError ? "is-invalid" : ""
-                            }`}
-                          placeholder="Email"
-                          value={email}
-                          ref={emailRef}
-                          onKeyDown={(e) => handleEnter(e, passcodeRef)}
-                          onChange={handleEmailChange}
-                        />
-                        {emailError && (
-                          <div className="invalid-feedback">
-                            Email is required.
                           </div>
                         )}
                       </div>

@@ -17,6 +17,8 @@ const ViewCancelledBooking = () => {
     const [showModal, setShowModal] = useState(false);
     const [modalType, setModalType] = useState("");
     const [showFields, setShowFields] = useState(false);
+    const [bookingDate, setBookingDate] = useState("");
+    const [bookingError, setBookingError] = useState("");
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -37,6 +39,17 @@ const ViewCancelledBooking = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
+    };
+
+    const formatDate = (date) => {
+        if (date) {
+            const d = new Date(date);
+            const day = ("0" + d.getDate()).slice(-2);
+            const month = ("0" + (d.getMonth() + 1)).slice(-2);
+            const year = d.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+        return "";
     };
 
     const handleCancel = () => {
@@ -65,6 +78,11 @@ const ViewCancelledBooking = () => {
                 });
             }
         });
+    };
+
+    const handleBookingDateChange = (e) => {
+        setBookingDate(e.target.value);
+        if (e.target.value) setBookingError(false);
     };
 
     return (
@@ -108,32 +126,14 @@ const ViewCancelledBooking = () => {
                                                 <input
                                                     type="text"
                                                     id="date"
+                                                    // ref={downPaymentDateRef}
                                                     className="form-control"
-                                                    value={
-                                                        incomeDate
-                                                            ? new Date(incomeDate).toLocaleDateString("en-GB", {
-                                                                day: "2-digit",
-                                                                month: "2-digit",
-                                                                year: "2-digit",
-                                                            })
-                                                            : ""
-                                                    }
-                                                    onChange={(e) => {
-                                                        const inputDate = e.target.value;
-                                                        const [day, month, year] = inputDate.split("-");
-                                                        if (day && month && year) {
-                                                            const formattedDate = `${day}-${month}-${year}`;
-                                                            const parsedDate = new Date(formattedDate);
-                                                            if (!isNaN(parsedDate)) {
-                                                                setIncomeDate(parsedDate.toISOString().slice(0, 10));
-                                                            } else {
-                                                                console.error("Invalid date format");
-                                                            }
-                                                        }
-                                                    }}
-                                                    placeholder=""
-                                                    onFocus={(e) => (e.target.type = "date")}
-                                                    onBlur={(e) => (e.target.type = "text")}
+                                                    value={formatDate(bookingDate)}
+                                                    onChange={(e) => handleBookingDateChange(e)}
+                                                // onKeyDown={(e) => handleEnter(e, submitRef)}
+                                                // placeholder="Down Payment Date"
+                                                onFocus={(e) => (e.target.type = "date")}
+                                                onBlur={(e) => (e.target.type = "text")}
                                                 />
                                             </div>
                                             <div className="col"></div>
@@ -247,7 +247,7 @@ const ViewCancelledBooking = () => {
                     <div className="row">
                         <div className="col position-relative">
                             <input
-                                type="text"
+                                type="number"
                                 className="form-control"
                                 id="name"
                                 placeholder="Old Unit No"

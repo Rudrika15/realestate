@@ -13,7 +13,6 @@ function AddUser() {
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
     const [users, setUsers] = useState([]);
     const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
     const [passcode, setPasscode] = useState("");
     const [role, setRole] = useState("");
     const [usernameError, setUsernameError] = useState(false);
@@ -24,7 +23,6 @@ function AddUser() {
     const navigate = useNavigate();
 
     const usernameRef = useRef(null);
-    const emailRef = useRef(null);
     const passcodeRef = useRef(null);
     const roleRef = useRef(null);
     const submitRef = useRef(null);
@@ -41,13 +39,6 @@ function AddUser() {
             isValid = false;
         } else {
             setUsernameError(false);
-        }
-
-        if (!email.trim()) {
-            setEmailError(true);
-            isValid = false;
-        } else {
-            setEmailError(false);
         }
 
         if (!passcode.trim()) {
@@ -69,7 +60,6 @@ function AddUser() {
             const newUser = {
                 id: Date.now(),
                 name: username,
-                email: email,
                 passcode: passcode,
                 role: role,
             };
@@ -81,7 +71,6 @@ function AddUser() {
             setTimeout(() => {
                 setLoading(false);
                 setUsername("");
-                setEmail("");
                 setPasscode("");
                 setRole("");
                 navigate("/view-user");
@@ -99,11 +88,6 @@ function AddUser() {
         if (e.target.value) setUsernameError(false);
     };
 
-    const handleEmailChange = (e) => {
-        setEmail(e.target.value);
-        if (e.target.value) setEmailError(false);
-    };
-
     const handlePasscodeChange = (e) => {
         setPasscode(e.target.value);
         if (e.target.value) setPasscodeError(false);
@@ -119,7 +103,8 @@ function AddUser() {
             e.preventDefault();
             if (nextField?.current) {
                 nextField.current.focus();
-            } else {
+            } if (e.key === "Enter" && nextField?.current) {
+                e.preventDefault();
                 handleAdd(e);
             }
         }
@@ -160,23 +145,9 @@ function AddUser() {
                                                     value={username}
                                                     ref={usernameRef}
                                                     onChange={handleUsernameChange}
-                                                    onKeyDown={(e) => handleEnter(e, emailRef)}
-                                                />
-                                                {usernameError && <div className="invalid-feedback">Enter a Username</div>}
-                                            </div>
-                                        </div>
-                                        <div className="row mb-3 w-50">
-                                            <div className="col">
-                                                <input
-                                                    type="email"
-                                                    className={`form-control ${emailError ? "is-invalid" : ""}`}
-                                                    placeholder="Email address"
-                                                    value={email}
-                                                    ref={emailRef}
-                                                    onChange={handleEmailChange}
                                                     onKeyDown={(e) => handleEnter(e, passcodeRef)}
                                                 />
-                                                {emailError && <div className="invalid-feedback">Enter a valid Email</div>}
+                                                {usernameError && <div className="invalid-feedback">Enter a Username</div>}
                                             </div>
                                         </div>
                                         <div className="row mb-3 w-50">

@@ -17,19 +17,29 @@ const ViewBooking = () => {
       No: 1,
       date: '12/2/2024',
       customerName: 'Alice',
-      saleDeedAmount: '5,00,000',
-      receivedSdAmount: '2,50,000',
-      pendingSdAmount: '2,50,000',
-      extraWorkAmount: '10,000',
-      receivedEwAmount: '5,000',
-      pendingEwAmount: '5,000',
-      otherWorkAmount: '1,000',
+      saleDeedAmount: '500000',
+      receivedSdAmount: '250000',
+      pendingSdAmount: '250000',
+      extraWorkAmount: '10000',
+      receivedEwAmount: '5000',
+      pendingEwAmount: '5000',
+      otherWorkAmount: '1000',
       receivedOtAmount: '500',
       pendingOtAmount: '500'
     },
   ].sort((a, b) => a.name.localeCompare(b.name)));
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const formatIndianNumbering = (num) => {
+    if (isNaN(num)) return num;
+    num = num.toString().split('.'); 
+    let integerPart = num[0];
+    const decimalPart = num[1] ? '.' + num[1] : '';
+    const regex = /\B(?=(\d{3})+(?!\d))/g;
+    integerPart = integerPart.replace(regex, ',');
+    return integerPart + decimalPart;
   };
 
   const getData = async () => {
@@ -110,15 +120,15 @@ const ViewBooking = () => {
                               <td>{index + 1}</td>
                               <td>{book.date}</td>
                               <td>{book.customerName}</td>
-                              <td>{book.saleDeedAmount}</td>
-                              <td>{book.receivedSdAmount}</td>
-                              <td>{book.pendingSdAmount}</td>
-                              <td>{book.extraWorkAmount}</td>
-                              <td>{book.receivedEwAmount}</td>
-                              <td>{book.pendingEwAmount}</td>
-                              <td>{book.otherWorkAmount}</td>
-                              <td>{book.receivedOtAmount}</td>
-                              <td>{book.pendingOtAmount}</td>
+                              <td>{formatIndianNumbering(book.saleDeedAmount)}</td>
+                              <td>{formatIndianNumbering(book.receivedSdAmount)}</td>
+                              <td>{formatIndianNumbering(book.pendingSdAmount)}</td>
+                              <td>{formatIndianNumbering(book.extraWorkAmount)}</td>
+                              <td>{formatIndianNumbering(book.receivedEwAmount)}</td>
+                              <td>{formatIndianNumbering(book.pendingEwAmount)}</td>
+                              <td>{formatIndianNumbering(book.otherWorkAmount)}</td>
+                              <td>{formatIndianNumbering(book.receivedOtAmount)}</td>
+                              <td>{formatIndianNumbering(book.pendingOtAmount)}</td>
                               <td>
                                 <Link to="/view-cancelled-booking">
                                   <button

@@ -33,6 +33,9 @@ import EditUser from "./Pages/User/EditUser";
 import View from "./Pages/User/View";
 import EditPartners from "./Pages/Partners/EditPartners";
 import EditExpenses from "./Pages/Expenses/EditExpenses";
+import Income from "./Pages/Income/Income";
+import AddIncome from "./Pages/Income/AddIncome";
+import EditIncome from "./Pages/Income/EditIncome";
 
 const App = () => {
   return (
@@ -69,6 +72,11 @@ const App = () => {
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />
           <Route path="/edit-expenses/:id" element={<EditExpenses />} />
+          <Route path="/income" element={<Income />}/>
+          <Route path="/add-income" element={< AddIncome/>}/>
+          <Route path="/edit-income" element={< EditIncome/>}/>
+
+
           <Route path="/report" element={<Report />} />
           <Route path="/add-customer-income" element={<AddCustomerIncome />} />
           <Route path="/add-partner-income" element={<AddPartnerIncome />} />
