@@ -14,7 +14,7 @@ function AddRole() {
   const [roleName, setRoleName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -42,8 +42,8 @@ function AddRole() {
     setTimeout(() => {
       setLoading(false);
       toast.success("Role added successfully!");
-      setRoleName(""); 
-      navigate("/role"); 
+      setRoleName("");
+      navigate("/role");
     }, 2000);
   };
 
@@ -68,11 +68,11 @@ function AddRole() {
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
-                    <div className="p-2 ">
+                    <div className="p-2">
                       <h6 className="mb-4">Role</h6>
                     </div>
-                    <div className="p-2 ">
-                      <Link to="/role" className="">
+                    <div className="p-2">
+                      <Link to="/role">
                         <h6 className="mb-4">
                           <i className="bi bi-arrow-left-circle-fill"></i> Back
                         </h6>
@@ -80,13 +80,11 @@ function AddRole() {
                     </div>
                   </div>
                   <form onSubmit={handleSubmit}>
-                    <div className="row mb-3 w-50">
-                      <div className="col">
+                    <div className="row mb-3">
+                      <div className="col-12 col-md-6">
                         <input
                           type="text"
-                          className={`form-control ${
-                            error ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${error ? "is-invalid" : ""}`}
                           id="roleName"
                           placeholder="Role Name"
                           value={roleName}
@@ -96,19 +94,91 @@ function AddRole() {
                         {error && <div className="invalid-feedback">{error}</div>}
                       </div>
                     </div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <div className="d-flex justify-content-center align-items-center">
-                          <Spinner animation="border" size="sm" />
-                        </div>
-                      ) : (
-                        "Submit"
-                      )}
-                    </button>
+
+                   
+
+                    {/* Group Checkboxes into a flex container */}
+                    <div className="table-responsive">
+                      <table className="table mt-4">
+                        <tbody>
+                          <tr>
+                            <td>
+                              <div className="form-check">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  id="check1"
+                                  name="option1"
+                                  value="something"
+                                />
+                                <label className="form-check-label" htmlFor="check1">
+                                  Option 1
+                                </label>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="form-check">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  id="check2"
+                                  name="option2"
+                                  value="something"
+                                />
+                                <label className="form-check-label" htmlFor="check2">
+                                  Option 2
+                                </label>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="form-check">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  id="check3"
+                                  name="option3"
+                                  value="something"
+                                />
+                                <label className="form-check-label" htmlFor="check3">
+                                  Option 3
+                                </label>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="form-check">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  id="check4"
+                                  name="option4"
+                                  value="something"
+                                />
+                                <label className="form-check-label" htmlFor="check4">
+                                  Option 4
+                                </label>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="mt-4">
+                      <button
+                        type="submit"
+                        className="btn btn-primary w-10"
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <div className="d-flex justify-content-center align-items-center">
+                            <Spinner animation="border" size="sm" />
+                          </div>
+                        ) : (
+                          "Submit"
+                        )}
+                      </button>
+                    </div>
                   </form>
                 </div>
               </div>

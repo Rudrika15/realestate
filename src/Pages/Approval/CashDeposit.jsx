@@ -68,13 +68,13 @@ const CashDeposit = () => {
                         <td>
                           <div className="btn-group" role="group" aria-label="Action Buttons">
                             <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
-                              Accept
+                            <i class="bi bi-check-circle"></i>
                             </Link>
                             <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
-                              Reject
+                            <i class="bi bi-x-circle"></i>
                             </Link>
                             <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
-                              View
+                            <i class="bi bi-eye"></i>
                             </Link>
                           </div>
                         </td>
@@ -93,13 +93,13 @@ const CashDeposit = () => {
                         <td>
                           <div className="btn-group" role="group" aria-label="Action Buttons">
                             <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
-                              Accept
+                            <i class="bi bi-check-circle"></i>
                             </Link>
                             <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
-                              Reject
+                            <i class="bi bi-x-circle"></i>
                             </Link>
                             <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
-                              View
+                            <i class="bi bi-eye"></i>
                             </Link>
                           </div>
                         </td>
@@ -118,13 +118,14 @@ const CashDeposit = () => {
                         <td>
                           <div className="btn-group" role="group" aria-label="Action Buttons">
                             <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
-                              Accept
+                            <i class="bi bi-check-circle"></i>
                             </Link>
+                            
                             <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
-                              Reject
+                            <i class="bi bi-x-circle"></i>
                             </Link>
                             <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
-                              View
+                            <i class="bi bi-eye"></i>
                             </Link>
                           </div>
                         </td>
@@ -135,7 +136,7 @@ const CashDeposit = () => {
               </div>
             </div>
           </div>
-          <Footer />
+          {/* <Footer /> */}
         </div>
       </div>
     </>

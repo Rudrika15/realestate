@@ -1,5 +1,4 @@
-// src/Pages/Add/Add.js
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import Footer from "../../Components/Footer/Footer";
@@ -11,25 +10,26 @@ import axios from "axios";
 const CancelledBooking = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-  const [data,setData] = useState([
+  const [data, setData] = useState([
     {
       No: 1,
       date: '12/2/2024',
       customerName: 'Alice',
-      saleDeedAmount: '5,00,000',
-      receivedSdAmount: '2,50,000',
-      pendingSdAmount: '2,50,000',
-      refundSdAmount:'2,00,000',
-      extraWorkAmount: '10,000',
-      receivedEwAmount: '5,000',
-      pendingEwAmount: '5,000',
-      refundEwAmount:'50000',
-      otherWorkAmount: '1,000',
-      receivedOtAmount: '500',
-      pendingOtAmount: '500',
-      refundOtAmount:'50000'
+      saleDeedAmount: 500000,
+      receivedSdAmount: 250000,
+      pendingSdAmount: 250000,
+      refundSdAmount: 200000,
+      extraWorkAmount: 10000,
+      receivedEwAmount: 5000,
+      pendingEwAmount: 5000,
+      refundEwAmount: 50000,
+      otherWorkAmount: 1000,
+      receivedOtAmount: 500,
+      pendingOtAmount: 500,
+      refundOtAmount: 50000
     },
-  ].sort((a, b) => a.name.localeCompare(b.name)));
+  ]);
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -38,7 +38,7 @@ const CancelledBooking = () => {
     try {
       const res = await axios.get();
       if (res.data.status === true) {
-        const sortedData = res.data.data.sort((a, b) => a.name.localeCompare(b.name));
+        const sortedData = res.data.data.sort((a, b) => a.customerName.localeCompare(b.customerName));
         setData(sortedData);
       } else {
         console.error('Error fetching data:', res.data.message);
@@ -50,9 +50,20 @@ const CancelledBooking = () => {
 
   useEffect(() => {
     getData();
-  }, [data]);
+  }, []);
+
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
+  };
+
+  const formatIndianNumbering = (num) => {
+    if (isNaN(num)) return num;
+    num = num.toString().split('.'); 
+    let integerPart = num[0];
+    const decimalPart = num[1] ? '.' + num[1] : '';
+    const regex = /\B(?=(\d{3})+(?!\d))/g;
+    integerPart = integerPart.replace(regex, ',');
+    return integerPart + decimalPart;
   };
 
   return (
@@ -76,51 +87,49 @@ const CancelledBooking = () => {
                   </div>
 
                   <div className="table-responsive">
-                    {data.length > 0 ?(
-                    <table className="table table-bordered text-center">
-                      <thead>
-                        <tr>
-                          <th scope="col">Unit No</th>
-                          <th scope="col">Booking Date</th>
-                          <th scope="col">Customer Name</th>
-                          <th scope="col">Sale Deed Amount</th>
-                          <th scope="col">Received SD Amount</th>
-                          <th scope="col">Pending SD Amount</th>
-                          <th scope="col">Refund SD Amount</th>
-                          <th scope="col">Extra Work Amount</th>
-                          <th scope="col">Received EW Amount</th>
-                          <th scope="col">Pending EW Amount</th>
-                          <th scope="col">Refund EW Amount</th>
-                          <th scope="col">Other Work Amount</th>
-                          <th scope="col">Received OT Amount</th>
-                          <th scope="col">Pending OT Amount</th>
-                          <th scope="col">Refund OT Amount</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      {data
-                          .sort((a, b) => a.name.localeCompare(b.name))
-                          .map((book, index) => (
+                    {data.length > 0 ? (
+                      <table className="table table-bordered text-center">
+                        <thead>
+                          <tr>
+                            <th scope="col">Unit No</th>
+                            <th scope="col">Booking Date</th>
+                            <th scope="col">Customer Name</th>
+                            <th scope="col">Sale Deed Amount</th>
+                            <th scope="col">Received SD Amount</th>
+                            <th scope="col">Pending SD Amount</th>
+                            <th scope="col">Refund SD Amount</th>
+                            <th scope="col">Extra Work Amount</th>
+                            <th scope="col">Received EW Amount</th>
+                            <th scope="col">Pending EW Amount</th>
+                            <th scope="col">Refund EW Amount</th>
+                            <th scope="col">Other Work Amount</th>
+                            <th scope="col">Received OT Amount</th>
+                            <th scope="col">Pending OT Amount</th>
+                            <th scope="col">Refund OT Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {data.map((book, index) => (
                             <tr key={index}>
                               <td>{index + 1}</td>
                               <td>{book.date}</td>
                               <td>{book.customerName}</td>
-                              <td>{book.saleDeedAmount}</td>
-                              <td>{book.receivedSdAmount}</td>
-                              <td>{book.pendingSdAmount}</td>
-                              <td>{book.refundSdAmount}</td>
-                              <td>{book.extraWorkAmount}</td>
-                              <td>{book.receivedEwAmount}</td>
-                              <td>{book.pendingEwAmount}</td>
-                              <td>{book.refundEwAmount}</td>
-                              <td>{book.otherWorkAmount}</td>
-                              <td>{book.receivedOtAmount}</td>
-                              <td>{book.pendingOtAmount}</td>
-                              <td>{book.refundOtAmount}</td>
-                        </tr> 
-                          ))}                     
-                      </tbody>
-                    </table>
+                              <td>{formatIndianNumbering(book.saleDeedAmount)}</td>
+                              <td>{formatIndianNumbering(book.receivedSdAmount)}</td>
+                              <td>{formatIndianNumbering(book.pendingSdAmount)}</td>
+                              <td>{formatIndianNumbering(book.refundSdAmount)}</td>
+                              <td>{formatIndianNumbering(book.extraWorkAmount)}</td>
+                              <td>{formatIndianNumbering(book.receivedEwAmount)}</td>
+                              <td>{formatIndianNumbering(book.pendingEwAmount)}</td>
+                              <td>{formatIndianNumbering(book.refundEwAmount)}</td>
+                              <td>{formatIndianNumbering(book.otherWorkAmount)}</td>
+                              <td>{formatIndianNumbering(book.receivedOtAmount)}</td>
+                              <td>{formatIndianNumbering(book.pendingOtAmount)}</td>
+                              <td>{formatIndianNumbering(book.refundOtAmount)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     ) : (
                       <div className="text-center">
                         <img src="img/image_2024_12_26T09_23_33_935Z.png" alt="No Users" className="img-fluid w-25 h-25" />

@@ -121,7 +121,7 @@ function Permission() {
                                                     </td>
                                                 </tr>
                                             </tbody>
-                                        </table>
+                                        </table> 
                                     </div>
                                     <div className="text-center pt-4">
                                         <Link to="#" type="submit" className="btn btn-primary">
