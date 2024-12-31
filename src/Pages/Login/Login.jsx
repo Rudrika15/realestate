@@ -104,7 +104,7 @@ const Login = () => {
                 <div className="d-flex align-items-center justify-content-between mb-3">
                   <Link to="/">
                     <h3 className="text-primary">
-                      <i className="fa fa-hashtag me-2"></i>React Estate
+                      <i className="fa fa-hashtag me-2"></i>Real Estate
                     </h3>
                   </Link>
                   <h3>Login</h3>
