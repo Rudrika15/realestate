@@ -80,61 +80,7 @@ const ChequeDeposit = () => {
                               </Link>
                             </div>
                           </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input className="form-check-input" type="checkbox" />
-                            </div>
-                          </td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <div className="btn-group" role="group" aria-label="Action Buttons">
-                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
-                              <i class="bi bi-check-circle"></i>
-                              </Link>
-                              <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
-                              <i class="bi bi-x-circle"></i>
-                              </Link>
-                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
-                              <i class="bi bi-eye"></i>
-                              </Link>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input className="form-check-input" type="checkbox" />
-                            </div>
-                          </td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <div className="btn-group" role="group" aria-label="Action Buttons">
-                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
-                              <i class="bi bi-check-circle"></i>
-                              </Link>
-                              <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
-                              <i class="bi bi-x-circle"></i>
-                              </Link>
-                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
-                              <i class="bi bi-eye"></i>
-                              </Link>
-                            </div>
-                          </td>
-                        </tr>
+                        </tr>                      
                       </tbody>
                     </table>
                   </div>
