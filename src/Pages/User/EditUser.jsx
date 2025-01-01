@@ -14,7 +14,6 @@ function EditUser() {
   const [passcode, setPasscode] = useState("");
   const [role, setRole] = useState("");
   const [usernameError, setUsernameError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
   const [passcodeError, setPasscodeError] = useState(false);
   const [roleError, setRoleError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -86,9 +85,11 @@ function EditUser() {
   };
 
   const handleRoleChange = (e) => {
-    setRole(e.target.value);
-    setRoleError(false);
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    setRole(selectedOptions);
+    if (selectedOptions.length > 0) setRoleError(false);
   };
+
 
   return (
     <>
@@ -162,16 +163,18 @@ function EditUser() {
                     <div className="row mb-3 w-50">
                       <div className="col">
                         <select
-                          className={`form-control bg-white ${roleError ? "is-invalid" : ""
-                            }`}
+                          className={`form-control bg-white ${roleError ? "is-invalid" : ""}`}
                           value={role}
                           ref={roleRef}
                           onChange={handleRoleChange}
+                          multiple
                           onKeyDown={(e) => handleEnter(e, submitRef)}
                         >
-                          <option value="">Select Role</option>
+                          <option value="" className="bg-light" disabled>Select Role</option>
                           <option value="admin">Admin</option>
                           <option value="user">User</option>
+                          <option value="editor">Editor</option>
+                          <option value="viewer">Viewer</option>
                         </select>
                         {roleError && (
                           <div className="invalid-feedback">

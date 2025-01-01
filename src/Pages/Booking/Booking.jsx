@@ -33,6 +33,7 @@ function Booking() {
   const [downPayment, setDownPayment] = useState("");
   const [downPaymentDate, setDownPaymentDate] = useState("");
   const [noOfInstallment, setNoOfInstallment] = useState("");
+  const [amount, setAmount] = useState("");
   const [paymentFrequency, setPaymentFrequency] = useState("");
   const [dueDate, setDueDate] = useState("");
 
@@ -59,6 +60,7 @@ function Booking() {
   const [noOfInstallmentError, setNoOfInstallmentError] = useState("");
   const [paymentFrequencyError, setPaymentFrequencyError] = useState("");
   const [dueDateError, setDueDateError] = useState("");
+  const [amountError, setAmountError] = useState("");
 
   const projectRef = useRef(null);
   const unitRef = useRef(null);
@@ -84,11 +86,30 @@ function Booking() {
   const noOfInstallmentRef = useRef(null);
   const paymentFrequencyRef = useRef(null);
   const dueDateRef = useRef(null);
+  const amountRef = useRef(null);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const [rows, setRows] = useState([
+    { downPayment: "", downPaymentDate: "" },
+  ]);
+
+  const handleAddRow = () => {
+    setRows([...rows, { downPayment: "", downPaymentDate: "" }]);
+  };
+
+  const handleAddRow1 = () => {
+    setRows([...rows, { customerName: "", customerContact: "" }]);
+  };
+
+  const handleInputChange = (index, field, value) => {
+    const newRows = [...rows];
+    newRows[index][field] = value;
+    setRows(newRows);
+  };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -146,6 +167,13 @@ function Booking() {
       isValid = false;
     } else {
       setProjectError(false);
+    }
+
+    if (!amount) {
+      setAmountError(true);
+      isValid = false;
+    } else {
+      setAmountError(false);
     }
 
     if (!unit) {
@@ -317,6 +345,11 @@ function Booking() {
     if (e.target.value) setProjectError(false);
   };
 
+  const handleAmountChange = (e) => {
+    setAmount(e.target.value);
+    if (e.target.value) setAmountError(false);
+  };
+
   const handleUnitChange = (e) => {
     setUnit(e.target.value);
     if (e.target.value) setUnitError(false);
@@ -327,15 +360,18 @@ function Booking() {
     if (e.target.value) setBookingError(false);
   };
 
-  const handleCustomerNameChange = (e) => {
-    setCustomerName(e.target.value);
-    if (e.target.value) setCustomerNameError(false);
+  const handleCustomerNameChange = (index, value) => {
+    const updatedCustomerNames = [...customerName];
+    updatedCustomerNames[index] = value;
+    setCustomerName(updatedCustomerNames);
+    if (value) setCustomerNameError(false);
   };
 
-  const handleCustomerContactChange = (e) => {
-    setCustomerContact(e.target.value);
-    if (e.target.value) setCustomerContactError
-      (false);
+  const handleCustomerContactChange = (index, value) => {
+    const updatedCustomerNames = [...customerContact];
+    updatedCustomerNames[index] = value;
+    setCustomerContact(updatedCustomerNames);
+    if (value) setCustomerContactError(false);
   };
 
   const handleCustomerAddressChange = (e) => {
@@ -471,7 +507,7 @@ function Booking() {
                           onChange={handleProjectChange}
                           onKeyDown={(e) => handleEnter(e, unitRef)}
                         >
-                          <option value="">Project Name</option>
+                          <option value="" disabled>Project Name</option>
                           <option value="demo">demo</option>
                         </select>
                         {projectError && (
@@ -486,7 +522,7 @@ function Booking() {
                           onChange={handleUnitChange}
                           onKeyDown={(e) => handleEnter(e, dateRef)}
                         >
-                          <option value="">Unit No</option>
+                          <option value="" disabled>Unit No</option>
                           <option value="demo">1</option>
                         </select>
                         {unitError && (
@@ -504,56 +540,62 @@ function Booking() {
                           value={formatDate(bookingDate)}
                           onChange={(e) => handleBookingDateChange(e)}
                           onKeyDown={(e) => handleEnter(e, customerNameRef)}
-                          placeholder="Boooking Date"
+                          placeholder="Booking Date"
                           onFocus={(e) => (e.target.type = "date")}
                           onBlur={(e) => (e.target.type = "text")}
                         />
                         {bookingError && (
-                          <div className="invalid-feedback">Please select a Booking Date</div>
+                          <div className="invalid-feedback">Please select a booking Date</div>
                         )}
                       </div>
                       <div className="col"></div>
                     </div>
                     <hr />
                     <p className="text-dark fs-5">Customer Details</p>
-                    <div className="row">
-                      <div className="col position-relative">
-                        <input
-                          type="text"
-                          className={`form-control ${customerNameError ? "is-invalid" : ""}`}
-                          id="name"
-                          placeholder="Name"
-                          name="name"
-                          value={customerName}
-                          ref={customerNameRef}
-                          onChange={handleCustomerNameChange}
-                          onKeyDown={(e) => handleEnter(e, customerContactRef)}
-                        />
-                        <i className="bi bi-plus-circle-fill icon-1"></i>
-                        {customerNameError && (
-                          <div className="invalid-feedback">Enter a Customer Name</div>
-                        )}
+                    {rows.map((row, index) => (
+                      <div className="row pt-2 mb-3">
+                        <div className="col position-relative">
+                          <input
+                            type="text"
+                            className={`form-control ${customerNameError ? "is-invalid" : ""}`}
+                            id="name"
+                            placeholder="Name"
+                            name="name"
+                            value={row.customerName}
+                            ref={customerNameRef}
+                            onChange={(e) => handleCustomerNameChange(index, e.target.value)}
+                            onKeyDown={(e) => handleEnter(e, customerContactRef)}
+                          />
+                          {customerNameError && (
+                            <div className="invalid-feedback">Enter a Customer Name</div>
+                          )}
+                        </div>
+                        <div className="col">
+                          <input
+                            type="number"
+                            className={`form-control ${customerContactError ? "is-invalid" : ""}`}
+                            id="Contact No"
+                            placeholder="Contact No"
+                            name="Contact No"
+                            value={row.customerContact}
+                            onChange={(e) => handleCustomerContactChange(index, e.target.value)}
+                            onKeyDown={(e) => handleEnter(e, customerAddressRef)}
+                            ref={customerContactRef}
+                          />
+                          {index === rows.length - 1 && (
+                            <i
+                              className="bi bi-plus-circle-fill icon-2"
+                              onClick={() => handleAddRow()}
+                            ></i>
+                          )}
+                          {customerContactError && (
+                            <div className="invalid-feedback">Enter a Customer Contact Number</div>
+                          )}
+                        </div>
                       </div>
-                      <div className="col">
-                        <input
-                          type="number"
-                          className={`form-control ${customerContactError ? "is-invalid" : ""}`}
-                          id="Contact No"
-                          placeholder="Contact No"
-                          name="Contact No"
-                          value={customerContact}
-                          onChange={handleCustomerContactChange}
-                          onKeyDown={(e) => handleEnter(e, customerAddressRef)}
-                          ref={customerContactRef}
-                        />
-                        <i className="bi bi-plus-circle-fill icon-2"></i>
-                        {customerContactError && (
-                          <div className="invalid-feedback">Enter a Customer Contact Number</div>
-                        )}
-                      </div>
-                    </div>
+                    ))}
                     <div className="row w-75">
-                      <div className="col pt-4">
+                      <div className="col pt-2">
                         <textarea
                           className={`form-control ${customerAddressError ? "is-invalid" : ""}`}
                           placeholder="Address"
@@ -794,43 +836,53 @@ function Booking() {
                     <div>
                       <p className="text-gray" onClick={() => setShowTokenFields1((prev) => !prev)}>Down Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
                       {showTokenFields1 && (
-                        <div className="row pt-3 mb-4">
-                          <div className="col">
-                            <input
-                              type="number"
-                              id="downpayment"
-                              placeholder="Down Payment"
-                              name="downpayment"
-                              className={`form-control ${downPaymentError ? "is-invalid" : ""}`}
-                              value={downPayment}
-                              onChange={handleDownPaymentChange}
-                              onKeyDown={(e) => handleEnter(e, downPaymentDateRef)}
-                              ref={downPaymentRef}
-                            />
-                            {downPaymentError && (
-                              <div className="invalid-feedback">Enter Down Payment</div>
-                            )}
+                        rows.map((row, index) => (
+                          <div className="row pt-2 mb-3" key={index}>
+                            <div className="col">
+                              <input
+                                type="number"
+                                id={`downpayment-${index}`}
+                                placeholder="Down Payment"
+                                name="downpayment"
+                                className={`form-control ${downPaymentError ? "is-invalid" : ""}`}
+                                value={row.downPayment}
+                                onChange={(e) =>
+                                  handleInputChange(index, "downPayment", e.target.value)
+                                }
+                                onKeyDown={(e) => handleEnter(e, downPaymentDateRef)}
+                                ref={downPaymentRef}
+                              />
+                              {downPaymentError && (
+                                <div className="invalid-feedback">Enter Down Payment</div>
+                              )}
+                            </div>
+                            <div className="col">
+                              <input
+                                type="text"
+                                id="date"
+                                ref={downPaymentDateRef}
+                                className={`form-control ${downPaymentDateError ? "is-invalid" : ""}`}
+                                value={formatDate(downPaymentDate)}
+                                onChange={(e) => handleDownPaymentDateChange(e)}
+                                onKeyDown={(e) => handleEnter(e, submitRef)}
+                                placeholder="Down Payment Date"
+                                onFocus={(e) => (e.target.type = "date")}
+                                onBlur={(e) => (e.target.type = "text")}
+                              />
+                              {index === rows.length - 1 && (
+                                <i
+                                  className="bi bi-plus-circle-fill icon-4"
+                                  onClick={handleAddRow}
+                                ></i>
+                              )}
+                              {downPaymentDateError && (
+                                <div className="invalid-feedback">Please select a Down Payment Date</div>
+                              )}
+                            </div>
                           </div>
-                          <div className="col">
-                            <input
-                              type="text"
-                              id="date"
-                              ref={downPaymentDateRef}
-                              className={`form-control ${downPaymentDateError ? "is-invalid" : ""}`}
-                              value={formatDate(downPaymentDate)}
-                              onChange={(e) => handleDownPaymentDateChange(e)}
-                              onKeyDown={(e) => handleEnter(e, submitRef)}
-                              placeholder="Down Payment Date"
-                              onFocus={(e) => (e.target.type = "date")}
-                              onBlur={(e) => (e.target.type = "text")}
-                            />
-                            {downPaymentDateError && (
-                              <div className="invalid-feedback">Please select a Down Payment Date</div>
-                            )}
-                          </div>
-                        </div>
+                        ))
                       )}
-                      <p
+                      < p
                         className="text-gray"
                         onClick={() => setShowTokenFields2((prev) => !prev)}
                       >
@@ -847,7 +899,7 @@ function Booking() {
                                 onKeyDown={(e) => handleEnter(e, dueDateRef)}
                                 ref={paymentFrequencyRef}
                               >
-                                <option value="">Payment Frequency</option>
+                                <option value="" disabled>Payment Frequency</option>
                                 <option value="Monthly">Monthly</option>
                                 <option value="Bi-monthly">Bi-monthly</option>
                                 <option value="Quarterly">Quarterly</option>
@@ -882,7 +934,7 @@ function Booking() {
                                 type="number"
                                 id="noofinstallment"
                                 ref={noOfInstallmentRef}
-                                onKeyDown={(e) => handleEnter(e, submitRef)}
+                                onKeyDown={(e) => handleEnter(e, amountRef)}
                                 placeholder="No Of Installments"
                                 className={`form-control ${noOfInstallmentError ? "is-invalid" : ""}`}
                                 value={noOfInstallment}
@@ -892,7 +944,21 @@ function Booking() {
                                 <div className="invalid-feedback">Enter No Of Installments</div>
                               )}
                             </div>
-                            <div className="col"></div>
+                            <div className="col">
+                              <input
+                                type="number"
+                                id="amount"
+                                ref={amountRef}
+                                onKeyDown={(e) => handleEnter(e, submitRef)}
+                                placeholder="Amount"
+                                className={`form-control ${amountError ? "is-invalid" : ""}`}
+                                value={amount}
+                                onChange={handleAmountChange}
+                              />
+                              {amountError && (
+                                <div className="invalid-feedback">Enter No Of Installments</div>
+                              )}
+                            </div>
                           </div>
                           <div className="pt-3 w-50 mb-4">
                             <table className="table table-bordered text-center">
@@ -912,12 +978,12 @@ function Booking() {
                                     month: "2-digit",
                                     year: "numeric",
                                   });
-
+                                  // const installmentAmount = (amount / noOfInstallment).toFixed(2);
                                   return (
                                     <tr key={idx}>
                                       <td>Installment {idx + 1}</td>
                                       <td>{formattedDate}</td>
-                                      <td>2,00,000</td>
+                                      <td>{amount}</td>
                                     </tr>
                                   );
                                 })}
@@ -929,12 +995,12 @@ function Booking() {
                       <div>
                         <p className="text-gray" onClick={() => setShowTokenFields3((prev) => !prev)}>Construction Linked Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
                       </div>
-                      <div className="form-check pt-4">
+                      <div className="form-check pt-3">
                         <input
                           type="checkbox"
                           className="form-check-input"
                           checked={installment}
-                          onChange={handleInstallmentChange}
+                          onChange={(e) => setInstallment(e.target.checked)}
                           onKeyDown={(e) => handleEnter(e, submitRef)}
                           ref={installmentRef}
                           id="installmentNotify"
@@ -949,7 +1015,7 @@ function Booking() {
                             ref={submitRef}
                             disabled={loading}
                           >
-                            {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
+                            {loading ? "Submitting..." : "Submit"}
                           </button>
 
                           {!loading && (

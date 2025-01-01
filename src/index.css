@@ -76,3 +76,10 @@ code {
   color: #009dff;
   cursor: pointer;
 } 
+.icon-4 {
+  position: absolute;
+  cursor: pointer;
+  right: 1.7rem;
+  transform: translateY(-130%);
+  color: black;
+}
