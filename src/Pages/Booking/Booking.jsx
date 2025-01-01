@@ -872,7 +872,7 @@ function Booking() {
                               {index === rows.length - 1 && (
                                 <i
                                   className="bi bi-plus-circle-fill icon-4"
-                                  onClick={handleAddRow}
+                                  onClick={handleAddRow1}
                                 ></i>
                               )}
                               {downPaymentDateError && (
