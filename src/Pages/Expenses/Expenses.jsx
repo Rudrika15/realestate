@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet";
 import Sidebar from "../../Components/Sidebar/Sidebar";
@@ -8,42 +8,51 @@ import Topbar from "../../Components/Topbar/Topbar";
 const Expenses = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-  const [expenses, setExpenses] = useState([]);
-  const [voucherDate, setVoucherDate] = useState("");
-  const [voucherNo, setVoucherNo] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [expenses, setExpenses] = useState([
+    {
+      id: 1,
+      voucherNo : 1,
+      voucherDate:"23-12-2024",
+      expenseHead: "Office Supplies",
+      narration: "Demo",
+      amount: 15000,
 
-  const location = useLocation();
-
-  useEffect(() => {
-    if (location.state && location.state.expenses) {
-      setExpenses(location.state.expenses);
-      setVoucherDate(location.state.voucherDate);
-      setVoucherNo(location.state.voucherNo);
-    }
-  }, [location.state]);
+    },
+    {
+      voucherNo : 2,
+      voucherDate:"25-12-2024",
+      id: 2,
+      expenseHead: "Utilities",
+      narration: "Demo",
+      amount: 25000,
+    },
+  ]);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleTopbar = () => setIsTopbarOpen(!isTopbarOpen);
 
-  const handleDelete = (id) => {
+  const handleDelete = (expenseId) => {
     Swal.fire({
-      title: "Are you sure you want to delete?",
-      text: "Once deleted, this data cannot be recovered.",
-      icon: "warning",
+      title: 'Are You Sure You Want to Delete?',
+      text: 'Once you delete, all the data related to this expense will be deleted.',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Delete",
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#c4c4c4',
     }).then((result) => {
       if (result.isConfirmed) {
-        setExpenses((prevExpenses) => {
-          const updatedExpenses = prevExpenses.filter(
-            (expense) => expense.id !== id
-          );
-          Swal.fire("Deleted!", "Your expense has been deleted.", "success");
-          return updatedExpenses;
+        const updatedExpenses = expenses.filter((expense) => expense.id !== expenseId);
+        setExpenses(updatedExpenses);
+
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'The expense has been deleted.',
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
         });
       }
     });
@@ -56,10 +65,7 @@ const Expenses = () => {
 
   const indexOfLastExpense = currentPage * itemsPerPage;
   const indexOfFirstExpense = indexOfLastExpense - itemsPerPage;
-  const currentExpenses = expenses.slice(
-    indexOfFirstExpense,
-    indexOfLastExpense
-  );
+  const currentExpenses = expenses.slice(indexOfFirstExpense, indexOfLastExpense);
 
   return (
     <>
@@ -120,7 +126,6 @@ const Expenses = () => {
                         </div>
                       </div>
 
-
                       <table className="table table-bordered text-center">
                         <thead>
                           <tr>
@@ -135,14 +140,14 @@ const Expenses = () => {
                         <tbody>
                           {currentExpenses.map((expense) => (
                             <tr key={expense.id}>
-                              <td>{voucherNo || "N/A"}</td>
-                              <td>{voucherDate || "N/A"}</td>
+                              <td>{expense.voucherNo || "N/A"}</td>
+                              <td>{expense.voucherDate || "N/A"}</td>
                               <td>{expense.expenseHead || "N/A"}</td>
                               <td>{expense.narration || "N/A"}</td>
                               <td>{expense.amount || "N/A"}</td>
                               <td>
                                 <Link
-                                  to={`/edit-expenses/${expense.id}`}
+                                  to={'/edit-expenses'}
                                   className="btn btn-warning btn-sm me-2"
                                 >
                                   <i className="fas fa-edit"></i>

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
@@ -11,6 +10,9 @@ import { numberToWords } from "number-to-words";
 const AddExpenses = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+  const [expenseDateError, setExpenseDateError] = useState(false);
+  const [voucherNoError, setVoucherNoError] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [expenseDate, setExpenseDate] = useState("");
   const [voucherNo, setVoucherNo] = useState("");
@@ -22,10 +24,16 @@ const AddExpenses = () => {
       expenseHead: "",
       narration: "",
       amount: "",
-      showRemove: true, 
+      showRemove: true,
+      projectError: false,
+      nameError: false,
+      expenseHeadError: false,
+      narrationError: false,
+      amountError: false,
     },
   ]);
   const [expenseHeads, setExpenseHeads] = useState([
+    "Select",
     "Construction Materials",
     "Utilities",
     "Site Preparation",
@@ -44,7 +52,12 @@ const AddExpenses = () => {
       expenseHead: "",
       narration: "",
       amount: "",
-      showRemove: true, 
+      showRemove: true,
+      projectError: false,
+      nameError: false,
+      expenseHeadError: false,
+      narrationError: false,
+      amountError: false,
     };
     setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
   };
@@ -52,6 +65,17 @@ const AddExpenses = () => {
   const removeExpense = (index) => {
     const updatedExpenses = expenses.filter((_, i) => i !== index);
     setExpenses(updatedExpenses);
+  };
+
+  const formatDate = (date) => {
+    if (date) {
+      const d = new Date(date);
+      const day = ("0" + d.getDate()).slice(-2);
+      const month = ("0" + (d.getMonth() + 1)).slice(-2);
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+    return "";
   };
 
   const handleExpenseChange = (index, field, value) => {
@@ -70,29 +94,31 @@ const AddExpenses = () => {
     setNewOption(e.target.value);
   };
 
-  const convertAmountToWords = (amount) => {
-    return numberToWords.toWords(amount).toUpperCase();
+  const formatIndianNumbering = (num) => {
+    if (isNaN(num)) return num;
+    num = num.toString().split('.'); 
+    let integerPart = num[0];
+    const decimalPart = num[1] ? '.' + num[1] : '';
+    const regex = /\B(?=(\d{3})+(?!\d))/g;
+    integerPart = integerPart.replace(regex, ',');
+    return integerPart + decimalPart;
   };
-
-  // const formatAmountInIndianStyle = (amount) => {
-  //   return new Intl.NumberFormat('en-IN').format(amount);
-  // };
-  
-  // const calculateTotalAmount = () => {
-  //   const totalAmount = expenses.reduce(
-  //     (total, expense) => total + (parseFloat(expense.amount) || 0),
-  //     0
-  //   );
-  //   return formatAmountInIndianStyle(totalAmount);
-  // };
   
 
   const calculateTotalAmount = () => {
-    return expenses.reduce(
+    const totalAmount = expenses.reduce(
       (total, expense) => total + (parseFloat(expense.amount) || 0),
       0
     );
+    return totalAmount; 
   };
+  
+  const convertAmountToWords = (amount) => {
+    return numberToWords.toWords(amount).toUpperCase(); 
+  };
+
+
+
 
   const handleNewOptionKeyDown = (e) => {
     if (e.key === "Enter" && newOption.trim()) {
@@ -104,6 +130,64 @@ const AddExpenses = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    let isValid = true;
+    const updatedExpenses = [...expenses];
+
+    updatedExpenses.forEach((expense, index) => {
+      if (!expense.project) {
+        updatedExpenses[index].projectError = true;
+        isValid = false;
+      } else {
+        updatedExpenses[index].projectError = false;
+      }
+      if (!/^[A-Za-z ]+$/.test(expense.name)) {
+        updatedExpenses[index].nameError = true;
+        isValid = false;
+      } else {
+        updatedExpenses[index].nameError = false;
+      }
+
+      if (!expense.expenseHead) {
+        updatedExpenses[index].expenseHeadError = true;
+        isValid = false;
+      } else {
+        updatedExpenses[index].expenseHeadError = false;
+      }
+
+      if (!expense.narration) {
+        updatedExpenses[index].narrationError = true;
+        isValid = false;
+      } else {
+        updatedExpenses[index].narrationError = false;
+      }
+
+      if (
+        !expense.amount ||
+        isNaN(expense.amount) ||
+        parseFloat(expense.amount) <= 0
+      ) {
+        updatedExpenses[index].amountError = true;
+        isValid = false;
+      } else {
+        updatedExpenses[index].amountError = false;
+      }
+    });
+
+    if (!expenseDate) {
+      isValid = false;
+    }
+    if (!voucherNo) {
+      isValid = false;
+    }
+
+    setExpenseDateError(!expenseDate);
+    setVoucherNoError(!voucherNo);
+    setExpenses(updatedExpenses);
+
+    if (!isValid) {
+      return;
+    }
+
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -125,7 +209,6 @@ const AddExpenses = () => {
 
   return (
     <>
-      <ToastContainer />
       <Helmet>
         <title>React Estate | Voucher Expense</title>
       </Helmet>
@@ -161,41 +244,36 @@ const AddExpenses = () => {
                       <input
                         type="text"
                         id="date"
-                        className="form-control"
-                        value={
-                          expenseDate
-                            ? new Date(expenseDate).toLocaleDateString("en-GB", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "2-digit",
-                              })
-                            : ""
-                        }
-                        onChange={(e) => {
-                          const inputDate = e.target.value;
-                          const [day, month, year] = inputDate.split("-");
-                          if (day && month && year) {
-                            const formattedDate = `${day}-${month}-${year}`;
-                            const parsedDate = new Date(formattedDate);
-                            if (!isNaN(parsedDate)) {
-                              setExpenseDate(parsedDate.toISOString().slice(0, 10));
-                            } else {
-                              console.error("Invalid date format");
-                            }
-                          }
-                        }}
+                        className={`form-control ${
+                          expenseDateError ? "is-invalid" : ""
+                        }`}
+                        value={formatDate(expenseDate)}
                         placeholder="Booking Date"
                         onFocus={(e) => (e.target.type = "date")}
                         onBlur={(e) => (e.target.type = "text")}
+                        onChange={(e) => setExpenseDate(e.target.value)}
                       />
+                      {expenseDateError && (
+                        <div className="invalid-feedback">
+                          Please select a Expense date.
+                        </div>
+                      )}
                     </div>
                     <div className="col">
                       <input
-                        onChange={(e) => setVoucherNo(e.target.value)}
                         type="text"
-                        className="form-control"
+                        className={`form-control ${
+                          voucherNoError ? "is-invalid" : ""
+                        }`}
+                        value={voucherNo}
                         placeholder="Voucher No"
+                        onChange={(e) => setVoucherNo(e.target.value)}
                       />
+                      {voucherNoError && (
+                        <div className="invalid-feedback">
+                          Please enter a voucher number.
+                        </div>
+                      )}
                     </div>
                     <div className="col"></div>
                   </div>
@@ -221,30 +299,57 @@ const AddExpenses = () => {
                           <tr key={expense.id}>
                             <td>
                               <select
-                                className="form-select"
+                                className={`form-select ${
+                                  expense.projectError ? "is-invalid" : ""
+                                }`}
                                 value={expense.project}
                                 onChange={(e) =>
-                                  handleExpenseChange(index, "project", e.target.value)
+                                  handleExpenseChange(
+                                    index,
+                                    "project",
+                                    e.target.value
+                                  )
                                 }
                               >
+                                <option value="" selected>
+                                  Select
+                                </option>
                                 <option>Shiv</option>
                                 <option>Mahadev</option>
                                 <option>Ganesh</option>
                               </select>
+                              {expense.projectError && (
+                                <div className="invalid-feedback">
+                                  Please select a project.
+                                </div>
+                              )}
                             </td>
                             <td>
                               <input
                                 type="text"
-                                className="form-control"
+                                className={`form-control ${
+                                  expense.nameError ? "is-invalid" : ""
+                                }`}
                                 value={expense.name}
                                 onChange={(e) =>
-                                  handleExpenseChange(index, "name", e.target.value)
+                                  handleExpenseChange(
+                                    index,
+                                    "name",
+                                    e.target.value
+                                  )
                                 }
                               />
+                              {expense.nameError && (
+                                <div className="invalid-feedback">
+                                  Name can only contain letters and spaces.
+                                </div>
+                              )}
                             </td>
                             <td>
                               <select
-                                className="form-select"
+                                className={`form-select ${
+                                  expense.expenseHeadError ? "is-invalid" : ""
+                                }`}
                                 value={expense.expenseHead}
                                 onChange={(e) =>
                                   handleExpenseHeadChange(index, e.target.value)
@@ -259,6 +364,11 @@ const AddExpenses = () => {
                                   Add New Option
                                 </option>
                               </select>
+                              {expense.expenseHeadError && (
+                                <div className="invalid-feedback">
+                                  Please select an expense head.
+                                </div>
+                              )}
                               {expense.expenseHead === "add-new-option" && (
                                 <div className="mt-2">
                                   <input
@@ -275,22 +385,44 @@ const AddExpenses = () => {
                             <td>
                               <input
                                 type="text"
-                                className="form-control"
+                                className={`form-control ${
+                                  expense.narrationError ? "is-invalid" : ""
+                                }`}
                                 value={expense.narration}
                                 onChange={(e) =>
-                                  handleExpenseChange(index, "narration", e.target.value)
+                                  handleExpenseChange(
+                                    index,
+                                    "narration",
+                                    e.target.value
+                                  )
                                 }
                               />
+                              {expense.narrationError && (
+                                <div className="invalid-feedback">
+                                  Please enter a narration.
+                                </div>
+                              )}
                             </td>
                             <td>
                               <input
                                 type="number"
-                                className="form-control"
+                                className={`form-control ${
+                                  expense.amountError ? "is-invalid" : ""
+                                }`}
                                 value={expense.amount}
                                 onChange={(e) =>
-                                  handleExpenseChange(index, "amount", e.target.value)
+                                  handleExpenseChange(
+                                    index,
+                                    "amount",
+                                    e.target.value
+                                  )
                                 }
                               />
+                              {expense.amountError && (
+                                <div className="invalid-feedback">
+                                  Please enter a valid amount.
+                                </div>
+                              )}
                             </td>
                             <td className="text-center action-buttons">
                               {expense.showRemove && index !== 0 && (
@@ -316,8 +448,13 @@ const AddExpenses = () => {
                             Total Amount <br />
                             Amount In Word
                           </td>
-                          <td className="text-start" colSpan={2}>
-                            {calculateTotalAmount()} <br />
+                    
+                          <td
+                            className="text-start"
+                            colSpan={2}
+                            style={{ width: "130px" }}
+                          >
+                            {formatIndianNumbering(calculateTotalAmount())} <br />
                             {convertAmountToWords(calculateTotalAmount())}
                           </td>
                         </tr>
