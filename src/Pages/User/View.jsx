@@ -12,22 +12,8 @@ const View = () => {
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
 
-    const fetchUsers = () => {
-        const storedUsersData = JSON.parse(localStorage.getItem('usersData'));
-        if (storedUsersData) {
-            setUsers(storedUsersData);
-        }
-    };
-
-    useEffect(() => {
-        const storedUsersData = JSON.parse(localStorage.getItem('usersData'));
-        if (storedUsersData) {
-            setUsers(storedUsersData);
-        }
-    }, []);
-
     const handleEdit = (user) => {
-        navigate('/edit-user', { state: { user } });
+        navigate('/edit-user');
     };
 
     const handleDelete = (userId) => {
@@ -88,31 +74,33 @@ const View = () => {
                                         </div>
                                     </div>
                                     {users.length > 0 ? (
-                                        <table className="table table-bordered text-center">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">UserId</th>
-                                                    <th scope="col" className="w-75">UserName</th>
-                                                    <th scope="col">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {users.map((user) => (
-                                                    <tr key={user.id}>
-                                                        <td>{user.id}</td>
-                                                        <td>{user.name}</td>
-                                                        <td>
-                                                            <Link to="/edit-user" onClick={() => handleEdit(user.id)} className="btn btn-warning btn-sm me-2">
-                                                                <i className="fas fa-edit"></i>
-                                                            </Link>
-                                                            <Link onClick={() => handleDelete(user.id)} className="btn btn-danger btn-sm">
-                                                                <i className="fas fa-trash"></i>
-                                                            </Link>
-                                                        </td>
+                                        <div className="table-responsive">
+                                            <table className="table table-bordered text-center">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">UserId</th>
+                                                        <th scope="col" className="w-50">UserName</th>
+                                                        <th scope="col">Action</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    {users.map((user) => (
+                                                        <tr key={user.id}>
+                                                            <td>{user.id}</td>
+                                                            <td>{user.name}</td>
+                                                            <td>
+                                                                <Link to="/edit-user" onClick={() => handleEdit(user.id)} className="btn btn-warning btn-sm me-2">
+                                                                    <i className="fas fa-edit"></i>
+                                                                </Link>
+                                                                <Link onClick={() => handleDelete(user.id)} className="btn btn-danger btn-sm">
+                                                                    <i className="fas fa-trash"></i>
+                                                                </Link>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     ) : (
                                         <div className="text-center">
                                             <img src="img/image_2024_12_26T09_23_33_935Z.png" alt="No Users" className="img-fluid w-25 h-25" />
