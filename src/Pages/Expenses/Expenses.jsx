@@ -10,23 +10,31 @@ const Expenses = () => {
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedExpenseHead, setSelectedExpenseHead] = useState(""); 
   const [expenses, setExpenses] = useState([
     {
       id: 1,
-      voucherNo : 1,
-      voucherDate:"23-12-2024",
+      voucherNo: 1,
+      voucherDate: "23-12-2024",
       expenseHead: "Office Supplies",
       narration: "Demo",
       amount: 15000,
-
     },
     {
-      voucherNo : 2,
-      voucherDate:"25-12-2024",
+      voucherNo: 2,
+      voucherDate: "25-12-2024",
       id: 2,
       expenseHead: "Utilities",
       narration: "Demo",
       amount: 25000,
+    },
+    {
+      voucherNo: 3,
+      voucherDate: "30-12-2024",
+      id: 3,
+      expenseHead: "Office Supplies",
+      narration: "Demo",
+      amount: 18000,
     },
   ]);
 
@@ -35,24 +43,26 @@ const Expenses = () => {
 
   const handleDelete = (expenseId) => {
     Swal.fire({
-      title: 'Are You Sure You Want to Delete?',
-      text: 'Once you delete, all the data related to this expense will be deleted.',
-      icon: 'warning',
+      title: "Are You Sure You Want to Delete?",
+      text: "Once you delete, all the data related to this expense will be deleted.",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#c4c4c4',
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#c4c4c4",
     }).then((result) => {
       if (result.isConfirmed) {
-        const updatedExpenses = expenses.filter((expense) => expense.id !== expenseId);
+        const updatedExpenses = expenses.filter(
+          (expense) => expense.id !== expenseId
+        );
         setExpenses(updatedExpenses);
 
         Swal.fire({
-          title: 'Deleted!',
-          text: 'The expense has been deleted.',
-          icon: 'success',
-          confirmButtonColor: '#3085d6',
+          title: "Deleted!",
+          text: "The expense has been deleted.",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
         });
       }
     });
@@ -63,9 +73,22 @@ const Expenses = () => {
     setCurrentPage(1);
   };
 
+  const filteredExpenses = expenses.filter((expense) => {
+    if (!selectedExpenseHead) return true; 
+    return expense.expenseHead === selectedExpenseHead;
+  });
+
   const indexOfLastExpense = currentPage * itemsPerPage;
   const indexOfFirstExpense = indexOfLastExpense - itemsPerPage;
-  const currentExpenses = expenses.slice(indexOfFirstExpense, indexOfLastExpense);
+  const currentExpenses = filteredExpenses.slice(
+    indexOfFirstExpense,
+    indexOfLastExpense
+  );
+
+  const handleExpenseHeadChange = (e) => {
+    setSelectedExpenseHead(e.target.value);
+    setCurrentPage(1); 
+  };
 
   return (
     <>
@@ -118,51 +141,58 @@ const Expenses = () => {
                             </select>
                           </div>
                           <div style={{ width: "30%" }}>
-                            <select className="form-select form-select-sm">
+                            <select
+                              className="form-select form-select-sm"
+                              value={selectedExpenseHead}
+                              onChange={handleExpenseHeadChange}
+                            >
                               <option value="">Expense Category</option>
-                              <option value="">Category 1</option>
+                              <option value="Office Supplies">Office Supplies</option>
+                              <option value="Utilities">Utilities</option>
                             </select>
                           </div>
                         </div>
                       </div>
 
-                      <table className="table table-bordered text-center">
-                        <thead>
-                          <tr>
-                            <th scope="col">Voucher No</th>
-                            <th scope="col">Voucher Expense Date</th>
-                            <th scope="col">Expense Head</th>
-                            <th scope="col">Narration</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {currentExpenses.map((expense) => (
-                            <tr key={expense.id}>
-                              <td>{expense.voucherNo || "N/A"}</td>
-                              <td>{expense.voucherDate || "N/A"}</td>
-                              <td>{expense.expenseHead || "N/A"}</td>
-                              <td>{expense.narration || "N/A"}</td>
-                              <td>{expense.amount || "N/A"}</td>
-                              <td>
-                                <Link
-                                  to={'/edit-expenses'}
-                                  className="btn btn-warning btn-sm me-2"
-                                >
-                                  <i className="fas fa-edit"></i>
-                                </Link>
-                                <button
-                                  onClick={() => handleDelete(expense.id)}
-                                  className="btn btn-danger btn-sm"
-                                >
-                                  <i className="fas fa-trash"></i>
-                                </button>
-                              </td>
+                      <div className="table-responsive">
+                        <table className="table table-bordered text-center">
+                          <thead>
+                            <tr>
+                              <th scope="col">Voucher No</th>
+                              <th scope="col">Voucher Expense Date</th>
+                              <th scope="col">Expense Head</th>
+                              <th scope="col">Narration</th>
+                              <th scope="col">Amount</th>
+                              <th scope="col">Action</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {currentExpenses.map((expense) => (
+                              <tr key={expense.id}>
+                                <td>{expense.voucherNo || "N/A"}</td>
+                                <td>{expense.voucherDate || "N/A"}</td>
+                                <td>{expense.expenseHead || "N/A"}</td>
+                                <td>{expense.narration || "N/A"}</td>
+                                <td>{expense.amount || "N/A"}</td>
+                                <td>
+                                  <Link
+                                    to={"/edit-expenses"}
+                                    className="btn btn-warning btn-sm me-2"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </Link>
+                                  <button
+                                    onClick={() => handleDelete(expense.id)}
+                                    className="btn btn-danger btn-sm"
+                                  >
+                                    <i className="fas fa-trash"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </>
                   )}
                 </div>
