@@ -97,18 +97,40 @@ function Booking() {
     { downPayment: "", downPaymentDate: "" },
   ]);
 
+  const [rows1, setRows1] = useState([
+    { customerName: "", customerContact: "" },
+  ]);
+
   const handleAddRow = () => {
+    const lastRow = rows[rows.length - 1];
+    if (lastRow.downPayment && lastRow.downPaymentDate) {
+      return;
+    }
     setRows([...rows, { downPayment: "", downPaymentDate: "" }]);
   };
 
   const handleAddRow1 = () => {
-    setRows([...rows, { customerName: "", customerContact: "" }]);
+    const lastRow = rows1[rows1.length - 1];
+    if (lastRow.customerName && lastRow.customerContact) {
+      return;
+    }
+    setRows1([...rows1, { customerName: "", customerContact: "" }]);
   };
 
-  const handleInputChange = (index, field, value) => {
-    const newRows = [...rows];
-    newRows[index][field] = value;
-    setRows(newRows);
+  const handleInputChangeGeneric = (index, field, value, type) => {
+    if (type === "rows") {
+      setRows((prevRows) =>
+        prevRows.map((row, i) =>
+          i === index ? { ...row, [field]: value } : row
+        )
+      );
+    } else if (type === "rows1") {
+      setRows1((prevRows1) =>
+        prevRows1.map((row, i) =>
+          i === index ? { ...row, [field]: value } : row
+        )
+      );
+    }
   };
 
   const toggleSidebar = () => {
@@ -552,8 +574,8 @@ function Booking() {
                     </div>
                     <hr />
                     <p className="text-dark fs-5">Customer Details</p>
-                    {rows.map((row, index) => (
-                      <div className="row pt-2 mb-3">
+                    {rows1.map((row, index) => (
+                      <div className="row pt-2 mb-3" key={`row1-${index}`}>
                         <div className="col position-relative">
                           <input
                             type="text"
@@ -563,7 +585,9 @@ function Booking() {
                             name="name"
                             value={row.customerName}
                             ref={customerNameRef}
-                            onChange={(e) => handleCustomerNameChange(index, e.target.value)}
+                            onChange={(e) =>
+                              handleInputChangeGeneric(index, "customerName", e.target.value, "rows1")
+                            }
                             onKeyDown={(e) => handleEnter(e, customerContactRef)}
                           />
                           {customerNameError && (
@@ -578,14 +602,16 @@ function Booking() {
                             placeholder="Contact No"
                             name="Contact No"
                             value={row.customerContact}
-                            onChange={(e) => handleCustomerContactChange(index, e.target.value)}
+                            onChange={(e) =>
+                              handleInputChangeGeneric(index, "customerContact", e.target.value, "rows1")
+                            }
                             onKeyDown={(e) => handleEnter(e, customerAddressRef)}
                             ref={customerContactRef}
                           />
-                          {index === rows.length - 1 && (
+                          {index === rows1.length - 1 && (
                             <i
                               className="bi bi-plus-circle-fill icon-2"
-                              onClick={() => handleAddRow()}
+                              onClick={() => setRows1([...rows1, { customerName: "", customerContact: "" }])}
                             ></i>
                           )}
                           {customerContactError && (
@@ -667,15 +693,6 @@ function Booking() {
                     </div>
                     <hr />
                     <p class="text-dark fs-5">Payment Terms</p>
-                    {/* <div className="row">
-                      <div className="col">
-                        <p className="text-gray" onClick={() => setShowTokenFields((prev) => !prev)}> Token Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
-                        <p className="text-gray" onClick={() => setShowTokenFields((prev) => !prev)}>Down Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
-                        <p className="text-gray">Installment Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
-                        <p className="text-gray">Construction Linked Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
-                      </div>
-                      <div className="col"></div>
-                    </div> */}
                     <>
                       <p className="text-gray" onClick={() => setShowTokenFields((prev) => !prev)}> Token Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
                       {showTokenFields && (
@@ -715,172 +732,61 @@ function Booking() {
                           </div>
                         </div>
                       )}
-                      {/* <div className="row pt-4">
-                        <div className="col">
-                          <input
-                            type="number"
-                            id="pendingamount"
-                            placeholder="Pending Amount"
-                            name="pendingamount"
-                            className={`form-control ${pendingAmountError ? "is-invalid" : ""}`}
-                            value={pendingAmount}
-                            onChange={handlePendingAmountChange}
-                            onKeyDown={(e) => handleEnter(e, pendingPaymentDateRef)}
-                            ref={pendingAmountRef}
-                          />
-                          {pendingAmountError && (
-                            <div className="invalid-feedback">Enter Pending Amount</div>
-                          )}
-                        </div>
-                        <div className="col">
-                          <input
-                            type="text"
-                            id="date"
-                            ref={pendingPaymentDateRef}
-                            className={`form-control ${pendingPaymentDateError ? "is-invalid" : ""}`}
-                            value={
-                              pendingPaymentDate
-                                ? new Date(pendingPaymentDate).toLocaleDateString("en-GB", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "2-digit",
-                                })
-                                : ""
-                            }
-                            onKeyDown={(e) => handleEnter(e, submitRef)}
-                            onChange={(e) => handlePendingPaymentDateChange(e)}
-                            placeholder="Pending Payment Date"
-                            onFocus={(e) => (e.target.type = "date")}
-                            onBlur={(e) => (e.target.type = "text")}
-                          />
-                          {pendingPaymentDateError && (
-                            <div className="invalid-feedback">Please select a Pending Payment Date</div>
-                          )}
-                        </div>
-                      </div> */}
                     </>
-                    {/* <div>
-                      <div className="row pt-4">
-                        <div className="col">
-                          <input
-                            type="number"
-                            id="loanamount"
-                            placeholder="Loan Amount"
-                            name="pendingamount"
-                            className={`form-control ${loanAmountError ? "is-invalid" : ""}`}
-                            value={loanAmount}
-                            onChange={handleLoanAmountChange}
-                            onKeyDown={(e) => handleEnter(e, loanPaymentDateRef)}
-                            ref={loanAmountRef}
-                          />
-                          {loanAmountError && (
-                            <div className="invalid-feedback">Enter Loan Amount</div>
-                          )}
-                        </div>
-                        <div className="col">
-                          <input
-                            type="text"
-                            id="date"
-                            ref={loanPaymentDateRef}
-                            className={`form-control ${loanPaymentDateError ? "is-invalid" : ""}`}
-                            value={
-                              loanPaymentDate
-                                ? new Date(loanPaymentDate).toLocaleDateString("en-GB", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "2-digit",
-                                })
-                                : ""
-                            }
-                            onChange={(e) => {
-                              handleLoanPaymentDateChange(e);
-                              const inputDate = e.target.value;
-                              const [year, month, day] = inputDate.split("-");
-                              if (day && month && year) {
-                                const formattedDate = `${year}-${month}-${day}`;
-                                const parsedDate = new Date(formattedDate);
-                                if (!isNaN(parsedDate)) {
-                                  setPendingPaymentDate(parsedDate.toISOString().slice(0, 10));
-                                } else {
-                                  console.error("Invalid date format");
-                                }
-                              }
-                            }}
-                            onKeyDown={(e) => handleEnter(e, bankDetailsRef)}
-                            placeholder="Loan Payment Date"
-                            onFocus={(e) => (e.target.type = "date")}
-                            onBlur={(e) => (e.target.type = "text")}
-                          />
-                          {loanPaymentDateError && (
-                            <div className="invalid-feedback">Please select a Loan Payment Date</div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="row w-75">
-                        <div className="col pt-4">
-                          <textarea
-                            className={`form-control ${bankDetailsError ? "is-invalid" : ""}`}
-                            placeholder="Bank Details"
-                            id="floatingTextarea"
-                            value={bankDetails}
-                            onChange={handleBankDetailsChange}
-                            onKeyDown={(e) => handleEnter(e, submitRef)}
-                            ref={bankDetailsRef}
-                          ></textarea>
-                          {bankDetailsError && (
-                            <div className="invalid-feedback">Enter Bank Details</div>
-                          )}
-                        </div>
-                      </div>
-                    </div> */}
                     <div>
                       <p className="text-gray" onClick={() => setShowTokenFields1((prev) => !prev)}>Down Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
                       {showTokenFields1 && (
-                        rows.map((row, index) => (
-                          <div className="row pt-2 mb-3" key={index}>
-                            <div className="col">
-                              <input
-                                type="number"
-                                id={`downpayment-${index}`}
-                                placeholder="Down Payment"
-                                name="downpayment"
-                                className={`form-control ${downPaymentError ? "is-invalid" : ""}`}
-                                value={row.downPayment}
-                                onChange={(e) =>
-                                  handleInputChange(index, "downPayment", e.target.value)
-                                }
-                                onKeyDown={(e) => handleEnter(e, downPaymentDateRef)}
-                                ref={downPaymentRef}
-                              />
-                              {downPaymentError && (
-                                <div className="invalid-feedback">Enter Down Payment</div>
-                              )}
+                        <div>
+                          {rows.map((row, index) => (
+                            <div className="row pt-2 mb-3" key={`row-${index}`}>
+                              <div className="col">
+                                <input
+                                  type="number"
+                                  id={`downpayment-${index}`}
+                                  placeholder="Down Payment"
+                                  name="downpayment"
+                                  className={`form-control ${downPaymentError ? "is-invalid" : ""}`}
+                                  value={row.downPayment}
+                                  onChange={(e) =>
+                                    handleInputChangeGeneric(index, "downPayment", e.target.value, "rows")
+                                  }
+                                  onKeyDown={(e) => handleEnter(e, downPaymentDateRef)}
+                                  ref={downPaymentRef}
+                                />
+                                {downPaymentError && (
+                                  <div className="invalid-feedback">Enter Down Payment</div>
+                                )}
+                              </div>
+                              <div className="col">
+                                <input
+                                  type="text"
+                                  id="date"
+                                  ref={downPaymentDateRef}
+                                  className={`form-control ${downPaymentDateError ? "is-invalid" : ""}`}
+                                  value={formatDate(row.downPaymentDate)}
+                                  onChange={(e) =>
+                                    handleInputChangeGeneric(index, "downPaymentDate", e.target.value, "rows")
+                                  }
+                                  onKeyDown={(e) => handleEnter(e, installmentRef)}
+                                  placeholder="Down Payment Date"
+                                  onFocus={(e) => (e.target.type = "date")}
+                                  onBlur={(e) => (e.target.type = "text")}
+                                />
+                                {index === rows.length - 1 && (
+                                  <i
+                                    className="bi bi-plus-circle-fill icon-4"
+                                    onClick={() => setRows([...rows, { downPayment: "", downPaymentDate: "" }])}
+                                    ></i>
+                                )}
+                                {downPaymentDateError && (
+                                  <div className="invalid-feedback">
+                                    Please select a Down Payment Date
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                            <div className="col">
-                              <input
-                                type="text"
-                                id="date"
-                                ref={downPaymentDateRef}
-                                className={`form-control ${downPaymentDateError ? "is-invalid" : ""}`}
-                                value={formatDate(downPaymentDate)}
-                                onChange={(e) => handleDownPaymentDateChange(e)}
-                                onKeyDown={(e) => handleEnter(e, submitRef)}
-                                placeholder="Down Payment Date"
-                                onFocus={(e) => (e.target.type = "date")}
-                                onBlur={(e) => (e.target.type = "text")}
-                              />
-                              {index === rows.length - 1 && (
-                                <i
-                                  className="bi bi-plus-circle-fill icon-4"
-                                  onClick={handleAddRow1}
-                                ></i>
-                              )}
-                              {downPaymentDateError && (
-                                <div className="invalid-feedback">Please select a Down Payment Date</div>
-                              )}
-                            </div>
-                          </div>
-                        ))
+                          ))}
+                        </div>
                       )}
                       < p
                         className="text-gray"
@@ -949,14 +855,14 @@ function Booking() {
                                 type="number"
                                 id="amount"
                                 ref={amountRef}
-                                onKeyDown={(e) => handleEnter(e, submitRef)}
+                                onKeyDown={(e) => handleEnter(e, installmentRef)}
                                 placeholder="Amount"
                                 className={`form-control ${amountError ? "is-invalid" : ""}`}
                                 value={amount}
                                 onChange={handleAmountChange}
                               />
                               {amountError && (
-                                <div className="invalid-feedback">Enter No Of Installments</div>
+                                <div className="invalid-feedback">Enter Amount</div>
                               )}
                             </div>
                           </div>
@@ -972,18 +878,25 @@ function Booking() {
                               <tbody>
                                 {Array.from({ length: noOfInstallment }).map((_, idx) => {
                                   const installmentDate = new Date(dueDate);
-                                  installmentDate.setMonth(installmentDate.getMonth() + idx * getFrequencyInMonths(paymentFrequency));
+                                  installmentDate.setMonth(
+                                    installmentDate.getMonth() + idx * getFrequencyInMonths(paymentFrequency)
+                                  );
                                   const formattedDate = installmentDate.toLocaleDateString("en-GB", {
                                     day: "2-digit",
                                     month: "2-digit",
                                     year: "numeric",
                                   });
-                                  // const installmentAmount = (amount / noOfInstallment).toFixed(2);
+                                  const formatter = new Intl.NumberFormat("en-IN", {
+                                    style: "currency",
+                                    currency: "INR",
+                                    minimumFractionDigits: 2,
+                                  });
+                                  const formattedAmount = formatter.format(amount);
                                   return (
                                     <tr key={idx}>
                                       <td>Installment {idx + 1}</td>
                                       <td>{formattedDate}</td>
-                                      <td>{amount}</td>
+                                      <td>{formattedAmount}</td>
                                     </tr>
                                   );
                                 })}

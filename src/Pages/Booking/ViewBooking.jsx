@@ -24,8 +24,8 @@ const ViewBooking = () => {
       receivedEwAmount: '5000',
       pendingEwAmount: '5000',
       otherWorkAmount: '1000',
-      receivedOtAmount: '500',
-      pendingOtAmount: '500'
+      receivedOtAmount: '1500',
+      pendingOtAmount: '1500'
     },
   ].sort((a, b) => a.name.localeCompare(b.name)));
   const toggleSidebar = () => {
@@ -34,14 +34,17 @@ const ViewBooking = () => {
 
   const formatIndianNumbering = (num) => {
     if (isNaN(num)) return num;
-    num = num.toString().split('.'); 
-    let integerPart = num[0];
-    const decimalPart = num[1] ? '.' + num[1] : '';
-    const regex = /\B(?=(\d{3})+(?!\d))/g;
-    integerPart = integerPart.replace(regex, ',');
-    return integerPart + decimalPart;
+    num = parseFloat(num).toFixed(2); 
+    const parts = num.split(".");
+    let integerPart = parts[0];
+    const decimalPart = parts[1] === "00" ? "" : "." + parts[1]; 
+    const lastThree = integerPart.slice(-3);
+    const otherNumbers = integerPart.slice(0, -3);
+    const formattedInteger =
+      otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree;
+    return formattedInteger + decimalPart;
   };
-
+  
   const getData = async () => {
     try {
       const res = await axios.get();
@@ -131,9 +134,7 @@ const ViewBooking = () => {
                               <td>{formatIndianNumbering(book.pendingOtAmount)}</td>
                               <td>
                                 <Link to="/view-cancelled-booking">
-                                  <button
-                                    type="button"
-                                    className="btn shadow-sm text-dark">
+                                  <button type="button" className="btn shadow-sm text-dark">
                                     Action
                                   </button>
                                 </Link>
