@@ -1,16 +1,18 @@
-// src/Pages/Add/Add.js
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import Sidebar from "../../Components/Sidebar/Sidebar";
-import Topbar from "../../Components/Topbar/Topbar";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { BiSolidDownload } from "react-icons/bi";
+import Sidebar from "../../Components/Sidebar/Sidebar";
+import Topbar from "../../Components/Topbar/Topbar";
+import { demoDownload } from "../../Api/ApiDipak";  
 
 const AddProjects = () => {
   const [name, setName] = useState("");
   const [unit, setUnit] = useState(null);
+  const [error, setError] = useState({});
+  const [loading, setLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
 
@@ -28,7 +30,17 @@ const AddProjects = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
 
-  // focus
+  const handleDownloadExcel = async () => {
+    try {
+      await demoDownload();  
+
+      toast.success("Excel file downloaded successfully!");
+    } catch (error) {
+      console.error("Error downloading Excel:", error);
+      toast.error("Failed to download Excel file");
+    }
+  };
+
   useEffect(() => {
     nameRef.current.focus();
   }, []);
@@ -42,7 +54,6 @@ const AddProjects = () => {
 
   const handleKey = useCallback((event) => {
     if (event.key === "F4") {
-      console.log(`form submit`);
       handleSubmit(event);
     }
   }, []);
@@ -56,45 +67,55 @@ const AddProjects = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    let isValid = true;
+    const validationErrors = {};
 
     if (!name.trim()) {
-      toast.error("Name is required");
-      return;
+      validationErrors.name = "Name is required";
+      isValid = false;
     }
 
     if (!/^[A-Za-z ]+$/.test(name)) {
-      toast.error("Name can only contain letters and spaces");
-      return;
-    }
-    if (name.length < 4) {
-      toast.error("Minimum 4 Characters ");
-      return;
+      validationErrors.name = "Name can only contain letters and spaces";
+      isValid = false;
     }
 
-    if (!unit) {
-      toast.error("Unit is Required");
+    if (!unit || unit.length === 0) {
+      validationErrors.unit = "Unit is required";
+      isValid = false;
+    } else {
+      const file = unit[0];
+
+      if (file.size > 2 * 1024 * 1024) {
+        validationErrors.unit = "File is larger than 2MB";
+        isValid = false;
+      }
+
+      if (
+        file.type !== "application/vnd.ms-excel" &&
+        file.type !==
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      ) {
+        validationErrors.unit = "Only Excel files (.xls, .xlsx) are allowed";
+        isValid = false;
+      }
+    }
+
+    if (!isValid) {
+      setError(validationErrors);
       return;
     }
 
-    const file = unit[0]; // Get the first file
+    setLoading(true);
 
-  if (file.size > 2 * 1024 * 1024) {
-    toast.error("Image Is Larger Than 2MB");
-    return;
-  }
-
-  // Check for valid image MIME types
-  if (file.type === 'application/vnd.ms-excel' || 
-    file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-        
-  } else {
-    toast.error("File type Does Not Support. Upload only excel files ");
-    return;
-  }
-    setName("");
-    files.current.value = null;
-
-    navigate("/projects");
+    setTimeout(() => {
+      setLoading(false);
+      setName("");
+      files.current.value = null;
+      setError({});
+      navigate("/projects");
+      toast.success("Project added successfully!");
+    }, 2000);
   };
 
   return (
@@ -129,82 +150,94 @@ const AddProjects = () => {
                       </Link>
                     </div>
                   </div>
-                  {/* <div className="d-flex justify-content-between mb-3">
-                                            <div className="p-3 w-30">
-                                                <div class="input-group mb-3">
-                                                    <span class="input-group-text bg-white">
-                                                        <i class="bi bi-search"></i>
-                                                    </span>
-                                                    <input type="text" class="form-control border-start-0" placeholder="Search" aria-label="Search" />
-                                                </div>
-                                            </div>
-                                        </div> */}
+
                   <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                      <label htmlFor="name" className="form-label">
-                        Name :{" "}
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        aria-describedby="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        onKeyPress={(e) => handleEnter(e, files)}
-                        ref={nameRef}
-                      />
+                    <div className="row">
+                      <div className=" col mb-3">
+                        <label htmlFor="name" className="form-label">
+                          Name :{" "}
+                        </label>
+                        <input
+                          type="text"
+                          className={`form-control ${
+                            error.name ? "is-invalid" : ""
+                          }`}
+                          id="name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          onKeyPress={(e) => handleEnter(e, files)}
+                          ref={nameRef}
+                        />
+                        {error.name && (
+                          <div className="invalid-feedback">{error.name}</div>
+                        )}
+                      </div>
+                      <div className="col"></div>
                     </div>
                     <div className="row">
                       <div className="col">
-
-                    <div className="mb-3">
-                      <label htmlFor="file" className="form-label">
-                        Upload Unit:
-                      </label>
-                      <input
-                        type="file"
-                        accept=".jpg, .jpeg, .png, .pdf, .docx" 
-                        className="form-control"
-                        multiple
-                        id="unit"
-                        aria-describedby="unit"
-                        onKeyPress={(e) => handleEnter(e, submitRef)}
-                        ref={files}
-                        onChange={(e) => setUnit(e.target.files)}
-                      />
-                    </div>
-                      </div>
-
-                      <div className="col">
-
-                    <div className="mb-3">
-                      <label htmlFor="file" className="form-label">
-                        Template:
-                      </label>
-
-                      <div className="row">
-                        <div className="col-2" style={{textAlign:"center"}}>
-
-                      <BiSolidDownload style={{fontSize:"30px"}} />
+                        <div className="mb-3">
+                          <label htmlFor="unit" className="form-label">
+                            Upload Unit:
+                          </label>
+                          <input
+                            type="file"
+                            accept=".xls, .xlsx"
+                            className={`form-control ${
+                              error.unit ? "is-invalid" : ""
+                            }`}
+                            id="unit"
+                            ref={files}
+                            onChange={(e) => setUnit(e.target.files)}
+                            onKeyPress={(e) => handleEnter(e, submitRef)}
+                          />
+                          {error.unit && (
+                            <div className="invalid-feedback">{error.unit}</div>
+                          )}
                         </div>
                       </div>
-                    </div>
+                      <div className="col">
+                        <div className="mb-3">
+                          <label htmlFor="file" className="form-label">
+                            Template:
+                          </label>
+
+                          <div className="row">
+                            <div
+                              className="col-2"
+                              style={{ textAlign: "center" }}
+                            >
+                              <BiSolidDownload
+                                style={{ fontSize: "30px" }}
+                                onClick={handleDownloadExcel}
+                                className="BiSolidDownload"
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <button
                       type="submit"
                       className="btn btn-primary"
                       ref={submitRef}
+                      disabled={loading}
                     >
-                      Submit
+                      {loading ? (
+                        <span
+                          className="spinner-border spinner-border-sm"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                      ) : (
+                        "Submit"
+                      )}
                     </button>
                   </form>
                 </div>
               </div>
             </div>
           </div>
-         
         </div>
       </div>
     </>

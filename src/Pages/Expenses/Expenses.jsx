@@ -11,6 +11,8 @@ const Expenses = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedExpenseHead, setSelectedExpenseHead] = useState(""); 
+    const [selectedExpensesDate, setselectedExpensesDate] = useState("");
+  
   const [expenses, setExpenses] = useState([
     {
       id: 1,
@@ -78,9 +80,16 @@ const Expenses = () => {
     return expense.expenseHead === selectedExpenseHead;
   });
 
+  const filteredDate = expenses.filter((expenses)=>{
+    if(selectedExpensesDate && expenses.voucherDate !== selectedExpensesDate){
+      return false;
+    }
+    return true;
+  })
+
   const indexOfLastExpense = currentPage * itemsPerPage;
   const indexOfFirstExpense = indexOfLastExpense - itemsPerPage;
-  const currentExpenses = filteredExpenses.slice(
+  const currentExpenses = filteredDate ||  filteredExpenses.slice(
     indexOfFirstExpense,
     indexOfLastExpense
   );
@@ -149,6 +158,20 @@ const Expenses = () => {
                               <option value="">Expense Category</option>
                               <option value="Office Supplies">Office Supplies</option>
                               <option value="Utilities">Utilities</option>
+                            </select>
+                          </div>
+                          <div style={{ width: "30%" }}>
+                            <select
+                              className="form-select form-select-sm"
+                              value={selectedExpensesDate}
+                              onChange={(e) =>
+                                setselectedExpensesDate(e.target.value)
+                              }
+                            >
+                              <option value="">Expenes Date</option>
+                              <option value="25-12-2020">23-12-2020</option>
+                              <option value="25-12-2020">25-12-2020</option>
+                              <option value="30-12-2020">30-12-2020</option>
                             </select>
                           </div>
                         </div>

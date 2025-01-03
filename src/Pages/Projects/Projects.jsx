@@ -4,7 +4,7 @@ import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { getUsers } from '../../Api/Api';
+// import { getUsers } from '../../Api/Api';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
@@ -15,23 +15,23 @@ const Projects = () => {
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
     const [data, setData] = useState([ ].sort((a, b) => a.name.localeCompare(b.name)));
    
-    const getData = async () => {
-        try {
-            const res = await axios.get(getUsers);
-            if (res.data.status === true) {
-                const sortedData = res.data.data.sort((a, b) => a.name.localeCompare(b.name));
-                setData(sortedData);
-            } else {
-                console.error('Error fetching data:', res.data.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
+    // const getData = async () => {
+    //     try {
+    //         const res = await axios.get(getUsers);
+    //         if (res.data.status === true) {
+    //             const sortedData = res.data.data.sort((a, b) => a.name.localeCompare(b.name));
+    //             setData(sortedData);
+    //         } else {
+    //             console.error('Error fetching data:', res.data.message);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error:', error);
+    //     }
+    // };
     
     useEffect(() => {
-        getData();
-    }, [data]);
+        // getData();
+    }, );
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
