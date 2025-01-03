@@ -7,6 +7,7 @@ import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
 import axios from "axios";  
+import { AddRoles } from "../../Api/Apikiran";
 
 function AddRole() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -34,7 +35,7 @@ function AddRole() {
   }
   try {
   
-    const response = await axios.post("/AddRole", data);
+    const response = await axios.post("/AddRoles", data);
     if (response.data.status) {
       toast.success('Role added successfully');
       setTimeout(() => navigate('/role'), 1000);  
