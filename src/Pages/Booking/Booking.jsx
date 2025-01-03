@@ -740,19 +740,17 @@ function Booking() {
                           {rows.map((row, index) => (
                             <div className="row pt-2 mb-3" key={`row-${index}`}>
                               <div className="col">
-                                <input
-                                  type="number"
-                                  id={`downpayment-${index}`}
-                                  placeholder="Down Payment"
-                                  name="downpayment"
-                                  className={`form-control ${downPaymentError ? "is-invalid" : ""}`}
-                                  value={row.downPayment}
-                                  onChange={(e) =>
-                                    handleInputChangeGeneric(index, "downPayment", e.target.value, "rows")
-                                  }
-                                  onKeyDown={(e) => handleEnter(e, downPaymentDateRef)}
-                                  ref={downPaymentRef}
-                                />
+                              <input
+                              type="number"
+                              className={`form-control ${downPaymentError ? "is-invalid" : ""}`}
+                              id="downpayment"
+                              placeholder="Down Payment"
+                              name="downpayment"
+                              value={tokenAmount}
+                              onChange={handleDownPaymentChange}
+                              onKeyDown={(e) => handleEnter(e, tokenPaymentDateRef)}
+                              ref={tokenAmountRef}
+                            />
                                 {downPaymentError && (
                                   <div className="invalid-feedback">Enter Down Payment</div>
                                 )}
@@ -776,7 +774,7 @@ function Booking() {
                                   <i
                                     className="bi bi-plus-circle-fill icon-4"
                                     onClick={() => setRows([...rows, { downPayment: "", downPaymentDate: "" }])}
-                                    ></i>
+                                  ></i>
                                 )}
                                 {downPaymentDateError && (
                                   <div className="invalid-feedback">

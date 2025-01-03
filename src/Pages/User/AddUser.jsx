@@ -54,17 +54,7 @@ function AddUser() {
         }
 
         if (isValid) {
-            setLoading(true);
-            const newUser = {
-                id: Date.now(),
-                name: username,
-                passcode: passcode,
-                role: role,
-            };
-            const updatedUsers = [...users, newUser];
-            localStorage.setItem("usersData", JSON.stringify(updatedUsers));
-            setUsers(updatedUsers);
-
+            setLoading(true);    
             toast.success("User Added Successfully!");
             setTimeout(() => {
                 setLoading(false);
@@ -76,10 +66,6 @@ function AddUser() {
         }
     };
 
-    useEffect(() => {
-        const storedUsers = JSON.parse(localStorage.getItem("usersData")) || [];
-        setUsers(storedUsers);
-    }, []);
 
     const handleUsernameChange = (e) => {
         setUsername(e.target.value);

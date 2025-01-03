@@ -1,50 +1,32 @@
+import axios from "axios";
 import React, { useRef, useState } from "react";
 import { Spinner, Form } from "react-bootstrap";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { login } from "../../Api/Api";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
-  const [username, setUsername] = useState("");
+  const [userName, setUserName] = useState("");
   const [passcode, setPasscode] = useState("");
-  const [usernameError, setUsernameError] = useState(false);
+  const [userNameError, setUserNameError] = useState(false);
   const [passcodeError, setPasscodeError] = useState(false);
   const navigate = useNavigate();
   const usernameRef = useRef(null);
   const passcodeRef = useRef(null);
   const loginRef = useRef(null);
 
-  // const handleLogin = async () => {
-  //     try {
-  //         setLoading(true);
-  //         const data = { email, passcode };
-  //         const response = await axios.post(login, data);
-  //         if (response.data.status === true) {
-  //             toast.success('Login successful');
-  //             setTimeout(() => navigate('/view-user'), 1000);
-  //         } else {
-  //             toast.error(response.data.message || 'Login failed');
-  //         }
-  //     } catch (error) {
-  //         console.error('Login error:', error);
-  //         toast.error(error.response?.data?.message || 'Something went wrong');
-  //     } finally {
-  //         setLoading(false);
-  //     }
-  // };
   const handleLogin = async (e) => {
     e.preventDefault();
     let isValid = true;
 
-
-
-    if (!username) {
-      setUsernameError(true);
+    if (!userName) {
+      setUserNameError(true);
       isValid = false;
     } else {
-      setUsernameError(false);
+      setUserNameError(false);
     }
 
     if (!passcode) {
@@ -54,18 +36,28 @@ const Login = () => {
       setPasscodeError(false);
     }
 
-    if (isValid) {
-      console.log("form submitted with:", { username, passcode });
-      setUsername('');
-      setPasscode('');
-      setLoading(true);
-      toast.success("Login Sucessfully!");
-      setTimeout(() => {
-        navigate("/view-user");
-      }, 2000);
+    if (!isValid) return;
+    setLoading(true);
+    try {
+      const data = { userName, passcode };
+      const response = await axios.post(login, data);
+      if (response.data.status === true) {
+        toast.success(response.data.message);
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("roles", JSON.stringify(response.data.roles));
+        setTimeout(() => navigate('/view-user'), 1000);
+        setUserName("");
+        setPasscode("");
+      } else {
+        toast.error(response.data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error(error.response?.data?.message || 'Something went wrong');
     }
   };
 
+  
   const handleEnter = (e, nextField) => {
     if (e.key === "Enter" && nextField?.current) {
       e.preventDefault();
@@ -78,9 +70,9 @@ const Login = () => {
   };
 
   const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
+    setUserName(e.target.value);
     if (e.target.value) {
-      setUsernameError(false);
+      setUserNameError(false);
     }
   };
 
@@ -109,19 +101,19 @@ const Login = () => {
                   </Link>
                   <h3>Login</h3>
                 </div>
-                <Form >
+                <Form onSubmit={handleLogin}>
                   <div className="form-floating mb-3">
                     <input
                       type="text"
-                      className={`form-control ${usernameError ? 'is-invalid' : ''}`}
+                      className={`form-control ${userNameError ? 'is-invalid' : ''}`}
                       id="floatingInput"
                       placeholder="User Name"
-                      value={username}
+                      value={userName}
                       ref={usernameRef}
                       onChange={handleUsernameChange}
                       onKeyDown={(e) => handleEnter(e, passcodeRef)}
                     />
-                    {usernameError && <div className="invalid-feedback">Enter a valid Username</div>}
+                    {userNameError && <div className="invalid-feedback">Enter a valid Username</div>}
                     <label htmlFor="floatingInput">Username</label>
                   </div>
                   <div className="form-floating mb-4">
