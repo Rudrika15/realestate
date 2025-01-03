@@ -6,7 +6,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { BiSolidDownload } from "react-icons/bi";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { demoDownload } from "../../Api/ApiDipak";  
+import { demoDownload } from "../../Api/ApiDipak"; 
+import axios from "axios";
+
 
 const AddProjects = () => {
   const [name, setName] = useState("");
@@ -30,16 +32,28 @@ const AddProjects = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
 
+ 
   const handleDownloadExcel = async () => {
+    
     try {
-      await demoDownload();  
 
-      toast.success("Excel file downloaded successfully!");
+      const response = await axios.get(demoDownload, {
+        responseType: 'blob', 
+      });
+  
+      const link = document.createElement('a');
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      link.href = url;
+      link.setAttribute('download', 'template.xlsx'); 
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     } catch (error) {
-      console.error("Error downloading Excel:", error);
+      console.error("Error downloading the Excel file:", error);
       toast.error("Failed to download Excel file");
     }
   };
+  
 
   useEffect(() => {
     nameRef.current.focus();
