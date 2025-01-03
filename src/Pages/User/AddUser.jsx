@@ -4,7 +4,6 @@ import { toast, ToastContainer } from "react-toastify";
 import { Spinner } from "react-bootstrap";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import Footer from "../../Components/Footer/Footer";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -16,7 +15,6 @@ function AddUser() {
     const [passcode, setPasscode] = useState("");
     const [role, setRole] = useState("");
     const [usernameError, setUsernameError] = useState(false);
-    const [emailError, setEmailError] = useState(false);
     const [passcodeError, setPasscodeError] = useState(false);
     const [roleError, setRoleError] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -94,8 +92,9 @@ function AddUser() {
     };
 
     const handleRoleChange = (e) => {
-        setRole(e.target.value);
-        if (e.target.value) setRoleError(false);
+        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+        setRole(selectedOptions);
+        if (selectedOptions.length > 0) setRoleError(false);
     };
 
     const handleEnter = (e, nextField) => {
@@ -170,11 +169,14 @@ function AddUser() {
                                                     value={role}
                                                     ref={roleRef}
                                                     onChange={handleRoleChange}
+                                                    multiple
                                                     onKeyDown={(e) => handleEnter(e, submitRef)}
                                                 >
-                                                    <option value="">Select Role</option>
+                                                    <option value="" className="bg-light" disabled>Select Role</option>
                                                     <option value="admin">Admin</option>
                                                     <option value="user">User</option>
+                                                    <option value="editor">Editor</option>
+                                                    <option value="viewer">Viewer</option>
                                                 </select>
                                                 {roleError && <div className="invalid-feedback">Please select a role.</div>}
                                             </div>

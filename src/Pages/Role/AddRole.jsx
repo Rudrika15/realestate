@@ -7,45 +7,49 @@ import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
+import axios from "axios";  
 
 function AddRole() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-  const [roleName, setRoleName] = useState("");
-  const [error, setError] = useState("");
+  const [roleName, setRoleName] = useState(""); 
+  const [error, setError] = useState(""); 
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [data,setData] = useState(); 
+  const navigate = useNavigate(); 
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const toggleTopbar = () => {
-    setIsTopbarOpen(!isTopbarOpen);
-  };
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const toggleTopbar = () => setIsTopbarOpen(!isTopbarOpen);
 
   const handleRoleNameChange = (e) => {
     setRoleName(e.target.value);
-    setError("");
-  };
+    setError(""); 
+  };  
+  
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!roleName.trim()) {
-      setError("Role Name is required.");
-      return;
+  if (!roleName.trim()) {
+    setError("Role Name is required.");
+    return;
+  }
+  try {
+  
+    const response = await axios.post("/AddRole", data);
+    if (response.data.status) {
+      toast.success('Role added successfully');
+      setTimeout(() => navigate('/role'), 1000);  
+    } else {
+      toast.error(response.data.message || 'Failed to add role');
     }
+  } catch (error) {
+    console.error('Fetch error:', error);
+    toast.error(error.response?.data?.message || 'Something went wrong');
+  } finally {
+    setLoading(false);
+  }
+};
 
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("Role added successfully!");
-      setRoleName("");
-      navigate("/role");
-    }, 2000);
-  };
 
   return (
     <>
@@ -95,9 +99,7 @@ function AddRole() {
                       </div>
                     </div>
 
-                   
-
-                    {/* Group Checkboxes into a flex container */}
+                    {/* Permission Checkboxes */}
                     <div className="table-responsive">
                       <table className="table mt-4">
                         <tbody>
@@ -109,7 +111,8 @@ function AddRole() {
                                   className="form-check-input"
                                   id="check1"
                                   name="option1"
-                                  value="something"
+                                  value="permission1"
+                                  
                                 />
                                 <label className="form-check-label" htmlFor="check1">
                                   Option 1
@@ -123,7 +126,8 @@ function AddRole() {
                                   className="form-check-input"
                                   id="check2"
                                   name="option2"
-                                  value="something"
+                                  value="permission2"
+                                  
                                 />
                                 <label className="form-check-label" htmlFor="check2">
                                   Option 2
@@ -137,7 +141,8 @@ function AddRole() {
                                   className="form-check-input"
                                   id="check3"
                                   name="option3"
-                                  value="something"
+                                  value="permission3"
+                                  
                                 />
                                 <label className="form-check-label" htmlFor="check3">
                                   Option 3
@@ -151,7 +156,8 @@ function AddRole() {
                                   className="form-check-input"
                                   id="check4"
                                   name="option4"
-                                  value="something"
+                                  value="permission4"
+                                  
                                 />
                                 <label className="form-check-label" htmlFor="check4">
                                   Option 4

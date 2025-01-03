@@ -71,7 +71,7 @@ const App = () => {
           <Route path="/edit-partners" element={<EditPartners />} />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />
-          <Route path="/edit-expenses/:id" element={<EditExpenses />} />
+          <Route path="/edit-expenses" element={<EditExpenses />} />
           <Route path="/income" element={<Income />}/>
           <Route path="/add-income" element={< AddIncome/>}/>
           <Route path="/edit-income" element={< EditIncome/>}/>
