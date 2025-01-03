@@ -10,10 +10,29 @@ const Income = () => {
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [selectedIncomeHead, setSelectedIncomeHead] = useState("");
   const [incomes, setIncomes] = useState([
-    { id: 1, name: "John Doe", incomeHead: "Salary", amount: "5000", date: "15-02-2020" },
-    { id: 2, name: "Jane Smith", incomeHead: "Business", amount: "7000", date: "15-02-2020" },
+    {
+      id: 1,
+      name: "Joy",
+      incomeHead: "Salary",
+      amount: "50000",
+      date: "15-02-2020",
+    },
+    {
+      id: 2,
+      name: "Roy",
+      incomeHead: "Business",
+      amount: "70000",
+      date: "16-02-2020",
+    },
+    {
+      id: 3,
+      name: "Toy",
+      incomeHead: "Shop",
+      amount: "10000",
+      date: "18-02-2020",
+    },
   ]);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -31,13 +50,8 @@ const Income = () => {
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-
         const updatedIncomes = incomes.filter((income) => income.id !== id);
-
-
         setIncomes(updatedIncomes);
-
-
         Swal.fire({
           title: "Deleted!",
           text: "Your income has been deleted.",
@@ -53,9 +67,19 @@ const Income = () => {
     setCurrentPage(1);
   };
 
+  const filteredIncomes = incomes.filter((income) => {
+    if (selectedIncomeHead && income.incomeHead !== selectedIncomeHead) {
+      return false;
+    }
+    return true;
+  });
+
   const indexOfLastIncome = currentPage * itemsPerPage;
   const indexOfFirstIncome = indexOfLastIncome - itemsPerPage;
-  const currentIncomes = incomes.slice(indexOfFirstIncome, indexOfLastIncome);
+  const currentIncomes = filteredIncomes.slice(
+    indexOfFirstIncome,
+    indexOfLastIncome
+  );
 
   return (
     <>
@@ -108,49 +132,58 @@ const Income = () => {
                             </select>
                           </div>
                           <div style={{ width: "30%" }}>
-                            <select className="form-select form-select-sm">
-                              <option value="">Income Category</option>
-                              <option value="">Category 1</option>
+                            <select
+                              className="form-select form-select-sm"
+                              value={selectedIncomeHead}
+                              onChange={(e) =>
+                                setSelectedIncomeHead(e.target.value)
+                              }
+                            >
+                              <option value="">Income Head</option>
+                              <option value="Salary">Salary</option>
+                              <option value="Business">Business</option>
+                              <option value="Shop">Shop</option>
                             </select>
                           </div>
                         </div>
                       </div>
-
-                      <table className="table table-bordered text-center">
-                        <thead>
-                          <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Income Date</th>
-                            <th scope="col">Income Head</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {currentIncomes.map((income) => (
-                            <tr key={income.id}>
-                              <td>{income.name || "N/A"}</td>
-                              <td>{income.date || "N/A"}</td>
-                              <td>{income.incomeHead || "N/A"}</td>
-                              <td>{income.amount || "N/A"}</td>
-                              <td>
-                                <Link
-                                  to={"/edit-income"}
-                                  className="btn btn-warning btn-sm me-2"
-                                >
-                                  <i className="fas fa-edit"></i>
-                                </Link>
-                                <button
-                                  onClick={() => handleDelete(income.id)} 
-                                  className="btn btn-danger btn-sm"
-                                >
-                                  <i className="fas fa-trash"></i> 
-                                </button>
-                              </td>
+                      <div className="table-responsive">
+                        <table className="table table-bordered text-center">
+                          <thead>
+                            <tr>
+                              <th scope="col">Name</th>
+                              <th scope="col">Income Date</th>
+                              <th scope="col">Income Head</th>
+                              <th scope="col">Amount</th>
+                              <th scope="col">Action</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {currentIncomes.map((income) => (
+                              <tr key={income.id}>
+                                <td>{income.name || "N/A"}</td>
+                                <td>{income.date || "N/A"}</td>
+                                <td>{income.incomeHead || "N/A"}</td>
+                                <td>{income.amount || "N/A"}</td>
+                                <td>
+                                  <Link
+                                    to={"/edit-income"}
+                                    className="btn btn-warning btn-sm me-2"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </Link>
+                                  <button
+                                    onClick={() => handleDelete(income.id)}
+                                    className="btn btn-danger btn-sm"
+                                  >
+                                    <i className="fas fa-trash"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </>
                   )}
                 </div>
