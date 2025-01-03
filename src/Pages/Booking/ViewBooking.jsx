@@ -24,8 +24,8 @@ const ViewBooking = () => {
       receivedEwAmount: '5000',
       pendingEwAmount: '5000',
       otherWorkAmount: '1000',
-      receivedOtAmount: '500',
-      pendingOtAmount: '500'
+      receivedOtAmount: '1500',
+      pendingOtAmount: '1500'
     },
   ].sort((a, b) => a.name.localeCompare(b.name)));
   const toggleSidebar = () => {
@@ -34,12 +34,15 @@ const ViewBooking = () => {
 
   const formatIndianNumbering = (num) => {
     if (isNaN(num)) return num;
-    num = num.toString().split('.'); 
-    let integerPart = num[0];
-    const decimalPart = num[1] ? '.' + num[1] : '';
-    const regex = /\B(?=(\d{3})+(?!\d))/g;
-    integerPart = integerPart.replace(regex, ',');
-    return integerPart + decimalPart;
+    num = parseFloat(num).toFixed(2);
+    const parts = num.split(".");
+    let integerPart = parts[0];
+    const decimalPart = parts[1] === "00" ? "" : "." + parts[1];
+    const lastThree = integerPart.slice(-3);
+    const otherNumbers = integerPart.slice(0, -3);
+    const formattedInteger =
+      otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree;
+    return formattedInteger + decimalPart;
   };
 
   const getData = async () => {
@@ -94,54 +97,54 @@ const ViewBooking = () => {
                     </div>
                   </div>
                   {data.length > 0 ? (
-                    <table className="table table-bordered text-center">
-                      <thead>
-                        <tr>
-                          <th scope="col" className="">Unit No</th>
-                          <th scope="col" className="">Booking Date</th>
-                          <th scope="col" className="">Customer Name</th>
-                          <th scope="col" className="">Sale Deed Amount</th>
-                          <th scope="col" className="">Received Sale Deed Amount</th>
-                          <th scope="col" className="">Pending Sale Deed Amount</th>
-                          <th scope="col" className="">Extra Work Amount</th>
-                          <th scope="col" className="">Received Extra Work Amount</th>
-                          <th scope="col" className="">Pending Extra Work Amount</th>
-                          <th scope="col" className="">Other Work Amount</th>
-                          <th scope="col" className="">Received Other Work Amount</th>
-                          <th scope="col" className="">Pending Other Work Amount</th>
-                          <th scope="col" className="">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {data
-                          .sort((a, b) => a.name.localeCompare(b.name))
-                          .map((book, index) => (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{book.date}</td>
-                              <td>{book.customerName}</td>
-                              <td>{formatIndianNumbering(book.saleDeedAmount)}</td>
-                              <td>{formatIndianNumbering(book.receivedSdAmount)}</td>
-                              <td>{formatIndianNumbering(book.pendingSdAmount)}</td>
-                              <td>{formatIndianNumbering(book.extraWorkAmount)}</td>
-                              <td>{formatIndianNumbering(book.receivedEwAmount)}</td>
-                              <td>{formatIndianNumbering(book.pendingEwAmount)}</td>
-                              <td>{formatIndianNumbering(book.otherWorkAmount)}</td>
-                              <td>{formatIndianNumbering(book.receivedOtAmount)}</td>
-                              <td>{formatIndianNumbering(book.pendingOtAmount)}</td>
-                              <td>
-                                <Link to="/view-cancelled-booking">
-                                  <button
-                                    type="button"
-                                    className="btn shadow-sm text-dark">
-                                    Action
-                                  </button>
-                                </Link>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
+                    <div className="table-responsive">
+                      <table className="table table-bordered text-center">
+                        <thead>
+                          <tr>
+                            <th scope="col" className="">Unit No</th>
+                            <th scope="col" className="">Booking Date</th>
+                            <th scope="col" className="">Customer Name</th>
+                            <th scope="col" className="">Sale Deed Amount</th>
+                            <th scope="col" className="">Received Sale Deed Amount</th>
+                            <th scope="col" className="">Pending Sale Deed Amount</th>
+                            <th scope="col" className="">Extra Work Amount</th>
+                            <th scope="col" className="">Received Extra Work Amount</th>
+                            <th scope="col" className="">Pending Extra Work Amount</th>
+                            <th scope="col" className="">Other Work Amount</th>
+                            <th scope="col" className="">Received Other Work Amount</th>
+                            <th scope="col" className="">Pending Other Work Amount</th>
+                            <th scope="col" className="">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {data
+                            .sort((a, b) => a.name.localeCompare(b.name))
+                            .map((book, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{book.date}</td>
+                                <td>{book.customerName}</td>
+                                <td>{formatIndianNumbering(book.saleDeedAmount)}</td>
+                                <td>{formatIndianNumbering(book.receivedSdAmount)}</td>
+                                <td>{formatIndianNumbering(book.pendingSdAmount)}</td>
+                                <td>{formatIndianNumbering(book.extraWorkAmount)}</td>
+                                <td>{formatIndianNumbering(book.receivedEwAmount)}</td>
+                                <td>{formatIndianNumbering(book.pendingEwAmount)}</td>
+                                <td>{formatIndianNumbering(book.otherWorkAmount)}</td>
+                                <td>{formatIndianNumbering(book.receivedOtAmount)}</td>
+                                <td>{formatIndianNumbering(book.pendingOtAmount)}</td>
+                                <td>
+                                  <Link to="/view-cancelled-booking">
+                                    <button type="button" className="btn shadow-sm text-dark">
+                                      Action
+                                    </button>
+                                  </Link>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
                   ) : (
                     <div className="text-center">
                       <img src="img/image_2024_12_26T09_23_33_935Z.png" alt="No Users" className="img-fluid w-25 h-25" />

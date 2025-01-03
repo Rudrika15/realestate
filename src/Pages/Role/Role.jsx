@@ -6,7 +6,7 @@ import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
-import { getUsers, ViewRoleData,DeleteRole } from '../../Api/Api';
+import { DeleteRole, ViewRoleData } from "../../Api/Apikiran";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -30,7 +30,7 @@ const Role = () => {
   const getData = async () => {
     try {
       const token = localStorage.getItem("token");
-      console.log(ViewRoleData); // Check the API endpoint
+      console.log("ViewRoleData"); // Check the API endpoint
       const res = await axios.get(ViewRoleData, {
         params: { page: currentPage },
         headers: {

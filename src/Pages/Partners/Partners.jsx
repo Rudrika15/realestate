@@ -94,41 +94,43 @@ const Partners = () => {
                   </div>
 
                   {partners.length > 0 ? (
-                    <table className="table table-bordered text-center">
-                      <thead>
-                        <tr>
-                          <th scope="col">Name</th>
-                          <th scope="col" className="w-25">
-                            Percentage
-                          </th>
-                          <th scope="col" className="w-25">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {partners.map((partner) => (
-                          <tr key={partner.id}>
-                            <td>{partner.name}</td>
-                            <td>{partner.percentage}</td>
-                            <td>
-                              <button
-                                onClick={() => handleEditClick(partner)}
-                                className="btn btn-warning btn-sm me-2"
-                              >
-                                <i className="fas fa-edit"></i>
-                              </button>
-                              <button
-                                onClick={() => handleDelete(partner.id)}
-                                className="btn btn-danger btn-sm"
-                              >
-                                <i className="fas fa-trash"></i>
-                              </button>
-                            </td>
+                    <div className="table-responsive">
+                      <table className="table table-bordered text-center">
+                        <thead>
+                          <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col" className="w-25">
+                              Percentage
+                            </th>
+                            <th scope="col" className="w-25">
+                              Action
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {partners.map((partner) => (
+                            <tr key={partner.id}>
+                              <td>{partner.name}</td>
+                              <td>{partner.percentage}</td>
+                              <td>
+                                <button
+                                  onClick={() => handleEditClick(partner)}
+                                  className="btn btn-warning btn-sm me-2"
+                                >
+                                  <i className="fas fa-edit"></i>
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(partner.id)}
+                                  className="btn btn-danger btn-sm"
+                                >
+                                  <i className="fas fa-trash"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   ) : (
                     <div className="text-center">
                       <img
