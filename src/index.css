@@ -86,3 +86,7 @@ code {
   transform: translateY(-130%);
   color: black;
 }
+
+.BiSolidDownload{
+  cursor: pointer;
+}
