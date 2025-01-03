@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { deleteUsers, getUsers } from '../../Api/devanshi/Api';
+import { deleteUsers, getUsers } from '../../Api/DevanshiApi';
 
 const View = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);

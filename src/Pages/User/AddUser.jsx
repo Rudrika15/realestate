@@ -6,7 +6,7 @@ import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
-import { addUsers } from "../../Api/devanshi/Api";
+import { addUsers } from "../../Api/DevanshiApi";
 import axios from "axios";
 
 function AddUser() {
