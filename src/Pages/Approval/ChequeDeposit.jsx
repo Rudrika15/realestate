@@ -16,7 +16,7 @@ const ChequeDeposit = () => {
   };
 
   const toggleTopbar = () => {
-    setIsTopbarOpen(!isTopbarOpen);
+    setIsTopbarOpen(!isTopbarOpen); 
   };
 
   return (

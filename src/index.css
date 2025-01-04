@@ -21,15 +21,15 @@ code {
 }
 .accept-btn {
   background-color: #f0e4ee;
-  width: 10px;
+  /* width: 10px; */
 }
 .reject-btn {
   background-color: #e4edd1;
-  width: 10px;
+  /* width: 10px; */
 }
 .view-btn {
   background-color: #ccdedc;
-  width: 10px;
+  /* width: 10px; */
 }
 .form-check-input {
   width: 20px;
@@ -85,4 +85,8 @@ code {
   right: 1.7rem;
   transform: translateY(-130%);
   color: black;
+}
+
+.BiSolidDownload{
+  cursor: pointer;
 }

@@ -1,14 +1,17 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
+import axios from "axios"; // Make sure axios is imported
+// import { EditRole } from "../../Api/Kiran/Api"; // Import the EditRole API function
 
 function EditRole() {
+  const { id } = useParams(); // Retrieve the ID from the URL
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [rolename, setRolename] = useState("");
@@ -17,6 +20,32 @@ function EditRole() {
   const navigate = useNavigate();
   const rolenameRef = useRef(null);
 
+  // Fetch role data on component mount
+  useEffect(() => {
+    const fetchRoleData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`/getRole/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (res.data.status === true) {
+          setRolename(res.data.data.name); // Set the rolename state with the fetched data
+        } else {
+          toast.error("Failed to fetch role data.");
+        }
+      } catch (error) {
+        console.error("Error fetching role data:", error);
+        toast.error("There was an error fetching the data.");
+      }
+    };
+
+    fetchRoleData();
+  }, [id]);
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -24,6 +53,8 @@ function EditRole() {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
+
+  // Handle form validation and submission
   const handleEdit = async (e) => {
     e.preventDefault();
     let isValid = true;
@@ -34,15 +65,40 @@ function EditRole() {
     } else {
       setRolenameError(false);
     }
+
     if (isValid) {
       setLoading(true);
-      toast.success("User Updated Successfully!");
-      setTimeout(() => {
+
+      // Prepare data to send to the server
+      const roleData = { name: rolename };
+
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.put(`/updateRole/${id}`, roleData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (res.data.status === true) {
+          toast.success("Role updated successfully!");
+          setTimeout(() => {
+            setLoading(false);
+            navigate("/role"); // Redirect to the roles page
+          }, 1000);
+        } else {
+          toast.error("Failed to update role.");
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error updating role:", error);
+        toast.error("An error occurred while updating the role.");
         setLoading(false);
-        navigate("/role");
-      }, 1000);
+      }
     }
   };
+
   const handleEnter = (e, nextField) => {
     if (e.key === "Enter" && nextField?.current) {
       e.preventDefault();
@@ -54,6 +110,7 @@ function EditRole() {
     setRolename(e.target.value);
     if (e.target.value) setRolenameError(false);
   };
+
   return (
     <>
       <ToastContainer />
@@ -90,100 +147,27 @@ function EditRole() {
                     <div className="row mb-3 w-50">
                       <div className="col">
                         <input
-                        
-                          className={`form-control ${
-                            rolenameerror ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${rolenameerror ? "is-invalid" : ""}`}
                           value={rolename}
                           ref={rolenameRef}
-                        
                           placeholder="Rolename"
-                        
                           onKeyDown={(e) => handleEnter(e, null)}
                           onChange={handleRolenameChange}
                         />
                         {rolenameerror && (
                           <div className="invalid-feedback">
-                            rolename is required.
+                            Role name is required.
                           </div>
                         )}
                       </div>
                     </div>
-                    <div className="table-responsive">
-                                        <table className="table mt-4  ">
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <div className="form-check ">
-                                                            <input
-                                                                type="checkbox"
-                                                                className="form-check-input"
-                                                                id="check1"
-                                                                name="option1"
-                                                                value="something"
-                                                            />
-                                                            <label className="form-check-label" htmlFor="check1">
-                                                                Option 1
-                                                            </label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="form-check">
-                                                            <input
-                                                                type="checkbox"
-                                                                className="form-check-input"
-                                                                id="check2"
-                                                                name="option2"
-                                                                value="something"
-                                                            />
-                                                            <label className="form-check-label" htmlFor="check2">
-                                                                Option 2
-                                                            </label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="form-check">
-                                                            <input
-                                                                type="checkbox"
-                                                                className="form-check-input"
-                                                                id="check3"
-                                                                name="option3"
-                                                                value="something"
-                                                            />
-                                                            <label className="form-check-label" htmlFor="check3">
-                                                                Option 3
-                                                            </label>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div className="form-check">
-                                                            <input
-                                                                type="checkbox"
-                                                                className="form-check-input"
-                                                                id="check4"
-                                                                name="option4"
-                                                                value="something"
-                                                            />
-                                                            <label className="form-check-label" htmlFor="check4">
-                                                                Option 4
-                                                            </label>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table> 
-                                    </div>
+                    {/* Add any checkboxes or other fields as required */}
                     <button
-                      to=""
                       type="submit"
                       className="btn btn-primary"
                       disabled={loading}
                     >
-                      {loading ? (
-                        <Spinner animation="border" size="sm" />
-                      ) : (
-                        "Submit"
-                      )}
+                      {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
                     </button>
                   </form>
                 </div>

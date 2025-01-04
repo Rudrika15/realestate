@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { login } from "../../Api/Api";
+import { login } from "../../Api/DevanshiApi";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,6 @@ const Login = () => {
   const navigate = useNavigate();
   const usernameRef = useRef(null);
   const passcodeRef = useRef(null);
-  const loginRef = useRef(null);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -45,19 +44,21 @@ const Login = () => {
         toast.success(response.data.message);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("roles", JSON.stringify(response.data.roles));
-        setTimeout(() => navigate('/view-user'), 1000);
+        setTimeout(() => {
+          navigate("/view-user");
+        }, 1000);
         setUserName("");
         setPasscode("");
       } else {
-        toast.error(response.data.message || 'Login failed');
+        toast.error(response.data.message || "Login failed");
       }
     } catch (error) {
-      console.error('Login error:', error);
-      toast.error(error.response?.data?.message || 'Something went wrong');
-    }
-    finally {
+      console.error("Login error:", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
       setLoading(false);
     }
+    
   };
 
 
@@ -65,10 +66,6 @@ const Login = () => {
     if (e.key === "Enter" && nextField?.current) {
       e.preventDefault();
       nextField.current.focus();
-    }
-    if (e.key === "Enter" && nextField?.current) {
-      e.preventDefault();
-      handleLogin(e);
     }
   };
 
@@ -108,7 +105,7 @@ const Login = () => {
                   <div className="form-floating mb-3">
                     <input
                       type="text"
-                      className={`form-control ${userNameError ? 'is-invalid' : ''}`}
+                      className={`form-control ${userNameError ? "is-invalid" : ""}`}
                       id="floatingInput"
                       placeholder="User Name"
                       value={userName}
@@ -116,39 +113,38 @@ const Login = () => {
                       onChange={handleUsernameChange}
                       onKeyDown={(e) => handleEnter(e, passcodeRef)}
                     />
-                    {userNameError && <div className="invalid-feedback">Enter a valid Username</div>}
+                    {userNameError && (
+                      <div className="invalid-feedback">Enter a valid Username</div>
+                    )}
                     <label htmlFor="floatingInput">Username</label>
                   </div>
                   <div className="form-floating mb-4">
                     <input
                       type="password"
-                      className={`form-control ${passcodeError ? 'is-invalid' : ''}`}
+                      className={`form-control ${passcodeError ? "is-invalid" : ""}`}
                       id="floatingPassword"
-                      placeholder=""
+                      placeholder="Passcode"
                       value={passcode}
                       ref={passcodeRef}
                       onChange={handlePasscodeChange}
-                      onKeyDown={(e) => handleEnter(e, loginRef)}
+                      onKeyDown={(e) => e.key === "Enter" && handleLogin(e)}
                     />
-                    {passcodeError && <div className="invalid-feedback">Enter a valid Passcode</div>}
+                    {passcodeError && (
+                      <div className="invalid-feedback">Enter a valid Passcode</div>
+                    )}
                     <label htmlFor="floatingPassword">Passcode</label>
                   </div>
-
-                  <Link to="/view-user"
+                  <button
                     type="submit"
                     className="btn btn-primary py-3 w-100 mb-4"
-                    onClick={handleLogin}
-                    ref={loginRef}
                     disabled={loading}
                   >
                     {loading ? (
-                      <div className="d-flex justify-content-center align-items-center">
-                        <Spinner animation="border" size="sm" />
-                      </div>
+                      <Spinner animation="border" size="sm" />
                     ) : (
                       "Login"
                     )}
-                  </Link>
+                  </button>
                 </Form>
               </div>
             </div>

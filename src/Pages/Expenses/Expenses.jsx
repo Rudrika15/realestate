@@ -10,7 +10,9 @@ const Expenses = () => {
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedExpenseHead, setSelectedExpenseHead] = useState(""); 
+  const [selectedExpenseHead, setSelectedExpenseHead] = useState("");
+  const [selectedExpensesDate, setselectedExpensesDate] = useState("");
+
   const [expenses, setExpenses] = useState([
     {
       id: 1,
@@ -18,23 +20,23 @@ const Expenses = () => {
       voucherDate: "23-12-2024",
       expenseHead: "Office Supplies",
       narration: "Demo",
-      amount: 15000,
+      amount: "15,000",
     },
     {
+      id: 2,
       voucherNo: 2,
       voucherDate: "25-12-2024",
-      id: 2,
       expenseHead: "Utilities",
       narration: "Demo",
-      amount: 25000,
+      amount: "25,000",
     },
     {
+      id: 3,
       voucherNo: 3,
       voucherDate: "30-12-2024",
-      id: 3,
       expenseHead: "Office Supplies",
       narration: "Demo",
-      amount: 18000,
+      amount: "18,000",
     },
   ]);
 
@@ -74,8 +76,13 @@ const Expenses = () => {
   };
 
   const filteredExpenses = expenses.filter((expense) => {
-    if (!selectedExpenseHead) return true; 
-    return expense.expenseHead === selectedExpenseHead;
+    const matchesExpenseHead = selectedExpenseHead
+      ? expense.expenseHead === selectedExpenseHead
+      : true;
+    const matchesDate = selectedExpensesDate
+      ? expense.voucherDate === selectedExpensesDate
+      : true;
+    return matchesExpenseHead && matchesDate;
   });
 
   const indexOfLastExpense = currentPage * itemsPerPage;
@@ -87,7 +94,7 @@ const Expenses = () => {
 
   const handleExpenseHeadChange = (e) => {
     setSelectedExpenseHead(e.target.value);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   return (
@@ -147,8 +154,24 @@ const Expenses = () => {
                               onChange={handleExpenseHeadChange}
                             >
                               <option value="">Expense Category</option>
-                              <option value="Office Supplies">Office Supplies</option>
+                              <option value="Office Supplies">
+                                Office Supplies
+                              </option>
                               <option value="Utilities">Utilities</option>
+                            </select>
+                          </div>
+                          <div style={{ width: "30%" }}>
+                            <select
+                              className="form-select form-select-sm"
+                              value={selectedExpensesDate}
+                              onChange={(e) =>
+                                setselectedExpensesDate(e.target.value)
+                              }
+                            >
+                              <option value="">Expense Date</option>
+                              <option value="23-12-2024">23-12-2024</option>
+                              <option value="25-12-2024">25-12-2024</option>
+                              <option value="30-12-2024">30-12-2024</option>
                             </select>
                           </div>
                         </div>

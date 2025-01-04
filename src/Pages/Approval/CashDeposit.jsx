@@ -93,52 +93,54 @@ const CashDeposit = () => {
                   <div className="d-flex justify-content-between mb-3">
                     <h6 className="">Cash Deposit</h6>
                   </div>
-                  <table className="table table-bordered text-center">
-                    <thead>
-                      <tr>
-                        <th scope="col"></th>
-                        <th scope="col">Income Date</th>
-                        <th scope="col">Project Name</th>
-                        <th scope="col">Unit No</th>
-                        <th scope="col">Customer Name</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {cashDepositData.map((deposit) => (
-                        <tr key={deposit.id}>
-                          <td>
-                            <div className="form-check">
-                              <input className="form-check-input" type="checkbox" value="" id={`flexCheck${deposit.id}`} />
-                            </div>
-                          </td>
-                          <td>{deposit.incomeDate}</td>
-                          <td>{deposit.projectName}</td>
-                          <td>{deposit.unitNo}</td>
-                          <td>{deposit.customerName}</td>
-                          <td>{deposit.amount}</td>
-                          <td>
-                            <div className="btn-group" role="group">
-                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn" onClick={handleAccept}>
-                                <i className="bi bi-check-circle"></i>
-                              </Link>
-                              <button
-                                type="button"
-                                className="btn shadow-sm text-dark reject-btn"
-                                onClick={() => handleCancel(deposit.id)}
-                              >
-                                <i className="bi bi-x-circle"></i>
-                              </button>
-                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
-                                <i className="bi bi-eye"></i>
-                              </Link>
-                            </div>
-                          </td>
+                  <div className="table-responsive">
+                    <table className="table table-bordered text-center">
+                      <thead>
+                        <tr>
+                          <th scope="col"></th>
+                          <th scope="col">Income Date</th>
+                          <th scope="col">Project Name</th>
+                          <th scope="col">Unit No</th>
+                          <th scope="col">Customer Name</th>
+                          <th scope="col">Amount</th>
+                          <th scope="col">Action</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {cashDepositData.map((deposit) => (
+                          <tr key={deposit.id}>
+                            <td>
+                              <div className="form-check">
+                                <input className="form-check-input" type="checkbox" value="" id={`flexCheck${deposit.id}`} />
+                              </div>
+                            </td>
+                            <td>{deposit.incomeDate}</td>
+                            <td>{deposit.projectName}</td>
+                            <td>{deposit.unitNo}</td>
+                            <td>{deposit.customerName}</td>
+                            <td>{deposit.amount}</td>
+                            <td>
+                              <div className="btn-group" role="group">
+                                <Link to="" type="button" className="btn shadow-sm text-dark accept-btn" onClick={handleAccept}>
+                                  <i className="bi bi-check-circle"></i>
+                                </Link>
+                                <button
+                                  type="button"
+                                  className="btn shadow-sm text-dark reject-btn"
+                                  onClick={() => handleCancel(deposit.id)}
+                                >
+                                  <i className="bi bi-x-circle"></i>
+                                </button>
+                                <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
+                                  <i className="bi bi-eye"></i>
+                                </Link>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

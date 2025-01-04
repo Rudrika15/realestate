@@ -11,26 +11,27 @@ const Income = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIncomeHead, setSelectedIncomeHead] = useState("");
+  const [selectedIncomeDate, setselectedIncomeDate] = useState("");
   const [incomes, setIncomes] = useState([
     {
       id: 1,
       name: "Joy",
       incomeHead: "Salary",
-      amount: "50000",
+      amount: "50,000",
       date: "15-02-2020",
     },
     {
       id: 2,
       name: "Roy",
       incomeHead: "Business",
-      amount: "70000",
+      amount: "70,000",
       date: "16-02-2020",
     },
     {
       id: 3,
       name: "Toy",
       incomeHead: "Shop",
-      amount: "10000",
+      amount: "10,000",
       date: "18-02-2020",
     },
   ]);
@@ -74,12 +75,20 @@ const Income = () => {
     return true;
   });
 
+  const filteredDate = incomes.filter((income)=>{
+    if(selectedIncomeDate && income.date !== selectedIncomeDate){
+      return false;
+    }
+    return true;
+  })
+
   const indexOfLastIncome = currentPage * itemsPerPage;
   const indexOfFirstIncome = indexOfLastIncome - itemsPerPage;
-  const currentIncomes = filteredIncomes.slice(
+  const currentIncomes =  filteredDate || filteredIncomes.slice(
     indexOfFirstIncome,
     indexOfLastIncome
   );
+  
 
   return (
     <>
@@ -143,6 +152,20 @@ const Income = () => {
                               <option value="Salary">Salary</option>
                               <option value="Business">Business</option>
                               <option value="Shop">Shop</option>
+                            </select>
+                          </div>
+                          <div style={{ width: "30%" }}>
+                            <select
+                              className="form-select form-select-sm"
+                              value={selectedIncomeDate}
+                              onChange={(e) =>
+                                setselectedIncomeDate(e.target.value)
+                              }
+                            >
+                              <option value="">Income Date</option>
+                              <option value="15-02-2020">15-02-2020</option>
+                              <option value="15-02-2020">16-02-2020</option>
+                              <option value="15-02-2020">18-02-2020</option>
                             </select>
                           </div>
                         </div>

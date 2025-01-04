@@ -92,6 +92,8 @@ function Booking() {
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const remainingAmount = saleAmount - tokenAmount - downPayment;
+  const installmentAmount = remainingAmount / noOfInstallment;
 
   const [rows, setRows] = useState([
     { downPayment: "", downPaymentDate: "" },
@@ -734,23 +736,30 @@ function Booking() {
                       )}
                     </>
                     <div>
-                      <p className="text-gray" onClick={() => setShowTokenFields1((prev) => !prev)}>Down Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
+                      <p
+                        className="text-gray"
+                        onClick={() => setShowTokenFields1((prev) => !prev)}
+                      >
+                        Down Payment <i className="bi bi-plus-circle-fill icon-3"></i>
+                      </p>
                       {showTokenFields1 && (
                         <div>
                           {rows.map((row, index) => (
                             <div className="row pt-2 mb-3" key={`row-${index}`}>
                               <div className="col">
-                              <input
-                              type="number"
-                              className={`form-control ${downPaymentError ? "is-invalid" : ""}`}
-                              id="downpayment"
-                              placeholder="Down Payment"
-                              name="downpayment"
-                              value={tokenAmount}
-                              onChange={handleDownPaymentChange}
-                              onKeyDown={(e) => handleEnter(e, tokenPaymentDateRef)}
-                              ref={tokenAmountRef}
-                            />
+                                <input
+                                  type="number"
+                                  className={`form-control ${downPaymentError ? "is-invalid" : ""}`}
+                                  id="downpayment"
+                                  placeholder="Down Payment"
+                                  name="downpayment"
+                                  value={row.downPayment}
+                                  onChange={(e) =>
+                                    handleInputChangeGeneric(index, "downPayment", e.target.value, "rows")
+                                  }
+                                  onKeyDown={(e) => handleEnter(e, downPaymentDateRef)}
+                                  ref={downPaymentRef}
+                                />
                                 {downPaymentError && (
                                   <div className="invalid-feedback">Enter Down Payment</div>
                                 )}
@@ -761,7 +770,7 @@ function Booking() {
                                   id="date"
                                   ref={downPaymentDateRef}
                                   className={`form-control ${downPaymentDateError ? "is-invalid" : ""}`}
-                                  value={formatDate(row.downPaymentDate)}
+                                  value={formatDate(row.downPaymentDate)} 
                                   onChange={(e) =>
                                     handleInputChangeGeneric(index, "downPaymentDate", e.target.value, "rows")
                                   }
@@ -773,7 +782,9 @@ function Booking() {
                                 {index === rows.length - 1 && (
                                   <i
                                     className="bi bi-plus-circle-fill icon-4"
-                                    onClick={() => setRows([...rows, { downPayment: "", downPaymentDate: "" }])}
+                                    onClick={() =>
+                                      setRows([...rows, { downPayment: "", downPaymentDate: "" }]) // Add a new row
+                                    }
                                   ></i>
                                 )}
                                 {downPaymentDateError && (
@@ -838,7 +849,7 @@ function Booking() {
                                 type="number"
                                 id="noofinstallment"
                                 ref={noOfInstallmentRef}
-                                onKeyDown={(e) => handleEnter(e, amountRef)}
+                                onKeyDown={(e) => handleEnter(e, installmentRef)}
                                 placeholder="No Of Installments"
                                 className={`form-control ${noOfInstallmentError ? "is-invalid" : ""}`}
                                 value={noOfInstallment}
@@ -849,7 +860,7 @@ function Booking() {
                               )}
                             </div>
                             <div className="col">
-                              <input
+                              {/* <input
                                 type="number"
                                 id="amount"
                                 ref={amountRef}
@@ -861,7 +872,7 @@ function Booking() {
                               />
                               {amountError && (
                                 <div className="invalid-feedback">Enter Amount</div>
-                              )}
+                              )} */}
                             </div>
                           </div>
                           <div className="pt-3 w-50 mb-4">
@@ -884,12 +895,12 @@ function Booking() {
                                     month: "2-digit",
                                     year: "numeric",
                                   });
-                                  const formatter = new Intl.NumberFormat("en-IN", {
+                                  const formattedAmount = new Intl.NumberFormat("en-IN", {
                                     style: "currency",
                                     currency: "INR",
                                     minimumFractionDigits: 2,
-                                  });
-                                  const formattedAmount = formatter.format(amount);
+                                  }).format(installmentAmount);
+
                                   return (
                                     <tr key={idx}>
                                       <td>Installment {idx + 1}</td>
