@@ -9,7 +9,6 @@ import Topbar from "../../Components/Topbar/Topbar";
 import { demoDownload } from "../../Api/ApiDipak"; 
 import axios from "axios";
 
-
 const AddProjects = () => {
   const [name, setName] = useState("");
   const [unit, setUnit] = useState(null);
@@ -32,19 +31,26 @@ const AddProjects = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
 
- 
   const handleDownloadExcel = async () => {
-    
     try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        toast.error("No token found. Please login.");
+        return;
+      }
 
       const response = await axios.get(demoDownload, {
-        responseType: 'blob', 
+        responseType: "blob", 
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
       });
-  
-      const link = document.createElement('a');
+
+      const link = document.createElement("a");
       const url = window.URL.createObjectURL(new Blob([response.data]));
       link.href = url;
-      link.setAttribute('download', 'template.xlsx'); 
+      link.setAttribute("download", "template.xlsx");
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -53,7 +59,6 @@ const AddProjects = () => {
       toast.error("Failed to download Excel file");
     }
   };
-  
 
   useEffect(() => {
     nameRef.current.focus();
