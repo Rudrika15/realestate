@@ -1,12 +1,11 @@
-export const baseUrl = "http://localhost:5000/api/v1";
+export const baseUrl = "http://46.202.166.227:5000/api/";
 
-export const login = baseUrl + "/users/login";
-// export const getUsers = baseUrl + "/users/get-users";
-// export const addUsers = baseUrl + "/users/add-users";
-export const AddRole = baseUrl + "/store-role";
-export const DeleteRole = baseUrl + "/roles/delete-role";
-export const RoleHasPermission = baseUrl + "/roles-permissions/get-role-permission";
-export const ViewRoleData = baseUrl + "/roles/get-role";
-export const  EditRoleData = baseUrl + "/roles/get-role";
+
+
+export const AddRole = baseUrl + "v1/store-role";
+export const DeleteRole = baseUrl + "v1/roles/delete-role";
+export const RoleHasPermission = baseUrl + "v1/roles-permissions/get-role-permission";
+export const ViewRoleData = baseUrl + "v1/roles/get-role";
+export const  EditRoleData = baseUrl + "v1/roles/get-role";
 
 
