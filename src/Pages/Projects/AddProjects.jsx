@@ -58,6 +58,9 @@ const AddProjects = () => {
       console.error("Error downloading the Excel file:", error);
       toast.error("Failed to download Excel file");
     }
+    finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
