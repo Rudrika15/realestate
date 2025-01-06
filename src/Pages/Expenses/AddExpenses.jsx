@@ -248,7 +248,7 @@ const AddExpenses = () => {
                           expenseDateError ? "is-invalid" : ""
                         }`}
                         value={formatDate(expenseDate)}
-                        placeholder="Booking Date"
+                        placeholder="Expense Date"
                         onFocus={(e) => (e.target.type = "date")}
                         onBlur={(e) => (e.target.type = "text")}
                         onChange={(e) => setExpenseDate(e.target.value)}

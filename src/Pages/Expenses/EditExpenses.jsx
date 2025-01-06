@@ -167,7 +167,7 @@ const EditExpenses = () => {
                         )}
                       </div>
                       <div className="col">
-                        <label className="form-label">Booking Date</label>
+                        <label className="form-label">Expense Date</label>
                         <input
                           type="text"
                           className={`form-control ${expenseDateError ? "is-invalid" : ""}`}

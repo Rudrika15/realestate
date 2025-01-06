@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { BiSolidDownload } from "react-icons/bi";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { demoDownload } from "../../Api/ApiDipak"; 
+import { demoDownload } from "../../Api/ApiDipak";
 import axios from "axios";
 
 const AddProjects = () => {
@@ -30,20 +30,19 @@ const AddProjects = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
+  const token = localStorage.getItem("token");
 
   const handleDownloadExcel = async () => {
     try {
-      const token = localStorage.getItem("token");
-
       if (!token) {
         toast.error("No token found. Please login.");
         return;
       }
 
       const response = await axios.get(demoDownload, {
-        responseType: "blob", 
+        responseType: "blob",
         headers: {
-          Authorization: `Bearer ${token}`, 
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -57,6 +56,8 @@ const AddProjects = () => {
     } catch (error) {
       console.error("Error downloading the Excel file:", error);
       toast.error("Failed to download Excel file");
+    } finally {
+      setLoading(false);
     }
   };
 
