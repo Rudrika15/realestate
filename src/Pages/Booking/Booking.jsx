@@ -119,19 +119,32 @@ function Booking() {
     setRows1([...rows1, { customerName: "", customerContact: "" }]);
   };
 
-  const handleInputChangeGeneric = (index, field, value, type) => {
-    if (type === "rows") {
-      setRows((prevRows) =>
-        prevRows.map((row, i) =>
-          i === index ? { ...row, [field]: value } : row
-        )
-      );
-    } else if (type === "rows1") {
-      setRows1((prevRows1) =>
-        prevRows1.map((row, i) =>
-          i === index ? { ...row, [field]: value } : row
-        )
-      );
+
+  const handleInputChangeGeneric = (index, field, value, rowArrayName) => {
+    if (rowArrayName === "rows1") {
+      const updatedRows1 = [...rows1];
+      updatedRows1[index][field] = value;
+
+      if (field === "customerName" && value.trim() !== "") {
+        setCustomerNameError(false);
+      }
+      if (field === "customerContact" && value.trim() !== "") {
+        setCustomerContactError(false);
+      }
+
+      setRows1(updatedRows1);
+    } else if (rowArrayName === "rows") {
+      const updatedRows = [...rows];
+      updatedRows[index][field] = value;
+
+      if (field === "downPayment" && value.trim() !== "") {
+        setDownPaymentError(false);
+      }
+      if (field === "downPaymentDate" && value.trim() !== "") {
+        setDownPaymentDateError(false);
+      }
+
+      setRows(updatedRows);
     }
   };
 
@@ -404,6 +417,7 @@ function Booking() {
   };
 
   const handleSaleAmountChange = (e) => {
+    console.log("samount Selected:", e.target.value);
     setSaleAmount(e.target.value);
     if (e.target.value) setSaleAmountError(false);
   };
@@ -684,7 +698,7 @@ function Booking() {
                           name="Work Amount"
                           value={work}
                           onChange={handleWorkChange}
-                          onKeyDown={(e) => handleEnter(e, null)}
+                          onKeyDown={(e) => handleEnter(e, tokenAmountRef)}
                           ref={workRef}
                         />
                         {workError && (
@@ -723,7 +737,7 @@ function Booking() {
                               className={`form-control ${tokenPaymentDateError ? "is-invalid" : ""}`}
                               value={formatDate(tokenPaymentDate)}
                               onChange={(e) => handleTokenPaymentDateChange(e)}
-                              onKeyDown={(e) => handleEnter(e, submitRef)}
+                              onKeyDown={(e) => handleEnter(e, downPaymentRef)}
                               placeholder="Token Payment Date"
                               onFocus={(e) => (e.target.type = "date")}
                               onBlur={(e) => (e.target.type = "text")}
@@ -770,11 +784,11 @@ function Booking() {
                                   id="date"
                                   ref={downPaymentDateRef}
                                   className={`form-control ${downPaymentDateError ? "is-invalid" : ""}`}
-                                  value={formatDate(row.downPaymentDate)} 
+                                  value={formatDate(row.downPaymentDate)}
                                   onChange={(e) =>
                                     handleInputChangeGeneric(index, "downPaymentDate", e.target.value, "rows")
                                   }
-                                  onKeyDown={(e) => handleEnter(e, installmentRef)}
+                                  onKeyDown={(e) => handleEnter(e, paymentFrequencyRef)}
                                   placeholder="Down Payment Date"
                                   onFocus={(e) => (e.target.type = "date")}
                                   onBlur={(e) => (e.target.type = "text")}
@@ -814,7 +828,9 @@ function Booking() {
                                 onKeyDown={(e) => handleEnter(e, dueDateRef)}
                                 ref={paymentFrequencyRef}
                               >
-                                <option value="" disabled>Payment Frequency</option>
+                                <option value="" disabled>
+                                  Payment Frequency
+                                </option>
                                 <option value="Monthly">Monthly</option>
                                 <option value="Bi-monthly">Bi-monthly</option>
                                 <option value="Quarterly">Quarterly</option>
@@ -832,7 +848,7 @@ function Booking() {
                                 ref={dueDateRef}
                                 className={`form-control ${dueDateError ? "is-invalid" : ""}`}
                                 value={formatDate(dueDate)}
-                                onChange={(e) => handleDueDateChange(e)}
+                                onChange={handleDueDateChange}
                                 onKeyDown={(e) => handleEnter(e, noOfInstallmentRef)}
                                 placeholder="Due Date"
                                 onFocus={(e) => (e.target.type = "date")}
@@ -854,26 +870,13 @@ function Booking() {
                                 className={`form-control ${noOfInstallmentError ? "is-invalid" : ""}`}
                                 value={noOfInstallment}
                                 onChange={handleNoOfInstallmentChange}
+                                min="1"
                               />
                               {noOfInstallmentError && (
-                                <div className="invalid-feedback">Enter No Of Installments</div>
+                                <div className="invalid-feedback">Enter a valid number of installments</div>
                               )}
                             </div>
-                            <div className="col">
-                              {/* <input
-                                type="number"
-                                id="amount"
-                                ref={amountRef}
-                                onKeyDown={(e) => handleEnter(e, installmentRef)}
-                                placeholder="Amount"
-                                className={`form-control ${amountError ? "is-invalid" : ""}`}
-                                value={amount}
-                                onChange={handleAmountChange}
-                              />
-                              {amountError && (
-                                <div className="invalid-feedback">Enter Amount</div>
-                              )} */}
-                            </div>
+                            <div className="col"></div>
                           </div>
                           <div className="pt-3 w-50 mb-4">
                             <table className="table table-bordered text-center">
@@ -900,6 +903,7 @@ function Booking() {
                                     currency: "INR",
                                     minimumFractionDigits: 2,
                                   }).format(installmentAmount);
+
 
                                   return (
                                     <tr key={idx}>
@@ -929,6 +933,7 @@ function Booking() {
                         />
                         <label htmlFor="installmentNotify">Installment Notify</label>
                       </div>
+
                       <div className="row pt-4">
                         <div className="col">
                           <button
@@ -936,13 +941,10 @@ function Booking() {
                             className="btn btn-primary"
                             ref={submitRef}
                             disabled={loading}
+                            onClick={handleSubmit}
                           >
                             {loading ? "Submitting..." : "Submit"}
                           </button>
-
-                          {!loading && (
-                            <Link to="/view-booking"></Link>
-                          )}
                         </div>
                       </div>
                     </div>

@@ -88,7 +88,25 @@ const CancelledBooking = () => {
                   <div className="d-flex justify-content-between mb-3">
                     <h6 className="">Cancelled Booking</h6>
                   </div>
-
+                  <div className="row mb-4 pt-4 d-flex align-items-center justify-content-between">
+                    <div className="col-12 col-md-8 d-flex gap-3">
+                      <div className="w-25">
+                        <select className="form-select form-select-sm text-dark fs-6">
+                          <option value="">Projects</option>
+                        </select>
+                      </div>
+                      <div className="w-25">
+                        <select className="form-select form-select-sm text-dark fs-6">
+                          <option value="">Units</option>
+                        </select>
+                      </div>
+                      <div className="w-25">
+                        <select className="form-select form-select-sm text-dark fs-6">
+                          <option value="">Customer</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
                   <div className="table-responsive">
                     {data.length > 0 ? (
                       <table className="table table-bordered text-center">
@@ -98,17 +116,17 @@ const CancelledBooking = () => {
                             <th scope="col">Booking Date</th>
                             <th scope="col">Customer Name</th>
                             <th scope="col">Sale Deed Amount</th>
-                            <th scope="col">Received SD Amount</th>
-                            <th scope="col">Pending SD Amount</th>
-                            <th scope="col">Refund SD Amount</th>
+                            <th scope="col">Received Sale Deed Amount</th>
+                            <th scope="col">Pending Sale Deed Amount</th>
+                            <th scope="col">Refund Sale Deed Amount</th>
                             <th scope="col">Extra Work Amount</th>
-                            <th scope="col">Received EW Amount</th>
-                            <th scope="col">Pending EW Amount</th>
-                            <th scope="col">Refund EW Amount</th>
+                            <th scope="col">Received Extra Work Amount</th>
+                            <th scope="col">Pending Extra Work Amount</th>
+                            <th scope="col">Refund Extra Work Amount</th>
                             <th scope="col">Other Work Amount</th>
-                            <th scope="col">Received OT Amount</th>
-                            <th scope="col">Pending OT Amount</th>
-                            <th scope="col">Refund OT Amount</th>
+                            <th scope="col">Received Other Work Amount</th>
+                            <th scope="col">Pending Other Work Amount</th>
+                            <th scope="col">Refund Other Work Amount</th>
                           </tr>
                         </thead>
                         <tbody>

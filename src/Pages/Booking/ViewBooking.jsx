@@ -96,6 +96,25 @@ const ViewBooking = () => {
                       </Link>
                     </div>
                   </div>
+                  <div className="row mb-4 d-flex align-items-center justify-content-between">
+                    <div className="col-12 col-md-8 d-flex gap-3">
+                      <div className="w-25">
+                        <select className="form-select form-select-sm text-dark fs-6">
+                          <option value="">Projects</option>
+                        </select>
+                      </div>
+                      <div className="w-25">
+                        <select className="form-select form-select-sm text-dark fs-6">
+                          <option value="">Units</option>
+                        </select>
+                      </div>
+                      <div className="w-25">
+                        <select className="form-select form-select-sm text-dark fs-6">
+                          <option value="">Customer</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
                   {data.length > 0 ? (
                     <div className="table-responsive">
                       <table className="table table-bordered text-center">
