@@ -24,7 +24,7 @@ const Role = () => {
   };
 
   const toggleTopbar = () => {
-    setIsTopbarOpen(!isTopbarOpen);
+    setIsTopbarOpen(!isTopbarOpen); 
   };
 
   const getData = async () => {
