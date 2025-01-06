@@ -27,7 +27,7 @@ const View = () => {
                 },
             });
             if (response.data.status == true) {
-                setUsers(response.data.data);
+                setUsers(response.data.data); 
                 setTotalPages(response.data.pagination.totalPages);
                 setCurrentPage(page);
             } else {

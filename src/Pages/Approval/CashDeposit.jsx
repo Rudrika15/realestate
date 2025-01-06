@@ -13,26 +13,17 @@ const CashDeposit = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [cancellationReason, setCancellationReason] = useState("");
+  const [selectedItems, setSelectedItems] = useState([]);
+  
 
-  // Example array of cash deposit data
-  const cashDepositData = [
-    {
-      id: 1,
-      incomeDate: '2025-01-01',
-      projectName: 'Project A',
-      unitNo: 'Unit 101',
-      customerName: 'shiv',
-      amount: 1000
-    },
-    {
-      id: 2,
-      incomeDate: '2025-01-02',
-      projectName: 'Project B',
-      unitNo: 'Unit 202',
-      customerName: 'shiv',
-      amount: 1500
-    },
-  ];
+  const [cashDepositData, setCashDepositData] = useState([
+    { id: 1, incomeDate: "2025-01-01", projectName: "Project A", unitNo: "Unit 101", customerName: "shiv", amount: "5000" },
+    { id: 2, incomeDate: "2025-01-02", projectName: "Project B", unitNo: "Unit 102", customerName: "mohan", amount: "4500" },
+    { id: 3, incomeDate: "2025-01-03", projectName: "Project C", unitNo: "Unit 103", customerName: "gopal", amount: "3500" },
+    { id: 4, incomeDate: "2025-01-04", projectName: "Project D", unitNo: "Unit 104", customerName: "Radha", amount: "4000" }
+  ]);
+
+  
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -75,6 +66,48 @@ const CashDeposit = () => {
     });
   };
 
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+    
+      setSelectedItems(cashDepositData.map((deposit) => deposit.id));
+    } else {
+    
+      setSelectedItems([]);
+    }
+  };
+
+  const handleSelectItem = (id) => {
+    if (selectedItems.includes(id)) {
+  
+      setSelectedItems(selectedItems.filter(item => item !== id));
+    } else {
+      
+      setSelectedItems([...selectedItems, id]);
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedItems.length > 0) {
+    
+      const remainingData = cashDepositData.filter(deposit => !selectedItems.includes(deposit.id));
+      setCashDepositData(remainingData);
+      setSelectedItems([]); 
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'Selected deposits have been deleted.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+    } else {
+      Swal.fire({
+        title: 'No Selection!',
+        text: 'Please select items to delete.',
+        icon: 'warning',
+        confirmButtonText: 'OK',
+      });
+    }
+  };
+
   return (
     <>
       <ToastContainer />
@@ -92,12 +125,24 @@ const CashDeposit = () => {
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
                     <h6 className="">Cash Deposit</h6>
+                    <button 
+                      className="btn btn-primary"
+                      onClick={handleDeleteSelected}
+                    >
+                      Delete All
+                    </button>
                   </div>
                   <div className="table-responsive">
                     <table className="table table-bordered text-center">
                       <thead>
                         <tr>
-                          <th scope="col"></th>
+                          <th scope="col">
+                            <input 
+                              type="checkbox" 
+                              onChange={handleSelectAll} 
+                              checked={selectedItems.length === cashDepositData.length} 
+                            />
+                          </th>
                           <th scope="col">Income Date</th>
                           <th scope="col">Project Name</th>
                           <th scope="col">Unit No</th>
@@ -110,9 +155,11 @@ const CashDeposit = () => {
                         {cashDepositData.map((deposit) => (
                           <tr key={deposit.id}>
                             <td>
-                              <div className="form-check">
-                                <input className="form-check-input" type="checkbox" value="" id={`flexCheck${deposit.id}`} />
-                              </div>
+                              <input 
+                                type="checkbox" 
+                                checked={selectedItems.includes(deposit.id)} 
+                                onChange={() => handleSelectItem(deposit.id)} 
+                              />
                             </td>
                             <td>{deposit.incomeDate}</td>
                             <td>{deposit.projectName}</td>
