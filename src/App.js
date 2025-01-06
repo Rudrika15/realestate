@@ -36,6 +36,7 @@ import EditExpenses from "./Pages/Expenses/EditExpenses";
 import Income from "./Pages/Income/Income";
 import AddIncome from "./Pages/Income/AddIncome";
 import EditIncome from "./Pages/Income/EditIncome";
+import EditProjects from "./Pages/Projects/EditProjects";
 
 const App = () => {
   return (
@@ -64,6 +65,7 @@ const App = () => {
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />
           <Route path="/add-projects" element={<AddProjects />} />
+          <Route  path="/edit-projects" element={<EditProjects />}/>
           <Route path="/unit" element={<Unit />} />
           <Route path="/edit-unit" element={<EditUnit />} />
           <Route path="/partners" element={<Partners />} />
