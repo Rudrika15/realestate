@@ -120,19 +120,19 @@ const ViewBooking = () => {
                       <table className="table table-bordered text-center">
                         <thead>
                           <tr>
-                            <th scope="col" className="">Unit No</th>
-                            <th scope="col" className="">Booking Date</th>
-                            <th scope="col" className="">Customer Name</th>
-                            <th scope="col" className="">Sale Deed Amount</th>
-                            <th scope="col" className="">Received Sale Deed Amount</th>
-                            <th scope="col" className="">Pending Sale Deed Amount</th>
-                            <th scope="col" className="">Extra Work Amount</th>
-                            <th scope="col" className="">Received Extra Work Amount</th>
-                            <th scope="col" className="">Pending Extra Work Amount</th>
-                            <th scope="col" className="">Other Work Amount</th>
-                            <th scope="col" className="">Received Other Work Amount</th>
-                            <th scope="col" className="">Pending Other Work Amount</th>
-                            <th scope="col" className="">Action</th>
+                            <th scope="col">Unit No</th>
+                            <th scope="col">Booking Date</th>
+                            <th scope="col">Customer Name</th>
+                            <th scope="col">Sale Deed Amount</th>
+                            <th scope="col">Received Sale Deed Amount</th>
+                            <th scope="col">Pending Sale Deed Amount</th>
+                            <th scope="col">Extra Work Amount</th>
+                            <th scope="col">Received Extra Work Amount</th>
+                            <th scope="col">Pending Extra Work Amount</th>
+                            <th scope="col">Other Work Amount</th>
+                            <th scope="col">Received Other Work Amount</th>
+                            <th scope="col">Pending Other Work Amount</th>
+                            <th scope="col">Action</th>
                           </tr>
                         </thead>
                         <tbody>

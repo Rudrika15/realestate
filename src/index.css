@@ -78,7 +78,7 @@ code {
   right: 3.5rem;
   color: #009dff;
   cursor: pointer;
-} 
+}
 .icon-4 {
   position: absolute;
   cursor: pointer;
@@ -86,7 +86,19 @@ code {
   transform: translateY(-130%);
   color: black;
 }
-
-.BiSolidDownload{
+.BiSolidDownload {
   cursor: pointer;
 }
+/* .table-responsive {
+  overflow-x: auto;
+} */
+/* .table-responsive::-webkit-scrollbar {
+  height: 2px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #787474;
+  border-radius: 3px;
+}
+.table {
+  min-width: 1500px;
+} */
