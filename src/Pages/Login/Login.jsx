@@ -39,7 +39,17 @@ const Login = () => {
     setLoading(true);
     try {
       const data = { userName, passcode };
-      const response = await axios.post(login, data);
+      const response = await axios.post(
+        login,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
       if (response.data.status === true) {
         toast.success(response.data.message);
         localStorage.setItem("token", response.data.token);
@@ -58,6 +68,10 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8c011104cc69a3ff07ec613573b5f99e5f5ec567
   };
 
 

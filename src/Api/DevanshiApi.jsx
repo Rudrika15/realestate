@@ -1,4 +1,4 @@
-export const baseUrl = "https://acsw.in/";
+export const baseUrl = "https://acsw.in/api/";
 
 export const login = baseUrl + "v1/users/login";
 export const getUsers = baseUrl + "v1/users/get-users";
