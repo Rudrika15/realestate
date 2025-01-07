@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { BiSolidDownload } from "react-icons/bi";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { demoDownload, getProject } from "../../Api/ApiDipak";
+import { demoDownload, storeProject } from "../../Api/ApiDipak";
 import axios from "axios";
 
 const AddProjects = () => {
@@ -30,7 +30,6 @@ const AddProjects = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
-  const token = localStorage.getItem("token");
 
   const handleDownloadExcel = async () => {
     try {
@@ -53,7 +52,11 @@ const AddProjects = () => {
       link.remove();
     } catch (error) {
       console.error("Error downloading the Excel file:", error);
-      toast.error("Failed to download Excel file");
+
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+        toast.error("Session expired. Please log in again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -82,60 +85,90 @@ const AddProjects = () => {
       document.removeEventListener("keydown", handleKey);
     };
   }, [handleKey]);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let isValid = true;
     const validationErrors = {};
-
+  
     if (!name.trim()) {
       validationErrors.name = "Name is required";
       isValid = false;
     }
-
+  
     if (!/^[A-Za-z ]+$/.test(name)) {
       validationErrors.name = "Name can only contain letters and spaces";
       isValid = false;
     }
-
+  
     if (!unit || unit.length === 0) {
       validationErrors.unit = "Unit is required";
       isValid = false;
     } else {
       const file = unit[0];
-
+  
       if (file.size > 2 * 1024 * 1024) {
         validationErrors.unit = "File is larger than 2MB";
         isValid = false;
       }
-
+  
       if (
         file.type !== "application/vnd.ms-excel" &&
         file.type !==
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       ) {
         validationErrors.unit = "Only Excel files (.xls, .xlsx) are allowed";
         isValid = false;
       }
     }
-
+  
     if (!isValid) {
       setError(validationErrors);
       return;
     }
-
+  
     setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
+  
+    console.log('FormData being sent:', { name, unit });
+  
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("unit", unit[0]);
+  
+      const response = await axios.post(storeProject, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+          "type": "formData"
+        },
+      });
+  
+      console.log("Response:", response.data);
+  
       setName("");
       files.current.value = null;
+      setUnit(null);
       setError({});
+      setLoading(false);
       navigate("/projects");
       toast.success("Project added successfully!");
-    }, 2000);
+    } catch (error) {
+      console.error("Error submitting project:", error);
+  
+      if (error.response) {
+        console.error("Error response:", error.response.data);
+      }
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+        toast.error("Session expired. Please log in again.");
+      } else {
+        toast.error("An error occurred. Please try again later.");
+      }
+      setLoading(false);
+    }
   };
-
+  
   return (
     <>
       <ToastContainer />
@@ -171,14 +204,15 @@ const AddProjects = () => {
 
                   <form onSubmit={handleSubmit}>
                     <div className="row">
-                      <div className=" col mb-3">
+                      <div className="col mb-3">
                         <label htmlFor="name" className="form-label">
-                          Name :{" "}
+                          Name:{" "}
                         </label>
                         <input
                           type="text"
-                          className={`form-control ${error.name ? "is-invalid" : ""
-                            }`}
+                          className={`form-control ${
+                            error.name ? "is-invalid" : ""
+                          }`}
                           id="name"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
@@ -200,8 +234,9 @@ const AddProjects = () => {
                           <input
                             type="file"
                             accept=".xls, .xlsx"
-                            className={`form-control ${error.unit ? "is-invalid" : ""
-                              }`}
+                            className={`form-control ${
+                              error.unit ? "is-invalid" : ""
+                            }`}
                             id="unit"
                             ref={files}
                             onChange={(e) => setUnit(e.target.files)}
@@ -217,7 +252,6 @@ const AddProjects = () => {
                           <label htmlFor="file" className="form-label">
                             Template:
                           </label>
-
                           <div className="row">
                             <div
                               className="col-2"
