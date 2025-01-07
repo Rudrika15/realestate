@@ -18,6 +18,9 @@ const Role = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState([]);
+  const [role_name, setRole_Name] = useState([]);
+  
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -58,58 +61,50 @@ const Role = () => {
   },[]);
 
   const handleDelete = async (id) => {
-  Swal.fire({
-    title: 'Are You Sure You Want to Delete?',
-    text: 'Once you delete, all the data related to this role will be deleted.',
-    icon: 'error',
-    showCancelButton: true,
-    confirmButtonText: 'Delete',
-    cancelButtonText: 'Cancel',
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#c4c4c4',
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      try {
-        const token = localStorage.getItem("token");
+    const confirmDelete = await Swal.fire({
+        title: 'Are You Sure You Want to Delete?',
+        text: 'Once you delete, all the data related to this user will be deleted.',
+        icon: 'error',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#c4c4c4',
+        customClass: {
+            title: 'swal-title',
+            text: 'swal-text',
+            confirmButton: 'swal-confirm-btn',
+            cancelButton: 'swal-cancel-btn',
+        },
+    });
 
-       
-        // Send the delete request to the server with the ID
-        const res = await axios.delete(`$DeleteRole/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    if (confirmDelete.isConfirmed) {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`${DeleteRole}/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-        if (res.data.status === true) {
-          // Remove the deleted role from the state
-          setData((prevData) => prevData.filter((role) => role.id !== id));
-
-          Swal.fire({
-            title: 'Deleted!',
-            text: 'The role has been deleted.',
-            icon: 'success',
-            confirmButtonColor: '#3085d6',
-          });
-        } else {
-          Swal.fire({
-            title: 'Error!',
-            text: 'There was an error deleting the role.',
-            icon: 'error',
-            confirmButtonColor: '#d33',
-          });
+            if (response.data.status === true) {
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'The Role has been deleted.',
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6',
+                });
+                setRole(role_name.filter((item) => item.id !== id));
+            } else {
+                toast.error('Failed to delete role!');
+            }
+        } catch (error) {
+            console.error("Error deleting role:", error);
+            toast.error('An error occurred while deleting the role!');
         }
-      } catch (error) {
-        console.error("Error deleting the role:", error);
-        Swal.fire({
-          title: 'Error!',
-          text: 'An error occurred while deleting the role.',
-          icon: 'error',
-          confirmButtonColor: '#d33',
-        });
-      }
     }
-  });
 };
+
 
   return (
     <>
