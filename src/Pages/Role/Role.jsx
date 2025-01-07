@@ -105,9 +105,6 @@ const Role = () => {
     }
 };
 
-// useEffect(() => {
-//     fetchRole();
-// }, []);
 
   return (
     <>

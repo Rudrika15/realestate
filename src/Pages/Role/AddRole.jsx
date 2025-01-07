@@ -66,6 +66,7 @@ function AddRole() {
       setLoading(false);  
     }
   };
+  
 
   return (
     <>
@@ -211,3 +212,6 @@ function AddRole() {
 }
 
 export default AddRole;
+//how to add role api
+//how to  add permission api 
+//how  to right permission and to get a role view display
