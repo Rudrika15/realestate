@@ -68,10 +68,6 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> 8c011104cc69a3ff07ec613573b5f99e5f5ec567
   };
 
 

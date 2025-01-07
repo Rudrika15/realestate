@@ -26,9 +26,8 @@ function Report() {
       <ToastContainer />
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
-
-        <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
-          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
+        <div className={`content ${isSidebarOpen ? "content-open" : ""}`}>
+          <Topbar toggleSidebar={toggleSidebar} />
 
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">

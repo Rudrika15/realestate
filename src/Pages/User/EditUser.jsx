@@ -38,7 +38,6 @@ function EditUser() {
       setUsernameError(false);
     }
 
-
     if (!passcode) {
       setPasscodeError(true);
       isValid = false;

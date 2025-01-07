@@ -116,18 +116,17 @@ const Projects = () => {
                                                                 <Link
                                                                     to=""
                                                                     type="button"
-                                                                    className="btn btn-danger btn-sm"
+                                                                    className="btn btn-danger btn-sm me-2"
                                                                     onClick={() => handleClick(project.id)}
                                                                 >
                                                                     <i className="fas fa-trash"></i>
                                                                 </Link>
                                                                 <Link
-                                                                    to=""
+                                                                    to="/project-stage"
                                                                     type="button"
-                                                                    className="btn btn-danger btn-sm"
-                                                                    onClick={() => handleClick(project.id)}
+                                                                    className="btn btn-secondary btn-sm"
                                                                 >
-                                                                    <i className="fas fa-trash"></i>
+                                                                    <i class="bi bi-bar-chart"></i>
                                                                 </Link>
                                                             </td>
                                                         </tr>

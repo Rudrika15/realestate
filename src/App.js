@@ -37,6 +37,7 @@ import Income from "./Pages/Income/Income";
 import AddIncome from "./Pages/Income/AddIncome";
 import EditIncome from "./Pages/Income/EditIncome";
 import EditProjects from "./Pages/Projects/EditProjects";
+import ProjectStage from "./Pages/Projects/ProjectStage";
 
 const App = () => {
   return (
@@ -50,10 +51,13 @@ const App = () => {
           <Route path="/role" element={<Role />}></Route>
           <Route path="/add-role" element={<AddRole />}></Route>
           <Route path="/edit-role" element={<EditRole />}></Route>
+          <Route path="/project-stage" element={<ProjectStage />}></Route>
+          <Route path="/project-stage" element={<ProjectStage />}></Route>
+          <Route path="/add-project"></Route>
           <Route
             path="/booking-authorization"
             element={<BookingAuthorization />}
-          ></Route> 
+          ></Route>
           <Route path="/cash-deposit" element={<CashDeposit />}></Route>
           <Route path="/cheque-deposit" element={<ChequeDeposit />}></Route>
           <Route path="/booking" element={<Booking />}></Route>
@@ -65,7 +69,7 @@ const App = () => {
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />
           <Route path="/add-projects" element={<AddProjects />} />
-          <Route  path="/edit-projects" element={<EditProjects />}/>
+          <Route path="/edit-projects" element={<EditProjects />} />
           <Route path="/unit" element={<Unit />} />
           <Route path="/edit-unit" element={<EditUnit />} />
           <Route path="/partners" element={<Partners />} />
@@ -74,10 +78,9 @@ const App = () => {
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />
           <Route path="/edit-expenses" element={<EditExpenses />} />
-          <Route path="/income" element={<Income />}/>
-          <Route path="/add-income" element={< AddIncome/>}/>
-          <Route path="/edit-income" element={< EditIncome/>}/>
-
+          <Route path="/income" element={<Income />} />
+          <Route path="/add-income" element={<AddIncome />} />
+          <Route path="/edit-income" element={<EditIncome />} />
 
           <Route path="/report" element={<Report />} />
           <Route path="/add-customer-income" element={<AddCustomerIncome />} />
