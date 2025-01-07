@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { BiSolidDownload } from "react-icons/bi";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { demoDownload ,getProject } from "../../Api/ApiDipak";
+import { demoDownload, getProject } from "../../Api/ApiDipak";
 import axios from "axios";
 
 const AddProjects = () => {
@@ -40,6 +40,7 @@ const AddProjects = () => {
         responseType: "blob",
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
 
@@ -111,7 +112,7 @@ const AddProjects = () => {
       if (
         file.type !== "application/vnd.ms-excel" &&
         file.type !==
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       ) {
         validationErrors.unit = "Only Excel files (.xls, .xlsx) are allowed";
         isValid = false;
@@ -176,9 +177,8 @@ const AddProjects = () => {
                         </label>
                         <input
                           type="text"
-                          className={`form-control ${
-                            error.name ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${error.name ? "is-invalid" : ""
+                            }`}
                           id="name"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
@@ -200,9 +200,8 @@ const AddProjects = () => {
                           <input
                             type="file"
                             accept=".xls, .xlsx"
-                            className={`form-control ${
-                              error.unit ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${error.unit ? "is-invalid" : ""
+                              }`}
                             id="unit"
                             ref={files}
                             onChange={(e) => setUnit(e.target.files)}
