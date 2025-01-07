@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { BiSolidDownload } from "react-icons/bi";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { demoDownload } from "../../Api/ApiDipak";
+import { demoDownload ,getProject } from "../../Api/ApiDipak";
 import axios from "axios";
 
 const AddProjects = () => {
@@ -34,10 +34,7 @@ const AddProjects = () => {
 
   const handleDownloadExcel = async () => {
     try {
-      if (!token) {
-        toast.error("No token found. Please login.");
-        return;
-      }
+      const token = localStorage.getItem("token");
 
       const response = await axios.get(demoDownload, {
         responseType: "blob",

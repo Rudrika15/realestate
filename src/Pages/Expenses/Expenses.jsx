@@ -12,6 +12,7 @@ const Expenses = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedExpenseHead, setSelectedExpenseHead] = useState("");
   const [selectedExpensesDate, setselectedExpensesDate] = useState("");
+  const [expandedVoucher, setExpandedVoucher] = useState(null); 
 
   const [expenses, setExpenses] = useState([
     {
@@ -24,6 +25,14 @@ const Expenses = () => {
     },
     {
       id: 2,
+      voucherNo: 1,
+      voucherDate: "23-12-2024",
+      expenseHead: "Office Supplies",
+      narration: "Demo",
+      amount: "15,000",
+    },
+    {
+      id: 3,
       voucherNo: 2,
       voucherDate: "25-12-2024",
       expenseHead: "Utilities",
@@ -31,7 +40,23 @@ const Expenses = () => {
       amount: "25,000",
     },
     {
-      id: 3,
+      id: 4,
+      voucherNo: 3,
+      voucherDate: "30-12-2024",
+      expenseHead: "Office Supplies",
+      narration: "Demo",
+      amount: "15,000",
+    },
+    {
+      id: 5,
+      voucherNo: 3,
+      voucherDate: "30-12-2024",
+      expenseHead: "Office Supplies",
+      narration: "Demo",
+      amount: "60,000",
+    },
+    {
+      id: 6,
       voucherNo: 3,
       voucherDate: "30-12-2024",
       expenseHead: "Office Supplies",
@@ -95,6 +120,34 @@ const Expenses = () => {
   const handleExpenseHeadChange = (e) => {
     setSelectedExpenseHead(e.target.value);
     setCurrentPage(1);
+  };
+
+  // Group expenses by voucherNo and calculate the total amount for each voucher
+  const groupedExpenses = expenses.reduce((acc, expense) => {
+    const existingVoucher = acc.find(
+      (voucher) => voucher.voucherNo === expense.voucherNo
+    );
+
+    if (existingVoucher) {
+      existingVoucher.totalAmount += parseFloat(
+        expense.amount.replace(/,/g, "")
+      );
+      existingVoucher.expenses.push(expense);
+    } else {
+      acc.push({
+        voucherNo: expense.voucherNo,
+        totalAmount: parseFloat(expense.amount.replace(/,/g, "")),
+        expenses: [expense],
+      });
+    }
+
+    return acc;
+  }, []);
+
+  const toggleVoucherDetails = (voucherNo) => {
+    setExpandedVoucher((prevState) =>
+      prevState === voucherNo ? null : voucherNo
+    );
   };
 
   return (
@@ -179,39 +232,98 @@ const Expenses = () => {
 
                       <div className="table-responsive">
                         <table className="table table-bordered text-center">
-                          <thead>
-                            <tr>
+                          {/* <thead> */}
+                          {/* <tr>
                               <th scope="col">Voucher No</th>
                               <th scope="col">Voucher Expense Date</th>
                               <th scope="col">Expense Head</th>
                               <th scope="col">Narration</th>
                               <th scope="col">Amount</th>
                               <th scope="col">Action</th>
-                            </tr>
-                          </thead>
+                            </tr> */}
+                          {/* </thead> */}
                           <tbody>
-                            {currentExpenses.map((expense) => (
-                              <tr key={expense.id}>
-                                <td>{expense.voucherNo || "N/A"}</td>
-                                <td>{expense.voucherDate || "N/A"}</td>
-                                <td>{expense.expenseHead || "N/A"}</td>
-                                <td>{expense.narration || "N/A"}</td>
-                                <td>{expense.amount || "N/A"}</td>
-                                <td>
-                                  <Link
-                                    to={"/edit-expenses"}
-                                    className="btn btn-warning btn-sm me-2"
-                                  >
-                                    <i className="fas fa-edit"></i>
-                                  </Link>
-                                  <button
-                                    onClick={() => handleDelete(expense.id)}
-                                    className="btn btn-danger btn-sm"
-                                  >
-                                    <i className="fas fa-trash"></i>
-                                  </button>
-                                </td>
-                              </tr>
+                            {groupedExpenses.map((voucher) => (
+                              <React.Fragment key={voucher.voucherNo}>
+                                <tr
+                                  style={{
+                                    cursor: "pointer",
+                                    textAlign: "start",
+                                  }}
+                                  onClick={() =>
+                                    toggleVoucherDetails(voucher.voucherNo)
+                                  }
+                                >
+                                  <td colSpan="5">
+                                    <strong>
+                                      Voucher No: {voucher.voucherNo}
+                                    </strong>{" "}
+                                    | Total Amount:{" "}
+                                    {voucher.totalAmount.toLocaleString()}
+                                  </td>
+                                  {/* <td></td> */}
+                                </tr>
+
+                                {expandedVoucher === voucher.voucherNo && (
+                                  <>
+                                    <tr>
+                                      <td colSpan="6">
+                                        <table className="table table-bordered text-center">
+                                          <thead>
+                                            <tr>
+                                              <th scope="col">Voucher No</th>
+                                              <th scope="col">
+                                                Voucher Expense Date
+                                              </th>
+                                              <th scope="col">Expense Head</th>
+                                              <th scope="col">Narration</th>
+                                              <th scope="col">Amount</th>
+                                              <th scope="col">Action</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {voucher.expenses.map((expense) => (
+                                              <tr key={expense.id}>
+                                                <td>
+                                                  {expense.voucherNo || "N/A"}
+                                                </td>
+                                                <td>
+                                                  {expense.voucherDate || "N/A"}
+                                                </td>
+                                                <td>
+                                                  {expense.expenseHead || "N/A"}
+                                                </td>
+                                                <td>
+                                                  {expense.narration || "N/A"}
+                                                </td>
+                                                <td>
+                                                  {expense.amount || "N/A"}
+                                                </td>
+                                                <td>
+                                                  <Link
+                                                    to={"/edit-expenses"}
+                                                    className="btn btn-warning btn-sm me-2"
+                                                  >
+                                                    <i className="fas fa-edit"></i>
+                                                  </Link>
+                                                  <button
+                                                    onClick={() =>
+                                                      handleDelete(expense.id)
+                                                    }
+                                                    className="btn btn-danger btn-sm"
+                                                  >
+                                                    <i className="fas fa-trash"></i>
+                                                  </button>
+                                                </td>
+                                              </tr>
+                                            ))}
+                                          </tbody>
+                                        </table>
+                                      </td>
+                                    </tr>
+                                  </>
+                                )}
+                              </React.Fragment>
                             ))}
                           </tbody>
                         </table>

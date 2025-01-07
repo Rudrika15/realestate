@@ -148,7 +148,7 @@ const Unit = () => {
                         <thead>
                           <tr>
                             <th scope="col">Wing</th>
-                            <th scope="col">Flat Name</th>
+                            <th scope="col">Unit Name</th>
                             <th scope="col">Size</th>
                             <th scope="col">Extra Work Amount</th>
                             <th scope="col">Unit Type</th>
