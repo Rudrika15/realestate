@@ -96,20 +96,11 @@ function AddUser() {
         }
 
         if (!isValid) return;
-
         setLoading(true);
-        const token = localStorage.getItem("token");
-        const userId = localStorage.getItem("user_id");
-
-        const formData = new FormData();
-        formData.append("userName", userName);
-        formData.append("passcode", passcode);
-        formData.append("authPasscode", authPasscode);
-        formData.append("roles", JSON.stringify(role));
-        formData.append("userId", userId);
 
         try {
-            const response = await axios.post(addUsers, formData, {
+            const token = localStorage.getItem("token");
+            const response = await axios.post(addUsers, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data",
@@ -117,22 +108,18 @@ function AddUser() {
             });
 
             if (response.data.status === true) {
-                toast.success("User added successfully!");
-                setUserName("");
-                setPasscode("");
-                setAuthPasscode("");
-                console.log(authPasscode);
+                toast.success('User added successfully!');
+                setUserName('');
+                setPasscode('');
+                setAuthPasscode('');
                 setRole([]);
-                setUserNameError(false);
-                setPasscodeError(false);
-                setAuthPasscodeError(false);
-                setRoleError(false);
-                setTimeout(() => navigate("/view-user"), 2000);
+                setTimeout(() => {
+                    navigate("/view-user");
+                }, 2000);
             } else {
-                toast.error(response.data.message || "Failed to add user.");
+                toast.error(response.data.message || 'Failed to add user');
             }
         } catch (error) {
-            console.error("Error adding user:", error);
             toast.error("Failed to add user. Please try again.");
         } finally {
             setLoading(false);
@@ -145,6 +132,7 @@ function AddUser() {
             errorSetter(false);
         }
     };
+
 
     const handleRoleChange = (setRole, setRoleError) => (e) => {
         setRole(e.target.value);
@@ -167,8 +155,13 @@ function AddUser() {
             </Helmet>
             <div className="container-fluid position-relative bg-white d-flex p-0">
                 <Sidebar isSidebarOpen={isSidebarOpen} />
-                <div className={`content ${isSidebarOpen ? "content-open" : ""}`}>
-                    <Topbar toggleSidebar={toggleSidebar} />
+
+                <div className={`content ${isSidebarOpen ? "open" : ""}`}>
+                    <Topbar
+                        toggleSidebar={toggleSidebar}
+                        isTopbarOpen={isTopbarOpen}
+                        toggleTopbar={toggleTopbar}
+                    />
                     <div className="container-fluid pt-4 px-4">
                         <div className="row g-4">
                             <div className="col-sm-12 col-xl-12">
