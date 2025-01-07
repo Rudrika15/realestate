@@ -7,49 +7,65 @@ import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
 import axios from "axios";  
-import { AddRoles } from "../../Api/Apikiran";
 
 function AddRole() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-  const [roleName, setRoleName] = useState(""); 
+  const [role_Name, setRole_Name] = useState(""); 
   const [error, setError] = useState(""); 
   const [loading, setLoading] = useState(false);
-  const [data,setData] = useState(); 
+  const [permissions, setPermissions] = useState([]); 
   const navigate = useNavigate(); 
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleTopbar = () => setIsTopbarOpen(!isTopbarOpen);
 
   const handleRoleNameChange = (e) => {
-    setRoleName(e.target.value);
+    setRole_Name(e.target.value);
     setError(""); 
-  };  
-  
-  const handleSubmit = async (e) => {
-  e.preventDefault();
+  };
 
-  if (!roleName.trim()) {
-    setError("Role Name is required.");
-    return;
-  }
-  try {
-  
-    const response = await axios.post("/AddRoles", data);
-    if (response.data.status) {
-      toast.success('Role added successfully');
-      setTimeout(() => navigate('/role'), 1000);  
+  const handlePermissionChange = (e) => {
+    const { value, checked } = e.target;
+
+    
+    if (checked) {
+      setPermissions([...permissions, value]);
     } else {
-      toast.error(response.data.message || 'Failed to add role');
+  
+      setPermissions(permissions.filter(permission => permission !== value));
     }
-  } catch (error) {
-    console.error('Fetch error:', error);
-    toast.error(error.response?.data?.message || 'Something went wrong');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!role_Name.trim()) {
+      setError("Role Name is required.");
+      return;
+    }
+    
+    const data = {
+      role_Name,
+      permissions, 
+    };
+
+    try {
+      setLoading(true); 
+      const response = await axios.post("/AddRole", data); 
+      if (response.data.status) {
+        toast.success('Role added successfully');
+        setTimeout(() => navigate('/role'), 1000);  
+      } else {
+        toast.error(response.data.message || 'Failed to add role');
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+      toast.error(error.response?.data?.message || 'Something went wrong');
+    } finally {
+      setLoading(false);  
+    }
+  };
 
   return (
     <>
@@ -59,14 +75,12 @@ function AddRole() {
       </Helmet>
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
-
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
           <Topbar
             toggleSidebar={toggleSidebar}
             isTopbarOpen={isTopbarOpen}
             toggleTopbar={toggleTopbar}
           />
-
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
@@ -91,7 +105,7 @@ function AddRole() {
                           className={`form-control ${error ? "is-invalid" : ""}`}
                           id="roleName"
                           placeholder="Role Name"
-                          value={roleName}
+                          value={role_Name}
                           onChange={handleRoleNameChange}
                           name="roleName"
                         />
@@ -99,7 +113,7 @@ function AddRole() {
                       </div>
                     </div>
 
-                    {/* Permission Checkboxes */}
+                  
                     <div className="table-responsive">
                       <table className="table mt-4">
                         <tbody>
@@ -112,7 +126,7 @@ function AddRole() {
                                   id="check1"
                                   name="option1"
                                   value="permission1"
-                                  
+                                  onChange={handlePermissionChange}
                                 />
                                 <label className="form-check-label" htmlFor="check1">
                                   Option 1
@@ -127,7 +141,7 @@ function AddRole() {
                                   id="check2"
                                   name="option2"
                                   value="permission2"
-                                  
+                                  onChange={handlePermissionChange}
                                 />
                                 <label className="form-check-label" htmlFor="check2">
                                   Option 2
@@ -142,7 +156,7 @@ function AddRole() {
                                   id="check3"
                                   name="option3"
                                   value="permission3"
-                                  
+                                  onChange={handlePermissionChange}
                                 />
                                 <label className="form-check-label" htmlFor="check3">
                                   Option 3
@@ -157,7 +171,7 @@ function AddRole() {
                                   id="check4"
                                   name="option4"
                                   value="permission4"
-                                  
+                                  onChange={handlePermissionChange}
                                 />
                                 <label className="form-check-label" htmlFor="check4">
                                   Option 4
@@ -169,7 +183,7 @@ function AddRole() {
                       </table>
                     </div>
 
-                    {/* Submit Button */}
+                
                     <div className="mt-4">
                       <button
                         type="submit"
