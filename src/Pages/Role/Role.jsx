@@ -58,48 +58,58 @@ const Role = () => {
   },[]);
 
   const handleDelete = async (id) => {
-    Swal.fire({
-      title: 'Are You Sure You Want to Delete?',
-      text: 'Once you delete, all the data related to this user will be deleted.',
-      icon: 'error',
-      showCancelButton: true,
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#c4c4c4',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const res = await axios.delete(`DeleteRole${id}`);
-          
-          if (res.data.status === true) {
-            setData((prevData) => prevData.filter((user) => user.id !== id));
-            Swal.fire({
-              title: 'Deleted!',
-              text: 'The user has been deleted.',
-              icon: 'success',
-              confirmButtonColor: '#3085d6',
-            });
-          } else {
-            Swal.fire({
-              title: 'Error!',
-              text: 'There was an error deleting the user.',
-              icon: 'error',
-              confirmButtonColor: '#d33',
-            });
-          }
-        } catch (error) {
-          console.error("Error deleting the user:", error);
+  Swal.fire({
+    title: 'Are You Sure You Want to Delete?',
+    text: 'Once you delete, all the data related to this role will be deleted.',
+    icon: 'error',
+    showCancelButton: true,
+    confirmButtonText: 'Delete',
+    cancelButtonText: 'Cancel',
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#c4c4c4',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const token = localStorage.getItem("token");
+
+       
+        // Send the delete request to the server with the ID
+        const res = await axios.delete(`$DeleteRole/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.data.status === true) {
+          // Remove the deleted role from the state
+          setData((prevData) => prevData.filter((role) => role.id !== id));
+
+          Swal.fire({
+            title: 'Deleted!',
+            text: 'The role has been deleted.',
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+          });
+        } else {
           Swal.fire({
             title: 'Error!',
-            text: 'An error occurred while deleting the user.',
+            text: 'There was an error deleting the role.',
             icon: 'error',
             confirmButtonColor: '#d33',
           });
         }
+      } catch (error) {
+        console.error("Error deleting the role:", error);
+        Swal.fire({
+          title: 'Error!',
+          text: 'An error occurred while deleting the role.',
+          icon: 'error',
+          confirmButtonColor: '#d33',
+        });
       }
-    });
-  };
+    }
+  });
+};
 
   return (
     <>
@@ -146,7 +156,7 @@ const Role = () => {
                           {data.map((user) => (
                             <tr key={user.id}>
                               <td>{user.id}</td>
-                              <td>{user.name}</td>
+                              <td>{user.role_name}</td>
                               <td>
                                 <select
                                   className="form-select"

@@ -7,25 +7,25 @@ import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
-import axios from "axios"; // Make sure axios is imported
-// import { EditRole } from "../../Api/Kiran/Api"; // Import the EditRole API function
+import axios from "axios";
+import { EditRoleData } from "../../Api/Apikiran";
 
 function EditRole() {
   const { id } = useParams(); // Retrieve the ID from the URL
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-  const [rolename, setRolename] = useState("");
-  const [rolenameerror, setRolenameError] = useState("");
+  const [role_name, setRole_name] = useState("");
+  const [role_nameerror, setRole_nameError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const rolenameRef = useRef(null);
+  const role_nameRef = useRef(null);
 
   // Fetch role data on component mount
   useEffect(() => {
     const fetchRoleData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`/getRole/${id}`, {
+        const res = await axios.get(`/EditRoleData/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -33,7 +33,7 @@ function EditRole() {
         });
 
         if (res.data.status === true) {
-          setRolename(res.data.data.name); // Set the rolename state with the fetched data
+          setRole_name(res.data.data.name); 
         } else {
           toast.error("Failed to fetch role data.");
         }
@@ -59,18 +59,18 @@ function EditRole() {
     e.preventDefault();
     let isValid = true;
 
-    if (!rolename) {
-      setRolenameError(true);
+    if (!role_name) {
+      setRole_nameError(true);
       isValid = false;
     } else {
-      setRolenameError(false);
+      setRole_nameError(false);
     }
 
     if (isValid) {
       setLoading(true);
 
-      // Prepare data to send to the server
-      const roleData = { name: rolename };
+      
+      const roleData = { name: role_name };
 
       try {
         const token = localStorage.getItem("token");
@@ -85,7 +85,7 @@ function EditRole() {
           toast.success("Role updated successfully!");
           setTimeout(() => {
             setLoading(false);
-            navigate("/role"); // Redirect to the roles page
+            navigate("/role"); 
           }, 1000);
         } else {
           toast.error("Failed to update role.");
@@ -107,8 +107,8 @@ function EditRole() {
   };
 
   const handleRolenameChange = (e) => {
-    setRolename(e.target.value);
-    if (e.target.value) setRolenameError(false);
+    setRole_name(e.target.value);
+    if (e.target.value) setRole_nameError(false);
   };
 
   return (
@@ -147,14 +147,14 @@ function EditRole() {
                     <div className="row mb-3 w-50">
                       <div className="col">
                         <input
-                          className={`form-control ${rolenameerror ? "is-invalid" : ""}`}
-                          value={rolename}
-                          ref={rolenameRef}
+                          className={`form-control ${role_nameerror ? "is-invalid" : ""}`}
+                          value={role_name}
+                          ref={role_nameRef}
                           placeholder="Rolename"
                           onKeyDown={(e) => handleEnter(e, null)}
                           onChange={handleRolenameChange}
                         />
-                        {rolenameerror && (
+                        {role_nameerror && (
                           <div className="invalid-feedback">
                             Role name is required.
                           </div>
