@@ -30,20 +30,20 @@ const AddProjects = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
-  const token = localStorage.getItem("token");
+  // const token = localStorage.getItem("token");
 
   const handleDownloadExcel = async () => {
     try {
-      if (!token) {
-        toast.error("No token found. Please login.");
-        return;
-      }
+      // if (!token) {
+      //   toast.error("No token found. Please login.");
+      //   return;
+      // }
 
       const response = await axios.get(demoDownload, {
         responseType: "blob",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
 
       const link = document.createElement("a");
