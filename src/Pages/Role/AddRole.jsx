@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,67 +6,108 @@ import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
-import axios from "axios";  
+import axios from "axios";
+import Swal from "sweetalert2";
+import { AddRoles } from "../../Api/Apikiran";
+import { PermissionFetch } from "../../Api/Apikiran";
 
 function AddRole() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-  const [role_Name, setRole_Name] = useState(""); 
-  const [error, setError] = useState(""); 
+  const [role_name, setRole_Name] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [permissions, setPermissions] = useState([]); 
-  const navigate = useNavigate(); 
+  const [permissions, setPermissions] = useState([]);
+  const [selectedPermissions, setSelectedPermissions] = useState([]);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleTopbar = () => setIsTopbarOpen(!isTopbarOpen);
 
-  const handleRoleNameChange = (e) => {
-    setRole_Name(e.target.value);
-    setError(""); 
+  const fetchPermission = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      console.log("Token: ", token);
+
+      const response = await axios.get(`${PermissionFetch}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.data.status === true) {
+        console.log("Permissions data:", response.data.data);
+        setPermissions(response.data.data);
+      } else {
+        toast.error("Failed to fetch permission data!");
+      }
+    } catch (error) {
+      console.error("Error fetching permission:", error);
+      toast.error("Error fetching permission.");
+    }
   };
+
+  useEffect(() => {
+    fetchPermission();
+  }, []);
 
   const handlePermissionChange = (e) => {
     const { value, checked } = e.target;
 
-    
-    if (checked) {
-      setPermissions([...permissions, value]);
-    } else {
-  
-      setPermissions(permissions.filter(permission => permission !== value));
-    }
+    setSelectedPermissions((prevSelectedPermissions) => {
+      if (checked) {
+        return [...prevSelectedPermissions, value];
+      } else {
+        return prevSelectedPermissions.filter(
+          (permission) => permission !== value
+        );
+      }
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!role_Name.trim()) {
-      setError("Role Name is required.");
+    if (!role_name) {
+      setError("Role name is required");
       return;
     }
-    
-    const data = {
-      role_Name,
-      permissions, 
-    };
+
+    if (selectedPermissions.length === 0) {
+      toast.error("Please select at least one permission.");
+      return;
+    }
 
     try {
-      setLoading(true); 
-      const response = await axios.post("/AddRole", data); 
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        AddRoles,
+        { role_name, permissions: selectedPermissions },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       if (response.data.status) {
-        toast.success('Role added successfully');
-        setTimeout(() => navigate('/role'), 1000);  
+        toast.success("Role added successfully!");
+        setRole_Name("");
+        setSelectedPermissions([]);
+        setTimeout(() => {
+          navigate("/role");
+        }, 2000);
       } else {
-        toast.error(response.data.message || 'Failed to add role');
+        toast.error(response.data.message || "Failed to add role");
       }
     } catch (error) {
-      console.error('Fetch error:', error);
-      toast.error(error.response?.data?.message || 'Something went wrong');
+      toast.error("Failed to add role. Please try again.");
     } finally {
-      setLoading(false);  
+      setLoading(false);
     }
   };
-  
 
   return (
     <>
@@ -103,88 +144,58 @@ function AddRole() {
                       <div className="col-12 col-md-6">
                         <input
                           type="text"
-                          className={`form-control ${error ? "is-invalid" : ""}`}
-                          id="roleName"
+                          className={`form-control ${
+                            error ? "is-invalid" : ""
+                          }`}
+                          id="role_name"
                           placeholder="Role Name"
-                          value={role_Name}
-                          onChange={handleRoleNameChange}
+                          value={role_name}
+                          onChange={(e) => setRole_Name(e.target.value)}
                           name="roleName"
                         />
-                        {error && <div className="invalid-feedback">{error}</div>}
+                        {error && (
+                          <div className="invalid-feedback">{error}</div>
+                        )}
                       </div>
                     </div>
-
-                  
                     <div className="table-responsive">
                       <table className="table mt-4">
                         <tbody>
-                          <tr>
-                            <td>
-                              <div className="form-check">
-                                <input
-                                  type="checkbox"
-                                  className="form-check-input"
-                                  id="check1"
-                                  name="option1"
-                                  value="permission1"
-                                  onChange={handlePermissionChange}
-                                />
-                                <label className="form-check-label" htmlFor="check1">
-                                  Option 1
-                                </label>
-                              </div>
-                            </td>
-                            <td>
-                              <div className="form-check">
-                                <input
-                                  type="checkbox"
-                                  className="form-check-input"
-                                  id="check2"
-                                  name="option2"
-                                  value="permission2"
-                                  onChange={handlePermissionChange}
-                                />
-                                <label className="form-check-label" htmlFor="check2">
-                                  Option 2
-                                </label>
-                              </div>
-                            </td>
-                            <td>
-                              <div className="form-check">
-                                <input
-                                  type="checkbox"
-                                  className="form-check-input"
-                                  id="check3"
-                                  name="option3"
-                                  value="permission3"
-                                  onChange={handlePermissionChange}
-                                />
-                                <label className="form-check-label" htmlFor="check3">
-                                  Option 3
-                                </label>
-                              </div>
-                            </td>
-                            <td>
-                              <div className="form-check">
-                                <input
-                                  type="checkbox"
-                                  className="form-check-input"
-                                  id="check4"
-                                  name="option4"
-                                  value="permission4"
-                                  onChange={handlePermissionChange}
-                                />
-                                <label className="form-check-label" htmlFor="check4">
-                                  Option 4
-                                </label>
-                              </div>
-                            </td>
-                          </tr>
+                          {permissions && permissions.length > 0 ? (
+                            permissions.map((permission) => (
+                              <tr key={permission.id}>
+                                <td>
+                                  <div className="form-check">
+                                    <input
+                                      type="checkbox"
+                                      className="form-check-input"
+                                      id={`permission-${permission.id}`}
+                                      name="permissions"
+                                      value={permission.id}
+                                      onChange={handlePermissionChange}
+                                      checked={selectedPermissions.includes(
+                                        permission.id.toString()
+                                      )}
+                                    />
+                                    <label
+                                      className="form-check-label"
+                                      htmlFor={`permission-${permission.id}`}
+                                    >
+                                      {permission.permissionName}
+                                    </label>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="2">No permissions available</td>
+                            </tr>
+                          )}
                         </tbody>
                       </table>
                     </div>
 
-                
                     <div className="mt-4">
                       <button
                         type="submit"
@@ -212,6 +223,3 @@ function AddRole() {
 }
 
 export default AddRole;
-//how to add role api
-//how to  add permission api 
-//how  to right permission and to get a role view display
