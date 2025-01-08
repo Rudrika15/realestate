@@ -10,7 +10,7 @@ import { demoDownload, storeProject } from "../../Api/ApiDipak";
 import axios from "axios";
 
 const AddProjects = () => {
-  const [name, setName] = useState("");
+  const [projectName, setProjectName] = useState("");
   const [unit, setUnit] = useState(null);
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
@@ -42,7 +42,6 @@ const AddProjects = () => {
           "Content-Type": "application/json",
         },
       });
-
       const link = document.createElement("a");
       const url = window.URL.createObjectURL(new Blob([response.data]));
       link.href = url;
@@ -85,32 +84,33 @@ const AddProjects = () => {
       document.removeEventListener("keydown", handleKey);
     };
   }, [handleKey]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let isValid = true;
     const validationErrors = {};
-  
-    if (!name.trim()) {
+
+    if (!projectName.trim()) {
       validationErrors.name = "Name is required";
       isValid = false;
     }
-  
-    if (!/^[A-Za-z ]+$/.test(name)) {
+
+    if (!/^[A-Za-z ]+$/.test(projectName)) {
       validationErrors.name = "Name can only contain letters and spaces";
       isValid = false;
     }
-  
+
     if (!unit || unit.length === 0) {
-      validationErrors.unit = "Unit is required";
+      validationErrors.unit = "Unit file is required";
       isValid = false;
     } else {
       const file = unit[0];
-  
+
       if (file.size > 2 * 1024 * 1024) {
-        validationErrors.unit = "File is larger than 2MB";
+        validationErrors.unit = "File size is too large (max: 2MB)";
         isValid = false;
       }
-  
+
       if (
         file.type !== "application/vnd.ms-excel" &&
         file.type !==
@@ -120,55 +120,98 @@ const AddProjects = () => {
         isValid = false;
       }
     }
-  
     if (!isValid) {
       setError(validationErrors);
       return;
     }
-  
-    setLoading(true);
-  
-    console.log('FormData being sent:', { name, unit });
-  
-    try {
-      const token = localStorage.getItem("token");
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("unit", unit[0]);
-  
-      const response = await axios.post(storeProject, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-          "type": "formData"
-        },
-      });
-  
-      console.log("Response:", response.data);
-  
-      setName("");
-      files.current.value = null;
-      setUnit(null);
-      setError({});
-      setLoading(false);
-      navigate("/projects");
-      toast.success("Project added successfully!");
-    } catch (error) {
-      console.error("Error submitting project:", error);
-  
-      if (error.response) {
-        console.error("Error response:", error.response.data);
+
+      setLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+        console.log(token);
+        const formData = new FormData();
+        formData.append("projectName", projectName);
+        formData.append("unit", unit[0]);
+
+        const response = await axios.post(
+          storeProject,
+          { projectName, unit },
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+         console.log("response", response);
+        if (response.status === 200) {
+          toast.success("Project and units added successfully");
+          setProjectName("");
+          files.current.value = null;
+          setUnit(null);
+          setError({});
+          setLoading(false);
+
+          navigate("/projects");
+        }
+      } catch (error) {
+        console.error("Error submitting project:", error);
+
+        if (error.response) {
+          console.error("Error response:", error.response.data);
+        }
+
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+          toast.error("Session expired. Please log in again.");
+        } else {
+          toast.error("An error occurred. Please try again later.");
+        }
+     setLoading(false);
+
       }
-      if (error.response && error.response.status === 401) {
-        navigate("/");
-        toast.error("Session expired. Please log in again.");
-      } else {
-        toast.error("An error occurred. Please try again later.");
-      }
-      setLoading(false);
-    }
+
+    // try {
+    //   const token = localStorage.getItem("token");
+
+    //   const formData = new FormData(); // Create a new FormData object
+
+    //   // Append the data to the FormData
+    //   formData.append("projectName", projectName);
+    //   formData.append("unit", unit[0]); // Append the unit file
+
+    //   // Send the data using FormData
+    //   const response = await axios.post(storeProject, formData, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //       "Content-Type": "multipart/form-data", // Content type for file uploads
+    //     },
+    //   });
+
+    //   if (response.status === 200) {
+    //     toast.success("Project and units added successfully");
+    //     setProjectName(""); // Reset the form
+    //     files.current.value = null;
+    //     setUnit(null);
+    //     setError({});
+    //     setLoading(false);
+    //     navigate("/projects"); // Redirect to projects page after successful submission
+    //   }
+    // } catch (error) {
+    //   console.error("Error submitting project:", error);
+    //   setLoading(false);
+
+    //   if (error.response && error.response.status === 401) {
+    //     navigate("/"); // Redirect to login if session expired
+    //     toast.error("Session expired. Please log in again.");
+    //   } else {
+    //     toast.error("An error occurred. Please try again later.");
+    //   }
+    // }
   };
-  
+
   return (
     <>
       <ToastContainer />
@@ -214,8 +257,8 @@ const AddProjects = () => {
                             error.name ? "is-invalid" : ""
                           }`}
                           id="name"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
+                          value={projectName}
+                          onChange={(e) => setProjectName(e.target.value)}
                           onKeyPress={(e) => handleEnter(e, files)}
                           ref={nameRef}
                         />
