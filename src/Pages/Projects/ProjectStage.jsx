@@ -27,7 +27,7 @@ function ProjectStage() {
     return (
         <>
             <Helmet>
-                <title>React Estate | Projects</title>
+                <title>React Estate | Project Stage</title>
             </Helmet>
             <div className="container-fluid position-relative bg-white d-flex p-0">
                 <Sidebar isSidebarOpen={isSidebarOpen} />

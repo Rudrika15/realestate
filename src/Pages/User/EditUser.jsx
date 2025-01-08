@@ -140,7 +140,7 @@ function EditUser() {
                         )}
                       </div>
                     </div>
-                    <div className="row mb-3 w-50">
+                    {/* <div className="row mb-3 w-50">
                       <div className="col">
                         <input
                           type="password"
@@ -158,8 +158,8 @@ function EditUser() {
                           </div>
                         )}
                       </div>
-                    </div>
-                    <div className="row mb-3 w-50">
+                    </div> */}
+                    {/* <div className="row mb-3 w-50">
                       <div className="col">
                         <select
                           className={`form-control bg-white ${roleError ? "is-invalid" : ""}`}
@@ -181,7 +181,7 @@ function EditUser() {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </div> */}
                     <button
                       type="submit"
                       className="btn btn-primary"

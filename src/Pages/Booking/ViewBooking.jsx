@@ -8,6 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { getProject } from "../../Api/DevanshiApi";
 
 const ViewBooking = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -45,23 +46,60 @@ const ViewBooking = () => {
     return formattedInteger + decimalPart;
   };
 
-  const getData = async () => {
+  // // const getData = async () => {
+  // //   try {
+  // //     const res = await axios.get();
+  // //     if (res.data.status === true) {
+  // //       const sortedData = res.data.data.sort((a, b) => a.name.localeCompare(b.name));
+  // //       setData(sortedData);
+  // //     } else {
+  // //       console.error('Error fetching data:', res.data.message);
+  // //     }
+  // //   } catch (error) {
+  // //     console.error('Error:', error);
+  // //   }
+  // // };
+
+  // // useEffect(() => {
+  // //   getData();
+  // }, [data]);
+
+
+  const [projects, setProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState([]);
+
+  const fetchProject = async () => {
     try {
-      const res = await axios.get();
-      if (res.data.status === true) {
-        const sortedData = res.data.data.sort((a, b) => a.name.localeCompare(b.name));
-        setData(sortedData);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Authentication token is missing!');
+        window.location.href = '/';
+        return;
+      }
+
+      console.log('Token:', token);
+
+      const response = await axios.get(getProject, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.status == true) {
+        setProjects(response.data.data);
       } else {
-        console.error('Error fetching data:', res.data.message);
+        console.error("Failed to fetch peoject data!");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error fetching peojects:", error);
+      toast.error("Error fetching peojects!");
     }
   };
 
+
   useEffect(() => {
-    getData();
-  }, [data]);
+    fetchProject();
+  }, []);
+
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
@@ -101,6 +139,11 @@ const ViewBooking = () => {
                       <div className="w-25">
                         <select className="form-select form-select-sm text-dark fs-6">
                           <option value="">Projects</option>
+                          {projects.map((project) => (
+                            <option key={project.id} value={project.id}>
+                              {project.projectName}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div className="w-25">

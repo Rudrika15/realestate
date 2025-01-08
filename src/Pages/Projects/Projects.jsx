@@ -126,7 +126,7 @@ const Projects = () => {
                                   type="button"
                                   className="btn btn-secondary btn-sm"
                                 >
-                                  <i class="bi bi-bar-chart"></i>
+                                  <i class="bi bi-bar-chart-fill"></i>
                                 </Link>
                               </td>
                             </tr>

@@ -17,12 +17,12 @@ function AddUser() {
     const [passcode, setPasscode] = useState("");
     const [authPasscode, setAuthPasscode] = useState("");
     const [role, setRole] = useState([]);
+    const [selectedRoles, setSelectedRoles] = useState([]);
     const [userNameError, setUserNameError] = useState(false);
     const [passcodeError, setPasscodeError] = useState(false);
     const [authPasscodeError, setAuthPasscodeError] = useState(false);
     const [roleError, setRoleError] = useState(false);
     const [loading, setLoading] = useState(false);
-
 
     const navigate = useNavigate();
 
@@ -30,32 +30,27 @@ function AddUser() {
     const passcodeRef = useRef(null);
     const authpasscodeRef = useRef(null);
     const roleRef = useRef(null);
-    const submitRef = useRef(null);
 
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-    const toggleTopbar = () => {
-        setIsTopbarOpen(!isTopbarOpen);
-    };
+    const toggleTopbar = () => setIsTopbarOpen(!isTopbarOpen);
 
-    const fetchRoles = async (e) => {
+    const fetchRoles = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${ViewRoleData}`, {
+            const token = localStorage.getItem("token");
+            const response = await axios.get(ViewRoleData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            if (response.data.status == true) {
+            if (response.data.status) {
                 setRole(response.data.data);
             } else {
-                toast.error('Failed to fetch role data!');
+                toast.error("Failed to fetch role data!");
             }
         } catch (error) {
-            console.error('Error fetching roles:', error);
-            toast.error('Error fetching roles:', error);
+            console.error("Error fetching roles:", error);
+            toast.error("Error fetching roles!");
         }
     };
 
@@ -81,14 +76,14 @@ function AddUser() {
             setPasscodeError(false);
         }
 
-        if (!authPasscode.trim()) {
+        if (!authPasscode.trim() || authPasscode !== passcode) {
             setAuthPasscodeError(true);
             isValid = false;
         } else {
             setAuthPasscodeError(false);
         }
 
-        if (role.length === 0) {
+        if (selectedRoles.length === 0) {
             setRoleError(true);
             isValid = false;
         } else {
@@ -100,24 +95,33 @@ function AddUser() {
 
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.post(addUsers, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
+            const response = await axios.post(
+                addUsers,
+                {
+                    userName,
+                    passcode,
+                    authPasscode,
+                    roles: selectedRoles,
                 },
-            });
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
 
-            if (response.data.status === true) {
-                toast.success('User added successfully!');
-                setUserName('');
-                setPasscode('');
-                setAuthPasscode('');
-                setRole([]);
+            if (response.data.status) {
+                toast.success("User added successfully!");
+                setUserName("");
+                setPasscode("");
+                setAuthPasscode("");
+                setSelectedRoles([]);
                 setTimeout(() => {
                     navigate("/view-user");
                 }, 2000);
             } else {
-                toast.error(response.data.message || 'Failed to add user');
+                toast.error(response.data.message || "Failed to add user");
             }
         } catch (error) {
             toast.error("Failed to add user. Please try again.");
@@ -133,10 +137,10 @@ function AddUser() {
         }
     };
 
-
-    const handleRoleChange = (setRole, setRoleError) => (e) => {
-        setRole(e.target.value);
-        if (e.target.value) setRoleError(false);
+    const handleRoleChange = (e) => {
+        const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+        setSelectedRoles(selectedOptions);
+        setRoleError(selectedOptions.length === 0);
     };
 
     const handleEnter = (e, nextField) => {
@@ -155,13 +159,8 @@ function AddUser() {
             </Helmet>
             <div className="container-fluid position-relative bg-white d-flex p-0">
                 <Sidebar isSidebarOpen={isSidebarOpen} />
-
                 <div className={`content ${isSidebarOpen ? "open" : ""}`}>
-                    <Topbar
-                        toggleSidebar={toggleSidebar}
-                        isTopbarOpen={isTopbarOpen}
-                        toggleTopbar={toggleTopbar}
-                    />
+                    <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
                     <div className="container-fluid pt-4 px-4">
                         <div className="row g-4">
                             <div className="col-sm-12 col-xl-12">
@@ -215,7 +214,9 @@ function AddUser() {
                                                     onKeyDown={(e) => handleEnter(e, roleRef)}
                                                 />
                                                 {authPasscodeError && (
-                                                    <div className="invalid-feedback">Enter an Auth Passcode</div>
+                                                    <div className="invalid-feedback">
+                                                        Auth Passcode must match Passcode
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>
@@ -230,13 +231,11 @@ function AddUser() {
                                                     <option value="" disabled>
                                                         Select Role
                                                     </option>
-                                                    {Array.isArray(role) && role.length > 0 ? (
-                                                        role.map((item) => (
-                                                            <option key={item.id} value={item.role_name}>
-                                                                {item.role_name}
-                                                            </option>
-                                                        ))
-                                                    ) : null}
+                                                    {role.map((item) => (
+                                                        <option key={item.id} value={item.id}>
+                                                            {item.role_name}
+                                                        </option>
+                                                    ))}
                                                 </select>
                                                 {roleError && <div className="invalid-feedback">Please select a role.</div>}
                                             </div>
@@ -245,7 +244,6 @@ function AddUser() {
                                             type="submit"
                                             className="btn btn-primary"
                                             disabled={loading}
-                                            ref={submitRef}
                                         >
                                             {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
                                         </button>

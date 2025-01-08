@@ -6,6 +6,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Helmet } from "react-helmet";
 import { Spinner } from "react-bootstrap";
+import axios from "axios";
+import { getProject, getProjectWiseUnit } from "../../Api/DevanshiApi";
 
 function Booking() {
   const [projectName, setProjectName] = useState("");
@@ -378,8 +380,9 @@ function Booking() {
   };
 
   const handleProjectChange = (e) => {
-    setProjectName(e.target.value);
-    if (e.target.value) setProjectError(false);
+    const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+    setSelectedProject(selectedOptions);
+    setProjectError(selectedOptions.length === 0);
   };
 
   const handleAmountChange = (e) => {
@@ -388,8 +391,9 @@ function Booking() {
   };
 
   const handleUnitChange = (e) => {
-    setUnit(e.target.value);
-    if (e.target.value) setUnitError(false);
+    const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+    setSelectedUnit(selectedOptions);
+    setUnitError(selectedOptions.length === 0);
   };
 
   const handleBookingDateChange = (e) => {
@@ -503,6 +507,71 @@ function Booking() {
     if (e.target.value) setDownPaymentDateError(false);
   };
 
+  const [projects, setProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState([]);
+  const [units, setUnits] = useState([]);
+  const [selectedUnit, setSelectedUnit] = useState([]);
+
+  const fetchProject = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Authentication token is missing!');
+        window.location.href = '/';
+        return;
+      }
+      const response = await axios.get(getProject, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.status == true) {
+        setProjects(response.data.data);
+        if (projects.length > 0) {
+          const selectedProjectId = projects[0].id;
+          fetchUnit(selectedProjectId); 
+        }
+      } else {
+        console.error("Failed to fetch peoject data!");
+      }
+    } catch (error) {
+      console.error("Error fetching peojects:", error);
+      toast.error("Error fetching peojects!");
+    }
+  };
+
+  const fetchUnit = async (projectId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Authentication token is missing!');
+        window.location.href = '/';
+        return;
+      }
+      console.log('Token:', token);
+      const response = await axios.get(`${getProjectWiseUnit}/${projectId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.status === true) {
+        console.log(response.data.status);
+        console.log(response.data.data);
+        setUnit(response.data.data);
+      } else {
+        console.error("Failed to fetch Unit data!");
+      }
+    } catch (error) {
+      console.error("Error fetching Units:", error);
+      toast.error("Error fetching Units!");
+    }
+  };
+
+  useEffect(() => {
+    fetchProject();
+    fetchUnit();
+  }, []);
+
   return (
     <>
       <ToastContainer />
@@ -540,13 +609,17 @@ function Booking() {
                       <div className="col">
                         <select
                           className={`form-control bg-white ${projectError ? "is-invalid" : ""}`}
-                          value={projectName}
+                          value={selectedProject}
                           ref={projectRef}
                           onChange={handleProjectChange}
                           onKeyDown={(e) => handleEnter(e, unitRef)}
                         >
                           <option value="" disabled>Project Name</option>
-                          <option value="demo">demo</option>
+                          {projects.map((project) => (
+                            <option key={project.id} value={project.id}>
+                              {project.projectName}
+                            </option>
+                          ))}
                         </select>
                         {projectError && (
                           <div className="invalid-feedback">Please select a Project</div>
@@ -555,13 +628,17 @@ function Booking() {
                       <div className="col">
                         <select
                           className={`form-control bg-white ${unitError ? "is-invalid" : ""}`}
-                          value={unit}
+                          value={selectedUnit}
                           ref={unitRef}
                           onChange={handleUnitChange}
                           onKeyDown={(e) => handleEnter(e, dateRef)}
                         >
                           <option value="" disabled>Unit No</option>
-                          <option value="demo">1</option>
+                          {units.map((unit) => (
+                            <option key={unit.id} value={unit.id}>
+                              {unit.unitNo}
+                            </option>
+                          ))}
                         </select>
                         {unitError && (
                           <div className="invalid-feedback">Please select a Unit</div>
