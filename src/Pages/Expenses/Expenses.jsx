@@ -12,7 +12,9 @@ const Expenses = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedExpenseHead, setSelectedExpenseHead] = useState("");
   const [selectedExpensesDate, setselectedExpensesDate] = useState("");
-  const [expandedVoucher, setExpandedVoucher] = useState(null); 
+  const [expandedVoucher, setExpandedVoucher] = useState(null);
+  const [showAll, setShowAll] = useState(false); 
+  const [hideAll, setHideAll] = useState(false);
 
   const [expenses, setExpenses] = useState([
     {
@@ -37,7 +39,7 @@ const Expenses = () => {
       voucherDate: "25-12-2024",
       expenseHead: "Utilities",
       narration: "Demo",
-      amount: "25,000",
+      amount: "22,000",
     },
     {
       id: 4,
@@ -122,7 +124,6 @@ const Expenses = () => {
     setCurrentPage(1);
   };
 
-  // Group expenses by voucherNo and calculate the total amount for each voucher
   const groupedExpenses = expenses.reduce((acc, expense) => {
     const existingVoucher = acc.find(
       (voucher) => voucher.voucherNo === expense.voucherNo
@@ -144,10 +145,37 @@ const Expenses = () => {
     return acc;
   }, []);
 
+  const grandTotal = groupedExpenses.reduce(
+    (total, voucher) => total + voucher.totalAmount,
+    0
+  );
+
   const toggleVoucherDetails = (voucherNo) => {
-    setExpandedVoucher((prevState) =>
-      prevState === voucherNo ? null : voucherNo
-    );
+    if (hideAll) {
+      return;
+    }
+
+    if (!showAll) {
+      setExpandedVoucher((prevState) =>
+        prevState === voucherNo ? null : voucherNo
+      );
+    }
+  };
+
+  const handleShowAllChange = (e) => {
+    setShowAll(e.target.checked);
+    setHideAll(false); 
+    if (e.target.checked) {
+      setExpandedVoucher(null); 
+    }
+  };
+
+  const handleHideAllChange = (e) => {
+    setHideAll(e.target.checked);
+    setShowAll(false); 
+    if (e.target.checked) {
+      setExpandedVoucher(null); 
+    }
   };
 
   return (
@@ -229,19 +257,25 @@ const Expenses = () => {
                           </div>
                         </div>
                       </div>
+                      <div className="d-flex gap-2 mb-2">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          checked={showAll}
+                          onChange={handleShowAllChange}
+                        />
+                        <label className="form-check-label">Show All</label>
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
 
+                          checked={hideAll}
+                          onChange={handleHideAllChange}
+                        />
+                        <label className="form-check-label">Hide All</label>
+                      </div>
                       <div className="table-responsive">
                         <table className="table table-bordered text-center">
-                          {/* <thead> */}
-                          {/* <tr>
-                              <th scope="col">Voucher No</th>
-                              <th scope="col">Voucher Expense Date</th>
-                              <th scope="col">Expense Head</th>
-                              <th scope="col">Narration</th>
-                              <th scope="col">Amount</th>
-                              <th scope="col">Action</th>
-                            </tr> */}
-                          {/* </thead> */}
                           <tbody>
                             {groupedExpenses.map((voucher) => (
                               <React.Fragment key={voucher.voucherNo}>
@@ -251,7 +285,7 @@ const Expenses = () => {
                                     textAlign: "start",
                                   }}
                                   onClick={() =>
-                                    toggleVoucherDetails(voucher.voucherNo)
+                                    !showAll && !hideAll && toggleVoucherDetails(voucher.voucherNo)
                                   }
                                 >
                                   <td colSpan="5">
@@ -261,72 +295,61 @@ const Expenses = () => {
                                     | Total Amount:{" "}
                                     {voucher.totalAmount.toLocaleString()}
                                   </td>
-                                  {/* <td></td> */}
                                 </tr>
 
-                                {expandedVoucher === voucher.voucherNo && (
-                                  <>
-                                    <tr>
-                                      <td colSpan="6">
-                                        <table className="table table-bordered text-center">
-                                          <thead>
-                                            <tr>
-                                              <th scope="col">Voucher No</th>
-                                              <th scope="col">
-                                                Voucher Expense Date
-                                              </th>
-                                              <th scope="col">Expense Head</th>
-                                              <th scope="col">Narration</th>
-                                              <th scope="col">Amount</th>
-                                              <th scope="col">Action</th>
+                                {(expandedVoucher === voucher.voucherNo || showAll) && !hideAll && (
+                                  <tr>
+                                    <td colSpan="6">
+                                      <table className="table table-bordered text-center">
+                                        <thead>
+                                          <tr>
+                                            <th scope="col">Voucher No</th>
+                                            <th scope="col">Voucher Expense Date</th>
+                                            <th scope="col">Expense Head</th>
+                                            <th scope="col">Narration</th>
+                                            <th scope="col">Amount</th>
+                                            <th scope="col">Action</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {voucher.expenses.map((expense) => (
+                                            <tr key={expense.id}>
+                                              <td>{expense.voucherNo || "N/A"}</td>
+                                              <td>{expense.voucherDate || "N/A"}</td>
+                                              <td>{expense.expenseHead || "N/A"}</td>
+                                              <td>{expense.narration || "N/A"}</td>
+                                              <td>{expense.amount || "N/A"}</td>
+                                              <td>
+                                                <Link
+                                                  to={"/edit-expenses"}
+                                                  className="btn btn-warning btn-sm me-2"
+                                                >
+                                                  <i className="fas fa-edit"></i>
+                                                </Link>
+                                                <button
+                                                  onClick={() => handleDelete(expense.id)}
+                                                  className="btn btn-danger btn-sm"
+                                                >
+                                                  <i className="fas fa-trash"></i>
+                                                </button>
+                                              </td>
                                             </tr>
-                                          </thead>
-                                          <tbody>
-                                            {voucher.expenses.map((expense) => (
-                                              <tr key={expense.id}>
-                                                <td>
-                                                  {expense.voucherNo || "N/A"}
-                                                </td>
-                                                <td>
-                                                  {expense.voucherDate || "N/A"}
-                                                </td>
-                                                <td>
-                                                  {expense.expenseHead || "N/A"}
-                                                </td>
-                                                <td>
-                                                  {expense.narration || "N/A"}
-                                                </td>
-                                                <td>
-                                                  {expense.amount || "N/A"}
-                                                </td>
-                                                <td>
-                                                  <Link
-                                                    to={"/edit-expenses"}
-                                                    className="btn btn-warning btn-sm me-2"
-                                                  >
-                                                    <i className="fas fa-edit"></i>
-                                                  </Link>
-                                                  <button
-                                                    onClick={() =>
-                                                      handleDelete(expense.id)
-                                                    }
-                                                    className="btn btn-danger btn-sm"
-                                                  >
-                                                    <i className="fas fa-trash"></i>
-                                                  </button>
-                                                </td>
-                                              </tr>
-                                            ))}
-                                          </tbody>
-                                        </table>
-                                      </td>
-                                    </tr>
-                                  </>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
                                 )}
                               </React.Fragment>
                             ))}
                           </tbody>
                         </table>
+                      </div>
+                      <div className="d-flex justify-content-start ">
+                        <h6>
+                          <strong>Grand Total: </strong>
+                          {grandTotal.toLocaleString()}
+                        </h6>
                       </div>
                     </>
                   )}

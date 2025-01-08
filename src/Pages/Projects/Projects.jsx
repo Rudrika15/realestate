@@ -4,19 +4,17 @@ import Topbar from "../../Components/Topbar/Topbar";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import axios from "axios";
+import { getProject } from "../../Api/ApiDipak";
 
 const Projects = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const staticData = [
-    { id: 1, projectName: "Shiv", totalUnits: 5 },
-    { id: 2, projectName: "Demo", totalUnits: 3 },
-  ];
-
-  const [data, setData] = useState(
-    staticData.sort((a, b) => a.projectName.localeCompare(b.projectName))
-  );
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -25,6 +23,54 @@ const Projects = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+        console.log("Token:", token);
+
+        const response = await axios.get(getProject, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log("API Response:", response.data);
+
+        if (response.data.status === true && response.data.data) {
+          setData(response.data.data);
+        } else {
+          console.error("Projects data not found in the response.");
+        }
+      } catch (error) {
+        if (error.response) {
+          console.error("Error response:", error.response.data);
+        } else if (error.request) {
+          console.error("Error request:", error.request);
+        } else {
+          console.error("Error message:", error.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentData = data.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleClick = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -55,7 +101,6 @@ const Projects = () => {
       </Helmet>
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
-
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
           <Topbar
             toggleSidebar={toggleSidebar}
@@ -68,7 +113,7 @@ const Projects = () => {
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
-                    <div className="p-2 ">
+                    <div className="p-2">
                       <h6 className="mb-4">Projects</h6>
                     </div>
                     <div className="p-2">
@@ -80,25 +125,27 @@ const Projects = () => {
                     </div>
                   </div>
 
-                  {data.length > 0 ? (
+                  {loading ? (
+                    <div className="text-center">
+                      <div className="spinner-border" role="status"></div>
+                    </div>
+                  ) : currentData.length > 0 ? (
                     <div className="table-responsive">
                       <table className="table table-bordered text-center">
                         <thead>
                           <tr>
+                            <th scope="col">Project Id</th>
                             <th scope="col">Project Name</th>
                             <th scope="col" className="w-25">
-                              Total Units
-                            </th>
-                            <th scope="col " className="w-25">
                               Action
                             </th>
                           </tr>
                         </thead>
                         <tbody>
-                          {data.map((project) => (
+                          {currentData.map((project) => (
                             <tr key={project.id}>
+                              <td>{project.id}</td>
                               <td>{project.projectName}</td>
-                              <td>{project.totalUnits}</td>
                               <td>
                                 <Link
                                   to="/unit"
@@ -113,26 +160,69 @@ const Projects = () => {
                                   <i className="fas fa-edit"></i>
                                 </Link>
 
-                                <Link
-                                  to=""
+                                <button
                                   type="button"
                                   className="btn btn-danger btn-sm me-2"
                                   onClick={() => handleClick(project.id)}
                                 >
                                   <i className="fas fa-trash"></i>
-                                </Link>
+                                </button>
                                 <Link
                                   to="/project-stage"
-                                  type="button"
                                   className="btn btn-secondary btn-sm"
                                 >
-                                  <i class="bi bi-bar-chart"></i>
+                                  <i className="bi bi-bar-chart"></i>
                                 </Link>
                               </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
+                      <nav aria-label="Page navigation">
+                        <ul className="pagination justify-content-end">
+                          <li
+                            className={`page-item ${
+                              currentPage === 1 ? "disabled" : ""
+                            }`}
+                          >
+                            <button
+                              className="page-link"
+                              onClick={() => handlePageChange(currentPage - 1)}
+                            >
+                              &laquo; Previous
+                            </button>
+                          </li>
+
+                          {Array.from({ length: totalPages }, (_, i) => (
+                            <li
+                              key={i + 1}
+                              className={`page-item ${
+                                currentPage === i + 1 ? "active" : ""
+                              }`}
+                            >
+                              <button
+                                className="page-link"
+                                onClick={() => handlePageChange(i + 1)}
+                              >
+                                {i + 1}
+                              </button>
+                            </li>
+                          ))}
+
+                          <li
+                            className={`page-item ${
+                              currentPage === totalPages ? "disabled" : ""
+                            }`}
+                          >
+                            <button
+                              className="page-link"
+                              onClick={() => handlePageChange(currentPage + 1)}
+                            >
+                              Next &raquo;
+                            </button>
+                          </li>
+                        </ul>
+                      </nav>
                     </div>
                   ) : (
                     <div className="text-center">
