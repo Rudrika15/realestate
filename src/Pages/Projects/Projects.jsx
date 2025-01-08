@@ -29,7 +29,7 @@ const Projects = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        console.log("Token:", token);
+        // console.log("Token:", token);
 
         const response = await axios.get(getProject, {
           headers: {
@@ -38,7 +38,7 @@ const Projects = () => {
           },
         });
 
-        console.log("API Response:", response.data);
+        // console.log("API Response:", response.data);
 
         if (response.data.status === true && response.data.data) {
           setData(response.data.data);

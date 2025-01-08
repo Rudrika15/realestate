@@ -125,92 +125,63 @@ const AddProjects = () => {
       return;
     }
 
-      setLoading(true);
-      try {
-        const token = localStorage.getItem("token");
-        console.log(token);
-        const formData = new FormData();
-        formData.append("projectName", projectName);
-        formData.append("unit", unit[0]);
+    setLoading(true);
 
-        const response = await axios.post(
-          storeProject,
-          { projectName, unit },
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-         console.log("response", response);
-        if (response.status === 200) {
-          toast.success("Project and units added successfully");
-          setProjectName("");
-          files.current.value = null;
-          setUnit(null);
-          setError({});
-          setLoading(false);
-
-          navigate("/projects");
-        }
-      } catch (error) {
-        console.error("Error submitting project:", error);
-
-        if (error.response) {
-          console.error("Error response:", error.response.data);
-        }
-
-        if (error.response && error.response.status === 401) {
-          navigate("/");
-          toast.error("Session expired. Please log in again.");
-        } else {
-          toast.error("An error occurred. Please try again later.");
-        }
-     setLoading(false);
-
+    try {
+      const token = localStorage.getItem("token");
+      console.log("Token from localStorage:", token);  // Check if the token exists
+  
+      if (!token) {
+        toast.error("Authentication failed. No token provided.");
+        setLoading(false);
+        return;  
       }
-
-    // try {
-    //   const token = localStorage.getItem("token");
-
-    //   const formData = new FormData(); // Create a new FormData object
-
-    //   // Append the data to the FormData
-    //   formData.append("projectName", projectName);
-    //   formData.append("unit", unit[0]); // Append the unit file
-
-    //   // Send the data using FormData
-    //   const response = await axios.post(storeProject, formData, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //       "Content-Type": "multipart/form-data", // Content type for file uploads
-    //     },
-    //   });
-
-    //   if (response.status === 200) {
-    //     toast.success("Project and units added successfully");
-    //     setProjectName(""); // Reset the form
-    //     files.current.value = null;
-    //     setUnit(null);
-    //     setError({});
-    //     setLoading(false);
-    //     navigate("/projects"); // Redirect to projects page after successful submission
-    //   }
-    // } catch (error) {
-    //   console.error("Error submitting project:", error);
-    //   setLoading(false);
-
-    //   if (error.response && error.response.status === 401) {
-    //     navigate("/"); // Redirect to login if session expired
-    //     toast.error("Session expired. Please log in again.");
-    //   } else {
-    //     toast.error("An error occurred. Please try again later.");
-    //   }
-    // }
-  };
+  
+      
+      const formData = new FormData();
+      formData.append("project_name", projectName);
+      formData.append("file", unit[0]);
+  
+      const response = await axios.post(
+        storeProject,
+        formData,  // Send the formData as the body
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+      console.log("response", response);
+  
+      if (response.status === 200) {
+        toast.success("Project and units added successfully");
+        setProjectName("");
+        files.current.value = null;
+        setUnit(null);
+        setError({});
+        setLoading(false);
+  
+        navigate("/projects");  
+      }
+    } catch (error) {
+      console.error("Error submitting project:", error);
+  
+      if (error.response) {
+        console.error("Error response:", error.response.data);
+      }
+  
+      if (error.response && error.response.status === 401) {
+        navigate("/");  
+        toast.error("Session expired. Please log in again.");
+      } else {
+        toast.error("An error occurred. Please try again later.");
+      }
+  
+      setLoading(false);
+    }
+    };
 
   return (
     <>
