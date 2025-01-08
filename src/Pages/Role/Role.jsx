@@ -6,7 +6,7 @@ import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
-import { DeleteRole, ViewRoleData } from "../../Api/Apikiran";
+import { DeleteRole, PermissionFetch, ViewRoleData } from "../../Api/Apikiran";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -20,20 +20,20 @@ const Role = () => {
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState([]);
   const [role_name, setRole_Name] = useState([]);
-  
+  const [permissions, setPermissions] = useState([]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
   const toggleTopbar = () => {
-    setIsTopbarOpen(!isTopbarOpen); 
+    setIsTopbarOpen(!isTopbarOpen);
   };
 
   const getData = async () => {
     try {
       const token = localStorage.getItem("token");
-      console.log("ViewRoleData"); // Check the API endpoint
+      console.log("ViewRoleData");
       const res = await axios.get(ViewRoleData, {
         params: { page: currentPage },
         headers: {
@@ -57,54 +57,79 @@ const Role = () => {
   };
 
   useEffect(() => {
-    getData(); 
-  },[]);
+    getData();
+  }, []);
+  const fetchPermission = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      console.log("Token: ", token);
+
+      const response = await axios.get(`${PermissionFetch}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.data.status === true) {
+        console.log("Permissions data:", response.data.data);
+        setPermissions(response.data.data);
+      } else {
+        toast.error("Failed to fetch permission data!");
+      }
+    } catch (error) {
+      console.error("Error fetching permission:", error);
+      toast.error("Error fetching permission.");
+    }
+  };
+
+  useEffect(() => {
+    fetchPermission();
+  }, []);
 
   const handleDelete = async (id) => {
     const confirmDelete = await Swal.fire({
-        title: 'Are You Sure You Want to Delete?',
-        text: 'Once you delete, all the data related to this user will be deleted.',
-        icon: 'error',
-        showCancelButton: true,
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#c4c4c4',
-        customClass: {
-            title: 'swal-title',
-            text: 'swal-text',
-            confirmButton: 'swal-confirm-btn',
-            cancelButton: 'swal-cancel-btn',
-        },
+      title: "Are You Sure You Want to Delete?",
+      text: "Once you delete, all the data related to this user will be deleted.",
+      icon: "error",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#c4c4c4",
+      customClass: {
+        title: "swal-title",
+        text: "swal-text",
+        confirmButton: "swal-confirm-btn",
+        cancelButton: "swal-cancel-btn",
+      },
     });
 
     if (confirmDelete.isConfirmed) {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.delete(`${DeleteRole}/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${DeleteRole}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-            if (response.data.status === true) {
-                Swal.fire({
-                    title: 'Deleted!',
-                    text: 'The Role has been deleted.',
-                    icon: 'success',
-                    confirmButtonColor: '#3085d6',
-                });
-                setRole(role_name.filter((item) => item.id !== id));
-            } else {
-                toast.error('Failed to delete role!');
-            }
-        } catch (error) {
-            console.error("Error deleting role:", error);
-            toast.error('An error occurred while deleting the role!');
+        if (response.data.status === true) {
+          Swal.fire({
+            title: "Deleted!",
+            text: "The Role has been deleted.",
+            icon: "success",
+            confirmButtonColor: "#3085d6",
+          });
+          setRole(role_name.filter((item) => item.id !== id));
+        } else {
+          toast.error("Failed to delete role!");
         }
+      } catch (error) {
+        console.error("Error deleting role:", error);
+        toast.error("An error occurred while deleting the role!");
+      }
     }
-};
-
+  };
 
   return (
     <>
@@ -155,19 +180,32 @@ const Role = () => {
                               <td>
                                 <select
                                   className="form-select"
-                                  value={user.permission}
+                                  value={user.permission || ""} 
                                   onChange={(e) => {
                                     const updatedData = data.map((u) =>
                                       u.id === user.id
-                                        ? { ...u, permission: e.target.value }
+                                        ? { ...u, permission: e.target.value } 
                                         : u
                                     );
-                                    setData(updatedData);
+                                    setData(updatedData); 
                                   }}
                                 >
-                                  <option value="Admin">Admin</option>
-                                  <option value="Editor">Editor</option>
-                                  <option value="Viewer">Viewer</option>
+                                  <option value="" disabled>Select Permission</option>
+                                  {permissions.length > 0 ? (
+                                    permissions.map((permission) => (
+                                      <option
+                                        key={permission.id}
+                                        value={permission.id}
+                                      >
+                                        {permission.permissionName}{" "}
+                                      
+                                      </option>
+                                    ))
+                                  ) : (
+                                    <option value="" disabled>
+                                      No Permissions Available
+                                    </option>
+                                  )}
                                 </select>
                               </td>
                               <td>
@@ -175,7 +213,7 @@ const Role = () => {
                                   to="/edit-role"
                                   className="btn btn-warning btn-sm me-2"
                                 >
-                                   <i className="fas fa-edit"></i>
+                                  <i className="fas fa-edit"></i>
                                 </Link>
                                 <Link
                                   onClick={() => handleDelete(user.id)}
