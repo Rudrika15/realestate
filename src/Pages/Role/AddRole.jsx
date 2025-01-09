@@ -158,13 +158,11 @@ function AddRole() {
                         )}
                       </div>
                     </div>
-                    <div className="table-responsive">
-                      <table className="table mt-4">
-                        <tbody>
-                          {permissions && permissions.length > 0 ? (
+                    <div className="container-fluid">
+                      <div className="row">
+                      {permissions && permissions.length > 0 ? (
                             permissions.map((permission) => (
-                              <tr key={permission.id}>
-                                <td>
+                                <div  key={permission.id} className="col-md-3">
                                   <div className="form-check">
                                     <input
                                       type="checkbox"
@@ -184,16 +182,14 @@ function AddRole() {
                                       {permission.permissionName}
                                     </label>
                                   </div>
-                                </td>
-                              </tr>
+                                </div>
                             ))
                           ) : (
-                            <tr>
-                              <td colSpan="2">No permissions available</td>
-                            </tr>
+                            <div>
+                              <span colSpan="2">No permissions available</span>
+                            </div>
                           )}
-                        </tbody>
-                      </table>
+                      </div>
                     </div>
 
                     <div className="mt-4">

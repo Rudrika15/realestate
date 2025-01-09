@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { DeleteRole, PermissionFetch, ViewRoleData } from "../../Api/Apikiran";
 import axios from "axios";
 import Swal from "sweetalert2";
+// import { ViewRoleData } from "../../Api/Apikiran";
 
 const Role = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
