@@ -5,9 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Helmet } from "react-helmet";
-import { Spinner } from "react-bootstrap";
+import { Modal, Spinner } from "react-bootstrap";
 import axios from "axios";
-import { getProject, getProjectWiseUnit } from "../../Api/DevanshiApi";
+import { getBroker, getProject, getProjectWiseUnit } from "../../Api/DevanshiApi";
 
 function Booking() {
   const [projectName, setProjectName] = useState("");
@@ -89,13 +89,62 @@ function Booking() {
   const paymentFrequencyRef = useRef(null);
   const dueDateRef = useRef(null);
   const amountRef = useRef(null);
-
+  const brokerNameRef = useRef(null);
+  const brokerAddressRef = useRef(null);
+  const brokerContactRef = useRef(null);
+  const modalSubmitRef = useRef(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
+  const [brokers, setBrokers] = useState([]);
+  const [brokerName, setBrokerName] = useState("");
+  const [brokerContact, setBrokerContact] = useState("");
+  const [brokerAddress, setBrokerAddress] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const remainingAmount = saleAmount - tokenAmount - downPayment;
   const installmentAmount = remainingAmount / noOfInstallment;
+
+  const handleSelectChange = (event) => {
+    const selectedValue = event.target.value;
+    setSelectedOption(selectedValue);
+    if (selectedValue === "addBroker") {
+      setModalType("Add Broker");
+      setShowModal(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedOption("");
+    setBrokerName("");
+    setBrokerContact("");
+    setBrokerAddress("");
+  };
+
+  const fetchBroker = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${getBroker}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.status === true) {
+        setBrokers(response.data.data);
+      } else {
+        toast.error('Failed to fetch Broker data!');
+      }
+    } catch (error) {
+      console.error('Error fetching broker:', error);
+      toast.error('Error fetching broker!');
+    } finally {
+      setLoading(false);
+    }
+  };  
 
   const [rows, setRows] = useState([
     { downPayment: "", downPaymentDate: "" },
@@ -529,14 +578,13 @@ function Booking() {
         setProjects(response.data.data);
         if (projects.length > 0) {
           const selectedProjectId = projects[0].id;
-          fetchUnit(selectedProjectId); 
+          fetchUnit(selectedProjectId);
         }
       } else {
         console.error("Failed to fetch peoject data!");
       }
     } catch (error) {
       console.error("Error fetching peojects:", error);
-      toast.error("Error fetching peojects!");
     }
   };
 
@@ -563,7 +611,6 @@ function Booking() {
       }
     } catch (error) {
       console.error("Error fetching Units:", error);
-      toast.error("Error fetching Units!");
     }
   };
 
@@ -606,6 +653,84 @@ function Booking() {
                   <form onSubmit={handleSubmit}>
                     <p class="text-dark fs-5">Project Details</p>
                     <div className="row">
+                      <div className="col">
+                        <select
+                          className={`form-control bg-white`}
+                          value={selectedOption}
+                          onChange={handleSelectChange}
+                        >
+                          <option value="">Select a Broker</option>
+                          <option value="addBroker">Add Broker</option>
+                          {brokers.map((broker) => (
+                            <option key={broker.id} value={broker.id}>
+                              {broker.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="col"></div>
+                    </div>
+                    {/* <Modal show={showModal} onHide={handleCloseModal} dialogClassName="custom-modal">
+                      <Modal.Header closeButton className="d-flex justify-content-center">
+                        <Modal.Title className="w-100 text-center">{modalType} Broker</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <div className="row pt-4">
+                          <div className="col position-relative">
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="name"
+                              placeholder="Name"
+                              name="name"
+                              ref={brokerNameRef}
+                              onKeyDown={(e) => handleEnter(e, brokerContactRef)}
+                              value={brokerName}
+                              onChange={(e) => setBrokerName(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className="row pt-4">
+                          <div className="col position-relative">
+                            <input
+                              type="number"
+                              className="form-control"
+                              id="contact"
+                              placeholder="Contact No"
+                              name="contact"
+                              ref={brokerContactRef}
+                              value={brokerContact}
+                              onKeyDown={(e) => handleEnter(e, brokerAddressRef)}
+                              onChange={(e) => setBrokerContact(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className="row pt-4">
+                          <div className="col position-relative">
+                            <textarea
+                              className="form-control"
+                              placeholder="Address"
+                              id="floatingTextarea"
+                              value={brokerAddress}
+                              ref={brokerAddressRef}
+                              onKeyDown={(e) => handleEnter(e, modalSubmitRef)}
+                              onChange={(e) => setBrokerAddress(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                      </Modal.Body>
+                      <Modal.Footer className="d-flex justify-content-center">
+                        <button
+                          type="button"
+                          className="btn btn-secondary w-25"
+                          onClick={handleSubmitBroker}
+                          ref={modalSubmitRef}
+                        >
+                          Submit
+                        </button>
+                      </Modal.Footer>
+                    </Modal> */}
+                    <div className="row pt-4">
                       <div className="col">
                         <select
                           className={`form-control bg-white ${projectError ? "is-invalid" : ""}`}

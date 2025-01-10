@@ -91,7 +91,6 @@ const ViewBooking = () => {
       }
     } catch (error) {
       console.error("Error fetching peojects:", error);
-      toast.error("Error fetching peojects!");
     }
   };
 

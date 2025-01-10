@@ -21,15 +21,12 @@ code {
 }
 .accept-btn {
   background-color: #f0e4ee;
-  /* width: 10px; */
 }
 .reject-btn {
   background-color: #e4edd1;
-  /* width: 10px; */
 }
 .view-btn {
   background-color: #ccdedc;
-  /* width: 10px; */
 }
 .form-check-input {
   width: 20px;
@@ -73,6 +70,9 @@ code {
 .custom-modal {
   max-width: 600px;
 }
+.custom1-modal {
+  max-width: 600px;
+}
 .icon-3 {
   position: absolute;
   right: 3.5rem;
@@ -102,3 +102,9 @@ code {
 .table {
   min-width: 1500px;
 } */
+.icon-10 {
+  font-size: 1rem;
+  vertical-align: middle; 
+  cursor: pointer;
+  color: black;
+}
