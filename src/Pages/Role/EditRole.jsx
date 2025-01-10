@@ -34,7 +34,7 @@ function EditRole() {
       });
       if (response.data.status === true) {
         console.log("role data:", response.data.data);
-        setRole_name(response.data.data.role_name);
+        setRole_name(response.data.role_name);
       } else {
         toast.error("Failed to fetch permission data!");
       }
@@ -160,6 +160,7 @@ function EditRole() {
                           onKeyDown={(e) => handleEnter(e, null)}
                           onChange={handleRolenameChange}
                         />
+                        {console.log("Current role_name: ", role_name)}
                         {role_nameerror && (
                           <div className="invalid-feedback">
                             Role name is required.

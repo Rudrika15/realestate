@@ -9,7 +9,8 @@ export const PermissionFetch = baseUrl + "v1/permissions/get-permission";
 export const ViewRoleData = baseUrl + "v1/roles/get-role";
 export const  EditRoleData = baseUrl + "v1/roles/get-role";
 export const updateRole =  baseUrl + "v1/roles/update-role";
-
+export const AddPermissions = baseUrl + "v1/permissions/store-permission";
+export const RoleAndPermission = baseUrl + "v1/roles-permissions/store-role-permission";
 
 
 

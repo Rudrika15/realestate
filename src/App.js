@@ -39,6 +39,7 @@ import EditIncome from "./Pages/Income/EditIncome";
 import EditProjects from "./Pages/Projects/EditProjects";
 import ProjectStage from "./Pages/Projects/ProjectStage";
 import AddProjectStage from "./Pages/Projects/AddProjectStage";
+import AddNewPermission from "./Pages/Permission/AddNewPermission";
 
 const App = () => {
   return (
@@ -71,6 +72,7 @@ const App = () => {
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />
+          <Route path="/addnewpermission" element={<AddNewPermission/>}/>
           <Route path="/add-projects" element={<AddProjects />} />
           <Route path="/edit-projects" element={<EditProjects />} />
           <Route path="/unit" element={<Unit />} />

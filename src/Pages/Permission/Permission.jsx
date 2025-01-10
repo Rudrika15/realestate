@@ -26,7 +26,6 @@ function Permission() {
     setIsTopbarOpen(!isTopbarOpen);
   };
 
-  
   const fetchPermission = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -49,7 +48,6 @@ function Permission() {
       toast.error("Error fetching permission.");
     }
   };
-
 
   const handleCheckboxChange = (id) => {
     setPermissions((prevPermissions) =>
@@ -89,9 +87,16 @@ function Permission() {
                       <h6 className="mb-4">Permission</h6>
                     </div>
                     <div className="p-2">
-                      <Link to="/role" className="">
+                      <Link to="/addnewpermission" className="">
                         <h6 className="mb-4">
-                          <i className="bi bi-arrow-left-circle-fill"></i> Back
+                          <button
+                            type="submit"
+                            className="btn btn-primary"
+                            disabled={loading}
+                          >                          
+                              Add Permission
+                            
+                          </button>
                         </h6>
                       </Link>
                     </div>
@@ -101,28 +106,24 @@ function Permission() {
                     <table className="table table-bordered mt-4">
                       <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Option</th>
+                          <th>Name</th>
+                          <th>Option</th>
                         </tr>
                       </thead>
                       <tbody>
                         {permissions.map((permission) => (
                           <tr key={permission.id}>
+                            <td>{permission.permissionName}</td>
                             <td>
-                                 {permission.permissionName}
-                               </td>
-                               <td>
-                                <Link class="btn btn-warning btn-sm me-2">
+                              <Link class="btn btn-warning btn-sm me-2">
                                 <i className="bi bi-pen"></i>
-                                </Link>
-                               </td>
-
+                              </Link>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
-
                 </div>
               </div>
             </div>
