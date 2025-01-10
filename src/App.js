@@ -39,12 +39,10 @@ import EditIncome from "./Pages/Income/EditIncome";
 import EditProjects from "./Pages/Projects/EditProjects";
 import ProjectStage from "./Pages/Projects/ProjectStage";
 import AddProjectStage from "./Pages/Projects/AddProjectStage";
-<<<<<<< HEAD
 import Broker from "./Pages/Broker/Broker";
 import Modal from "./Components/Modal/Modal";
-=======
 import AddNewPermission from "./Pages/Permission/AddNewPermission";
->>>>>>> 4fc0769a61c126a044baf40dfa484d4c0ac349b6
+
 
 const App = () => {
   return (
