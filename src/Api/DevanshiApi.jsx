@@ -8,8 +8,8 @@ export const getSingleUsers = baseUrl + "v1/users/get-users-by-id";
 export const getProject = baseUrl + "v1/projects/get-project";
 export const getProjectWiseUnit = baseUrl + "v1/projects/get-project-unit";
 export const getBroker = baseUrl + "v1/brokers/get-broker";
-export const storeBroker = baseUrl + "v1/brokers/store-broker";
-
+export const addBroker = baseUrl + "v1/brokers/store-broker";
+export const deleteBroker = baseUrl + "v1/brokers/delete-broker";
 
 
 

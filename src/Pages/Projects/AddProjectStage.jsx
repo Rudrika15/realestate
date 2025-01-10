@@ -2,17 +2,18 @@ import React, { useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
+import Multiselect from 'multiselect-react-dropdown';
 
 function AddProjectStage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState([]);
   const [percentage, setPercentage] = useState('');
-  const [wing, setWing] = useState('');
+  const [wing, setWing] = useState([]);
   const [stageDate, setStageDate] = useState('');
   const [titleError, setTitleError] = useState(false);
   const [percentageError, setPercentageError] = useState(false);
@@ -49,17 +50,13 @@ function AddProjectStage() {
       e.preventDefault();
       nextField.current.focus();
     }
-    if (e.key === "Enter" && nextField?.current) {
-      e.preventDefault();
-      handleAdd(e);
-    }
   };
 
   const handleAdd = async (e) => {
     e.preventDefault();
     let isValid = true;
 
-    if (!title) {
+    if (title.length === 0) {
       setTitleError(true);
       isValid = false;
     } else {
@@ -73,7 +70,7 @@ function AddProjectStage() {
       setPercentageError(false);
     }
 
-    if (!wing) {
+    if (wing.length === 0) {
       setWingError(true);
       isValid = false;
     } else {
@@ -112,6 +109,20 @@ function AddProjectStage() {
     }
   };
 
+  const handleMultiSelectChange = (selectedValues, setter, errorSetter) => {
+    setter(selectedValues);
+    if (selectedValues.length > 0) {
+      errorSetter(false);
+    } else {
+      errorSetter(true);
+    }
+  };
+
+  const [rows1, setRows1] = useState([
+    { customerName: "", customerContact: "" },
+  ]);
+
+
   return (
     <>
       <ToastContainer />
@@ -147,27 +158,21 @@ function AddProjectStage() {
                   <form>
                     <div className="row">
                       <div className="col">
-                        <select
-                          className={`form-control bg-white ${titleError ? 'is-invalid' : ''}`}
+                        <input
+                          type="text"
+                          className={`form-control ${titleError ? 'is-invalid' : ''} custom-input`}
+                          placeholder="Title"
                           value={title}
-                          ref={titleRef}
                           onChange={handleFieldChange(setTitle, setTitleError)}
                           onKeyDown={(e) => handleEnter(e, percentageRef)}
-                        >
-                          <option value="" disabled>
-                            Select Title
-                          </option>
-                          <option value="Foundation">Foundation</option>
-                          <option value="RCC">RCC</option>
-                        </select>
-                        {titleError && (
-                          <div className="invalid-feedback">Please select a Title</div>
-                        )}
+                          ref={titleRef}
+                        />
+                        {titleError && <div className="invalid-feedback">Please select a Title</div>}
                       </div>
                       <div className="col">
                         <input
                           type="number"
-                          className={`form-control ${percentageError ? 'is-invalid' : ''}`}
+                          className={`form-control ${percentageError ? 'is-invalid' : ''} custom-input`}
                           placeholder="Percentage"
                           value={percentage}
                           onChange={handleFieldChange(setPercentage, setPercentageError)}
@@ -181,46 +186,46 @@ function AddProjectStage() {
                         )}
                       </div>
                     </div>
-                    <div className="row pt-4">
-                      <div className="col">
-                        <select
-                          className={`form-control bg-white ${wingError ? 'is-invalid' : ''}`}
-                          value={wing}
-                          ref={wingRef}
-                          onChange={handleFieldChange(setWing, setWingError)}
-                          onKeyDown={(e) => handleEnter(e, stageDateRef)}
-                        >
-                          <option value="" disabled>
-                            Select Wing
-                          </option>
-                          <option value="All Wings">All Wings</option>
-                          <option value="A">A</option>
-                          <option value="B">B</option>
-                        </select>
-                        {wingError && (
-                          <div className="invalid-feedback">Please select a Wing</div>
-                        )}
+                    {rows1.map((row, index) => (
+                      <div className="row pt-4" key={`row1-${index}`}>
+                        <div className="col">
+                          <select
+                            className={`form-control bg-white ${wingError ? "is-invalid" : ""}`}
+                            value={wing}
+                            ref={wingRef}
+                            onChange={handleFieldChange}
+                            onKeyDown={(e) => handleEnter(e, stageDateRef)}
+                          >
+                            <option value="" disabled>Wing</option>
+                            <option value="">A</option>
+                            <option value="">B</option>
+                          </select>
+                          {wingError && <div className="invalid-feedback">Please select a Wing</div>}
+                        </div>
+                        <div className="col">
+                          <input
+                            type="text"
+                            className={`form-control ${stageDateError ? 'is-invalid' : ''}custom-input`}
+                            value={formatDate(stageDate)}
+                            onChange={handleFieldChange(setStageDate, setStageDateError)}
+                            onKeyDown={(e) => handleEnter(e, submitRef)}
+                            placeholder="Stage Date"
+                            onFocus={(e) => (e.target.type = 'date')}
+                            onBlur={(e) => (e.target.type = 'text')}
+                            ref={stageDateRef}
+                          />
+                          {index === rows1.length - 1 && (
+                            <i
+                              className="bi bi-plus-circle-fill icon-2"
+                              onClick={() => setRows1([...rows1, { customerName: "", customerContact: "" }])}
+                            ></i>
+                          )}
+                          {stageDateError && (
+                            <div className="invalid-feedback">Please select a Stage Date</div>
+                          )}
+                        </div>
                       </div>
-                      <div className="col">
-                        <input
-                          type="text"
-                          className={`form-control ${stageDateError ? 'is-invalid' : ''}`}
-                          value={formatDate(stageDate)}
-                          onChange={handleFieldChange(setStageDate, setStageDateError)}
-                          onKeyDown={(e) => handleEnter(e, submitRef)}
-                          placeholder="Stage Date"
-                          onFocus={(e) => (e.target.type = 'date')}
-                          onBlur={(e) => (e.target.type = 'text')}
-                          ref={stageDateRef}
-                        />
-                        <i
-                          className="bi bi-plus-circle-fill icon-2"
-                        ></i>
-                        {stageDateError && (
-                          <div className="invalid-feedback">Please select a Stage Date</div>
-                        )}
-                      </div>
-                    </div>
+                    ))}
                     <button
                       type="button"
                       className="btn btn-primary mt-3"

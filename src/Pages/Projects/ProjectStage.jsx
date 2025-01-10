@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 function ProjectStage() {
     const staticData = [
-        { id: 1, Title: "Shiv", Percentage: "10%" },
+        { id: 1, Title: "Shiv", Percentage: "10%", wing: "A", stagedate: "25-12-2024" },
     ];
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -74,6 +74,8 @@ function ProjectStage() {
                                                         <th scope="col">StageId</th>
                                                         <th scope="col" className='w-25'>Title</th>
                                                         <th scope="col">Percentage</th>
+                                                        <th scope="col">Wing</th>
+                                                        <th scope="col">Stage Date</th>
                                                         <th scope="col">Action</th>
                                                     </tr>
                                                 </thead>
@@ -83,6 +85,8 @@ function ProjectStage() {
                                                             <td>{item.id}</td>
                                                             <td>{item.Title}</td>
                                                             <td>{item.Percentage}</td>
+                                                            <td>{item.wing}</td>
+                                                            <td>{item.stagedate}</td>
                                                             <td>
                                                                 <Link to="" className="btn btn-warning btn-sm me-2">
                                                                     <i className="fas fa-edit"></i>

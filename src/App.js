@@ -39,6 +39,8 @@ import EditIncome from "./Pages/Income/EditIncome";
 import EditProjects from "./Pages/Projects/EditProjects";
 import ProjectStage from "./Pages/Projects/ProjectStage";
 import AddProjectStage from "./Pages/Projects/AddProjectStage";
+import Broker from "./Pages/Broker/Broker";
+import Modal from "./Components/Modal/Modal";
 
 const App = () => {
   return (
@@ -64,10 +66,12 @@ const App = () => {
           <Route path="/cash-deposit" element={<CashDeposit />}></Route>
           <Route path="/cheque-deposit" element={<ChequeDeposit />}></Route>
           <Route path="/booking" element={<Booking />}></Route>
+          <Route path="/modal" element={<Modal />}></Route>
           <Route
             path="/cancelled-booking"
             element={<CancelledBooking />}
           ></Route>
+          <Route path="/broker" element={<Broker />}></Route>
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />

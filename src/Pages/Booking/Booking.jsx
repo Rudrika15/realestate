@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Helmet } from "react-helmet";
 import { Modal, Spinner } from "react-bootstrap";
 import axios from "axios";
-import { getBroker, getProject, getProjectWiseUnit } from "../../Api/DevanshiApi";
+import { addBroker, getBroker, getProject, getProjectWiseUnit } from "../../Api/DevanshiApi";
 
 function Booking() {
   const [projectName, setProjectName] = useState("");
@@ -98,7 +98,10 @@ function Booking() {
   const [selectedOption, setSelectedOption] = useState("");
   const [brokers, setBrokers] = useState([]);
   const [brokerName, setBrokerName] = useState("");
-  const [brokerContact, setBrokerContact] = useState("");
+  const [brokerNameError, setbrokerNameError] = useState("");
+  const [brokerContactError, setbrokerContactError] = useState("");
+  const [brokerAddressError, setbrokerAddressError] = useState("");
+  const [brokerMobileNumber, setbrokerMobileNumber] = useState("");
   const [brokerAddress, setBrokerAddress] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
@@ -120,7 +123,7 @@ function Booking() {
     setShowModal(false);
     setSelectedOption("");
     setBrokerName("");
-    setBrokerContact("");
+    setbrokerMobileNumber("");
     setBrokerAddress("");
   };
 
@@ -140,11 +143,79 @@ function Booking() {
       }
     } catch (error) {
       console.error('Error fetching broker:', error);
-      toast.error('Error fetching broker!');
     } finally {
       setLoading(false);
     }
-  };  
+  };
+
+  const storeBroker = async (e) => {
+    e.preventDefault();
+    let isValid = true;
+
+    if (!brokerName) {
+      setbrokerNameError(true);
+      isValid = false;
+    } else {
+      setbrokerNameError(false);
+    }
+
+    if (!brokerAddress) {
+      setbrokerAddressError(true);
+      isValid = false;
+    } else {
+      setbrokerAddressError(false);
+    }
+
+    if (!brokerMobileNumber) {
+      setbrokerMobileNumber(true);
+      isValid = false;
+    } else {
+      setbrokerMobileNumber(false);
+    }
+
+    if (!isValid) return;
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      console.log(token);
+      const response = await axios.post(
+        addBroker,
+        {
+          brokerName,
+          brokerMobileNumber,
+          brokerAddress
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const result = response.data;
+      if (result.status) {
+        setBrokers((prevBrokers) => [
+          ...prevBrokers,
+          {
+            id: result.data.id,
+            brokerName: result.data.brokerName,
+            brokerAddress: result.data.brokerAddress,
+            brokerMobileNumber: result.data.brokerMobileNumber,
+          },
+        ]);
+        setBrokerName('');
+        setbrokerMobileNumber('');  
+        setBrokerAddress('');
+        handleCloseModal()  
+      } else {
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error adding broker:', error);
+    }
+  };
+
 
   const [rows, setRows] = useState([
     { downPayment: "", downPaymentDate: "" },
@@ -596,15 +667,12 @@ function Booking() {
         window.location.href = '/';
         return;
       }
-      console.log('Token:', token);
       const response = await axios.get(`${getProjectWiseUnit}/${projectId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       if (response.data.status === true) {
-        console.log(response.data.status);
-        console.log(response.data.data);
         setUnit(response.data.data);
       } else {
         console.error("Failed to fetch Unit data!");
@@ -617,6 +685,7 @@ function Booking() {
   useEffect(() => {
     fetchProject();
     fetchUnit();
+    fetchBroker();
   }, []);
 
   return (
@@ -655,7 +724,7 @@ function Booking() {
                     <div className="row">
                       <div className="col">
                         <select
-                          className={`form-control bg-white`}
+                          className="form-control bg-white"
                           value={selectedOption}
                           onChange={handleSelectChange}
                         >
@@ -663,14 +732,14 @@ function Booking() {
                           <option value="addBroker">Add Broker</option>
                           {brokers.map((broker) => (
                             <option key={broker.id} value={broker.id}>
-                              {broker.name}
+                              {broker.brokerName}
                             </option>
                           ))}
                         </select>
                       </div>
                       <div className="col"></div>
                     </div>
-                    {/* <Modal show={showModal} onHide={handleCloseModal} dialogClassName="custom-modal">
+                    <Modal show={showModal} onHide={handleCloseModal} dialogClassName="custom-modal">
                       <Modal.Header closeButton className="d-flex justify-content-center">
                         <Modal.Title className="w-100 text-center">{modalType} Broker</Modal.Title>
                       </Modal.Header>
@@ -695,13 +764,13 @@ function Booking() {
                             <input
                               type="number"
                               className="form-control"
-                              id="contact"
-                              placeholder="Contact No"
-                              name="contact"
+                              id="Mobile Number"
+                              placeholder="Mobile Number"
+                              name="Mobile Number"
                               ref={brokerContactRef}
-                              value={brokerContact}
+                              value={brokerMobileNumber}
                               onKeyDown={(e) => handleEnter(e, brokerAddressRef)}
-                              onChange={(e) => setBrokerContact(e.target.value)}
+                              onChange={(e) => setbrokerMobileNumber(e.target.value)}
                             />
                           </div>
                         </div>
@@ -723,13 +792,13 @@ function Booking() {
                         <button
                           type="button"
                           className="btn btn-secondary w-25"
-                          onClick={handleSubmitBroker}
+                          onClick={storeBroker}
                           ref={modalSubmitRef}
                         >
                           Submit
                         </button>
                       </Modal.Footer>
-                    </Modal> */}
+                    </Modal>
                     <div className="row pt-4">
                       <div className="col">
                         <select
