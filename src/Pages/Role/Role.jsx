@@ -96,7 +96,7 @@ const Role = () => {
       confirmButtonText: "Delete",
       cancelButtonText: "Cancel",
       confirmButtonColor: "#d33",
-      cancelButtonColor: "#c4c4c4",
+      cancelButtonColor: "#c4c4c4", 
       customClass: {
         title: "swal-title",
         text: "swal-text",
