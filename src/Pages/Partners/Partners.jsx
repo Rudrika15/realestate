@@ -98,11 +98,12 @@ const Partners = () => {
                       <table className="table table-bordered text-center">
                         <thead>
                           <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col" className="w-25">
+                            <th scope=" col">Project Name</th>
+                            <th scope="col">Partners Name</th>
+                            <th scope="col" className="w-20">
                               Percentage
                             </th>
-                            <th scope="col" className="w-25">
+                            <th scope="col" className="w-20">
                               Action
                             </th>
                           </tr>
@@ -110,7 +111,8 @@ const Partners = () => {
                         <tbody>
                           {partners.map((partner) => (
                             <tr key={partner.id}>
-                              <td>{partner.name}</td>
+                              <td>Shiv</td>
+                              <td>{partner.name}1</td>
                               <td>{partner.percentage}</td>
                               <td>
                                 <button
