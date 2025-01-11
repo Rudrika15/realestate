@@ -2,103 +2,185 @@ import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import { addPartner, getProject } from "../../Api/ApiDipak";
 
 function AddPartners() {
-  const [selectproject, setselectproject] = useState("");
-  const [partners, setPartners] = useState([{ name: "", percentage: "" }]);
-  const [error, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-  
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectProject, setSelectProject] = useState("");
+  const [name, setName] = useState("");
+  const [percentage, setPercentage] = useState("");
+  const [error, setError] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  const selectProjectRef = useRef(null);
+  const nameRef = useRef(null);
+  const percentageRef = useRef(null);
+  const submitRef = useRef(null);
 
   const navigate = useNavigate();
 
-  const selectprojectRef = useRef(null);
-  const nameRef = useRef(null);
-  const partnersRef = useRef(null);
-  const submitRef = useRef(null);
-
-  useEffect(() => {
-    selectprojectRef.current.focus();
-  }, []);
-
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-  const handleEnter = (e, nextField) => {
-    if (e.key === "Enter" && nextField.current) {
-      e.preventDefault();
-      nextField.current.focus();
+  const validateForm = () => {
+    const errors = {};
+
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!name.trim()) {
+      errors.name = "Name is required.";
+    } else if (!nameRegex.test(name.trim())) {
+      errors.name = "Name must only contain letters.";
     }
-  };
-
-  const handleInputChange = (index, e) => {
-    const updatedPartners = [...partners];
-    updatedPartners[index][e.target.name] = e.target.value;
-    setPartners(updatedPartners);
-
-    const updatedErrors = { ...error };
-    delete updatedErrors[`${e.target.name}${index}`];
-    setErrors(updatedErrors);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    let isValid = true;
-    const validationError = {};
-
-    if (!selectproject) {
-      validationError.selectproject = "Please select a project.";
-      isValid = false;
+    if (!selectProject) {
+      errors.selectProject = "Project is required.";
+    }
+    if (!percentage) {
+      errors.percentage = "Percentage is required.";
+    } else if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+      errors.percentage = "Percentage must be a number between 0 and 100.";
     }
 
-    partners.forEach((partner, index) => {
-      if (!partner.name) {
-        validationError[`name${index}`] = "Please enter Name for partner";
-        isValid = false;
-      }
+    return errors;
+  };
 
-      if (!/^[A-Za-z ]+$/.test(partner.name)) {
-        validationError[`name${index}`] = "Name for partner can only contain letters and spaces";
-        isValid = false;
-      }
+  const handleInputChange = (e, field) => {
+    const value = e.target.value;
 
-      if (!partner.percentage) {
-        validationError[`percentage${index}`] = "Please enter Percentage for partner";
-        isValid = false;
-      }
+    if (field === "name") {
+      setName(value);
+    } else if (field === "percentage") {
+      setPercentage(value);
+    } else if (field === "selectProject") {
+      setSelectProject(value);
+    }
 
-      if (isNaN(partner.percentage)) {
-        validationError[`percentage${index}`] = "Percentage for partner must be a valid number!";
-        isValid = false;
-      }
-
-      if (parseFloat(partner.percentage) < 0 || parseFloat(partner.percentage) > 100) {
-        validationError[`percentage${index}`] = "Percentage for partner must be between 0 and 100!";
-        isValid = false;
-      }
+    setError((prevState) => {
+      const newErrors = { ...prevState };
+      delete newErrors[field];
+      return newErrors;
     });
+  };
 
-    if (!isValid) {
-      setErrors(validationError);
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/"); 
+          return;
+        }
+
+        const response = await axios.get(getProject, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log(response.data.data); 
+
+        if (response.data.status === true && response.data.data) {
+          const selectProject = response.data.data.projectName;
+
+          
+          if (Array.isArray(selectProject)) {
+            setSelectProject(selectProject[0]); 
+          } else {
+            setSelectProject(selectProject);
+          }
+        } else {
+          console.error("Projects data not found in the response.");
+        }
+      } 
+      catch (error) {
+        if (error.response) {
+          if (error.response.status === 401) {
+            navigate("/"); 
+          } else {
+            console.error("Error response:", error.response.data);
+          }
+        } else if (error.request) {
+          console.error("Error request:", error.request);
+        } else {
+          console.error("Error message:", error.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, [navigate]); 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formErrors = validateForm();
+    setError(formErrors);
+    if (Object.keys(formErrors).length > 0) {
       return;
     }
-
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      setselectproject("");
-      setPartners([{ name: "", percentage: "" }]);
-      setErrors({});
-      localStorage.setItem('partnersData', JSON.stringify(partners));
-      navigate("/partners");
-    }, 2000);
-  };
+    // try {
+    //   const token = localStorage.getItem("token");
+    //   console.log("Token from localStorage:", token);
 
+    //   if (!token) {
+    //     // toast.error("Authentication failed. Please log in again.");
+    //     navigate("/");
+    //     return;
+    //   }
+
+    //   const formData = new FormData();
+    //   formData.append("partner_name", name.trim());
+    //   formData.append("percentage", percentage.trim());
+    //   formData.append("project_id", selectProject);
+
+    //   for (let [key, value] of formData.entries()) {
+    //     console.log(`${key}: ${value}`);
+    //   }
+
+    //   const response = await axios.post(addPartner, formData, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //       "Content-Type": "application/json",
+
+    //     },
+    //   });
+
+    //   console.log("response", response);
+
+    //   if (response.status === 200) {
+    //     // toast.success("Project and units added successfully");
+    //     setLoading(false);
+
+    //     navigate("/partners");
+    //   }
+    // } catch (error) {
+    //   console.error("Error submitting project:", error);
+
+    //   if (error.response) {
+    //     console.error("Error response:", error.response.data);
+
+    //     if (error.response.data.message === "partner_name is required") {
+    //       setError((prevState) => ({
+    //         ...prevState,
+    //         partner_name: "Partner name is required",
+    //       }));
+    //     }
+    //   }
+
+    //   if (error.response && error.response.status === 401) {
+    //     navigate("/");
+    //   }
+
+    //   setLoading(false);
+    // }
+  };
   return (
     <>
       <Helmet>
@@ -108,7 +190,6 @@ function AddPartners() {
         <Sidebar isSidebarOpen={isSidebarOpen} />
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
           <Topbar toggleSidebar={toggleSidebar} />
-
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
@@ -129,67 +210,71 @@ function AddPartners() {
                     <div className="row">
                       <div className="col">
                         <select
-                          className={`form-select form-select-sm p-2 ${error.selectproject ? "is-invalid" : ""}`}
-                          value={selectproject}
-                          onChange={(e) => setselectproject(e.target.value)}
-                          ref={selectprojectRef}
-                          onKeyPress={(e) => handleEnter(e, nameRef)}
+                          className={`form-select form-select-sm p-2 ${
+                            error.selectProject ? "is-invalid" : ""
+                          }`}
+                          value={selectProject}
+                          onChange={(e) =>
+                            handleInputChange(e, "selectProject")
+                          }
+                          ref={selectProjectRef}
                         >
                           <option value="">Select Project</option>
-                          <option value="demo">Demo</option>
+                          {Array.isArray(selectProject) &&
+                            selectProject.map((projectName, index,id) => (
+                              <option key={index} value={id}>
+                                {projectName}{" "}
+                              </option>
+                            ))}
                         </select>
-                        {error.selectproject && (
+                        {error.selectProject && (
                           <div className="invalid-feedback">
-                            {error.selectproject}
+                            {error.selectProject}
                           </div>
                         )}
                       </div>
                       <div className="col"></div>
                     </div>
 
-                    {partners.map((partner, index) => (
-                      <div className="row pt-4" key={index}>
-                        <div className="col">
-                          <div className="input-container">
-                            <input
-                              type="text"
-                              className={`form-control mb-1 ${error[`name${index}`] ? "is-invalid" : ""}`}
-                              placeholder="Name"
-                              value={partner.name}
-                              onChange={(e) => handleInputChange(index, e)}
-                              name="name"
-                              ref={nameRef}
-                              onKeyPress={(e) => handleEnter(e, partnersRef)}
-                            />
-                            {error[`name${index}`] && (
-                              <div className="invalid-feedback">
-                                {error[`name${index}`]}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="col position-relative">
-                          <div className="input-container">
-                            <input
-                              type="number"
-                              className={`form-control mb-1 ${error[`percentage${index}`] ? "is-invalid" : ""}`}
-                              placeholder="Percentage"
-                              value={partner.percentage}
-                              onChange={(e) => handleInputChange(index, e)}
-                              name="percentage"
-                              ref={partnersRef}
-                              onKeyPress={(e) => handleEnter(e, submitRef)}
-                            />
-                            {error[`percentage${index}`] && (
-                              <div className="invalid-feedback">
-                                {error[`percentage${index}`]}
-                              </div>
-                            )}
-                          </div>
+                    <div className="row pt-4">
+                      <div className="col">
+                        <div className="input-container">
+                          <input
+                            type="text"
+                            className={`form-control mb-1 ${
+                              error.name ? "is-invalid" : ""
+                            }`}
+                            placeholder="Name"
+                            value={name}
+                            onChange={(e) => handleInputChange(e, "name")}
+                            ref={nameRef}
+                          />
+                          {error.name && (
+                            <div className="invalid-feedback">{error.name}</div>
+                          )}
                         </div>
                       </div>
-                    ))}
+
+                      <div className="col position-relative">
+                        <div className="input-container">
+                          <input
+                            type="number"
+                            className={`form-control mb-1 ${
+                              error.percentage ? "is-invalid" : ""
+                            }`}
+                            placeholder="Percentage"
+                            value={percentage}
+                            onChange={(e) => handleInputChange(e, "percentage")}
+                            ref={percentageRef}
+                          />
+                          {error.percentage && (
+                            <div className="invalid-feedback">
+                              {error.percentage}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
 
                     <button
                       type="submit"
@@ -198,11 +283,19 @@ function AddPartners() {
                       disabled={loading}
                     >
                       {loading ? (
-                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span
+                          className="spinner-border spinner-border-sm"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
                       ) : (
                         "Submit"
                       )}
                     </button>
+
+                    {error.api && (
+                      <div className="invalid-feedback">{error.api}</div>
+                    )}
                   </form>
                 </div>
               </div>

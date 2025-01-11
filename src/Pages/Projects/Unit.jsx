@@ -1,28 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
+import { projectWiseUnit } from "../../Api/ApiDipak";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Unit = () => {
   const [units, setUnits] = useState([
     {
       wing: "",
-      flatName: "",
+      unitNo: "",
       size: "",
-      extraWork: "",
+      extraWorkAmount: "",
       unitType: "",
-      salesDeed: "",
+      saleDeedAmount: "",
     },
   ]);
+  const [loading, setLoading] = useState(true); 
+
 
   const [unitErrors, setUnitErrors] = useState({
     wingError: false,
-    flatNameError: false,
+    unitNoError: false,
     sizeError: false,
-    extraWorkError: false,
+    extraWorkAmountError: false,
     unitTypeError: false,
-    salesDeedError: false,
+    saleDeedAmountError: false,
   });
 
   const navigate = useNavigate();
@@ -36,7 +41,42 @@ const Unit = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
-
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+  
+    if (!token) {
+      toast.error("Token not found! Please log in.");
+      navigate("/");
+    } else {
+      const fetchProjects = async () => {
+        try {
+          setLoading(true);  
+          const response = await axios.get(projectWiseUnit, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+  
+          if (response.data.status === true && response.data.data) {
+            setUnits(response.data.data);
+          }
+        } catch (error) {
+          if (error.response && error.response.status === 401) {
+            toast.error("Session expired! Please log in again.");
+            navigate("/");
+          } else {
+            console.error("Error fetching data:", error);
+          }
+        } finally {
+          setLoading(false);  
+        }
+      };
+  
+      fetchProjects();
+    }
+  }, [navigate]);
+  
   const handleInputChange = (e, index) => {
     const { name, value } = e.target;
     const updatedUnits = [...units];
@@ -49,11 +89,11 @@ const Unit = () => {
       ...units,
       {
         wing: "",
-        flatName: "",
+        unitNo: "",
         size: "",
-        extraWork: "",
+        extraWorkAmount: "",
         unitType: "",
-        salesDeed: "",
+        saleDeedAmount: "",
       },
     ]);
   };
@@ -62,36 +102,36 @@ const Unit = () => {
     let isValid = true;
     const errors = {
       wingError: false,
-      flatNameError: false,
+      unitNoError: false,
       sizeError: false,
-      extraWorkError: false,
+      extraWorkAmountError: false,
       unitTypeError: false,
-      salesDeedError: false,
+      saleDeedAmountError: false,
     };
 
-    units.forEach((unit, index) => {
-      if (!unit.wing.trim()) {
+    units.forEach((unit) => {
+      if (!unit.wing || !unit.wing.trim()) {
         errors.wingError = true;
         isValid = false;
       }
-      if (!unit.flatName.trim()) {
-        errors.flatNameError = true;
+      if (!unit.unitNo || !unit.unitNo.trim()) {
+        errors.unitNoError = true;
         isValid = false;
       }
-      if (!unit.size.trim()) {
+      if (!unit.size || !unit.size.trim()) {
         errors.sizeError = true;
         isValid = false;
       }
-      if (!unit.extraWork.trim()) {
-        errors.extraWorkError = true;
+      if (!unit.extraWorkAmount || !unit.extraWorkAmount.trim()) {
+        errors.extraWorkAmountError = true;
         isValid = false;
       }
-      if (!unit.unitType.trim()) {
+      if (!unit.unitType || !unit.unitType.trim()) {
         errors.unitTypeError = true;
         isValid = false;
       }
-      if (!unit.salesDeed.trim()) {
-        errors.salesDeedError = true;
+      if (!unit.saleDeedAmount || !unit.saleDeedAmount.trim()) {
+        errors.saleDeedAmountError = true;
         isValid = false;
       }
     });
@@ -106,8 +146,8 @@ const Unit = () => {
     navigate("/projects");
   };
 
-  const handleEditUnit = (index) => {
-    navigate("/edit-unit", { state: { unitData: units[index], index: index } });
+  const handleEditUnit = () => {
+    navigate("/edit-unit");
   };
 
   return (
@@ -117,24 +157,22 @@ const Unit = () => {
       </Helmet>
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
-
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
           <Topbar
             toggleSidebar={toggleSidebar}
             isTopbarOpen={isTopbarOpen}
             toggleTopbar={toggleTopbar}
           />
-
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
-                    <div className="p-2 ">
+                    <div className="p-2">
                       <h6 className="mb-4">Units</h6>
                     </div>
-                    <div className="p-2 ">
-                      <Link to="/projects" className="">
+                    <div className="p-2">
+                      <Link to="/projects">
                         <h6 className="mb-4">
                           <i className="bi bi-arrow-left-circle-fill"></i> Back
                         </h6>
@@ -147,18 +185,20 @@ const Unit = () => {
                       <table className="table table-bordered text-center">
                         <thead>
                           <tr>
+                            <th scope="col">Project Id</th>
                             <th scope="col">Wing</th>
-                            <th scope="col">Unit Name</th>
+                            <th scope="col">Unit No</th>
                             <th scope="col">Size</th>
                             <th scope="col">Extra Work Amount</th>
                             <th scope="col">Unit Type</th>
                             <th scope="col">Sales Deed Amount</th>
-                            <th scope="col" >Action</th>
+                            <th scope="col">Action</th>
                           </tr>
                         </thead>
                         <tbody>
                           {units.map((unit, index) => (
                             <tr key={index}>
+                              <td>{unit.projectId}</td>
                               <td>
                                 <input
                                   type="text"
@@ -178,14 +218,14 @@ const Unit = () => {
                               <td>
                                 <input
                                   type="text"
-                                  name="flatName"
+                                  name="unitNo"
                                   className={`form-control ${
-                                    unitErrors.flatNameError ? "is-invalid" : ""
+                                    unitErrors.unitNoError ? "is-invalid" : ""
                                   }`}
-                                  value={unit.flatName}
+                                  value={unit.unitNo}
                                   onChange={(e) => handleInputChange(e, index)}
                                 />
-                                {unitErrors.flatNameError && (
+                                {unitErrors.unitNoError && (
                                   <div className="invalid-feedback">
                                     Enter a Flat Name
                                   </div>
@@ -210,16 +250,14 @@ const Unit = () => {
                               <td>
                                 <input
                                   type="text"
-                                  name="extraWork"
+                                  name="extraWorkAmount"
                                   className={`form-control ${
-                                    unitErrors.extraWorkError
-                                      ? "is-invalid"
-                                      : ""
+                                    unitErrors.extraWorkAmountError ? "is-invalid" : ""
                                   }`}
-                                  value={unit.extraWork}
+                                  value={unit.extraWorkAmount}
                                   onChange={(e) => handleInputChange(e, index)}
                                 />
-                                {unitErrors.extraWorkError && (
+                                {unitErrors.extraWorkAmountError && (
                                   <div className="invalid-feedback">
                                     Enter Extra Work Amount
                                   </div>
@@ -244,22 +282,22 @@ const Unit = () => {
                               <td>
                                 <input
                                   type="text"
-                                  name="salesDeed"
+                                  name="saleDeedAmount"
                                   className={`form-control ${
-                                    unitErrors.salesDeedError
+                                    unitErrors.saleDeedAmountError
                                       ? "is-invalid"
                                       : ""
                                   }`}
-                                  value={unit.salesDeed}
+                                  value={unit.saleDeedAmount}
                                   onChange={(e) => handleInputChange(e, index)}
                                 />
-                                {unitErrors.salesDeedError && (
+                                {unitErrors.saleDeedAmountError && (
                                   <div className="invalid-feedback">
                                     Enter Sales Deed Amount
                                   </div>
                                 )}
                               </td>
-                              <td className="d-flex gap-2  action-buttons"  >
+                              <td className="d-flex gap-2 action-buttons">
                                 <button
                                   onClick={() => handleEditUnit(index)}
                                   className="btn btn-warning btn-sm me-2"
@@ -270,12 +308,7 @@ const Unit = () => {
                                   className="bi bi-plus-circle-fill"
                                   onClick={handleAddUnit}
                                 ></i>
-                                <i
-                                  className="bi bi-x-circle-fill"
-                                  // onClick={() => removeExpense(index)}
-                                ></i>
                               </td>
-                              
                             </tr>
                           ))}
                         </tbody>

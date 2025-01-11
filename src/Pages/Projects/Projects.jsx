@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { getProject } from "../../Api/ApiDipak";
@@ -14,7 +14,9 @@ const Projects = () => {
   const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+  const itemsPerPage = 10;
+
+  const navigate = useNavigate(); 
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -29,7 +31,13 @@ const Projects = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        console.log("Token:", token);
+
+        if (!token) {
+        
+            navigate("/"); 
+          
+          return;
+        }
 
         const response = await axios.get(getProject, {
           headers: {
@@ -38,8 +46,6 @@ const Projects = () => {
           },
         });
 
-        console.log("API Response:", response.data);
-
         if (response.data.status === true && response.data.data) {
           setData(response.data.data);
         } else {
@@ -47,7 +53,11 @@ const Projects = () => {
         }
       } catch (error) {
         if (error.response) {
-          console.error("Error response:", error.response.data);
+          if (error.response.status === 401) {
+            navigate("/");
+          } else {
+            console.error("Error response:", error.response.data);
+          }
         } else if (error.request) {
           console.error("Error request:", error.request);
         } else {
@@ -59,7 +69,7 @@ const Projects = () => {
     };
 
     fetchProjects();
-  }, []);
+  }, [navigate]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
