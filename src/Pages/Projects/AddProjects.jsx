@@ -129,14 +129,14 @@ const AddProjects = () => {
 
     try {
       const token = localStorage.getItem("token");
-      console.log("Token from localStorage:", token);  // Check if the token exists
+      console.log("Token from localStorage:", token);  
   
+      
       if (!token) {
-        toast.error("Authentication failed. No token provided.");
-        setLoading(false);
-        return;  
+        toast.error("Authentication failed. Please log in again.");
+        navigate("/");
+        return;
       }
-  
       
       const formData = new FormData();
       formData.append("project_name", projectName);
@@ -144,7 +144,7 @@ const AddProjects = () => {
   
       const response = await axios.post(
         storeProject,
-        formData,  // Send the formData as the body
+        formData,  
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -174,10 +174,7 @@ const AddProjects = () => {
   
       if (error.response && error.response.status === 401) {
         navigate("/");  
-        toast.error("Session expired. Please log in again.");
-      } else {
-        toast.error("An error occurred. Please try again later.");
-      }
+      } 
   
       setLoading(false);
     }

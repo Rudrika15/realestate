@@ -11,35 +11,58 @@ const Income = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIncomeHead, setSelectedIncomeHead] = useState("");
-  const [selectedIncomeDate, setselectedIncomeDate] = useState("");
+  const [selectedIncomeDate, setSelectedIncomeDate] = useState("");
+  const [expandedIncomeId, setExpandedIncomeId] = useState(null);
+  const [showAll, setShowAll] = useState(false);  
+  const [hideAll, setHideAll] = useState(false);  
+
   const [incomes, setIncomes] = useState([
     {
       id: 1,
-      name: "Joy",
+      name: "a",
       incomeHead: "Salary",
       amount: "50,000",
-      date: "15-02-2020",
+      date: "15-02-2024",
+      deleteId:1
     },
     {
       id: 2,
-      name: "Roy",
+      name: "b",
       incomeHead: "Business",
       amount: "70,000",
-      date: "16-02-2020",
+      date: "16-02-2024",
+      deleteId:2
     },
     {
       id: 3,
-      name: "Toy",
+      name: "c",
       incomeHead: "Shop",
       amount: "10,000",
-      date: "18-02-2020",
+      date: "18-02-2024",
+      deleteId:3
+    },
+    {
+      id: 1, 
+      name: "d",
+      incomeHead: "Salary",
+      amount: "20,000",
+      date: "20-02-2024",
+      deleteId:4
+    },
+    {
+      id: 2, 
+      name: "e",
+      incomeHead: "Business",
+      amount: "15,000",
+      date: "22-02-2024",
+      deleteId:5
     },
   ]);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleTopbar = () => setIsTopbarOpen(!isTopbarOpen);
 
-  const handleDelete = (id) => {
+  const handleDelete = (deleteId) => {
     Swal.fire({
       title: "Are you sure you want to delete?",
       text: "Once you delete, all the data related to this income will be deleted.",
@@ -51,7 +74,7 @@ const Income = () => {
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        const updatedIncomes = incomes.filter((income) => income.id !== id);
+        const updatedIncomes = incomes.filter((income) => income.deleteId !== deleteId);
         setIncomes(updatedIncomes);
         Swal.fire({
           title: "Deleted!",
@@ -72,23 +95,63 @@ const Income = () => {
     if (selectedIncomeHead && income.incomeHead !== selectedIncomeHead) {
       return false;
     }
-    return true;
-  });
-
-  const filteredDate = incomes.filter((income)=>{
-    if(selectedIncomeDate && income.date !== selectedIncomeDate){
+    if (selectedIncomeDate && income.date !== selectedIncomeDate) {
       return false;
     }
     return true;
-  })
+  });
+
+
+  const groupedIncomes = filteredIncomes.reduce((acc, income) => {
+    const existingGroup = acc.find((group) => group.id === income.id);
+
+    if (existingGroup) {
+      existingGroup.totalAmount += parseFloat(income.amount.replace(/,/g, ""));
+      existingGroup.incomes.push(income);
+    } else {
+      acc.push({
+        id: income.id,
+        totalAmount: parseFloat(income.amount.replace(/,/g, "")),
+        incomes: [income],
+      });
+    }
+
+    return acc;
+  }, []);
+
+
+  const grandTotal = groupedIncomes.reduce(
+    (total, group) => total + group.totalAmount,
+    0
+  );
 
   const indexOfLastIncome = currentPage * itemsPerPage;
   const indexOfFirstIncome = indexOfLastIncome - itemsPerPage;
-  const currentIncomes =  filteredDate || filteredIncomes.slice(
+  const currentIncomes = groupedIncomes.slice(
     indexOfFirstIncome,
     indexOfLastIncome
   );
-  
+
+  const toggleIncomeDetails = (id) => {
+    if (showAll || hideAll) return; 
+    setExpandedIncomeId((prevState) => (prevState === id ? null : id));
+  };
+
+  const handleShowAllChange = (e) => {
+    setShowAll(e.target.checked);
+    setHideAll(false);
+    if (e.target.checked) {
+      setExpandedIncomeId(null); 
+    }
+  };
+
+  const handleHideAllChange = (e) => {
+    setHideAll(e.target.checked);
+    setShowAll(false);
+    if (e.target.checked) {
+      setExpandedIncomeId(null); 
+    }
+  };
 
   return (
     <>
@@ -159,53 +222,101 @@ const Income = () => {
                               className="form-select form-select-sm"
                               value={selectedIncomeDate}
                               onChange={(e) =>
-                                setselectedIncomeDate(e.target.value)
+                                setSelectedIncomeDate(e.target.value)
                               }
                             >
                               <option value="">Income Date</option>
                               <option value="15-02-2020">15-02-2020</option>
-                              <option value="15-02-2020">16-02-2020</option>
-                              <option value="15-02-2020">18-02-2020</option>
+                              <option value="16-02-2020">16-02-2020</option>
+                              <option value="18-02-2020">18-02-2020</option>
                             </select>
                           </div>
                         </div>
                       </div>
+
+                      <div className="d-flex gap-2 mb-2">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          checked={showAll}
+                          onChange={handleShowAllChange}
+                        />
+                        <label className="form-check-label">Show All</label>
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          checked={hideAll}
+                          onChange={handleHideAllChange}
+                        />
+                        <label className="form-check-label">Hide All</label>
+                      </div>
+
                       <div className="table-responsive">
-                        <table className="table table-bordered text-center">
-                          <thead>
-                            <tr>
-                              <th scope="col">Name</th>
-                              <th scope="col">Income Date</th>
-                              <th scope="col">Income Head</th>
-                              <th scope="col">Amount</th>
-                              <th scope="col">Action</th>
-                            </tr>
-                          </thead>
+                        <table className="table table-bordered ">
                           <tbody>
-                            {currentIncomes.map((income) => (
-                              <tr key={income.id}>
-                                <td>{income.name || "N/A"}</td>
-                                <td>{income.date || "N/A"}</td>
-                                <td>{income.incomeHead || "N/A"}</td>
-                                <td>{income.amount || "N/A"}</td>
-                                <td>
-                                  <Link
-                                    to={"/edit-income"}
-                                    className="btn btn-warning btn-sm me-2"
-                                  >
-                                    <i className="fas fa-edit"></i>
-                                  </Link>
-                                  <button
-                                    onClick={() => handleDelete(income.id)}
-                                    className="btn btn-danger btn-sm"
-                                  >
-                                    <i className="fas fa-trash"></i>
-                                  </button>
-                                </td>
-                              </tr>
+                            {currentIncomes.map((group) => (
+                              <React.Fragment key={group.id}>
+                                <tr
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => toggleIncomeDetails(group.id)}
+                                >
+                                  <td colSpan="3">
+                                    <strong>ID: {group.id}</strong> | Total Amount:{" "}
+                                    {group.totalAmount.toLocaleString()}
+                                  </td>
+                                </tr>
+
+                                {(showAll || expandedIncomeId === group.id) && (
+                                  <tr>
+                                    <td colSpan="3">
+                                      <table className="table table-bordered text-center">
+                                        <thead>
+                                          <tr>
+                                            <th scope="col">Income Id</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Income Date</th>
+                                            <th scope="col">Amount</th>
+                                            <th scope="col">Action</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {group.incomes.map((income) => (
+                                            <tr key={income.id}>
+                                              <td>{income.id}</td>
+                                              <td>{income.name || "N/A"}</td>
+                                              <td>{income.date || "N/A"}</td>
+                                              <td>{income.amount || "N/A"}</td>
+                                              <td>
+                                                <Link
+                                                  to={"/edit-income"}
+                                                  className="btn btn-warning btn-sm me-2"
+                                                >
+                                                  <i className="fas fa-edit"></i>
+                                                </Link>
+                                                <button
+                                                  onClick={() => handleDelete(income.deleteId)}
+                                                  className="btn btn-danger btn-sm"
+                                                >
+                                                  <i className="fas fa-trash"></i>
+                                                </button>
+                                              </td>
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                )}
+                              </React.Fragment>
                             ))}
                           </tbody>
                         </table>
+                      </div>
+                      <div className="d-flex justify-content-start ">
+                        <h6>
+                          <strong>Grand Total: </strong>
+                          {grandTotal.toLocaleString()}
+                        </h6>
                       </div>
                     </>
                   )}
