@@ -1,20 +1,55 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { getProjectStage } from '../../Api/DevanshiApi';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-bootstrap';
 
 function ProjectStage() {
-    const staticData = [
-        { id: 1, Title: "Shiv", Percentage: "10%", wing: "A", stagedate: "25-12-2024" },
-    ];
+    // const staticData = [
+    //     { id: 1, Title: "Shiv", Percentage: "10%", wing: "A", stagedate: "25-12-2024" },
+    // ];
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isTopbarOpen, setIsTopbarOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [data, setData] = useState(
-        staticData.sort((a, b) => a.Title.localeCompare(b.Title))
-    );
+    const navigate = useNavigate();
+    const [projectStage, setProjectStage] = useState([]);
+
+    // const [data, setData] = useState(
+    //     staticData.sort((a, b) => a.Title.localeCompare(b.Title))
+    // );
+
+    const fetchProjectStage = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            console.log(token);
+            
+            const response = await axios.get(`${getProjectStage}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },                
+            });
+            if (response.data.status === true) {
+                setProjectStage(response.data.data);
+            } else {
+                toast.error('Failed to fetch project stages!');
+            }
+        } catch (error) {
+            console.error('Error fetching project stages:', error);
+            toast.error('Error fetching project stages!');
+        } finally {
+            setLoading(false);
+        }
+    };    
+
+    useEffect(() => {
+        fetchProjectStage();
+    }, []);
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -66,13 +101,13 @@ function ProjectStage() {
                                                 <span className="visually-hidden"></span>
                                             </div>
                                         </div>
-                                    ) : data.length > 0 ? (
+                                    ) : projectStage.length > 0 ? (
                                         <div className="table-responsive">
                                             <table className="table table-bordered text-center">
                                                 <thead>
                                                     <tr>
                                                         <th scope="col">StageId</th>
-                                                        <th scope="col" className='w-25'>Title</th>
+                                                        <th scope="col">Title</th>
                                                         <th scope="col">Percentage</th>
                                                         <th scope="col">Wing</th>
                                                         <th scope="col">Stage Date</th>
@@ -80,13 +115,13 @@ function ProjectStage() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {data.map((item) => (
-                                                        <tr key={item.id}>
-                                                            <td>{item.id}</td>
-                                                            <td>{item.Title}</td>
-                                                            <td>{item.Percentage}</td>
-                                                            <td>{item.wing}</td>
-                                                            <td>{item.stagedate}</td>
+                                                    {projectStage.map((projectStages) => (
+                                                        <tr key={projectStages.id}>
+                                                            <td>{projectStages.id}</td>
+                                                            <td>{projectStages.projectStageName}</td>
+                                                            <td>{projectStages.projectStagePer}</td>
+                                                            <td>{projectStages.projectWingId}</td>
+                                                            <td>{projectStages.projectCompletionDate}</td>
                                                             <td>
                                                                 <Link to="" className="btn btn-warning btn-sm me-2">
                                                                     <i className="fas fa-edit"></i>
@@ -107,7 +142,7 @@ function ProjectStage() {
                                                 alt="No Users"
                                                 className="img-fluid w-25 h-25"
                                             />
-                                            <p className="text-dark">No Users Found</p>
+                                            <p className="text-dark">No Project Stage Found</p>
                                         </div>
                                     )}
                                 </div>
@@ -115,6 +150,7 @@ function ProjectStage() {
                         </div>
                     </div>
                 </div>
+                <ToastContainer />
             </div>
         </>
     );

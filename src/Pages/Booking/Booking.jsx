@@ -8,6 +8,7 @@ import { Helmet } from "react-helmet";
 import { Modal, Spinner } from "react-bootstrap";
 import axios from "axios";
 import { addBroker, getBroker, getProject, getProjectWiseUnit } from "../../Api/DevanshiApi";
+import { projectWiseUnit } from "../../Api/ApiDipak";
 
 function Booking() {
   const [projectName, setProjectName] = useState("");
@@ -205,9 +206,9 @@ function Booking() {
           },
         ]);
         setBrokerName('');
-        setbrokerMobileNumber('');  
+        setbrokerMobileNumber('');
         setBrokerAddress('');
-        handleCloseModal()  
+        handleCloseModal()
       } else {
         console.error(result.message);
       }
@@ -660,27 +661,43 @@ function Booking() {
   };
 
   const fetchUnit = async (projectId) => {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    
+    if (!token) {
+      toast.error("No token found! Please log in.");
+      navigate("/");
+      return;
+    }
+
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        toast.error('Authentication token is missing!');
-        window.location.href = '/';
-        return;
-      }
-      const response = await axios.get(`${getProjectWiseUnit}/${projectId}`, {
+      setLoading(true);
+      const response = await axios.get(`${projectWiseUnit}/${projectId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
+
       if (response.data.status === true) {
-        setUnit(response.data.data);
+        console.log(response.data.data);
+        setUnits(response.data.data);
       } else {
-        console.error("Failed to fetch Unit data!");
+        toast.error("Invalid data received!");
       }
     } catch (error) {
-      console.error("Error fetching Units:", error);
+      if (error.response && error.response.status === 401) {
+        toast.error("Session expired! Please log in again.");
+        navigate("/");
+      } else {
+        console.error("Error fetching data:", error);
+        toast.error("Something went wrong! Please try again later.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchProject();
