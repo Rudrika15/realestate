@@ -6,6 +6,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import Multiselect from 'multiselect-react-dropdown';
+import { addProjectStage } from '../../Api/DevanshiApi';
+import axios from 'axios';
 
 function AddProjectStage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -84,13 +86,43 @@ function AddProjectStage() {
       setStageDateError(false);
     }
 
-    if (isValid) {
-      toast.success("Project Stage added successfully!");
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        navigate('/project-stage');
-      }, 1000);
+    if (!isValid) return;
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        addProjectStage,
+        {
+          title,
+          percentage,
+          wing,
+          stageDate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.status) {
+        toast.success("User added successfully!");
+        setTitle("");
+        setStageDate("");
+        setWing("");
+        setPercentage([]);
+        setTimeout(() => {
+          navigate("/project-stage");
+        }, 1000);
+      } else {
+        toast.error(response.data.message || "Failed to add project stage");
+      }
+    } catch (error) {
+      toast.error("Failed to add project stage. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 

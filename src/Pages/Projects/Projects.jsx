@@ -16,7 +16,7 @@ const Projects = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -33,9 +33,9 @@ const Projects = () => {
         const token = localStorage.getItem("token");
 
         if (!token) {
-        
-            navigate("/"); 
-          
+
+          navigate("/");
+
           return;
         }
 
@@ -178,7 +178,7 @@ const Projects = () => {
                                   <i className="fas fa-trash"></i>
                                 </button>
                                 <Link
-                                  to="/project-stage"
+                                  to={`/project-stage/${project.id}`}
                                   className="btn btn-secondary btn-sm"
                                 >
                                   <i className="bi bi-bar-chart"></i>
@@ -191,9 +191,8 @@ const Projects = () => {
                       <nav aria-label="Page navigation">
                         <ul className="pagination justify-content-end">
                           <li
-                            className={`page-item ${
-                              currentPage === 1 ? "disabled" : ""
-                            }`}
+                            className={`page-item ${currentPage === 1 ? "disabled" : ""
+                              }`}
                           >
                             <button
                               className="page-link"
@@ -206,9 +205,8 @@ const Projects = () => {
                           {Array.from({ length: totalPages }, (_, i) => (
                             <li
                               key={i + 1}
-                              className={`page-item ${
-                                currentPage === i + 1 ? "active" : ""
-                              }`}
+                              className={`page-item ${currentPage === i + 1 ? "active" : ""
+                                }`}
                             >
                               <button
                                 className="page-link"
@@ -220,9 +218,8 @@ const Projects = () => {
                           ))}
 
                           <li
-                            className={`page-item ${
-                              currentPage === totalPages ? "disabled" : ""
-                            }`}
+                            className={`page-item ${currentPage === totalPages ? "disabled" : ""
+                              }`}
                           >
                             <button
                               className="page-link"

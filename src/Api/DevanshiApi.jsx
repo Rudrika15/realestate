@@ -9,6 +9,6 @@ export const getProject = baseUrl + "v1/projects/get-project";
 export const getBroker = baseUrl + "v1/brokers/get-broker";
 export const addBroker = baseUrl + "v1/brokers/store-broker";
 export const deleteBroker = baseUrl + "v1/brokers/delete-broker";
-export const getProjectStage = baseUrl + "v1/projectstage/get-project-stage"
-
+export const getProjectStage = baseUrl + "v1/projectstage/get-project-stage-by-id"
+export const addProjectStage = baseUrl + "v1/projectstage/store-project-stage"
 

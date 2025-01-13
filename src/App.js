@@ -56,7 +56,7 @@ const App = () => {
           <Route path="/role" element={<Role />}></Route>
           <Route path="/add-role" element={<AddRole />}></Route>
           <Route path="/edit-role" element={<EditRole />}></Route>
-          <Route path="/project-stage" element={<ProjectStage />}></Route>
+          <Route path="/project-stage/:id" element={<ProjectStage />} />
           <Route
             path="/add-project-stage"
             element={<AddProjectStage />}
