@@ -25,51 +25,47 @@ function AddRole() {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleTopbar = () => setIsTopbarOpen(!isTopbarOpen);
 
-  const fetchPermission = async () => {
+  // Fetch permissions on component mount
+  const fetchPermissions = async () => {
     try {
       const token = localStorage.getItem("token");
-      console.log("Token: ", token);
 
-      const response = await axios.get(`${PermissionFetch}`, {
+      const response = await axios.get(PermissionFetch, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      if (response.data.status === true) {
-        console.log("Permissions data:", response.data.data);
+
+      if (response.data.status) {
         setPermissions(response.data.data);
       } else {
         toast.error("Failed to fetch permission data!");
       }
     } catch (error) {
       console.error("Error fetching permission:", error);
-      toast.error("Error fetching permission.");
+      toast.error("Error fetching permissions.");
     }
   };
 
   useEffect(() => {
-    fetchPermission();
+    fetchPermissions();
   }, []);
 
   const handlePermissionChange = (e) => {
     const { value, checked } = e.target;
     const permissionId = parseInt(value, 10);
 
-    setSelectedPermissions((prevSelectedPermissions) => {
-      if (checked) {
-        return [...prevSelectedPermissions, value];
-      } else {
-        return prevSelectedPermissions.filter(
-          (permission) => permission !== value
-        );
-      }
-    });
+    setSelectedPermissions((prevSelectedPermissions) =>
+      checked
+        ? [...prevSelectedPermissions, permissionId]
+        : prevSelectedPermissions.filter((id) => id !== permissionId)
+    );
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
 
     if (!roleName) {
       setError("Role name is required");
@@ -81,39 +77,28 @@ function AddRole() {
       return;
     }
 
-    console.log("Selected Permissions: ", selectedPermissions); 
-
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
 
-      
       const dataToSend = {
         roleName,
-        permissions: selectedPermissions, 
+        permissionIds: selectedPermissions,
       };
 
-      console.log("Data to send to API: ", dataToSend); 
+      const response = await axios.post(RoleAndPermission, dataToSend, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      
-      const response = await axios.post(
-        RoleAndPermission, 
-        dataToSend, 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, 
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      
       if (response.data.status) {
         toast.success("Role added successfully!");
-        setRole_Name(""); 
-        setSelectedPermissions([]); 
+        setRole_Name("");
+        setSelectedPermissions([]);
         setTimeout(() => {
-          navigate("/role"); 
+          navigate("/role");
         }, 2000);
       } else {
         toast.error(response.data.message || "Failed to add role.");
@@ -123,7 +108,7 @@ function AddRole() {
     } finally {
       setLoading(false);
     }
-};
+  };
 
   return (
     <>
@@ -160,58 +145,49 @@ function AddRole() {
                       <div className="col-12 col-md-6">
                         <input
                           type="text"
-                          className={`form-control ${
-                            error ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${error ? "is-invalid" : ""}`}
                           id="role_name"
                           placeholder="Role Name"
                           value={roleName}
                           onChange={(e) => setRole_Name(e.target.value)}
                           name="roleName"
                         />
-                        {error && (
-                          <div className="invalid-feedback">{error}</div>
-                        )}
+                        {error && <div className="invalid-feedback">{error}</div>}
                       </div>
                     </div>
                     <div className="container-fluid">
                       <div className="row">
-                      {permissions && permissions.length > 0 ? (
-                            permissions.map((permission) => (
-                                <div  key={permission.id} className="col-md-3">
-                                  <div className="form-check">
-                                    <input
-                                      type="checkbox"
-                                      className="form-check-input"
-                                      id={`permission-${permission.id}`}
-                                      name="permissions"
-                                      value={permission.id}
-                                      onChange={handlePermissionChange}
-                                      checked={selectedPermissions.includes(
-                                        permission.id.toString()
-                                      )}
-                                    />
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor={`permission-${permission.id}`}
-                                    >
-                                      {permission.permissionName}
-                                    </label>
-                                  </div>
-                                </div>
-                            ))
-                          ) : (
-                            <div>
-                              <span colSpan="2">No permissions available</span>
+                        {permissions.length > 0 ? (
+                          permissions.map((permission) => (
+                            <div key={permission.id} className="col-md-3">
+                              <div className="form-check">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  id={`permission-${permission.id}`}
+                                  name="permissions"
+                                  value={permission.id}
+                                  onChange={handlePermissionChange}
+                                  checked={selectedPermissions.includes(permission.id)}
+                                />
+                                <label
+                                  className="form-check-label"
+                                  htmlFor={`permission-${permission.id}`}
+                                >
+                                  {permission.permissionName}
+                                </label>
+                              </div>
                             </div>
-                          )}
+                          ))
+                        ) : (
+                          <div>No permissions available</div>
+                        )}
                       </div>
                     </div>
-
                     <div className="mt-4">
                       <button
                         type="submit"
-                        className="btn btn-primary w-10"
+                        className="btn btn-primary w-100"
                         disabled={loading}
                       >
                         {loading ? (
