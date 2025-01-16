@@ -6,6 +6,8 @@ import { Helmet } from "react-helmet";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
+import { getPartner } from "../../Api/ApiDipak";
+import axios from "axios";
 
 const Partners = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -21,16 +23,42 @@ const Partners = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
 
-  useEffect(() => {
-    const storedPartnersData = JSON.parse(localStorage.getItem("partnersData"));
-    if (storedPartnersData) {
-      setPartners(storedPartnersData);
-    }
-  }, []);
-
-  const handleEditClick = (partner) => {
-    navigate("/edit-partners", { state: { partner } });
+  const handleEditClick = () => {
+    navigate("/edit-partners");
   };
+
+  const fetchPartner = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      if (!token) {
+        navigate("/");
+        return;
+      }
+
+      const response = await axios.get(getPartner, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setPartners(response.data.data);
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Error response:", error.response.data);
+        }
+      } else {
+        console.error("Error message:", error.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchPartner();
+  }, [navigate]);
 
   const handleDelete = (partnerId) => {
     Swal.fire({
@@ -48,7 +76,6 @@ const Partners = () => {
           (partner) => partner.id !== partnerId
         );
         setPartners(updatedPartners);
-        localStorage.setItem("partnersData", JSON.stringify(updatedPartners));
 
         Swal.fire({
           title: "Deleted!",
@@ -93,13 +120,14 @@ const Partners = () => {
                     </div>
                   </div>
 
+                  {/* Partners table */}
                   {partners.length > 0 ? (
                     <div className="table-responsive">
                       <table className="table table-bordered text-center">
                         <thead>
                           <tr>
-                            <th scope=" col">Project Name</th>
-                            <th scope="col">Partners Name</th>
+                            <th scope="col">Project Name</th>
+                            <th scope="col">Partner's Name</th>
                             <th scope="col" className="w-20">
                               Percentage
                             </th>
@@ -111,12 +139,12 @@ const Partners = () => {
                         <tbody>
                           {partners.map((partner) => (
                             <tr key={partner.id}>
-                              <td>Shiv</td>
-                              <td>{partner.name}1</td>
-                              <td>{partner.percentage}</td>
+                              <td>{partner.project?.projectName || "N/A"}</td>
+                              <td>{partner.ProjectPartners[0]?.partnerName}</td>
+                              <td>{partner.percentage}%</td>
                               <td>
                                 <button
-                                  onClick={() => handleEditClick(partner)}
+                                  onClick={() => handleEditClick}
                                   className="btn btn-warning btn-sm me-2"
                                 >
                                   <i className="fas fa-edit"></i>
@@ -137,7 +165,7 @@ const Partners = () => {
                     <div className="text-center">
                       <img
                         src="img/image_2024_12_26T09_23_33_935Z.png"
-                        alt="No Partners"
+                        alt="No Projects"
                         className="img-fluid w-25 h-25"
                       />
                       <p className="text-dark">No Partners Found</p>

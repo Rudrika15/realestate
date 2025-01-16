@@ -7,4 +7,4 @@ export const  projectWiseUnit = baseUrl + "v1/projects/get-project-unit/17";
 
   // partner //
 export const addPartner = baseUrl + "v1/partner/add-partner";
-// export const 
+export const getPartner = baseUrl + "v1/partner/get-partner"
