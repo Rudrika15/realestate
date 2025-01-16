@@ -80,7 +80,7 @@ const App = () => {
           <Route path="/addnewpermission" element={<AddNewPermission/>}/>
           <Route path="/add-projects" element={<AddProjects />} />
           <Route path="/edit-projects" element={<EditProjects />} />
-          <Route path="/unit" element={<Unit />} />
+          <Route path="/unit/:id" element={<Unit />} />
           <Route path="/edit-unit" element={<EditUnit />} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/add-partners" element={<AddPartners />} />

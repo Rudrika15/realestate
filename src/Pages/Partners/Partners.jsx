@@ -3,10 +3,11 @@ import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
-import { getPartner } from "../../Api/ApiDipak";
+import { getPartner, deletePartner } from "../../Api/ApiDipak";
 import axios from "axios";
 
 const Partners = () => {
@@ -42,7 +43,12 @@ const Partners = () => {
           "Content-Type": "application/json",
         },
       });
-      setPartners(response.data.data);
+      if (response.data.status === true && response.data.data) {
+        setPartners(response.data.data);
+        // toast.success(response.data.message);
+      console.log(response.data);
+
+      }
     } catch (error) {
       if (error.response) {
         if (error.response.status === 401) {
@@ -58,10 +64,10 @@ const Partners = () => {
 
   useEffect(() => {
     fetchPartner();
-  }, [navigate]);
+  },[navigate] );
 
-  const handleDelete = (partnerId) => {
-    Swal.fire({
+  const handleDelete = async (partnerId) => {
+    const confirmDelete = await Swal.fire({
       title: "Are You Sure You Want to Delete?",
       text: "Once you delete, all the data related to this partner will be deleted.",
       icon: "warning",
@@ -70,21 +76,45 @@ const Partners = () => {
       cancelButtonText: "Cancel",
       confirmButtonColor: "#d33",
       cancelButtonColor: "#c4c4c4",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const updatedPartners = partners.filter(
-          (partner) => partner.id !== partnerId
-        );
-        setPartners(updatedPartners);
+    });
 
+    if (confirmDelete.isConfirmed) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${deletePartner}/${partnerId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.data.status === true) {
+          setPartners(
+            partners.filter((partner) => partner.partnerId !== partnerId)
+          );
+          Swal.fire({
+            title: "Deleted!",
+            text: "The partner has been deleted.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+        } else {
+          Swal.fire({
+            title: "Error!",
+            text: "An error occurred while deleting the partner.",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+        }
+      } catch (error) {
+        console.error("Error deleting partner:", error);
         Swal.fire({
-          title: "Deleted!",
-          text: "The partner has been deleted.",
-          icon: "success",
-          confirmButtonColor: "#3085d6",
+          title: "Error!",
+          text: "An error occurred while deleting the partner.",
+          icon: "error",
+          confirmButtonText: "OK",
         });
       }
-    });
+    }
   };
 
   return (
@@ -119,13 +149,12 @@ const Partners = () => {
                       </Link>
                     </div>
                   </div>
-
-                  {/* Partners table */}
                   {partners.length > 0 ? (
                     <div className="table-responsive">
                       <table className="table table-bordered text-center">
                         <thead>
                           <tr>
+                            <th scope="col">Partner Id</th>
                             <th scope="col">Project Name</th>
                             <th scope="col">Partner's Name</th>
                             <th scope="col" className="w-20">
@@ -138,19 +167,22 @@ const Partners = () => {
                         </thead>
                         <tbody>
                           {partners.map((partner) => (
-                            <tr key={partner.id}>
+                            <tr key={partner.partnerId}>
+                              <td>{partner.partnerId}</td>
                               <td>{partner.project?.projectName || "N/A"}</td>
                               <td>{partner.ProjectPartners[0]?.partnerName}</td>
                               <td>{partner.percentage}%</td>
                               <td>
                                 <button
-                                  onClick={() => handleEditClick}
+                                  onClick={() => handleEditClick()} 
                                   className="btn btn-warning btn-sm me-2"
                                 >
                                   <i className="fas fa-edit"></i>
                                 </button>
                                 <button
-                                  onClick={() => handleDelete(partner.id)}
+                                  onClick={() =>
+                                    handleDelete(partner.partnerId)
+                                  } 
                                   className="btn btn-danger btn-sm"
                                 >
                                   <i className="fas fa-trash"></i>
@@ -165,7 +197,7 @@ const Partners = () => {
                     <div className="text-center">
                       <img
                         src="img/image_2024_12_26T09_23_33_935Z.png"
-                        alt="No Projects"
+                        alt="No Partners"
                         className="img-fluid w-25 h-25"
                       />
                       <p className="text-dark">No Partners Found</p>

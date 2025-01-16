@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { addPartner, getProject } from "../../Api/ApiDipak";
 
@@ -144,6 +145,8 @@ function AddPartners() {
       console.log("Response from API:", response);
 
       if (response.status === 200) {
+        toast.success("Project and units added successfully");
+        
         setLoading(false);
         navigate("/partners");
       }
@@ -162,6 +165,8 @@ function AddPartners() {
   };
   return (
     <>
+          <ToastContainer />
+    
       <Helmet>
         <title>React Estate | Add Partners</title>
       </Helmet>

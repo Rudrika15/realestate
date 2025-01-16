@@ -3,9 +3,12 @@ import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+
 import Swal from "sweetalert2";
 import axios from "axios";
 import { getProject } from "../../Api/ApiDipak";
+import Multiselect from "multiselect-react-dropdown";
 
 const Projects = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -33,7 +36,6 @@ const Projects = () => {
         const token = localStorage.getItem("token");
 
         if (!token) {
-
           navigate("/");
 
           return;
@@ -45,9 +47,9 @@ const Projects = () => {
             "Content-Type": "application/json",
           },
         });
-
         if (response.data.status === true && response.data.data) {
           setData(response.data.data);
+          // toast.success(response.data.message);
         } else {
           console.error("Projects data not found in the response.");
         }
@@ -158,7 +160,7 @@ const Projects = () => {
                               <td>{project.projectName}</td>
                               <td>
                                 <Link
-                                  to="/unit"
+                                  to={`/unit/${project.id}`}
                                   className="btn btn-info btn-sm me-2"
                                 >
                                   <i className="fas fa-eye"></i>
@@ -191,8 +193,9 @@ const Projects = () => {
                       <nav aria-label="Page navigation">
                         <ul className="pagination justify-content-end">
                           <li
-                            className={`page-item ${currentPage === 1 ? "disabled" : ""
-                              }`}
+                            className={`page-item ${
+                              currentPage === 1 ? "disabled" : ""
+                            }`}
                           >
                             <button
                               className="page-link"
@@ -205,8 +208,9 @@ const Projects = () => {
                           {Array.from({ length: totalPages }, (_, i) => (
                             <li
                               key={i + 1}
-                              className={`page-item ${currentPage === i + 1 ? "active" : ""
-                                }`}
+                              className={`page-item ${
+                                currentPage === i + 1 ? "active" : ""
+                              }`}
                             >
                               <button
                                 className="page-link"
@@ -218,8 +222,9 @@ const Projects = () => {
                           ))}
 
                           <li
-                            className={`page-item ${currentPage === totalPages ? "disabled" : ""
-                              }`}
+                            className={`page-item ${
+                              currentPage === totalPages ? "disabled" : ""
+                            }`}
                           >
                             <button
                               className="page-link"
@@ -247,6 +252,7 @@ const Projects = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };
