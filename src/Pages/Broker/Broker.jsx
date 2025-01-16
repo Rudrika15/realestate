@@ -229,7 +229,7 @@ function Broker() {
                                                             <td>{broker.brokerAddress}</td>
                                                             <td>{broker.brokerMobileNumber}</td>
                                                             <td>
-                                                                <Link to={`/edit-user`} className="btn btn-warning btn-sm me-2">
+                                                                <Link to={`/edit-broker`} className="btn btn-warning btn-sm me-2">
                                                                     <i className="fas fa-edit"></i>
                                                                 </Link>
                                                                 <Link to="" onClick={() => handleDelete(broker.id)} className="btn btn-danger btn-sm">
