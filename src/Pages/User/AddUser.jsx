@@ -119,7 +119,7 @@ function AddUser() {
                 setSelectedRoles([]);
                 setTimeout(() => {
                     navigate("/view-user");
-                }, 2000);
+                }, 1000);
             } else {
                 toast.error(response.data.message || "Failed to add user");
             }

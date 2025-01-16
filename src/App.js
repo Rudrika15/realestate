@@ -39,6 +39,10 @@ import EditIncome from "./Pages/Income/EditIncome";
 import EditProjects from "./Pages/Projects/EditProjects";
 import ProjectStage from "./Pages/Projects/ProjectStage";
 import AddProjectStage from "./Pages/Projects/AddProjectStage";
+import Broker from "./Pages/Broker/Broker";
+import Modal from "./Components/Modal/Modal";
+import AddNewPermission from "./Pages/Permission/AddNewPermission";
+
 
 const App = () => {
   return (
@@ -52,7 +56,7 @@ const App = () => {
           <Route path="/role" element={<Role />}></Route>
           <Route path="/add-role" element={<AddRole />}></Route>
           <Route path="/edit-role" element={<EditRole />}></Route>
-          <Route path="/project-stage" element={<ProjectStage />}></Route>
+          <Route path="/project-stage/:id" element={<ProjectStage />} />
           <Route
             path="/add-project-stage"
             element={<AddProjectStage />}
@@ -64,13 +68,16 @@ const App = () => {
           <Route path="/cash-deposit" element={<CashDeposit />}></Route>
           <Route path="/cheque-deposit" element={<ChequeDeposit />}></Route>
           <Route path="/booking" element={<Booking />}></Route>
+          <Route path="/modal" element={<Modal />}></Route>
           <Route
             path="/cancelled-booking"
             element={<CancelledBooking />}
           ></Route>
+          <Route path="/broker" element={<Broker />}></Route>
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />
+          <Route path="/addnewpermission" element={<AddNewPermission/>}/>
           <Route path="/add-projects" element={<AddProjects />} />
           <Route path="/edit-projects" element={<EditProjects />} />
           <Route path="/unit" element={<Unit />} />

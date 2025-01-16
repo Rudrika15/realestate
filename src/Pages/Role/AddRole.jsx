@@ -10,11 +10,12 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { AddRoles } from "../../Api/Apikiran";
 import { PermissionFetch } from "../../Api/Apikiran";
+import { RoleAndPermission } from "../../Api/Apikiran";
 
 function AddRole() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-  const [role_name, setRole_Name] = useState("");
+  const [roleName, setRole_Name] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [permissions, setPermissions] = useState([]);
@@ -53,6 +54,7 @@ function AddRole() {
 
   const handlePermissionChange = (e) => {
     const { value, checked } = e.target;
+    const permissionId = parseInt(value, 10);
 
     setSelectedPermissions((prevSelectedPermissions) => {
       if (checked) {
@@ -68,7 +70,8 @@ function AddRole() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!role_name) {
+
+    if (!roleName) {
       setError("Role name is required");
       return;
     }
@@ -78,36 +81,49 @@ function AddRole() {
       return;
     }
 
+    console.log("Selected Permissions: ", selectedPermissions); 
+
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
+
+      
+      const dataToSend = {
+        roleName,
+        permissions: selectedPermissions, 
+      };
+
+      console.log("Data to send to API: ", dataToSend); 
+
+      
       const response = await axios.post(
-        AddRoles,
-        { role_name, permissions: selectedPermissions },
+        RoleAndPermission, 
+        dataToSend, 
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, 
             "Content-Type": "application/json",
           },
         }
       );
 
+      
       if (response.data.status) {
         toast.success("Role added successfully!");
-        setRole_Name("");
-        setSelectedPermissions([]);
+        setRole_Name(""); 
+        setSelectedPermissions([]); 
         setTimeout(() => {
-          navigate("/role");
+          navigate("/role"); 
         }, 2000);
       } else {
-        toast.error(response.data.message || "Failed to add role");
+        toast.error(response.data.message || "Failed to add role.");
       }
     } catch (error) {
       toast.error("Failed to add role. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
+};
 
   return (
     <>
@@ -149,7 +165,7 @@ function AddRole() {
                           }`}
                           id="role_name"
                           placeholder="Role Name"
-                          value={role_name}
+                          value={roleName}
                           onChange={(e) => setRole_Name(e.target.value)}
                           name="roleName"
                         />
@@ -158,13 +174,11 @@ function AddRole() {
                         )}
                       </div>
                     </div>
-                    <div className="table-responsive">
-                      <table className="table mt-4">
-                        <tbody>
-                          {permissions && permissions.length > 0 ? (
+                    <div className="container-fluid">
+                      <div className="row">
+                      {permissions && permissions.length > 0 ? (
                             permissions.map((permission) => (
-                              <tr key={permission.id}>
-                                <td>
+                                <div  key={permission.id} className="col-md-3">
                                   <div className="form-check">
                                     <input
                                       type="checkbox"
@@ -184,16 +198,14 @@ function AddRole() {
                                       {permission.permissionName}
                                     </label>
                                   </div>
-                                </td>
-                              </tr>
+                                </div>
                             ))
                           ) : (
-                            <tr>
-                              <td colSpan="2">No permissions available</td>
-                            </tr>
+                            <div>
+                              <span colSpan="2">No permissions available</span>
+                            </div>
                           )}
-                        </tbody>
-                      </table>
+                      </div>
                     </div>
 
                     <div className="mt-4">

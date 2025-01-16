@@ -11,7 +11,7 @@ import axios from "axios";
 import { EditRoleData } from "../../Api/Apikiran";
 
 function EditRole() {
-  const { id } = useParams(); // Retrieve the ID from the URL
+  const { id } = useParams(); 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [role_name, setRole_name] = useState("");
@@ -21,32 +21,34 @@ function EditRole() {
   const role_nameRef = useRef(null);
 
   // Fetch role data on component mount
-  useEffect(() => {
-    const fetchRoleData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`/EditRoleData/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+  const fetchRole = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      console.log("Token: ", token);
 
-        if (res.data.status === true) {
-          setRole_name(res.data.data.name); 
-        } else {
-          toast.error("Failed to fetch role data.");
-        }
-      } catch (error) {
-        console.error("Error fetching role data:", error);
-        toast.error("There was an error fetching the data.");
+      const response = await axios.get(`${EditRoleData}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.data.status === true) {
+        console.log("role data:", response.data.data);
+        setRole_name(response.data.role_name);
+      } else {
+        toast.error("Failed to fetch permission data!");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching role:", error);
+      toast.error("Error fetching role.");
+    }
+  };
 
-    fetchRoleData();
-  }, [id]);
+  useEffect(() => {
+    fetchRole();
+  }, []);
 
-  const toggleSidebar = () => {
+ const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
@@ -74,14 +76,14 @@ function EditRole() {
 
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.put(`/updateRole/${id}`, roleData, {
+        const res = await axios.post(`/updateRole/${id}`, roleData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
 
-        if (res.data.status === true) {
+        if (res.data.data.status === true) {
           toast.success("Role updated successfully!");
           setTimeout(() => {
             setLoading(false);
@@ -98,6 +100,10 @@ function EditRole() {
       }
     }
   };
+  useEffect(() => {
+    console.log("Role Name Updated: ", role_name);
+  }, [role_name]);
+  
 
   const handleEnter = (e, nextField) => {
     if (e.key === "Enter" && nextField?.current) {
@@ -144,16 +150,17 @@ function EditRole() {
                     </div>
                   </div>
                   <form onSubmit={handleEdit}>
+                    
                     <div className="row mb-3 w-50">
                       <div className="col">
                         <input
                           className={`form-control ${role_nameerror ? "is-invalid" : ""}`}
                           value={role_name}
                           ref={role_nameRef}
-                          placeholder="Rolename"
                           onKeyDown={(e) => handleEnter(e, null)}
                           onChange={handleRolenameChange}
                         />
+                        {console.log("Current role_name: ", role_name)}
                         {role_nameerror && (
                           <div className="invalid-feedback">
                             Role name is required.
@@ -161,7 +168,7 @@ function EditRole() {
                         )}
                       </div>
                     </div>
-                    {/* Add any checkboxes or other fields as required */}
+                    
                     <button
                       type="submit"
                       className="btn btn-primary"
