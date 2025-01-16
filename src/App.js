@@ -75,7 +75,7 @@ const App = () => {
             element={<CancelledBooking />}
           ></Route>
           <Route path="/broker" element={<Broker />}></Route>
-          <Route path="/edit-broker" element={<EditBroker />}></Route>
+          <Route path="/edit-broker/:id" element={<EditBroker />} />
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />

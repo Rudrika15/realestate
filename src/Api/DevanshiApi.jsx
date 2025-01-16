@@ -12,4 +12,6 @@ export const deleteBroker = baseUrl + "v1/brokers/delete-broker";
 export const getProjectStage = baseUrl + "v1/projectstage/get-project-stage"
 export const addProjectStage = baseUrl + "v1/projectstage/store-project-stage"
 export const getProjectWing = baseUrl + "v1/projects/get-project-wing/39"
+export const updateBroker = baseUrl + "v1/brokers/update-broker-id"
+export const singleUpdateBroker = baseUrl + "v1/brokers/get-broker-by-id"
 

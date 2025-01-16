@@ -221,7 +221,7 @@ function Broker() {
                                                         <th scope="col">Action</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                               <tbody>
                                                     {brokers.map((broker) => (
                                                         <tr key={broker.id}>
                                                             <td>{broker.id}</td>
@@ -229,7 +229,7 @@ function Broker() {
                                                             <td>{broker.brokerAddress}</td>
                                                             <td>{broker.brokerMobileNumber}</td>
                                                             <td>
-                                                                <Link to={`/edit-broker`} className="btn btn-warning btn-sm me-2">
+                                                                <Link to={`/edit-broker/${broker.id}`} className="btn btn-warning btn-sm me-2">
                                                                     <i className="fas fa-edit"></i>
                                                                 </Link>
                                                                 <Link to="" onClick={() => handleDelete(broker.id)} className="btn btn-danger btn-sm">
