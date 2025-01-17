@@ -84,7 +84,7 @@ const App = () => {
           <Route path="/edit-unit" element={<EditUnit />} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/add-partners" element={<AddPartners />} />
-          <Route path="/edit-partners" element={<EditPartners />} />
+          <Route path="/edit-partners/:id" element={<EditPartners />} />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />
           <Route path="/edit-expenses" element={<EditExpenses />} />

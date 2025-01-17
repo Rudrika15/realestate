@@ -42,9 +42,6 @@ const Unit = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
   const id = useParams()
-  // alert(id)
- const projecId = id.id
-//  alert(id.id) 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -153,7 +150,7 @@ const Unit = () => {
   };
 
   const handleEditUnit = () => {
-    navigate("/edit-unit");
+    // navigate("/edit-unit");
   };
 
   return (
@@ -194,7 +191,7 @@ const Unit = () => {
                         <thead>
                           <tr>
                             <th scope="col">Project Id</th>
-                            <th scope="col">Wing</th>
+                            {/* <th scope="col">Wing</th> */}
                             <th scope="col">Unit No</th>
                             <th scope="col">Size</th>
                             <th scope="col">Extra Work Amount</th>
@@ -207,7 +204,7 @@ const Unit = () => {
                           {units.map((unit, index) => (
                             <tr key={index}>
                               <td>{unit.projectId}</td>
-                              <td>
+                              {/* <td>
                                 <input
                                   type="text"
                                   name="wing"
@@ -222,7 +219,7 @@ const Unit = () => {
                                     Enter a Wing
                                   </div>
                                 )}
-                              </td>
+                              </td> */}
                               <td>
                                 <input
                                   type="text"

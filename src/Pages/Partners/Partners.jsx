@@ -23,11 +23,6 @@ const Partners = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
-
-  const handleEditClick = () => {
-    navigate("/edit-partners");
-  };
-
   const fetchPartner = async () => {
     const token = localStorage.getItem("token");
 
@@ -46,8 +41,6 @@ const Partners = () => {
       if (response.data.status === true && response.data.data) {
         setPartners(response.data.data);
         // toast.success(response.data.message);
-      console.log(response.data);
-
       }
     } catch (error) {
       if (error.response) {
@@ -64,55 +57,49 @@ const Partners = () => {
 
   useEffect(() => {
     fetchPartner();
-  },[navigate] );
+  }, [navigate]);
 
-  const handleDelete = async (partnerId) => {
+  const handleDelete = async (id) => {
     const confirmDelete = await Swal.fire({
       title: "Are You Sure You Want to Delete?",
-      text: "Once you delete, all the data related to this partner will be deleted.",
-      icon: "warning",
+      text: "Once you delete, all the data related to this user will be deleted.",
+      icon: "error",
       showCancelButton: true,
       confirmButtonText: "Delete",
       cancelButtonText: "Cancel",
       confirmButtonColor: "#d33",
       cancelButtonColor: "#c4c4c4",
+      customClass: {
+        title: "swal-title",
+        text: "swal-text",
+        confirmButton: "swal-confirm-btn",
+        cancelButton: "swal-cancel-btn",
+      },
     });
 
     if (confirmDelete.isConfirmed) {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.delete(`${deletePartner}/${partnerId}`, {
+        const response = await axios.delete(`${deletePartner}/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
         if (response.data.status === true) {
-          setPartners(
-            partners.filter((partner) => partner.partnerId !== partnerId)
-          );
           Swal.fire({
             title: "Deleted!",
-            text: "The partner has been deleted.",
+            text: "The Partner has been deleted.",
             icon: "success",
-            confirmButtonText: "OK",
+            confirmButtonColor: "#3085d6",
           });
+          setPartners(partners.filter((item) => item.id !== id));
         } else {
-          Swal.fire({
-            title: "Error!",
-            text: "An error occurred while deleting the partner.",
-            icon: "error",
-            confirmButtonText: "OK",
-          });
+          toast.error("Failed to delete user!");
         }
       } catch (error) {
-        console.error("Error deleting partner:", error);
-        Swal.fire({
-          title: "Error!",
-          text: "An error occurred while deleting the partner.",
-          icon: "error",
-          confirmButtonText: "OK",
-        });
+        console.error("Error deleting Partners:", error);
+        toast.error("An error occurred while deleting the Partners!");
       }
     }
   };
@@ -173,20 +160,18 @@ const Partners = () => {
                               <td>{partner.ProjectPartners[0]?.partnerName}</td>
                               <td>{partner.percentage}%</td>
                               <td>
-                                <button
-                                  onClick={() => handleEditClick()} 
+                                {/* <Link
+                                  to={`/edit-partners/${partner.id}`}
                                   className="btn btn-warning btn-sm me-2"
                                 >
                                   <i className="fas fa-edit"></i>
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    handleDelete(partner.partnerId)
-                                  } 
+                                </Link> */}
+                                <Link
+                                  onClick={() => handleDelete(partner.id)}
                                   className="btn btn-danger btn-sm"
                                 >
                                   <i className="fas fa-trash"></i>
-                                </button>
+                                </Link>
                               </td>
                             </tr>
                           ))}
