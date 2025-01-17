@@ -62,7 +62,7 @@ const Sidebar = ({ isSidebarOpen }) => {
           <div className="position-relative">
             <img
               className="rounded-circle me-lg-2"
-              src="img/user.jpg"
+              src="./img/user.jpg"
               alt="User"
             />
             <div className="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
