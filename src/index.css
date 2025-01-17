@@ -149,8 +149,8 @@ code {
 } */
 label {
   font-size: 16px;
-  display: block;
   cursor: pointer;
+  vertical-align: middle;
 }
 input[type="checkbox"] {
   margin-right: 10px; 
@@ -158,3 +158,23 @@ input[type="checkbox"] {
   transform: scale(1.4);
   vertical-align: middle;
 }
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 9px;
+}
+
+.form-check-input {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: black;
+  border: 2px solid #ddd; 
+  border-radius: 4px;
+}
+
+.form-check-input:checked {
+  background-color: gray;
+  border-color: #ddd;
+}
+

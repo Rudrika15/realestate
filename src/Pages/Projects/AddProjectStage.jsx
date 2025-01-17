@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
@@ -15,181 +15,145 @@ function AddProjectStage() {
 
   const [title, setTitle] = useState('');
   const [percentage, setPercentage] = useState('');
-  const [wing, setWing] = useState('');
-  const [stageDate, setStageDate] = useState('');
-  const [stageDate1, setStageDate1] = useState('');
+  const [stageDates, setStageDates] = useState({});
+  const [wingOptions, setWingOptions] = useState([]);
+  const [selectedWings, setSelectedWings] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [sharedDate, setSharedDate] = useState('');
 
-  const [titleError, setTitleError] = useState('');
-  const [percentageError, setPercentageError] = useState('');
-  const [wingError, setWingError] = useState('');
-  const [stageDateError, setStageDateError] = useState('');
-  const [stageDateError1, setStageDateError1] = useState('');
-
-  const [unitWings, setUnitWings] = useState([]);
   const navigate = useNavigate();
-
-  const titleRef = useRef(null);
-  const percentageRef = useRef(null);
-  const wingRef = useRef(null);
-  const stageDateRef1 = useRef(null);
-  const stageDateRef = useRef(null);
-  const submitRef = useRef(null);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleTopbar = () => setIsTopbarOpen(!isTopbarOpen);
 
-  const fetchWing = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        toast.error('No token found. Please log in again.');
-        navigate('/login');
-        return;
-      }
-      const response = await axios.get(getProjectWing, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.data.status && Array.isArray(response.data.data)) {
-        setUnitWings(response.data.data);
-      } else {
-        toast.error('No wings found or invalid response structure');
-      }
-    } catch (error) {
-      console.error('Error fetching wing:', error);
-      if (error.response && error.response.status === 401) {
-        toast.error('Unauthorized access. Please log in again.');
-        navigate('/');
-      } else {
-        toast.error('Error fetching wing');
-      }
-      setUnitWings([]);
-    }
-  };
-
-
   useEffect(() => {
+    const fetchWing = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          toast.error('No token found. Please log in again.');
+          navigate('/login');
+          return;
+        }
+        const response = await axios.get(getProjectWing, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.data.status) {
+          setWingOptions(response.data.data || []);
+        } else {
+          toast.error('No wings found.');
+        }
+      } catch (error) {
+        console.error('Error fetching wings:', error);
+        toast.error('Error fetching wings');
+      }
+    };
     fetchWing();
-  }, []);
+  }, [navigate]);
 
-  const handleStageDateChange = (e) => {
-    setStageDate(e.target.value);
-    if (e.target.value) setStageDateError(false);
+  const handleInputChange = (setter) => (e) => {
+    setter(e.target.value);
+    setErrors((prev) => ({ ...prev, [e.target.name]: '' }));
   };
 
-  const handleStageDateChange1 = (e) => {
-    setStageDate1(e.target.value);
-    if (e.target.value) setStageDateError1(false);
+  const handleCheckboxChange = (wing) => {
+    setSelectedWings((prev) =>
+      prev.includes(wing) ? prev.filter((w) => w !== wing) : [...prev, wing]
+    );
   };
 
-  const handleWingChange = (e) => {
-    setWing(e.target.value);
-    if (e.target.value) setWingError(false);
+  const handleStageDateChange = (wing, date) => {
+    setStageDates((prev) => ({ ...prev, [wing]: date }));
+    setErrors((prev) => ({ ...prev, [`date-${wing}`]: '' }));
   };
 
-  const handlePercentageChange = (e) => {
-    setPercentage(e.target.value);
-    if (e.target.value) setPercentageError(false);
+  const validateForm = () => {
+    const newErrors = {};
+    if (!title.trim()) newErrors.title = 'Title is required';
+    if (!percentage.trim()) newErrors.percentage = 'Percentage is required';
+    if (selectedWings.length === 0) newErrors.wings = 'Select at least one wing';
+    selectedWings.forEach((wing) => {
+      if (!stageDates[wing]) newErrors[`date-${wing}`] = `Date for ${wing} is required`;
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-    if (e.target.value) setTitleError(false);
-  };
-
-  const handleAdd = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let isValid = true;
-
-    if (!stageDate.trim()) {
-      setStageDateError(true);
-      isValid = false;
-    } else {
-      setStageDateError(false);
+    if (!validateForm()) return;
+  
+    if (selectedWings.length === 0) {
+      toast.error('Please select at least one wing.');
+      return;
     }
-
-    if (!stageDate1.trim()) {
-      setStageDateError1(true);
-      isValid = false;
-    } else {
-      setStageDateError1(false);
-    }
-
-    if (!wing.trim()) {
-      setWingError(true);
-      isValid = false;
-    } else {
-      setWingError(false);
-    }
-
-    if (!percentage.trim()) {
-      setPercentageError(true);
-      isValid = false;
-    } else {
-      setPercentageError(false);
-    }
-
-    if (!title.trim()) {
-      setTitleError(true);
-      isValid = false;
-    } else {
-      setTitleError(false);
-    }
-
-    if (!isValid) return;
+  
     setLoading(true);
-
     try {
       const token = localStorage.getItem('token');
-      console.log("Token:", token);
       if (!token) {
         toast.error('No token found. Please log in again.');
         navigate('/login');
         return;
       }
-
-      const formData = {
+  
+      const payload = {
         projectStageName: title,
         projectStagePer: Number(percentage),
-        wing: wing,
-        stageDate: stageDate,
+        projectId: 16, // Replace this with the actual projectId you want to include
+        projectWingData: selectedWings.map((wing) => ({
+          projectWingId: wing,
+          status: 'In Progress', // Replace with dynamic status if needed
+          projectCompletionDate: stageDates[wing] || sharedDate, // Ensure a date is provided
+        })),
       };
-
-      const response = await axios.post(addProjectStage, {
+  
+      console.log('Submitting Payload:', payload);
+  
+      const response = await axios.post(addProjectStage, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
-      if (response.data.status === true) {
-        console.log(response.data.status);
+  
+      if (response.data.status) {
         toast.success(response.data.message || 'Project stage added successfully!');
         setTitle('');
         setPercentage('');
-        setWing('');
-        setStageDate('');
-        setStageDate1('');
-        setTimeout(() => {
-          navigate('/project-stage');
-        }, 1000);
+        setSelectedWings([]);
+        setStageDates({});
+        setTimeout(() => navigate(`/project-stage/{id}`), 1000);
       } else {
         toast.error(response.data.message || 'Failed to add project stage.');
       }
     } catch (error) {
       console.error('Error adding project stage:', error);
-      toast.error('Failed to add project stage. Please try again.');
+      toast.error('Error adding project stage. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+  
+  
 
-  const handleEnter = (e, nextField) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      if (nextField?.current) {
-        nextField.current.focus();
-      }
+  const handleSelectAll = () => {
+    if (selectedWings.length === wingOptions.length) {
+      setSelectedWings([]);
+      setSharedDate('');
+    } else {
+      setSelectedWings(wingOptions);
     }
   };
+  const handleSharedDateChange = (date) => {
+    setSharedDate(date);
+    const updatedDates = {};
+    selectedWings.forEach((wing) => {
+      updatedDates[wing] = date;
+    });
+    setStageDates(updatedDates);
+  };
+
 
   return (
     <>
@@ -206,73 +170,89 @@ function AddProjectStage() {
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
-                    <h6>Project Stage</h6>
-                    <Link to="">
+                    <h6>Add Project Stage</h6>
+                    <Link to="/project-stage">
                       <h6>
                         <i className="bi bi-arrow-left-circle-fill"></i> Back
                       </h6>
                     </Link>
                   </div>
-                  <form onSubmit={handleAdd}>
-                    <div className="row">
+                  <form onSubmit={handleSubmit}>
+                    <div className="row pt-3">
                       <div className="col">
                         <input
                           type="text"
-                          className={`form-control ${titleError ? 'is-invalid' : ''}`}
+                          name="title"
+                          className={`form-control ${errors.title ? 'is-invalid' : ''}`}
                           placeholder="Title"
                           value={title}
-                          onChange={handleTitleChange}
-                          onKeyDown={(e) => handleEnter(e, percentageRef)}
-                          ref={titleRef}
+                          onChange={handleInputChange(setTitle)}
                         />
-                        {titleError && <div className="invalid-feedback">Enter a Title</div>}
+                        {errors.title && <div className="invalid-feedback">{errors.title}</div>}
                       </div>
                       <div className="col">
                         <input
                           type="number"
-                          className={`form-control ${percentageError ? 'is-invalid' : ''}`}
+                          name="percentage"
+                          className={`form-control ${errors.percentage ? 'is-invalid' : ''}`}
                           placeholder="Percentage"
                           value={percentage}
-                          onChange={handlePercentageChange}
-                          ref={percentageRef}
-                          onKeyDown={(e) => handleEnter(e, wingRef)}
+                          onChange={handleInputChange(setPercentage)}
                         />
-                        {percentageError && <div className="invalid-feedback">Enter a Percentage</div>}
+                        {errors.percentage && <div className="invalid-feedback">{errors.percentage}</div>}
                       </div>
                     </div>
-                    <div className="row pt-4">
+                    <div className="row pt-3">
                       <div className="col">
-                        <label>
-                          <input type="checkbox" name="option1" value="Option 1" /> Wing A
-                        </label>
-                      </div>
-                      <div className="col">
-                        <input
-                          type="date"
-                          className={`form-control ${stageDateError ? 'is-invalid' : ''}`}
-                          value={stageDate}
-                          onChange={handleStageDateChange}
-                          ref={stageDateRef}
-                          onKeyDown={(e) => handleEnter(e, submitRef)}
-                        />
-                        {stageDateError && <div className="invalid-feedback">Select a Stage Date</div>}
-                      </div>
-                    </div>
-                    <div className="row pt-4">
-                      <div className="col">
-                        <label>
-                          <input type="checkbox" name="option1" value="Option 1" /> Wing B
-                        </label>
-                      </div>
-                      <div className="col">
-                        <input
-                          type="date"
-                          className={`form-control ${stageDateError1 ? 'is-invalid' : ''}`}
-                          value={stageDate1}
-                          onChange={handleStageDateChange1}
-                          ref={stageDateRef1}
-                          onKeyDown={(e) => handleEnter(e, submitRef)}
-                        />
+                        <label className="mb-2">Select Wings:</label>
+
+                        <div className="form-check d-flex align-items-center">
+                          <input
+                            type="checkbox"
+                            id="select-all"
+                            className="form-check-input me-4"
+                            checked={selectedWings.length === wingOptions.length}
+                            onChange={handleSelectAll}
+                          />
+                          <label htmlFor="select-all" className="form-check-label">
+                            Select All
+                          </label>
+                        </div>
+                        {wingOptions.map((wing) => (
+                          <div key={wing} className="form-check d-flex align-items-center">
+                            <input
+                              type="checkbox"
+                              id={wing}
+                              className="form-check-input me-4"
+                              checked={selectedWings.includes(wing)}
+                              onChange={() => handleCheckboxChange(wing)}
+                            />
+                            <label htmlFor={wing} className="form-check-label">
+                              Wing {wing}
+                            </label>
+                          </div>
+                        ))}
+                        {selectedWings.length > 0 && (
+                          <div className="mt-3">
+                            <label htmlFor="shared-date" className="form-label">
+                              Select Date for Wings:
+                            </label>
+
+                            <input
+                              type="date"
+                              id="shared-date"
+                              className={`form-control ${errors.sharedDate ? 'is-invalid' : ''}`}
+                              value={sharedDate}
+                              onChange={(e) => handleSharedDateChange(e.target.value)}
+                              style={{ maxWidth: '200px' }}
+                            />
+                            {errors.sharedDate && (
+                              <div className="invalid-feedback">{errors.sharedDate}</div>
+                            )}
+                          </div>
+                        )}
+
+                        {errors.wings && <div className="text-danger">{errors.wings}</div>}
                       </div>
                     </div>
                     <button type="submit" className="btn btn-primary mt-3" disabled={loading}>
@@ -283,8 +263,8 @@ function AddProjectStage() {
               </div>
             </div>
           </div>
-        </div >
-      </div >
+        </div>
+      </div>
     </>
   );
 }
