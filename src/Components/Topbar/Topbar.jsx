@@ -93,7 +93,7 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
           >
             <img
               className="rounded-circle me-lg-2"
-              src="./img/user.jpg"
+              src="/img/user.jpg"
               alt="User"
             />
             <span className="d-none d-lg-inline-flex">Admin</span>
