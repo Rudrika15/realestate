@@ -1,29 +1,50 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import { Link } from "react-router-dom";
-
 import Topbar from "../../Components/Topbar/Topbar";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
+import axios from "axios";
+import { editPartner,updatePartner } from "../../Api/ApiDipak";
 
 const EditPartners = () => {
   const [partner, setPartner] = useState({ id: "", name: "", percentage: "" });
   const [error, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (location.state?.partner) {
-      setPartner(location.state.partner);
-    } else {
-      navigate("/partners");
+  const fetchPartner = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Token is missing.");
+        return;
+      }
+  
+      const response = await axios.get(`${editPartner}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.data.status === true) {
+        const { partnerId, name, percentage } = response.data.data;
+        setPartner({ id: partnerId, name, percentage });
+      } else {
+        toast.error("Failed to fetch partner data!");
+      }
+    } catch (error) {
+      console.error("Error fetching partner:", error);
+      toast.error("Error fetching partner.");
     }
-  }, [location, navigate]);
+  };
+    useEffect(() => {
+    fetchPartner();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,7 +55,6 @@ const EditPartners = () => {
   const validateFields = () => {
     let isValid = true;
     const validationErrors = {};
-
     if (!partner.name) {
       validationErrors.name = "Please enter Name for partner";
       isValid = false;
@@ -42,8 +62,6 @@ const EditPartners = () => {
       validationErrors.name = "Name can only contain letters and spaces";
       isValid = false;
     }
-
-    // Percentage validation
     if (!partner.percentage) {
       validationErrors.percentage = "Please enter Percentage for partner";
       isValid = false;
@@ -60,34 +78,54 @@ const EditPartners = () => {
 
     setErrors(validationErrors);
     return isValid;
-  };
-
-  const handleSubmit = (e) => {
+  };const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
+    // Validate fields before submitting
     if (!validateFields()) {
       return;
     }
-
-    const partners = JSON.parse(localStorage.getItem("partnersData")) || [];
-    const updatedPartners = partners.map((p) =>
-      p.id === partner.id ? partner : p
-    );
-    localStorage.setItem("partnersData", JSON.stringify(updatedPartners));
+    
     setLoading(true);
-
-    setTimeout(() => {
+    const PartnerData = {
+      partner_id: id,  
+      partner_name: partner.name,
+      percentage: partner.percentage,
+    };
+  
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Token is missing or expired.");
+        setLoading(false);
+        return;
+      }
+  
+      const response = await axios.post(`${updatePartner}/${id}`, PartnerData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (response.data.status === true) {
+        toast.success("Partner updated successfully!");
+        setTimeout(() => {
+          setLoading(false);
+          navigate("/partners");
+        }, 1000);
+      } else {
+        toast.error("Failed to update partner.");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error updating partner:", error);
+      toast.error("An error occurred while updating the partner.");
       setLoading(false);
-      navigate("/partners");
-    }, 2000);
-  };
-
-  const preventFormSubmit = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
     }
   };
-
+  
+  
   return (
     <>
       <Helmet>
@@ -116,7 +154,7 @@ const EditPartners = () => {
                       </Link>
                     </div>
                   </div>
-                  <form onSubmit={handleSubmit} onKeyDown={preventFormSubmit}>
+                  <form onSubmit={handleSubmit}>
                     <div className="row mb-3">
                       <div className="col">
                         <label className="form-label">Name</label>
@@ -136,7 +174,6 @@ const EditPartners = () => {
                       </div>
                       <div className="col">
                         <label className="form-label">Percentage</label>
-
                         <input
                           type="number"
                           className={`form-control ${

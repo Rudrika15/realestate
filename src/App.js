@@ -84,11 +84,11 @@ const App = () => {
           <Route path="/addnewpermission" element={<AddNewPermission/>}/>
           <Route path="/add-projects" element={<AddProjects />} />
           <Route path="/edit-projects" element={<EditProjects />} />
-          <Route path="/unit" element={<Unit />} />
+          <Route path="/unit/:id" element={<Unit />} />
           <Route path="/edit-unit" element={<EditUnit />} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/add-partners" element={<AddPartners />} />
-          <Route path="/edit-partners" element={<EditPartners />} />
+          <Route path="/edit-partners/:id" element={<EditPartners />} />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />
           <Route path="/edit-expenses" element={<EditExpenses />} />

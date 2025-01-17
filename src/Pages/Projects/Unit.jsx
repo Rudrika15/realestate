@@ -5,7 +5,8 @@ import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import { projectWiseUnit } from "../../Api/ApiDipak";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import { useParams } from "react-router-dom";
 
 const Unit = () => {
   const [units, setUnits] = useState([
@@ -18,8 +19,7 @@ const Unit = () => {
       saleDeedAmount: "",
     },
   ]);
-  const [loading, setLoading] = useState(true); 
-
+  const [loading, setLoading] = useState(true);
 
   const [unitErrors, setUnitErrors] = useState({
     wingError: false,
@@ -41,24 +41,27 @@ const Unit = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
+  const id = useParams()
   useEffect(() => {
     const token = localStorage.getItem("token");
-  
+
     if (!token) {
       toast.error("Token not found! Please log in.");
       navigate("/");
     } else {
       const fetchProjects = async () => {
         try {
-          setLoading(true);  
-          const response = await axios.get(projectWiseUnit, {
+          setLoading(true);
+          const response = await axios.get(`${projectWiseUnit}/${id.id}`, {
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
           });
-  
+          console.log(response);
+          
           if (response.data.status === true && response.data.data) {
+            // toast.success(response.data.message);
             setUnits(response.data.data);
           }
         } catch (error) {
@@ -69,14 +72,14 @@ const Unit = () => {
             console.error("Error fetching data:", error);
           }
         } finally {
-          setLoading(false);  
+          setLoading(false);
         }
       };
-  
+
       fetchProjects();
     }
   }, [navigate]);
-  
+
   const handleInputChange = (e, index) => {
     const { name, value } = e.target;
     const updatedUnits = [...units];
@@ -147,11 +150,13 @@ const Unit = () => {
   };
 
   const handleEditUnit = () => {
-    navigate("/edit-unit");
+    // navigate("/edit-unit");
   };
 
   return (
     <>
+      <ToastContainer />
+
       <Helmet>
         <title>React Estate | Units</title>
       </Helmet>
@@ -186,7 +191,7 @@ const Unit = () => {
                         <thead>
                           <tr>
                             <th scope="col">Project Id</th>
-                            <th scope="col">Wing</th>
+                            {/* <th scope="col">Wing</th> */}
                             <th scope="col">Unit No</th>
                             <th scope="col">Size</th>
                             <th scope="col">Extra Work Amount</th>
@@ -199,7 +204,7 @@ const Unit = () => {
                           {units.map((unit, index) => (
                             <tr key={index}>
                               <td>{unit.projectId}</td>
-                              <td>
+                              {/* <td>
                                 <input
                                   type="text"
                                   name="wing"
@@ -214,7 +219,7 @@ const Unit = () => {
                                     Enter a Wing
                                   </div>
                                 )}
-                              </td>
+                              </td> */}
                               <td>
                                 <input
                                   type="text"
@@ -252,7 +257,9 @@ const Unit = () => {
                                   type="text"
                                   name="extraWorkAmount"
                                   className={`form-control ${
-                                    unitErrors.extraWorkAmountError ? "is-invalid" : ""
+                                    unitErrors.extraWorkAmountError
+                                      ? "is-invalid"
+                                      : ""
                                   }`}
                                   value={unit.extraWorkAmount}
                                   onChange={(e) => handleInputChange(e, index)}

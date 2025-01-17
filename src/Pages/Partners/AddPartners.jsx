@@ -5,12 +5,14 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { addPartner, getProject } from "../../Api/ApiDipak";
 
 function AddPartners() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectProject, setSelectProject] = useState("");
+  const [projects, setProjects] = useState([]);
   const [name, setName] = useState("");
   const [percentage, setPercentage] = useState("");
   const [error, setError] = useState({});
@@ -63,13 +65,12 @@ function AddPartners() {
       return newErrors;
     });
   };
-
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
-          navigate("/"); 
+          navigate("/");
           return;
         }
 
@@ -79,42 +80,26 @@ function AddPartners() {
             "Content-Type": "application/json",
           },
         });
-
-        console.log(response.data.data); 
-
         if (response.data.status === true && response.data.data) {
-          const selectProject = response.data.data.projectName;
-
-          
-          if (Array.isArray(selectProject)) {
-            setSelectProject(selectProject[0]); 
-          } else {
-            setSelectProject(selectProject);
-          }
+          setProjects(response.data.data);
         } else {
           console.error("Projects data not found in the response.");
         }
-      } 
-      catch (error) {
+      } catch (error) {
         if (error.response) {
           if (error.response.status === 401) {
-            navigate("/"); 
+            navigate("/");
           } else {
             console.error("Error response:", error.response.data);
           }
-        } else if (error.request) {
-          console.error("Error request:", error.request);
         } else {
           console.error("Error message:", error.message);
         }
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchProjects();
-  }, [navigate]); 
-
+  }, [navigate]);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -123,66 +108,65 @@ function AddPartners() {
     if (Object.keys(formErrors).length > 0) {
       return;
     }
+
+    if (!selectProject) {
+      setError((prevState) => ({
+        ...prevState,
+        selectProject: "Please select a project",
+      }));
+      return;
+    }
+
     setLoading(true);
 
-    // try {
-    //   const token = localStorage.getItem("token");
-    //   console.log("Token from localStorage:", token);
+    try {
+      const token = localStorage.getItem("token");
+      console.log("Token from localStorage:", token);
 
-    //   if (!token) {
-    //     // toast.error("Authentication failed. Please log in again.");
-    //     navigate("/");
-    //     return;
-    //   }
+      if (!token) {
+        navigate("/");
+        return;
+      }
 
-    //   const formData = new FormData();
-    //   formData.append("partner_name", name.trim());
-    //   formData.append("percentage", percentage.trim());
-    //   formData.append("project_id", selectProject);
+      const partnerData = {
+        partner_name: name.trim(),
+        percentage: percentage.trim(),
+        projectId: selectProject,
+      };
+      console.log("Sending data:", partnerData);
+      const response = await axios.post(addPartner, partnerData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          
+        },
+      });
 
-    //   for (let [key, value] of formData.entries()) {
-    //     console.log(`${key}: ${value}`);
-    //   }
+      console.log("Response from API:", response);
 
-    //   const response = await axios.post(addPartner, formData, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //       "Content-Type": "application/json",
+      if (response.status === 200) {
+        toast.success("Project and units added successfully");
+        
+        setLoading(false);
+        navigate("/partners");
+      }
+    } catch (error) {
+      console.error("Error submitting data:", error);
 
-    //     },
-    //   });
+      if (error.response) {
+        console.error("Error response:", error.response.data);
+      }
 
-    //   console.log("response", response);
-
-    //   if (response.status === 200) {
-    //     // toast.success("Project and units added successfully");
-    //     setLoading(false);
-
-    //     navigate("/partners");
-    //   }
-    // } catch (error) {
-    //   console.error("Error submitting project:", error);
-
-    //   if (error.response) {
-    //     console.error("Error response:", error.response.data);
-
-    //     if (error.response.data.message === "partner_name is required") {
-    //       setError((prevState) => ({
-    //         ...prevState,
-    //         partner_name: "Partner name is required",
-    //       }));
-    //     }
-    //   }
-
-    //   if (error.response && error.response.status === 401) {
-    //     navigate("/");
-    //   }
-
-    //   setLoading(false);
-    // }
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+      setLoading(false);
+    }
   };
   return (
     <>
+          <ToastContainer />
+    
       <Helmet>
         <title>React Estate | Add Partners</title>
       </Helmet>
@@ -220,13 +204,14 @@ function AddPartners() {
                           ref={selectProjectRef}
                         >
                           <option value="">Select Project</option>
-                          {Array.isArray(selectProject) &&
-                            selectProject.map((projectName, index,id) => (
-                              <option key={index} value={id}>
-                                {projectName}{" "}
+                          {Array.isArray(projects) &&
+                            projects.map((project) => (
+                              <option key={project.id} value={project.id}>
+                                {project.projectName}
                               </option>
                             ))}
                         </select>
+
                         {error.selectProject && (
                           <div className="invalid-feedback">
                             {error.selectProject}

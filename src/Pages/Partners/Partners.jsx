@@ -3,9 +3,12 @@ import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
+import { getPartner, deletePartner } from "../../Api/ApiDipak";
+import axios from "axios";
 
 const Partners = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -20,44 +23,85 @@ const Partners = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
+  const fetchPartner = async () => {
+    const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    const storedPartnersData = JSON.parse(localStorage.getItem("partnersData"));
-    if (storedPartnersData) {
-      setPartners(storedPartnersData);
+    try {
+      if (!token) {
+        navigate("/");
+        return;
+      }
+
+      const response = await axios.get(getPartner, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.data.status === true && response.data.data) {
+        setPartners(response.data.data);
+        // toast.success(response.data.message);
+      }
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 401) {
+          navigate("/");
+        } else {
+          console.error("Error response:", error.response.data);
+        }
+      } else {
+        console.error("Error message:", error.message);
+      }
     }
-  }, []);
-
-  const handleEditClick = (partner) => {
-    navigate("/edit-partners", { state: { partner } });
   };
 
-  const handleDelete = (partnerId) => {
-    Swal.fire({
+  useEffect(() => {
+    fetchPartner();
+  }, [navigate]);
+
+  const handleDelete = async (id) => {
+    const confirmDelete = await Swal.fire({
       title: "Are You Sure You Want to Delete?",
-      text: "Once you delete, all the data related to this partner will be deleted.",
-      icon: "warning",
+      text: "Once you delete, all the data related to this user will be deleted.",
+      icon: "error",
       showCancelButton: true,
       confirmButtonText: "Delete",
       cancelButtonText: "Cancel",
       confirmButtonColor: "#d33",
       cancelButtonColor: "#c4c4c4",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const updatedPartners = partners.filter(
-          (partner) => partner.id !== partnerId
-        );
-        setPartners(updatedPartners);
-        localStorage.setItem("partnersData", JSON.stringify(updatedPartners));
-
-        Swal.fire({
-          title: "Deleted!",
-          text: "The partner has been deleted.",
-          icon: "success",
-          confirmButtonColor: "#3085d6",
-        });
-      }
+      customClass: {
+        title: "swal-title",
+        text: "swal-text",
+        confirmButton: "swal-confirm-btn",
+        cancelButton: "swal-cancel-btn",
+      },
     });
+
+    if (confirmDelete.isConfirmed) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${deletePartner}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.data.status === true) {
+          Swal.fire({
+            title: "Deleted!",
+            text: "The Partner has been deleted.",
+            icon: "success",
+            confirmButtonColor: "#3085d6",
+          });
+          setPartners(partners.filter((item) => item.id !== id));
+        } else {
+          toast.error("Failed to delete user!");
+        }
+      } catch (error) {
+        console.error("Error deleting Partners:", error);
+        toast.error("An error occurred while deleting the Partners!");
+      }
+    }
   };
 
   return (
@@ -92,39 +136,42 @@ const Partners = () => {
                       </Link>
                     </div>
                   </div>
-
                   {partners.length > 0 ? (
                     <div className="table-responsive">
                       <table className="table table-bordered text-center">
                         <thead>
                           <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col" className="w-25">
+                            <th scope="col">Partner Id</th>
+                            <th scope="col">Project Name</th>
+                            <th scope="col">Partner's Name</th>
+                            <th scope="col" className="w-20">
                               Percentage
                             </th>
-                            <th scope="col" className="w-25">
+                            <th scope="col" className="w-20">
                               Action
                             </th>
                           </tr>
                         </thead>
                         <tbody>
                           {partners.map((partner) => (
-                            <tr key={partner.id}>
-                              <td>{partner.name}</td>
-                              <td>{partner.percentage}</td>
+                            <tr key={partner.partnerId}>
+                              <td>{partner.partnerId}</td>
+                              <td>{partner.project?.projectName || "N/A"}</td>
+                              <td>{partner.ProjectPartners[0]?.partnerName}</td>
+                              <td>{partner.percentage}%</td>
                               <td>
-                                <button
-                                  onClick={() => handleEditClick(partner)}
+                                {/* <Link
+                                  to={`/edit-partners/${partner.id}`}
                                   className="btn btn-warning btn-sm me-2"
                                 >
                                   <i className="fas fa-edit"></i>
-                                </button>
-                                <button
+                                </Link> */}
+                                <Link
                                   onClick={() => handleDelete(partner.id)}
                                   className="btn btn-danger btn-sm"
                                 >
                                   <i className="fas fa-trash"></i>
-                                </button>
+                                </Link>
                               </td>
                             </tr>
                           ))}
