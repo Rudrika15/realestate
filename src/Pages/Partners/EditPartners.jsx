@@ -8,15 +8,19 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
 import axios from "axios";
-import { editPartner,updatePartner } from "../../Api/ApiDipak";
+import { editPartner, updatePartner } from "../../Api/ApiDipak";
 
 const EditPartners = () => {
-  const [partner, setPartner] = useState({ id: "", name: "", percentage: "" });
+  const [partner, setPartner] = useState({  name: "", percentage: "" });
+  const [Xyz, setXyz] = useState(""); 
+
+  const [projectName, setProjectName] = useState(""); 
   const [error, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const { id } = useParams();
   const navigate = useNavigate();
+
   const fetchPartner = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -24,16 +28,21 @@ const EditPartners = () => {
         toast.error("Token is missing.");
         return;
       }
-  
+
       const response = await axios.get(`${editPartner}/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
+
+      console.log(response.data.data.ProjectPartners[0]);
+
       if (response.data.status === true) {
-        const { partnerId, name, percentage } = response.data.data;
-        setPartner({ id: partnerId, name, percentage });
+        
+        const {  name=response.data.data.ProjectPartners[0].partnerName, percentage, project } = response.data.data;
+        setPartner({  name , percentage });
+        setProjectName(project ? project.projectName : ""); 
       } else {
         toast.error("Failed to fetch partner data!");
       }
@@ -42,7 +51,8 @@ const EditPartners = () => {
       toast.error("Error fetching partner.");
     }
   };
-    useEffect(() => {
+
+  useEffect(() => {
     fetchPartner();
   }, []);
 
@@ -78,21 +88,23 @@ const EditPartners = () => {
 
     setErrors(validationErrors);
     return isValid;
-  };const handleSubmit = async (e) => {
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate fields before submitting
+
     if (!validateFields()) {
       return;
     }
-    
+
     setLoading(true);
     const PartnerData = {
-      partner_id: id,  
+      partner_id: id,
       partner_name: partner.name,
       percentage: partner.percentage,
+      project_id: partner.projectId, 
     };
-  
+
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -100,14 +112,14 @@ const EditPartners = () => {
         setLoading(false);
         return;
       }
-  
+
       const response = await axios.post(`${updatePartner}/${id}`, PartnerData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-  
+
       if (response.data.status === true) {
         toast.success("Partner updated successfully!");
         setTimeout(() => {
@@ -124,8 +136,7 @@ const EditPartners = () => {
       setLoading(false);
     }
   };
-  
-  
+
   return (
     <>
       <Helmet>
@@ -156,8 +167,18 @@ const EditPartners = () => {
                   </div>
                   <form onSubmit={handleSubmit}>
                     <div className="row mb-3">
+                       <div className="col">
+                        <label className="form-label">Project Name</label>
+                        <input
+                          type="text"
+                          className={`form-control`}
+                          placeholder="Project Name"
+                          name="projectName"
+                          value={projectName}
+                        />
+                      </div>
                       <div className="col">
-                        <label className="form-label">Name</label>
+                        <label className="form-label"> Partner Name</label>
                         <input
                           type="text"
                           className={`form-control ${
@@ -167,12 +188,16 @@ const EditPartners = () => {
                           name="name"
                           value={partner.name}
                           onChange={handleInputChange}
+                          readOnly
+
                         />
                         {error.name && (
                           <div className="invalid-feedback">{error.name}</div>
                         )}
                       </div>
-                      <div className="col">
+                    </div>
+                    <div className="row mb-3">
+                    <div className="col">
                         <label className="form-label">Percentage</label>
                         <input
                           type="number"
@@ -190,6 +215,7 @@ const EditPartners = () => {
                           </div>
                         )}
                       </div>
+                      <div className="col"></div>
                     </div>
 
                     <button

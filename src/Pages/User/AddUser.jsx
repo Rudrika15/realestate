@@ -9,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { addUsers } from "../../Api/DevanshiApi";
 import axios from "axios";
 import { ViewRoleData } from "../../Api/Apikiran";
-import { Multiselect } from "multiselect-react-dropdown";
 
 function AddUser() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -153,14 +152,6 @@ function AddUser() {
         }
     };
 
-    const handleSelect = (selectedList) => {
-        setSelectedRoles(selectedList);
-    };
-
-    const handleRemove = (selectedList) => {
-        setSelectedRoles(selectedList);
-    };
-
     return (
         <>
             <Helmet>
@@ -183,7 +174,7 @@ function AddUser() {
                                         </Link>
                                     </div>
                                     <form onSubmit={handleAdd}>
-                                        <div className="row mb-3">
+                                        <div className="row mb-3 w-50">
                                             <div className="col">
                                                 <input
                                                     type="text"
@@ -196,9 +187,8 @@ function AddUser() {
                                                 />
                                                 {userNameError && <div className="invalid-feedback">Enter a Username</div>}
                                             </div>
-                                            <div className="col"></div>
                                         </div>
-                                        <div className="row mb-3">
+                                        <div className="row mb-3 w-50">
                                             <div className="col">
                                                 <input
                                                     type="password"
@@ -211,9 +201,8 @@ function AddUser() {
                                                 />
                                                 {passcodeError && <div className="invalid-feedback">Enter a Passcode</div>}
                                             </div>
-                                            <div className="col"></div>
                                         </div>
-                                        <div className="row mb-3">
+                                        <div className="row mb-3 w-50">
                                             <div className="col">
                                                 <input
                                                     type="password"
@@ -230,21 +219,26 @@ function AddUser() {
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="col"></div>
                                         </div>
-                                        <div className="row mb-3">
+                                        <div className="row mb-3 w-50">
                                             <div className="col">
-                                                <Multiselect
-                                                    options={role}
-                                                    displayValue="role_name"
-                                                    onSelect={handleSelect}
-                                                    onRemove={handleRemove}
-                                                    placeholder="Select Role"
-                                                    showCheckbox={true}
-                                                    className="bg-white"
-                                                />
+                                                <select
+                                                    className={`form-control bg-white ${roleError ? "is-invalid" : ""}`}
+                                                    ref={roleRef}
+                                                    onChange={handleRoleChange}
+                                                    multiple
+                                                >
+                                                    <option value="" disabled>
+                                                        Select Role
+                                                    </option>
+                                                    {role.map((item) => (
+                                                        <option key={item.id} value={item.id}>
+                                                            {item.role_name}
+                                                        </option>
+                                                    ))}
+                                                 </select>
+                                                {roleError && <div className="invalid-feedback">Please select a role.</div>}
                                             </div>
-                                            <div className="col"></div>
                                         </div>
                                         <button
                                             type="submit"
