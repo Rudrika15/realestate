@@ -160,12 +160,12 @@ const Partners = () => {
                               <td>{partner.ProjectPartners[0]?.partnerName}</td>
                               <td>{partner.percentage}%</td>
                               <td>
-                                <Link
+                                {/* <Link
                                   to={`/edit-partners/${partner.id}`}
                                   className="btn btn-warning btn-sm me-2"
                                 >
                                   <i className="fas fa-edit"></i>
-                                </Link>
+                                </Link> */}
                                 <Link
                                   onClick={() => handleDelete(partner.id)}
                                   className="btn btn-danger btn-sm"
