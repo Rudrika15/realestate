@@ -138,7 +138,14 @@ const Role = () => {
                               <td>
                                 <div>
                                   {role.Permissions.length > 0 ? (
-                                    <select aria-label="Permissions">
+                                    <select
+                                      aria-label="Permissions"
+                                      className="form-select form-select-sm w-80"
+                                      defaultValue=""
+                                    >
+                                      <option value="" disabled>
+                                        Select Permission
+                                      </option>
                                       {role.Permissions.map(
                                         (permission, index) => (
                                           <option
@@ -155,6 +162,7 @@ const Role = () => {
                                   )}
                                 </div>
                               </td>
+
                               <td>
                                 <Link
                                   to={`/edit-role`}
@@ -190,6 +198,17 @@ const Role = () => {
           </div>
         </div>
       </div>
+      <style jsx="true">{`
+        /* Optional additional styling */
+        .form-select:focus {
+          border-color: #007bff;
+          box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+        }
+
+        .form-select:hover {
+          border-color: #0056b3;
+        }
+      `}</style>
     </>
   );
 };

@@ -82,12 +82,12 @@ function AddProjectStage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-  
+
     if (selectedWings.length === 0) {
       toast.error('Please select at least one wing.');
       return;
     }
-  
+
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
@@ -96,7 +96,7 @@ function AddProjectStage() {
         navigate('/login');
         return;
       }
-  
+
       const payload = {
         projectStageName: title,
         projectStagePer: Number(percentage),
@@ -107,23 +107,23 @@ function AddProjectStage() {
           projectCompletionDate: stageDates[wing] || sharedDate, // Ensure a date is provided
         })),
       };
-  
+
       console.log('Submitting Payload:', payload);
-  
+
       const response = await axios.post(addProjectStage, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.data.status) {
         toast.success(response.data.message || 'Project stage added successfully!');
         setTitle('');
         setPercentage('');
         setSelectedWings([]);
         setStageDates({});
-        setTimeout(() => navigate(`/project-stage/{id}`), 1000);
+        setTimeout(() => navigate(`/project-stage/:id`), 1000);
       } else {
         toast.error(response.data.message || 'Failed to add project stage.');
       }
@@ -134,8 +134,8 @@ function AddProjectStage() {
       setLoading(false);
     }
   };
-  
-  
+
+
 
   const handleSelectAll = () => {
     if (selectedWings.length === wingOptions.length) {
@@ -205,19 +205,35 @@ function AddProjectStage() {
                     <div className="row pt-3">
                       <div className="col">
                         <label className="mb-2">Select Wings:</label>
-
-                        <div className="form-check d-flex align-items-center">
-                          <input
-                            type="checkbox"
-                            id="select-all"
-                            className="form-check-input me-4"
-                            checked={selectedWings.length === wingOptions.length}
-                            onChange={handleSelectAll}
-                          />
-                          <label htmlFor="select-all" className="form-check-label">
-                            Select All
-                          </label>
+                        <div className="d-flex align-items-center">
+                          <div className="form-check me-4">
+                            <input
+                              type="checkbox"
+                              id="select-all"
+                              className="form-check-input me-2"
+                              checked={selectedWings.length === wingOptions.length}
+                              onChange={handleSelectAll}
+                            />
+                            <label htmlFor="select-all" className="form-check-label">
+                              Select All
+                            </label>
+                          </div>
+                          {selectedWings.length > 0 && (
+                            <div className="d-flex flex-column align-items-start">
+                              <input
+                                type="date"
+                                id="shared-date"
+                                className={`form-control ${errors.sharedDate ? 'is-invalid' : ''}`}
+                                value={sharedDate}
+                                onChange={(e) => handleSharedDateChange(e.target.value)}
+                              />
+                              {errors.sharedDate && (
+                                <div className="invalid-feedback">{errors.sharedDate}</div>
+                              )}
+                            </div>
+                          )}
                         </div>
+
                         {wingOptions.map((wing) => (
                           <div key={wing} className="form-check d-flex align-items-center">
                             <input
@@ -232,29 +248,10 @@ function AddProjectStage() {
                             </label>
                           </div>
                         ))}
-                        {selectedWings.length > 0 && (
-                          <div className="mt-3">
-                            <label htmlFor="shared-date" className="form-label">
-                              Select Date for Wings:
-                            </label>
-
-                            <input
-                              type="date"
-                              id="shared-date"
-                              className={`form-control ${errors.sharedDate ? 'is-invalid' : ''}`}
-                              value={sharedDate}
-                              onChange={(e) => handleSharedDateChange(e.target.value)}
-                              style={{ maxWidth: '200px' }}
-                            />
-                            {errors.sharedDate && (
-                              <div className="invalid-feedback">{errors.sharedDate}</div>
-                            )}
-                          </div>
-                        )}
-
                         {errors.wings && <div className="text-danger">{errors.wings}</div>}
                       </div>
                     </div>
+
                     <button type="submit" className="btn btn-primary mt-3" disabled={loading}>
                       {loading ? <Spinner animation="border" size="sm" /> : 'Submit'}
                     </button>

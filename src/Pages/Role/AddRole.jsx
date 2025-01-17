@@ -187,11 +187,11 @@ function AddRole() {
                     <div className="mt-4">
                       <button
                         type="submit"
-                        className="btn btn-primary w-100"
+                        className="btn btn-primary"
                         disabled={loading}
                       >
                         {loading ? (
-                          <div className="d-flex justify-content-center align-items-center">
+                          <div className="d-flex justify-content-center align-items-cente">
                             <Spinner animation="border" size="sm" />
                           </div>
                         ) : (
