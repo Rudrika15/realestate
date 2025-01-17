@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import { Helmet } from 'react-helmet';
 import Topbar from '../../Components/Topbar/Topbar';
-import { Link, useNavigate, useParams } from 'react-router-dom'; // Added useNavigate import
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import axios from 'axios';
 import { singleUpdateBroker, updateBroker } from '../../Api/DevanshiApi';
@@ -19,10 +19,10 @@ function EditBroker() {
     const [brokerMobileNumberError, setBrokerMobileNumberError] = useState('');
     const [brokerAddressError, setBrokerAddressError] = useState('');
     const { id } = useParams();
-    const navigate = useNavigate();  // Initialize the navigate hook
+    const navigate = useNavigate();
 
+    // Fetch broker details on component mount or when ID changes
     const fetchBrokerDetails = async () => {
-        setLoading(true);
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -44,16 +44,16 @@ function EditBroker() {
                 toast.error(response?.data?.message || 'Failed to fetch broker details.');
             }
         } catch (error) {
+            console.error(error); // Log the error for debugging
             toast.error('An error occurred while fetching broker details.');
-        } finally {
-            setLoading(false);
         }
     };
 
     useEffect(() => {
         fetchBrokerDetails();
-    }, [id]);
+    }, [id]); // Only re-fetch when the ID changes
 
+    // Form validation
     const handleValidation = () => {
         let isValid = true;
 
@@ -84,6 +84,7 @@ function EditBroker() {
         return isValid;
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -115,11 +116,14 @@ function EditBroker() {
 
             if (response.data.status === true) {
                 toast.success(response.data.message || 'Broker updated successfully');
-                navigate('/broker');  // Navigate to the broker page after success
+                setTimeout(() => {
+                    navigate("/broker");
+                }, 1000);
             } else {
                 toast.error(response?.data?.message || 'Failed to update broker.');
             }
         } catch (error) {
+            console.error(error);
             toast.error('An error occurred while updating broker details.');
         } finally {
             setLoading(false);
@@ -128,7 +132,6 @@ function EditBroker() {
 
     return (
         <>
-            <ToastContainer />
             <Helmet>
                 <title>Edit Broker</title>
             </Helmet>
@@ -211,6 +214,7 @@ function EditBroker() {
                     </div>
                 </div>
             </div>
+            <ToastContainer />
         </>
     );
 }

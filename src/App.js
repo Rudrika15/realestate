@@ -76,6 +76,7 @@ const App = () => {
             element={<CancelledBooking />}
           ></Route>
           <Route path="/broker" element={<Broker />}></Route>
+          <Route path="/edit-broker/:id" element={<EditBroker />} />
           <Route path="/edit-projectstage" element={<EditProjectStage />} />
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />

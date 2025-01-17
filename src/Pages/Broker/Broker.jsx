@@ -221,7 +221,7 @@ function Broker() {
                                                         <th scope="col">Action</th>
                                                     </tr>
                                                 </thead>
-                                               <tbody>
+                                                <tbody>
                                                     {brokers.map((broker) => (
                                                         <tr key={broker.id}>
                                                             <td>{broker.id}</td>

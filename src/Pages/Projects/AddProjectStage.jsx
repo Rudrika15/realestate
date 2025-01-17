@@ -207,7 +207,7 @@ function AddProjectStage() {
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
                     <h6>Project Stage</h6>
-                    <Link to="/project-stage">
+                    <Link to="">
                       <h6>
                         <i className="bi bi-arrow-left-circle-fill"></i> Back
                       </h6>
@@ -245,25 +245,6 @@ function AddProjectStage() {
                         <label>
                           <input type="checkbox" name="option1" value="Option 1" /> Wing A
                         </label>
-                        {/* <select
-                          className={`form-control bg-white ${wingError.wing ? "is-invalid" : ""}`}
-                          value={wing}
-                          ref={wingRef}
-                          onChange={handleWingChange}
-                          onKeyDown={(e) => handleEnter(e, stageDateRef)}
-                        >
-                          <option value="" disabled>Select Wing</option>
-                          {unitWings && unitWings.length > 0 ? (
-                            unitWings.map((unitWing, index) => (
-                              <option key={index} value={unitWing}>
-                                {unitWing}
-                              </option>
-                            ))
-                          ) : (
-                            <option value="" disabled>No wings available</option>
-                          )}
-                        </select> */}
-                        {/* {wingError && <div className="invalid-feedback">Select a Wing</div>} */}
                       </div>
                       <div className="col">
                         <input
@@ -284,7 +265,7 @@ function AddProjectStage() {
                         </label>
                       </div>
                       <div className="col">
-                      <input
+                        <input
                           type="date"
                           className={`form-control ${stageDateError1 ? 'is-invalid' : ''}`}
                           value={stageDate1}
