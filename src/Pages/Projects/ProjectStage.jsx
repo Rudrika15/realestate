@@ -4,7 +4,7 @@ import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { getProjectStage } from '../../Api/DevanshiApi';
+import { getProjectStage, getSingleProjectStage } from '../../Api/DevanshiApi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -23,21 +23,21 @@ function ProjectStage() {
                 toast.error('Authorization token is missing.');
                 return;
             }
-    
-            const response = await axios.get(`${getProjectStage}/${id}`, {
+
+            const response = await axios.get(`${getSingleProjectStage}/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             if (response.data.status) {
                 const fetchedData = response.data.data;
                 if (Array.isArray(fetchedData)) {
                     setProjectStage(fetchedData);
                 } else if (fetchedData) {
-                    setProjectStage([fetchedData]); 
+                    setProjectStage([fetchedData]);
                 } else {
-                    setProjectStage([]); 
+                    setProjectStage([]);
                 }
             } else {
                 toast.error(response.data.message || 'Failed to fetch project stages!');
@@ -48,7 +48,7 @@ function ProjectStage() {
             setLoading(false);
         }
     };
-    
+
 
     useEffect(() => {
         if (id) {
@@ -116,14 +116,11 @@ function ProjectStage() {
                                                             <td>{stage.projectStageName}</td>
                                                             <td>{stage.projectStagePer}%</td>
                                                             <td>
-                                                                <Link to={`/edit-project-stage/${stage.id}`} className="btn btn-warning btn-sm me-2">
+                                                                <Link to="/edit-projectstage" className="btn btn-warning btn-sm me-2">
                                                                     <i className="fas fa-edit"></i>
                                                                 </Link>
                                                                 <button
                                                                     className="btn btn-danger btn-sm"
-                                                                    onClick={() =>
-                                                                        toast.info('Delete functionality to be implemented')
-                                                                    }
                                                                 >
                                                                     <i className="fas fa-trash"></i>
                                                                 </button>

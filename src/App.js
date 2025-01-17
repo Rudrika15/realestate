@@ -43,6 +43,7 @@ import Broker from "./Pages/Broker/Broker";
 import EditBroker from "./Pages/Broker/EditBroker";
 import Modal from "./Components/Modal/Modal";
 import AddNewPermission from "./Pages/Permission/AddNewPermission";
+import EditProjectStage from "./Pages/Projects/EditProjectStage";
 
 
 const App = () => {
@@ -75,7 +76,7 @@ const App = () => {
             element={<CancelledBooking />}
           ></Route>
           <Route path="/broker" element={<Broker />}></Route>
-          <Route path="/edit-broker/:id" element={<EditBroker />} />
+          <Route path="/edit-projectstage" element={<EditProjectStage />} />
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />

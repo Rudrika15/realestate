@@ -147,3 +147,14 @@ code {
   background: #787474;
   border-radius: 3px;
 } */
+label {
+  font-size: 16px;
+  display: block;
+  cursor: pointer;
+}
+input[type="checkbox"] {
+  margin-right: 10px; 
+  accent-color: black; 
+  transform: scale(1.4);
+  vertical-align: middle;
+}

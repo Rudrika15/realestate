@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import { Helmet } from 'react-helmet';
 import Topbar from '../../Components/Topbar/Topbar';
-import { Link, useParams } from 'react-router-dom';
-import { Spinner, ToastContainer } from 'react-bootstrap';
+import { Link, useNavigate, useParams } from 'react-router-dom'; // Added useNavigate import
+import { Spinner } from 'react-bootstrap';
 import axios from 'axios';
 import { singleUpdateBroker, updateBroker } from '../../Api/DevanshiApi';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
 function EditBroker() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -19,9 +19,10 @@ function EditBroker() {
     const [brokerMobileNumberError, setBrokerMobileNumberError] = useState('');
     const [brokerAddressError, setBrokerAddressError] = useState('');
     const { id } = useParams();
-    const [broker, setBroker] = useState({}); // Change here
+    const navigate = useNavigate();  // Initialize the navigate hook
 
     const fetchBrokerDetails = async () => {
+        setLoading(true);
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -29,39 +30,23 @@ function EditBroker() {
                 setLoading(false);
                 return;
             }
-            const response = await axios.get(singleUpdateBroker, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+
+            const response = await axios.get(`${singleUpdateBroker}${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
             });
-            if (response.data.datastatus === true) {
-                const brokerData = response.data.data.data;
-                setBroker({
-                    id: brokerData.id,
-                    brokerName: brokerData.brokerName || '',
-                    brokerAddress: brokerData.brokerAddress || '',
-                    brokerMobileNumber: brokerData.brokerMobileNumber || '',
-                });
-                setBrokerName(brokerData.brokerName || '');
-                setBrokerMobileNumber(brokerData.brokerMobileNumber || '');
-                setBrokerAddress(brokerData.brokerAddress || '');
-                toast.success('Broker data fetched successfully!');
+
+            if (response.data.status) {
+                const { brokerName, brokerMobileNumber, brokerAddress } = response.data.data;
+                setBrokerName(brokerName || '');
+                setBrokerMobileNumber(brokerMobileNumber || '');
+                setBrokerAddress(brokerAddress || '');
             } else {
                 toast.error(response?.data?.message || 'Failed to fetch broker details.');
             }
         } catch (error) {
-            console.error('Error fetching broker details:', error);
-            if (error.response) {
-                if (error.response.status === 404) {
-                    toast.error('Broker not found.');
-                } else if (error.response.status === 401) {
-                    toast.error('Unauthorized access. Please log in again.');
-                } else {
-                    toast.error(`Error: ${error.response.status}`);
-                }
-            } else {
-                toast.error('An error occurred while fetching broker details.');
-            }
+            toast.error('An error occurred while fetching broker details.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -69,35 +54,16 @@ function EditBroker() {
         fetchBrokerDetails();
     }, [id]);
 
-    const handleBrokerMobileNumberChange = (e) => {
-        setBrokerMobileNumber(e.target.value);
-        if (e.target.value) {
-            setBrokerMobileNumberError(false);
-        }
-    };
-
-    const handleBrokerAddressChange = (e) => {
-        setBrokerAddress(e.target.value);
-        if (e.target.value) {
-            setBrokerAddressError(false);
-        }
-    };
-
-    const handlebrokerNameChange = (e) => {
-        setBrokerName(e.target.value);
-        if (e.target.value) {
-            setBrokerNameError(false);
-        }
-    };
-
     const handleValidation = () => {
         let isValid = true;
+
         if (!brokerName.trim()) {
             setBrokerNameError('Name is required');
             isValid = false;
         } else {
             setBrokerNameError('');
         }
+
         if (!brokerMobileNumber.trim()) {
             setBrokerMobileNumberError('Mobile Number is required');
             isValid = false;
@@ -107,20 +73,64 @@ function EditBroker() {
         } else {
             setBrokerMobileNumberError('');
         }
+
         if (!brokerAddress.trim()) {
             setBrokerAddressError('Address is required');
             isValid = false;
         } else {
             setBrokerAddressError('');
         }
+
         return isValid;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!handleValidation()) return;
+
+        setLoading(true);
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error('Token is missing. Please log in again.');
+                setLoading(false);
+                return;
+            }
+
+            const response = await axios.post(`${updateBroker}/${id}`,
+                {
+                    brokerName,
+                    brokerMobileNumber,
+                    brokerAddress,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            if (response.data.status === true) {
+                toast.success(response.data.message || 'Broker updated successfully');
+                navigate('/broker');  // Navigate to the broker page after success
+            } else {
+                toast.error(response?.data?.message || 'Failed to update broker.');
+            }
+        } catch (error) {
+            toast.error('An error occurred while updating broker details.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <>
             <ToastContainer />
             <Helmet>
-                <title>React Estate | Brokers</title>
+                <title>Edit Broker</title>
             </Helmet>
             <div className="container-fluid position-relative bg-white d-flex p-0">
                 <Sidebar isSidebarOpen={isSidebarOpen} />
@@ -142,66 +152,57 @@ function EditBroker() {
                                             </h6>
                                         </Link>
                                     </div>
-                                    <form onSubmit={handleValidation}>
-                                        <input type="text" value={id} />
-                                        <div className="row pt-4">
-                                            <div className="col position-relative">
-                                                <input key={id}
-                                                    type="text"
-                                                    className="form-control"
-                                                    id="name"
-                                                    value={brokerName}
-                                                    placeholder={brokerName}
-                                                    onChange={handlebrokerNameChange}
-                                                />
-                                                {brokerNameError && (
-                                                    <p className="text-danger">{brokerNameError}</p>
-                                                )}
-                                            </div>
-                                            <div className="col position-relative"></div>
-                                        </div>
-                                        <div className="row pt-4">
-                                            <div className="col position-relative">
+                                    <form onSubmit={handleSubmit}>
+                                        <div className="row mb-3">
+                                            <div className="col">
                                                 <input
                                                     type="text"
                                                     className="form-control"
-                                                    id="mobile-number"
-                                                    value={brokerMobileNumber}
-                                                    placeholder={brokerMobileNumber}
-                                                    onChange={handleBrokerMobileNumberChange}
+                                                    value={brokerName}
+                                                    onChange={(e) => setBrokerName(e.target.value)}
+                                                    placeholder="Enter broker name"
                                                 />
-                                                {brokerMobileNumberError && (
-                                                    <p className="text-danger">
-                                                        {brokerMobileNumberError}
-                                                    </p>
+                                                {brokerNameError && (
+                                                    <small className="text-danger">{brokerNameError}</small>
                                                 )}
                                             </div>
-                                            <div className="col position-relative"></div>
+                                            <div className="col"></div>
                                         </div>
-                                        <div className="row pt-4 mb-3">
-                                            <div className="col position-relative">
+                                        <div className="row mb-3">
+                                            <div className="col">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={brokerMobileNumber}
+                                                    onChange={(e) => setBrokerMobileNumber(e.target.value)}
+                                                    placeholder="Enter broker mobile number"
+                                                />
+                                                {brokerMobileNumberError && (
+                                                    <small className="text-danger">{brokerMobileNumberError}</small>
+                                                )}
+                                            </div>
+                                            <div className="col"></div>
+                                        </div>
+                                        <div className="row mb-3">
+                                            <div className="col">
                                                 <textarea
                                                     className="form-control"
                                                     value={brokerAddress}
-                                                    placeholder={brokerAddress}
-                                                    onChange={handleBrokerAddressChange}
+                                                    onChange={(e) => setBrokerAddress(e.target.value)}
+                                                    placeholder="Enter broker address"
                                                 />
                                                 {brokerAddressError && (
-                                                    <p className="text-danger">{brokerAddressError}</p>
+                                                    <small className="text-danger">{brokerAddressError}</small>
                                                 )}
                                             </div>
-                                            <div className="col position-relative"></div>
+                                            <div className="col"></div>
                                         </div>
                                         <button
                                             type="submit"
                                             className="btn btn-primary"
                                             disabled={loading}
                                         >
-                                            {loading ? (
-                                                <Spinner animation="border" size="sm" />
-                                            ) : (
-                                                'Submit'
-                                            )}
+                                            {loading ? <Spinner animation="border" size="sm" /> : 'Submit'}
                                         </button>
                                     </form>
                                 </div>

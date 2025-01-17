@@ -17,11 +17,13 @@ function AddProjectStage() {
   const [percentage, setPercentage] = useState('');
   const [wing, setWing] = useState('');
   const [stageDate, setStageDate] = useState('');
+  const [stageDate1, setStageDate1] = useState('');
 
   const [titleError, setTitleError] = useState('');
   const [percentageError, setPercentageError] = useState('');
   const [wingError, setWingError] = useState('');
   const [stageDateError, setStageDateError] = useState('');
+  const [stageDateError1, setStageDateError1] = useState('');
 
   const [unitWings, setUnitWings] = useState([]);
   const navigate = useNavigate();
@@ -29,6 +31,7 @@ function AddProjectStage() {
   const titleRef = useRef(null);
   const percentageRef = useRef(null);
   const wingRef = useRef(null);
+  const stageDateRef1 = useRef(null);
   const stageDateRef = useRef(null);
   const submitRef = useRef(null);
 
@@ -73,6 +76,11 @@ function AddProjectStage() {
     if (e.target.value) setStageDateError(false);
   };
 
+  const handleStageDateChange1 = (e) => {
+    setStageDate1(e.target.value);
+    if (e.target.value) setStageDateError1(false);
+  };
+
   const handleWingChange = (e) => {
     setWing(e.target.value);
     if (e.target.value) setWingError(false);
@@ -97,6 +105,13 @@ function AddProjectStage() {
       isValid = false;
     } else {
       setStageDateError(false);
+    }
+
+    if (!stageDate1.trim()) {
+      setStageDateError1(true);
+      isValid = false;
+    } else {
+      setStageDateError1(false);
     }
 
     if (!wing.trim()) {
@@ -152,6 +167,7 @@ function AddProjectStage() {
         setPercentage('');
         setWing('');
         setStageDate('');
+        setStageDate1('');
         setTimeout(() => {
           navigate('/project-stage');
         }, 1000);
@@ -226,7 +242,10 @@ function AddProjectStage() {
                     </div>
                     <div className="row pt-4">
                       <div className="col">
-                        <select
+                        <label>
+                          <input type="checkbox" name="option1" value="Option 1" /> Wing A
+                        </label>
+                        {/* <select
                           className={`form-control bg-white ${wingError.wing ? "is-invalid" : ""}`}
                           value={wing}
                           ref={wingRef}
@@ -243,8 +262,8 @@ function AddProjectStage() {
                           ) : (
                             <option value="" disabled>No wings available</option>
                           )}
-                        </select>
-                        {wingError && <div className="invalid-feedback">Select a Wing</div>}
+                        </select> */}
+                        {/* {wingError && <div className="invalid-feedback">Select a Wing</div>} */}
                       </div>
                       <div className="col">
                         <input
@@ -256,6 +275,23 @@ function AddProjectStage() {
                           onKeyDown={(e) => handleEnter(e, submitRef)}
                         />
                         {stageDateError && <div className="invalid-feedback">Select a Stage Date</div>}
+                      </div>
+                    </div>
+                    <div className="row pt-4">
+                      <div className="col">
+                        <label>
+                          <input type="checkbox" name="option1" value="Option 1" /> Wing B
+                        </label>
+                      </div>
+                      <div className="col">
+                      <input
+                          type="date"
+                          className={`form-control ${stageDateError1 ? 'is-invalid' : ''}`}
+                          value={stageDate1}
+                          onChange={handleStageDateChange1}
+                          ref={stageDateRef1}
+                          onKeyDown={(e) => handleEnter(e, submitRef)}
+                        />
                       </div>
                     </div>
                     <button type="submit" className="btn btn-primary mt-3" disabled={loading}>
