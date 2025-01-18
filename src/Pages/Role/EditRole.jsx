@@ -11,7 +11,7 @@ import axios from "axios";
 import { EditRoleData } from "../../Api/Apikiran";
 
 function EditRole() {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [role_name, setRole_name] = useState("");
@@ -24,9 +24,14 @@ function EditRole() {
   const fetchRole = async () => {
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Token is missing. Please log in again.");
+        setLoading(false);
+        return;
+      }
       console.log("Token: ", token);
 
-      const response = await axios.get(`${EditRoleData}`, {
+      const response = await axios.get(`${EditRoleData}${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -48,7 +53,7 @@ function EditRole() {
     fetchRole();
   }, []);
 
- const toggleSidebar = () => {
+  const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
@@ -71,7 +76,6 @@ function EditRole() {
     if (isValid) {
       setLoading(true);
 
-      
       const roleData = { name: role_name };
 
       try {
@@ -87,7 +91,7 @@ function EditRole() {
           toast.success("Role updated successfully!");
           setTimeout(() => {
             setLoading(false);
-            navigate("/role"); 
+            navigate("/role");
           }, 1000);
         } else {
           toast.error("Failed to update role.");
@@ -103,7 +107,6 @@ function EditRole() {
   useEffect(() => {
     console.log("Role Name Updated: ", role_name);
   }, [role_name]);
-  
 
   const handleEnter = (e, nextField) => {
     if (e.key === "Enter" && nextField?.current) {
@@ -150,17 +153,20 @@ function EditRole() {
                     </div>
                   </div>
                   <form onSubmit={handleEdit}>
-                    
                     <div className="row mb-3 w-50">
+                      <label htmlFor="role_name" className="form-label">
+                        Role Name
+                      </label>
                       <div className="col">
                         <input
-                          className={`form-control ${role_nameerror ? "is-invalid" : ""}`}
+                          className={`form-control ${
+                            role_nameerror ? "is-invalid" : ""
+                          }`}
                           value={role_name}
                           ref={role_nameRef}
-                          onKeyDown={(e) => handleEnter(e, null)}
                           onChange={handleRolenameChange}
+                          id="role_name"
                         />
-                        {console.log("Current role_name: ", role_name)}
                         {role_nameerror && (
                           <div className="invalid-feedback">
                             Role name is required.
@@ -168,13 +174,17 @@ function EditRole() {
                         )}
                       </div>
                     </div>
-                    
+
                     <button
                       type="submit"
                       className="btn btn-primary"
                       disabled={loading}
                     >
-                      {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
+                      {loading ? (
+                        <Spinner animation="border" size="sm" />
+                      ) : (
+                        "Submit"
+                      )}
                     </button>
                   </form>
                 </div>
