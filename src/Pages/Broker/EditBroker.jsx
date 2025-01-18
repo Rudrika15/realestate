@@ -21,7 +21,6 @@ function EditBroker() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    // Fetch broker details on component mount or when ID changes
     const fetchBrokerDetails = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -44,16 +43,15 @@ function EditBroker() {
                 toast.error(response?.data?.message || 'Failed to fetch broker details.');
             }
         } catch (error) {
-            console.error(error); // Log the error for debugging
+            console.error(error); 
             toast.error('An error occurred while fetching broker details.');
         }
     };
 
     useEffect(() => {
         fetchBrokerDetails();
-    }, [id]); // Only re-fetch when the ID changes
+    }, [id]); 
 
-    // Form validation
     const handleValidation = () => {
         let isValid = true;
 
@@ -84,7 +82,6 @@ function EditBroker() {
         return isValid;
     };
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 

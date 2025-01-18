@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
@@ -12,6 +12,7 @@ function AddProjectStage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { id } = useParams();
 
   const [title, setTitle] = useState('');
   const [percentage, setPercentage] = useState('');
@@ -73,7 +74,7 @@ function AddProjectStage() {
     if (!percentage.trim()) newErrors.percentage = 'Percentage is required';
     if (selectedWings.length === 0) newErrors.wings = 'Select at least one wing';
     selectedWings.forEach((wing) => {
-      if (!stageDates[wing]) newErrors[`date-${wing}`] = `Date for ${wing} is required`;
+      if (!stageDates[wing] && !sharedDate) newErrors[`date-${wing}`] = `Date for ${wing} is required`;
     });
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -82,11 +83,6 @@ function AddProjectStage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
-    if (selectedWings.length === 0) {
-      toast.error('Please select at least one wing.');
-      return;
-    }
 
     setLoading(true);
     try {
@@ -100,17 +96,15 @@ function AddProjectStage() {
       const payload = {
         projectStageName: title,
         projectStagePer: Number(percentage),
-        projectId: 16, // Replace this with the actual projectId you want to include
+        projectId: Number(id),
         projectWingData: selectedWings.map((wing) => ({
           projectWingId: wing,
-          status: 'In Progress', // Replace with dynamic status if needed
-          projectCompletionDate: stageDates[wing] || sharedDate, // Ensure a date is provided
+          status: 'In Progress',
+          projectCompletionDate: stageDates[wing] || sharedDate,
         })),
       };
 
-      console.log('Submitting Payload:', payload);
-
-      const response = await axios.post(addProjectStage, payload, {
+      const response = await axios.post(`${addProjectStage}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -123,7 +117,8 @@ function AddProjectStage() {
         setPercentage('');
         setSelectedWings([]);
         setStageDates({});
-        setTimeout(() => navigate(`/project-stage/:id`), 1000);
+        setSharedDate('');
+        setTimeout(() => navigate(`/project-stage/${id}`), 1000);
       } else {
         toast.error(response.data.message || 'Failed to add project stage.');
       }
@@ -134,8 +129,6 @@ function AddProjectStage() {
       setLoading(false);
     }
   };
-
-
 
   const handleSelectAll = () => {
     if (selectedWings.length === wingOptions.length) {
@@ -154,7 +147,6 @@ function AddProjectStage() {
     setStageDates(updatedDates);
   };
 
-
   return (
     <>
       <ToastContainer />
@@ -171,7 +163,7 @@ function AddProjectStage() {
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
                     <h6>Add Project Stage</h6>
-                    <Link to="/project-stage">
+                    <Link to={`/project-stage/${id}`}>
                       <h6>
                         <i className="bi bi-arrow-left-circle-fill"></i> Back
                       </h6>
@@ -251,7 +243,6 @@ function AddProjectStage() {
                         {errors.wings && <div className="text-danger">{errors.wings}</div>}
                       </div>
                     </div>
-
                     <button type="submit" className="btn btn-primary mt-3" disabled={loading}>
                       {loading ? <Spinner animation="border" size="sm" /> : 'Submit'}
                     </button>

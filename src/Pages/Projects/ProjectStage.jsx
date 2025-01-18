@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getProjectStage, getSingleProjectStage } from '../../Api/DevanshiApi';
 import { toast, ToastContainer } from 'react-toastify';
@@ -14,6 +14,7 @@ function ProjectStage() {
     const [loading, setLoading] = useState(false);
     const [projectStage, setProjectStage] = useState([]);
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const fetchProjectStage = async () => {
         setLoading(true);
@@ -24,7 +25,7 @@ function ProjectStage() {
                 return;
             }
 
-            const response = await axios.get(`${getSingleProjectStage}/${id}`, {
+            const response = await axios.get(`${getProjectStage}/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -32,27 +33,25 @@ function ProjectStage() {
 
             if (response.data.status) {
                 const fetchedData = response.data.data;
-                if (Array.isArray(fetchedData)) {
-                    setProjectStage(fetchedData);
-                } else if (fetchedData) {
-                    setProjectStage([fetchedData]);
-                } else {
-                    setProjectStage([]);
-                }
+                setProjectStage(Array.isArray(fetchedData) ? fetchedData : [fetchedData]);
             } else {
-                toast.error(response.data.message || 'Failed to fetch project stages!');
+                // toast.error(response.data.message || 'Failed to fetch project stages!');
+                setProjectStage([]);
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Error fetching project stages!');
+            // toast.error(error.response?.data?.message || 'Error fetching project stages!');
+            setProjectStage([]);
         } finally {
             setLoading(false);
         }
     };
 
-
     useEffect(() => {
         if (id) {
             fetchProjectStage();
+        } else {
+            toast.error('Invalid project ID.');
+            setProjectStage([]);
         }
     }, [id]);
 
@@ -85,7 +84,7 @@ function ProjectStage() {
                                 <div className="bg-light rounded h-100 p-4">
                                     <div className="d-flex justify-content-between mb-3">
                                         <h6 className="mb-4">Project Stage List</h6>
-                                        <Link to="/add-project-stage">
+                                        <Link to={`/add-project-stage/${id}`} className="">
                                             <h6 className="mb-4">
                                                 <i className="bi bi-plus-circle-fill"></i> New Project Stage
                                             </h6>
@@ -111,12 +110,15 @@ function ProjectStage() {
                                                 </thead>
                                                 <tbody>
                                                     {projectStage.map((stage) => (
-                                                        <tr key={stage.id}>
-                                                            <td>{stage.id}</td>
-                                                            <td>{stage.projectStageName}</td>
-                                                            <td>{stage.projectStagePer}%</td>
+                                                        <tr key={stage?.id || Math.random()}>
+                                                            <td>{stage?.id || 'N/A'}</td>
+                                                            <td>{stage?.projectStageName || 'N/A'}</td>
+                                                            <td>{stage?.projectStagePer || 0}%</td>
                                                             <td>
-                                                                <Link to="/edit-projectstage" className="btn btn-warning btn-sm me-2">
+                                                                <Link
+                                                                    to={`/edit-projectstage/${id}`}
+                                                                    className={`btn btn-warning btn-sm me-2 ${!stage?.id ? 'disabled' : ''}`}
+                                                                >
                                                                     <i className="fas fa-edit"></i>
                                                                 </Link>
                                                                 <button
@@ -133,7 +135,7 @@ function ProjectStage() {
                                     ) : (
                                         <div className="text-center">
                                             <img
-                                                src="img/image_2024_12_26T09_23_33_935Z.png"
+                                                src="/img/image_2024_12_26T09_23_33_935Z.png"
                                                 alt="No Project Stages"
                                                 className="img-fluid w-25 h-25"
                                             />
