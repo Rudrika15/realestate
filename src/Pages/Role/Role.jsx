@@ -6,21 +6,17 @@ import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
-import { DeleteRole, PermissionFetch, ViewRoleData } from "../../Api/Apikiran";
+import { DeleteRole, ViewRoleData } from "../../Api/Apikiran";
 import axios from "axios";
 import Swal from "sweetalert2";
-// import { ViewRoleData } from "../../Api/Apikiran";
+import { RoleHasPermission } from "../../Api/Apikiran";
 
 const Role = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [role, setRole] = useState([]);
-  const [role_name, setRole_Name] = useState([]);
   const [permissions, setPermissions] = useState([]);
 
   const toggleSidebar = () => {
@@ -34,9 +30,7 @@ const Role = () => {
   const getData = async () => {
     try {
       const token = localStorage.getItem("token");
-      console.log("ViewRoleData");
       const res = await axios.get(ViewRoleData, {
-        params: { page: currentPage },
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -45,12 +39,10 @@ const Role = () => {
 
       if (res.data.status === true) {
         setData(res.data.data);
-        setTotalPages(res.data.totalPages);
       } else {
         setError("Failed to load users.");
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
       setError("There was an error fetching the data.");
     } finally {
       setLoading(false);
@@ -59,32 +51,6 @@ const Role = () => {
 
   useEffect(() => {
     getData();
-  }, []);
-  const fetchPermission = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      console.log("Token: ", token);
-
-      const response = await axios.get(`${PermissionFetch}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.data.status === true) {
-        console.log("Permissions data:", response.data.data);
-        setPermissions(response.data.data);
-      } else {
-        toast.error("Failed to fetch permission data!");
-      }
-    } catch (error) {
-      console.error("Error fetching permission:", error);
-      toast.error("Error fetching permission.");
-    }
-  };
-
-  useEffect(() => {
-    fetchPermission();
   }, []);
 
   const handleDelete = async (id) => {
@@ -96,22 +62,14 @@ const Role = () => {
       confirmButtonText: "Delete",
       cancelButtonText: "Cancel",
       confirmButtonColor: "#d33",
-      cancelButtonColor: "#c4c4c4", 
-      customClass: {
-        title: "swal-title",
-        text: "swal-text",
-        confirmButton: "swal-confirm-btn",
-        cancelButton: "swal-cancel-btn",
-      },
+      cancelButtonColor: "#c4c4c4",
     });
 
     if (confirmDelete.isConfirmed) {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.delete(`${DeleteRole}/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (response.data.status === true) {
@@ -121,12 +79,11 @@ const Role = () => {
             icon: "success",
             confirmButtonColor: "#3085d6",
           });
-          setRole(role_name.filter((item) => item.id !== id));
+          setData(data.filter((item) => item.id !== id));
         } else {
           toast.error("Failed to delete role!");
         }
       } catch (error) {
-        console.error("Error deleting role:", error);
         toast.error("An error occurred while deleting the role!");
       }
     }
@@ -174,50 +131,47 @@ const Role = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {data.map((user) => (
-                            <tr key={user.id}>
-                              <td>{user.id}</td>
-                              <td>{user.role_name}</td>
+                          {data.map((role) => (
+                            <tr key={role.id}>
+                              <td>{role.id}</td>
+                              <td>{role.role_name}</td>
                               <td>
-                                <select
-                                  className="form-select"
-                                  value={user.permission || ""} 
-                                  onChange={(e) => {
-                                    const updatedData = data.map((u) =>
-                                      u.id === user.id
-                                        ? { ...u, permission: e.target.value } 
-                                        : u
-                                    );
-                                    setData(updatedData); 
-                                  }}
-                                >
-                                  <option value="" disabled>Select Permission</option>
-                                  {permissions.length > 0 ? (
-                                    permissions.map((permission) => (
-                                      <option
-                                        key={permission.id}
-                                        value={permission.id}
-                                      >
-                                        {permission.permissionName}{" "}
-                                      
+                                <div>
+                                  {role.Permissions.length > 0 ? (
+                                    <select
+                                      aria-label="Permissions"
+                                      className="form-select form-select-sm w-80"
+                                      defaultValue=""
+                                    >
+                                      <option value="" disabled>
+                                        Select Permission
                                       </option>
-                                    ))
+                                      {role.Permissions.map(
+                                        (permission, index) => (
+                                          <option
+                                            key={index}
+                                            value={permission.permissionName}
+                                          >
+                                            {permission.permissionName}
+                                          </option>
+                                        )
+                                      )}
+                                    </select>
                                   ) : (
-                                    <option value="" disabled>
-                                      No Permissions Available
-                                    </option>
+                                    <div>No data</div>
                                   )}
-                                </select>
+                                </div>
                               </td>
+
                               <td>
                                 <Link
-                                  to="/edit-role"
+                                  to={`/edit-role`}
                                   className="btn btn-warning btn-sm me-2"
                                 >
                                   <i className="fas fa-edit"></i>
                                 </Link>
                                 <Link
-                                  onClick={() => handleDelete(user.id)}
+                                  onClick={() => handleDelete(role.id)}
                                   className="btn btn-danger btn-sm"
                                 >
                                   <i className="fas fa-trash"></i>
@@ -244,6 +198,17 @@ const Role = () => {
           </div>
         </div>
       </div>
+      <style jsx="true">{`
+        /* Optional additional styling */
+        .form-select:focus {
+          border-color: #007bff;
+          box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+        }
+
+        .form-select:hover {
+          border-color: #0056b3;
+        }
+      `}</style>
     </>
   );
 };

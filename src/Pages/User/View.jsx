@@ -136,7 +136,7 @@ const View = () => {
                                                             <td>{user.id}</td>
                                                             <td>{user.userName}</td>
                                                             <td>
-                                                                <Link to={`/edit-user`} className="btn btn-warning btn-sm me-2">
+                                                                <Link to="" className="btn btn-warning btn-sm me-2">
                                                                     <i className="fas fa-edit"></i>
                                                                 </Link>
                                                                 <Link to="" onClick={() => handleDelete(user.id)} className="btn btn-danger btn-sm">

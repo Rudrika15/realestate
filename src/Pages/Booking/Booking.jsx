@@ -17,6 +17,7 @@ function Booking() {
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
+  const [remark, setRemark] = useState("");
   const [saleAmount, setSaleAmount] = useState("");
   const [extra, setExtra] = useState("");
   const [work, setWork] = useState("");
@@ -46,6 +47,7 @@ function Booking() {
   const [customerNameError, setCustomerNameError] = useState("");
   const [customerContactError, setCustomerContactError] = useState("");
   const [customerAddressError, setCustomerAddressError] = useState("");
+  const [remarkError, setRemarkError] = useState("");
   const [saleAmountError, setSaleAmountError] = useState("");
   const [extraError, setExtraError] = useState("");
   const [workError, setWorkError] = useState("");
@@ -71,6 +73,7 @@ function Booking() {
   const customerNameRef = useRef(null);
   const customerContactRef = useRef(null);
   const customerAddressRef = useRef(null);
+  const remarkRef = useRef(null);
   const saleAmountRef = useRef(null);
   const extraRef = useRef(null);
   const workRef = useRef(null);
@@ -371,6 +374,13 @@ function Booking() {
       setCustomerAddressError(false);
     }
 
+    if (!remark) {
+      setRemarkError(true);
+      isValid = false;
+    } else {
+      setRemarkError(false);
+    }
+
     if (!saleAmount) {
       setSaleAmountError(true);
       isValid = false;
@@ -541,6 +551,11 @@ function Booking() {
     if (e.target.value) setCustomerAddressError(false);
   };
 
+  const handleRemarkChange = (e) => {
+    setRemark(e.target.value);
+    if (e.target.value) setRemarkError(false);
+  };
+
   const handleSaleAmountChange = (e) => {
     console.log("samount Selected:", e.target.value);
     setSaleAmount(e.target.value);
@@ -641,63 +656,65 @@ function Booking() {
         window.location.href = '/';
         return;
       }
+  
+      // Use the predefined `getProject` URL
       const response = await axios.get(getProject, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (response.data.status == true) {
-        setProjects(response.data.data);
-        if (projects.length > 0) {
+  
+      if (response.data.status) {
+        const projects = response.data.data;
+        setProjects(projects);
+  
+        // Automatically fetch units for the first project if available
+        if (projects && projects.length > 0) {
           const selectedProjectId = projects[0].id;
-          fetchUnit(selectedProjectId);
+          await fetchUnit(selectedProjectId); // Fetch units for the first project
         }
       } else {
-        console.error("Failed to fetch peoject data!");
+        console.error('Failed to fetch project data!');
       }
     } catch (error) {
-      console.error("Error fetching peojects:", error);
+      console.error('Error fetching projects:', error);
     }
-  };
-
+  };  
+  
   const fetchUnit = async (projectId) => {
-    const token = localStorage.getItem("token");
-    console.log(token);
-    
-    if (!token) {
-      toast.error("No token found! Please log in.");
-      navigate("/");
-      return;
-    }
-
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Token not found! Please log in.');
+        navigate('/');
+        return;
+      }
+  
       setLoading(true);
-      const response = await axios.get(`${projectWiseUnit}/${projectId}`, {
+  
+      const response = await axios.get(projectWiseUnit(projectId), {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
-
-      if (response.data.status === true) {
-        console.log(response.data.data);
+  
+      if (response.data.status && response.data.data) {
         setUnits(response.data.data);
       } else {
-        toast.error("Invalid data received!");
+        console.warn('No units found for the selected project.');
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        toast.error("Session expired! Please log in again.");
-        navigate("/");
+      if (error.response?.status === 401) {
+        toast.error('Session expired! Please log in again.');
+        navigate('/');
       } else {
-        console.error("Error fetching data:", error);
-        toast.error("Something went wrong! Please try again later.");
+        console.error('Error fetching units:', error);
       }
     } finally {
       setLoading(false);
     }
-  };
-
+  };  
 
   useEffect(() => {
     fetchProject();
@@ -924,7 +941,7 @@ function Booking() {
                         </div>
                       </div>
                     ))}
-                    <div className="row w-75">
+                    <div className="row">
                       <div className="col pt-2">
                         <textarea
                           className={`form-control ${customerAddressError ? "is-invalid" : ""}`}
@@ -932,12 +949,25 @@ function Booking() {
                           id="floatingTextarea"
                           value={customerAddress}
                           onChange={handleCustomerAddressChange}
-                          onKeyDown={(e) => handleEnter(e, saleAmountRef)}
+                          onKeyDown={(e) => handleEnter(e, remarkRef)}
                           ref={customerAddressRef}
                         ></textarea>
                         {customerAddressError && (
                           <div className="invalid-feedback">Enter a Customer Address</div>
                         )}
+                      </div>
+                      <div className="col  pt-2">
+                        <div className="col position-relative">
+                        <textarea
+                          className={`form-control ${remarkError ? "is-invalid" : ""}`}
+                          placeholder="Remark"
+                          id="floatingTextarea"
+                          value={remark}
+                          onChange={handleRemarkChange}
+                          onKeyDown={(e) => handleEnter(e, saleAmountRef)}
+                          ref={remarkRef}
+                        ></textarea>
+                        </div>
                       </div>
                     </div>
                     <hr />

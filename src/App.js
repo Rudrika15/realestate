@@ -40,8 +40,10 @@ import EditProjects from "./Pages/Projects/EditProjects";
 import ProjectStage from "./Pages/Projects/ProjectStage";
 import AddProjectStage from "./Pages/Projects/AddProjectStage";
 import Broker from "./Pages/Broker/Broker";
+import EditBroker from "./Pages/Broker/EditBroker";
 import Modal from "./Components/Modal/Modal";
 import AddNewPermission from "./Pages/Permission/AddNewPermission";
+import EditProjectStage from "./Pages/Projects/EditProjectStage";
 
 
 const App = () => {
@@ -68,12 +70,14 @@ const App = () => {
           <Route path="/cash-deposit" element={<CashDeposit />}></Route>
           <Route path="/cheque-deposit" element={<ChequeDeposit />}></Route>
           <Route path="/booking" element={<Booking />}></Route>
-          <Route path="/modal" element={<Modal />}></Route>
+          {/* <Route path="/modal" element={<Modal />}></Route> */}
           <Route
             path="/cancelled-booking"
             element={<CancelledBooking />}
           ></Route>
           <Route path="/broker" element={<Broker />}></Route>
+          <Route path="/edit-broker/:id" element={<EditBroker />} />
+          <Route path="/edit-projectstage" element={<EditProjectStage />} />
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />

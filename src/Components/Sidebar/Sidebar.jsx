@@ -55,8 +55,8 @@ const Sidebar = ({ isSidebarOpen }) => {
   return (
     <div className={`sidebar pe-4 ${isSidebarOpen ? "open" : ""}`}>
       <nav className="navbar bg-light navbar-light">
-        <a href="#" className="navbar-brand mx-4 mb-3">
-          <h3 className="text-primary">REAL-ESTATE</h3>
+        <a href="#" className="navbar-brand mx-5  mb-3">
+          <h3 className="text-primary">ACSW</h3>
         </a>
         <div className="d-flex align-items-center ms-4 mb-4">
           <div className="position-relative">
