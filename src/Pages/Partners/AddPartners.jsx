@@ -100,6 +100,7 @@ function AddPartners() {
 
     fetchProjects();
   }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -138,7 +139,6 @@ function AddPartners() {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-          
         },
       });
 
@@ -146,7 +146,7 @@ function AddPartners() {
 
       if (response.status === 200) {
         toast.success("Project and units added successfully");
-        
+
         setLoading(false);
         navigate("/partners");
       }
@@ -165,8 +165,8 @@ function AddPartners() {
   };
   return (
     <>
-          <ToastContainer />
-    
+      <ToastContainer />
+
       <Helmet>
         <title>React Estate | Add Partners</title>
       </Helmet>
@@ -193,36 +193,6 @@ function AddPartners() {
                   <form onSubmit={handleSubmit}>
                     <div className="row">
                       <div className="col">
-                        <select
-                          className={`form-select form-select-sm p-2 ${
-                            error.selectProject ? "is-invalid" : ""
-                          }`}
-                          value={selectProject}
-                          onChange={(e) =>
-                            handleInputChange(e, "selectProject")
-                          }
-                          ref={selectProjectRef}
-                        >
-                          <option value="">Select Project</option>
-                          {Array.isArray(projects) &&
-                            projects.map((project) => (
-                              <option key={project.id} value={project.id}>
-                                {project.projectName}
-                              </option>
-                            ))}
-                        </select>
-
-                        {error.selectProject && (
-                          <div className="invalid-feedback">
-                            {error.selectProject}
-                          </div>
-                        )}
-                      </div>
-                      <div className="col"></div>
-                    </div>
-
-                    <div className="row pt-4">
-                      <div className="col">
                         <div className="input-container">
                           <input
                             type="text"
@@ -239,8 +209,37 @@ function AddPartners() {
                           )}
                         </div>
                       </div>
+                      <div className="col"></div>
+                    </div>
 
-                      <div className="col position-relative">
+                    <div className="row pt-4">
+                    <div className="col">
+                          <select
+                            className={`form-select form-select-sm p-2 ${
+                              error.selectProject ? "is-invalid" : ""
+                            }`}
+                            value={selectProject}
+                            onChange={(e) =>
+                              handleInputChange(e, "selectProject")
+                            }
+                            ref={selectProjectRef}
+                          >
+                            <option value="">Select Project</option>
+                            {Array.isArray(projects) &&
+                              projects.map((project) => (
+                                <option key={project.id} value={project.id}>
+                                  {project.projectName}
+                                </option>
+                              ))}
+                          </select>
+
+                          {error.selectProject && (
+                            <div className="invalid-feedback">
+                              {error.selectProject}
+                            </div>
+                          )}
+                        </div>
+                      <div className="col ">
                         <div className="input-container">
                           <input
                             type="number"
@@ -252,6 +251,7 @@ function AddPartners() {
                             onChange={(e) => handleInputChange(e, "percentage")}
                             ref={percentageRef}
                           />
+                          <i className="bi bi-plus-circle-fill icon-2"></i>
                           {error.percentage && (
                             <div className="invalid-feedback">
                               {error.percentage}

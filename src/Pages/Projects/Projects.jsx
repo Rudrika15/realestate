@@ -4,12 +4,10 @@ import Topbar from "../../Components/Topbar/Topbar";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-
 import Swal from "sweetalert2";
 import axios from "axios";
 import { getProject } from "../../Api/ApiDipak";
 import Multiselect from "multiselect-react-dropdown";
-
 
 const Projects = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -140,7 +138,10 @@ const Projects = () => {
 
                   {loading ? (
                     <div className="text-center">
-                      <div className="spinner-border" role="status"></div>
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      ></div>
                     </div>
                   ) : currentData.length > 0 ? (
                     <div className="table-responsive">
