@@ -4,7 +4,6 @@ import Topbar from "../../Components/Topbar/Topbar";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { toast, ToastContainer } from "react-toastify";
-
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 import { getPartner, deletePartner } from "../../Api/ApiDipak";
@@ -19,38 +18,33 @@ const Partners = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
+
+
   const fetchPartner = async () => {
     const token = localStorage.getItem("token");
-    
     try {
       if (!token) {
         navigate("/");
         return;
       }
-
       const response = await axios.get(getPartner, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        },
-      });      
+        },        
+      }); 
+      console.log(response.data.data);
+
       if (response.data.status === true && response.data.data) {
         setPartners(response.data.data);
       }
     } catch (error) {
-      if (error.response) {
-        if (error.response.status === 401) {
-          navigate("/");
-        } else {
-          console.error("Error response:", error.response.data);
-        }
-      } else {
-        console.error("Error message:", error.message);
-      }
+      if (error.response && error.response.status === 401) {
+        navigate('/'); 
+    }
     }
   };
 
@@ -75,13 +69,11 @@ const Partners = () => {
         cancelButton: "swal-cancel-btn",
       },
     });
-console.log(id);
-
+console.log('Deleting partner with ID:', id);
     if (confirmDelete.isConfirmed) {
       try {
         const token = localStorage.getItem("token");
         console.log(token);
-        
         const response = await axios.delete(`${deletePartner}/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -97,7 +89,6 @@ console.log(id);
             confirmButtonColor: "#3085d6",
           });
           setPartners(partners.filter((item) => item.id !== id));
-          // setPartners((prevPartners) => prevPartners.filter((partner) => partner.id !== id));
         } else {
           toast.error("Failed to delete user!");
         }
@@ -152,8 +143,7 @@ console.log(id);
                           </tr>
                         </thead>
                         <tbody>
-                        {partners.length > 0 ? (
-                          partners.map((partner) => (
+                         {partners.map((partner) => (
                             <tr key={partner.id}>
                               <td>{partner.id}</td>
                               <td>{partner.partnerName}</td>
@@ -172,12 +162,8 @@ console.log(id);
                                 </button>
                               </td>
                             </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan="3">No partners found</td>
-                          </tr>
-                        )}
+                          ))}
+                      
                       </tbody>
                       </table>
                     </div>

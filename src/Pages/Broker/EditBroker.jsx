@@ -45,6 +45,9 @@ function EditBroker() {
             }
         } catch (error) {
             console.error(error); // Log the error for debugging
+            if (error.response && error.response.status === 401) {
+                navigate('/'); 
+            }
             toast.error('An error occurred while fetching broker details.');
         }
     };
@@ -124,6 +127,9 @@ function EditBroker() {
             }
         } catch (error) {
             console.error(error);
+            if (error.response && error.response.status === 401) {
+                navigate('/'); 
+            }
             toast.error('An error occurred while updating broker details.');
         } finally {
             setLoading(false);

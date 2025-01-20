@@ -40,6 +40,9 @@ function EditRole() {
       }
     } catch (error) {
       console.error("Error fetching role:", error);
+      if (error.response && error.response.status === 401) {
+        navigate('/'); 
+    }
       toast.error("Error fetching role.");
     }
   };

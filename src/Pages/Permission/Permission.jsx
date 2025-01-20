@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import Footer from "../../Components/Footer/Footer";
@@ -17,6 +17,8 @@ function Permission() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [permissions, setPermissions] = useState([]);
+
+  const navigate=useNavigate()
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -45,6 +47,9 @@ function Permission() {
       }
     } catch (error) {
       console.error("Error fetching permission:", error);
+      if (error.response && error.response.status === 401) {
+        navigate('/'); 
+    }
       toast.error("Error fetching permission.");
     }
   };

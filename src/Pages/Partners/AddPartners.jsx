@@ -11,14 +11,14 @@ import { addPartner, getProject } from "../../Api/ApiDipak";
 
 function AddPartners() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectProject, setSelectProject] = useState("");
   const [projects, setProjects] = useState([]);
   const [name, setName] = useState("");
-  const [percentage, setPercentage] = useState("");
+  const [inputFields, setInputFields] = useState([
+    { selectProject: "", percentage: "" },
+  ]);
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const selectProjectRef = useRef(null);
   const nameRef = useRef(null);
   const percentageRef = useRef(null);
   const submitRef = useRef(null);
@@ -26,6 +26,10 @@ function AddPartners() {
   const navigate = useNavigate();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  const handleAddInput = () => {
+    setInputFields([...inputFields, { selectProject: "", percentage: "" }]);
+  };
 
   const validateForm = () => {
     const errors = {};
@@ -36,35 +40,55 @@ function AddPartners() {
     } else if (!nameRegex.test(name.trim())) {
       errors.name = "Name must only contain letters.";
     }
-    if (!selectProject) {
-      errors.selectProject = "Project is required.";
-    }
-    if (!percentage) {
-      errors.percentage = "Percentage is required.";
-    } else if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-      errors.percentage = "Percentage must be a number between 0 and 100.";
-    }
+
+    // Validate each pair of selectProject and percentage
+    inputFields.forEach((field, index) => {
+      if (!field.selectProject) {
+        errors[`selectProject-${index}`] = "Project is required.";
+      }
+      if (!field.percentage) {
+        errors[`percentage-${index}`] = "Percentage is required.";
+      } else if (
+        isNaN(field.percentage) ||
+        field.percentage < 0 ||
+        field.percentage > 100
+      ) {
+        errors[`percentage-${index}`] =
+          "Percentage must be a number between 0 and 100.";
+      }
+    });
 
     return errors;
   };
 
-  const handleInputChange = (e, field) => {
+  const handleInputChange = (e, index, field) => {
     const value = e.target.value;
-
-    if (field === "name") {
-      setName(value);
-    } else if (field === "percentage") {
-      setPercentage(value);
-    } else if (field === "selectProject") {
-      setSelectProject(value);
-    }
+    const updatedFields = [...inputFields];
+    updatedFields[index][field] = value;
+    setInputFields(updatedFields);
 
     setError((prevState) => {
       const newErrors = { ...prevState };
-      delete newErrors[field];
+      if (field === "name") {
+        delete newErrors.name;
+      } else {
+        delete newErrors[`${field}-${index}`];
+      }
       return newErrors;
     });
   };
+
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+    if (error.name) {
+      setError((prevState) => {
+        const newErrors = { ...prevState };
+        delete newErrors.name;
+        return newErrors;
+      });
+    }
+  };
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -80,12 +104,14 @@ function AddPartners() {
             "Content-Type": "application/json",
           },
         });
+
         if (response.data.status === true && response.data.data) {
           setProjects(response.data.data);
         } else {
           console.error("Projects data not found in the response.");
         }
       } catch (error) {
+        
         if (error.response) {
           if (error.response.status === 401) {
             navigate("/");
@@ -100,69 +126,51 @@ function AddPartners() {
 
     fetchProjects();
   }, [navigate]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formErrors = validateForm();
     setError(formErrors);
     if (Object.keys(formErrors).length > 0) {
       return;
     }
-
-    if (!selectProject) {
-      setError((prevState) => ({
-        ...prevState,
-        selectProject: "Please select a project",
-      }));
-      return;
-    }
-
     setLoading(true);
-
     try {
       const token = localStorage.getItem("token");
-      console.log("Token from localStorage:", token);
-
       if (!token) {
         navigate("/");
         return;
       }
-
       const partnerData = {
         partner_name: name.trim(),
-        percentage: percentage.trim(),
-        projectId: selectProject,
+        projectPartners: inputFields.map((field) => ({
+          projectId: field.selectProject,
+          percentage: parseFloat(field.percentage.trim()),
+        })),
       };
-      console.log("Sending data:", partnerData);
+  
+      console.log(partnerData); 
+  
       const response = await axios.post(addPartner, partnerData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-
-      console.log("Response from API:", response);
-
+  
       if (response.status === 200) {
-        toast.success("Project and units added successfully");
-
+        toast.success("Partner added successfully!");
         setLoading(false);
         navigate("/partners");
       }
     } catch (error) {
       console.error("Error submitting data:", error);
-
-      if (error.response) {
-        console.error("Error response:", error.response.data);
-      }
-
       if (error.response && error.response.status === 401) {
         navigate("/");
       }
       setLoading(false);
     }
   };
+  
   return (
     <>
       <ToastContainer />
@@ -201,7 +209,7 @@ function AddPartners() {
                             }`}
                             placeholder="Name"
                             value={name}
-                            onChange={(e) => handleInputChange(e, "name")}
+                            onChange={handleNameChange}
                             ref={nameRef}
                           />
                           {error.name && (
@@ -212,54 +220,59 @@ function AddPartners() {
                       <div className="col"></div>
                     </div>
 
-                    <div className="row pt-4">
-                    <div className="col">
+                    {inputFields.map((inputField, index) => (
+                      <div key={index} className="row pt-4">
+                        <div className="col">
                           <select
                             className={`form-select form-select-sm p-2 ${
-                              error.selectProject ? "is-invalid" : ""
+                              error[`selectProject-${index}`]
+                                ? "is-invalid"
+                                : ""
                             }`}
-                            value={selectProject}
+                            value={inputField.selectProject}
                             onChange={(e) =>
-                              handleInputChange(e, "selectProject")
+                              handleInputChange(e, index, "selectProject")
                             }
-                            ref={selectProjectRef}
                           >
                             <option value="">Select Project</option>
-                            {Array.isArray(projects) &&
-                              projects.map((project) => (
-                                <option key={project.id} value={project.id}>
-                                  {project.projectName}
-                                </option>
-                              ))}
+                            {projects.map((project) => (
+                              <option key={project.id} value={project.id}>
+                                {project.projectName}
+                              </option>
+                            ))}
                           </select>
-
-                          {error.selectProject && (
+                          {error[`selectProject-${index}`] && (
                             <div className="invalid-feedback">
-                              {error.selectProject}
+                              {error[`selectProject-${index}`]}
                             </div>
                           )}
                         </div>
-                      <div className="col ">
-                        <div className="input-container">
+                        <div className="col input-container">
                           <input
                             type="number"
                             className={`form-control mb-1 ${
-                              error.percentage ? "is-invalid" : ""
+                              error[`percentage-${index}`] ? "is-invalid" : ""
                             }`}
                             placeholder="Percentage"
-                            value={percentage}
-                            onChange={(e) => handleInputChange(e, "percentage")}
-                            ref={percentageRef}
+                            value={inputField.percentage}
+                            onChange={(e) =>
+                              handleInputChange(e, index, "percentage")
+                            }
                           />
-                          <i className="bi bi-plus-circle-fill icon-2"></i>
-                          {error.percentage && (
+                          {index === inputFields.length - 1 && (
+                            <i
+                              className="bi bi-plus-circle-fill icon-2"
+                              onClick={handleAddInput}
+                            ></i>
+                          )}
+                          {error[`percentage-${index}`] && (
                             <div className="invalid-feedback">
-                              {error.percentage}
+                              {error[`percentage-${index}`]}
                             </div>
                           )}
                         </div>
                       </div>
-                    </div>
+                    ))}
 
                     <button
                       type="submit"
@@ -293,3 +306,5 @@ function AddPartners() {
 }
 
 export default AddPartners;
+
+

@@ -11,10 +11,10 @@ import axios from "axios";
 import { editPartner, updatePartner } from "../../Api/ApiDipak";
 
 const EditPartners = () => {
-  const [partner, setPartner] = useState({  name: "", percentage: "" });
-  const [Xyz, setXyz] = useState(""); 
+  const [partner, setPartner] = useState({ name: "", percentage: "" });
+  const [Xyz, setXyz] = useState("");
 
-  const [projectName, setProjectName] = useState(""); 
+  const [projectName, setProjectName] = useState("");
   const [error, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -39,10 +39,13 @@ const EditPartners = () => {
       console.log(response.data.data.ProjectPartners[0]);
 
       if (response.data.status === true) {
-        
-        const {  name=response.data.data.ProjectPartners[0].partnerName, percentage, project } = response.data.data;
-        setPartner({  name , percentage });
-        setProjectName(project ? project.projectName : ""); 
+        const {
+          name = response.data.data.ProjectPartners[0].partnerName,
+          percentage,
+          project,
+        } = response.data.data;
+        setPartner({ name, percentage });
+        setProjectName(project ? project.projectName : "");
       } else {
         toast.error("Failed to fetch partner data!");
       }
@@ -102,7 +105,7 @@ const EditPartners = () => {
       partner_id: id,
       partner_name: partner.name,
       percentage: partner.percentage,
-      project_id: partner.projectId, 
+      project_id: partner.projectId,
     };
 
     try {
@@ -132,8 +135,11 @@ const EditPartners = () => {
       }
     } catch (error) {
       console.error("Error updating partner:", error);
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
       toast.error("An error occurred while updating the partner.");
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -167,7 +173,7 @@ const EditPartners = () => {
                   </div>
                   <form onSubmit={handleSubmit}>
                     <div className="row mb-3">
-                       <div className="col">
+                      <div className="col">
                         <label className="form-label">Project Name</label>
                         <input
                           type="text"
@@ -189,7 +195,6 @@ const EditPartners = () => {
                           value={partner.name}
                           onChange={handleInputChange}
                           readOnly
-
                         />
                         {error.name && (
                           <div className="invalid-feedback">{error.name}</div>
@@ -197,7 +202,7 @@ const EditPartners = () => {
                       </div>
                     </div>
                     <div className="row mb-3">
-                    <div className="col">
+                      <div className="col">
                         <label className="form-label">Percentage</label>
                         <input
                           type="number"

@@ -53,16 +53,8 @@ const Projects = () => {
           console.error("Projects data not found in the response.");
         }
       } catch (error) {
-        if (error.response) {
-          if (error.response.status === 401) {
-            navigate("/");
-          } else {
-            console.error("Error response:", error.response.data);
-          }
-        } else if (error.request) {
-          console.error("Error request:", error.request);
-        } else {
-          console.error("Error message:", error.message);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
         }
       } finally {
         setLoading(false);

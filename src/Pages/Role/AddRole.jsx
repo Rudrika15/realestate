@@ -44,6 +44,9 @@ function AddRole() {
       }
     } catch (error) {
       console.error("Error fetching permission:", error);
+      if (error.response && error.response.status === 401) {
+        navigate('/'); 
+    }
       toast.error("Error fetching permissions.");
     }
   };
@@ -104,6 +107,9 @@ function AddRole() {
         toast.error(response.data.message || "Failed to add role.");
       }
     } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate('/'); 
+    }
       toast.error("Failed to add role. Please try again.");
     } finally {
       setLoading(false);

@@ -51,7 +51,6 @@ const AddProjects = () => {
       link.remove();
     } catch (error) {
       console.error("Error downloading the Excel file:", error);
-
       if (error.response && error.response.status === 401) {
         navigate("/");
         toast.error("Session expired. Please log in again.");

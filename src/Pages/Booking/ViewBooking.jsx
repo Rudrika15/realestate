@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
@@ -13,6 +13,7 @@ import { getProject } from "../../Api/DevanshiApi";
 const ViewBooking = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+  const navigate = useNavigate()
   const [data, setData] = useState([
     {
       No: 1,
@@ -91,6 +92,9 @@ const ViewBooking = () => {
       }
     } catch (error) {
       console.error("Error fetching peojects:", error);
+      if (error.response && error.response.status === 401) {
+        navigate('/'); 
+    }
     }
   };
 
