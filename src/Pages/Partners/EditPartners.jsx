@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import { Link } from "react-router-dom";
@@ -11,15 +11,13 @@ import axios from "axios";
 import { editPartner, updatePartner } from "../../Api/ApiDipak";
 
 const EditPartners = () => {
-  const [partner, setPartner] = useState({ name: "", percentage: "" });
-  const [Xyz, setXyz] = useState("");
-
-  const [projectName, setProjectName] = useState("");
+  const [partner, setPartner] = useState({ name: "", percentage: "" }); 
+  const [dynamicFields, setDynamicFields] = useState([{ projectName: "", percentage: "" }]); 
   const [error, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-
   const { id } = useParams();
   const navigate = useNavigate();
+
 
   const fetchPartner = async () => {
     try {
@@ -36,16 +34,25 @@ const EditPartners = () => {
         },
       });
 
-      console.log(response.data.data.ProjectPartners[0]);
+      if (response.data.status === true && response.data.data && response.data.data.length > 0) {
+        const partnersData = response.data.data;
 
-      if (response.data.status === true) {
-        const {
-          name = response.data.data.ProjectPartners[0].partnerName,
-          percentage,
-          project,
-        } = response.data.data;
-        setPartner({ name, percentage });
-        setProjectName(project ? project.projectName : "");
+        const partnerData = partnersData.find((partner) => partner.partnerId === parseInt(id));
+        if (partnerData) {
+          setPartner({
+            name: partnerData.project.projectName, 
+            percentage: partnerData.percentage,
+          });
+
+          const fields = partnersData.map((partner) => ({
+            projectName: partner.project.projectName,
+            percentage: partner.percentage,
+          }));
+          setDynamicFields(fields); 
+        }
+
+        console.log(response.data.data);
+        
       } else {
         toast.error("Failed to fetch partner data!");
       }
@@ -57,41 +64,51 @@ const EditPartners = () => {
 
   useEffect(() => {
     fetchPartner();
-  }, []);
+  }, [id]);
 
-  const handleInputChange = (e) => {
+
+  const handleInputChange = (e, index) => {
     const { name, value } = e.target;
-    setPartner((prev) => ({ ...prev, [name]: value }));
+    const updatedFields = [...dynamicFields];
+    updatedFields[index][name] = value;
+    setDynamicFields(updatedFields);
+
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
+  const handleAddFields = () => {
+    setDynamicFields([...dynamicFields, { projectName: "", percentage: "" }]);
+  };
+
+  const handlePartnerNameChange = (e) => {
+    const { value } = e.target;
+    setPartner({ ...partner, name: value }); 
+  };
+
 
   const validateFields = () => {
     let isValid = true;
     const validationErrors = {};
-    if (!partner.name) {
-      validationErrors.name = "Please enter Name for partner";
-      isValid = false;
-    } else if (!/^[A-Za-z ]+$/.test(partner.name)) {
-      validationErrors.name = "Name can only contain letters and spaces";
-      isValid = false;
-    }
-    if (!partner.percentage) {
-      validationErrors.percentage = "Please enter Percentage for partner";
-      isValid = false;
-    } else if (isNaN(partner.percentage)) {
-      validationErrors.percentage = "Percentage must be a valid number";
-      isValid = false;
-    } else if (
-      parseFloat(partner.percentage) < 0 ||
-      parseFloat(partner.percentage) > 100
-    ) {
-      validationErrors.percentage = "Percentage must be between 0 and 100";
-      isValid = false;
-    }
 
+    dynamicFields.forEach((field, index) => {
+      if (!field.projectName) {
+        validationErrors[`projectName_${index}`] = "Project name is required";
+        isValid = false;
+      }
+      if (!field.percentage) {
+        validationErrors[`percentage_${index}`] = "Percentage is required";
+        isValid = false;
+      } else if (isNaN(field.percentage)) {
+        validationErrors[`percentage_${index}`] = "Percentage must be a valid number";
+        isValid = false;
+      } else if (parseFloat(field.percentage) < 0 || parseFloat(field.percentage) > 100) {
+        validationErrors[`percentage_${index}`] = "Percentage must be between 0 and 100";
+        isValid = false;
+      }
+    });
     setErrors(validationErrors);
     return isValid;
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,8 +121,7 @@ const EditPartners = () => {
     const PartnerData = {
       partner_id: id,
       partner_name: partner.name,
-      percentage: partner.percentage,
-      project_id: partner.projectId,
+      dynamicFields, 
     };
 
     try {
@@ -139,7 +155,6 @@ const EditPartners = () => {
         navigate("/");
       }
       toast.error("An error occurred while updating the partner.");
-      // setLoading(false);
     }
   };
 
@@ -174,58 +189,74 @@ const EditPartners = () => {
                   <form onSubmit={handleSubmit}>
                     <div className="row mb-3">
                       <div className="col">
-                        <label className="form-label">Project Name</label>
+                        <label className="form-label">Partner Name</label>
                         <input
                           type="text"
-                          className={`form-control`}
-                          placeholder="Project Name"
-                          name="projectName"
-                          value={projectName}
-                        />
-                      </div>
-                      <div className="col">
-                        <label className="form-label"> Partner Name</label>
-                        <input
-                          type="text"
-                          className={`form-control ${
-                            error.name ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${error.name ? "is-invalid" : ""}`}
                           placeholder="Partner Name"
                           name="name"
                           value={partner.name}
-                          onChange={handleInputChange}
-                          readOnly
+                          onChange={handlePartnerNameChange}
                         />
                         {error.name && (
                           <div className="invalid-feedback">{error.name}</div>
                         )}
                       </div>
-                    </div>
-                    <div className="row mb-3">
-                      <div className="col">
-                        <label className="form-label">Percentage</label>
-                        <input
-                          type="number"
-                          className={`form-control ${
-                            error.percentage ? "is-invalid" : ""
-                          }`}
-                          placeholder="Percentage"
-                          name="percentage"
-                          value={partner.percentage}
-                          onChange={handleInputChange}
-                        />
-                        {error.percentage && (
-                          <div className="invalid-feedback">
-                            {error.percentage}
-                          </div>
-                        )}
-                      </div>
                       <div className="col"></div>
                     </div>
 
+                    {dynamicFields.map((field, index) => (
+                      <div className="row mb-3" key={index}>
+                        <div className="col-6">
+                          <label className="form-label">Project Name</label>
+                          <input
+                            type="text"
+                            className={`form-control ${error[`projectName_${index}`] ? "is-invalid" : ""}`}
+                            placeholder="Project Name"
+                            name="projectName"
+                            value={field.projectName}
+                            onChange={(e) => handleInputChange(e, index)}
+                          />
+                          {error[`projectName_${index}`] && (
+                            <div className="invalid-feedback">
+                              {error[`projectName_${index}`]}
+                            </div>
+                          )}
+                        </div>
+                        <div className="col">
+                          <label className="form-label">Percentage</label>
+                          <input
+                            type="number"
+                            className={`form-control ${error[`percentage_${index}`] ? "is-invalid" : ""}`}
+                            placeholder="Percentage"
+                            name="percentage"
+                            value={field.percentage}
+                            onChange={(e) => handleInputChange(e, index)}
+                          />
+                          {error[`percentage_${index}`] && (
+                            <div className="invalid-feedback">
+                              {error[`percentage_${index}`]}
+                            </div>
+                          )}
+                        </div>
+                        <div className="col mt-1">
+                          <label className="form-label">&nbsp;</label>
+                          <div>
+                            <span>
+                              <i
+                                className="bi bi-plus-circle-fill"
+                                onClick={handleAddFields}
+                                style={{ cursor: "pointer" }}
+                              ></i>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
                     <button
                       type="submit"
-                      className="btn btn-primary"
+                      className="btn btn-primary mt-3"
                       disabled={loading}
                     >
                       {loading ? (

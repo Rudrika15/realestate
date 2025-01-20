@@ -52,52 +52,52 @@ const Partners = () => {
     fetchPartner();
   }, [navigate]);
 
-  const handleDelete = async (id) => {
-    const confirmDelete = await Swal.fire({
-      title: "Are You Sure You Want to Delete?",
-      text: "Once you delete, all the data related to this user will be deleted.",
-      icon: "error",
-      showCancelButton: true,
-      confirmButtonText: "Delete",
-      cancelButtonText: "Cancel",
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#c4c4c4",
-      customClass: {
-        title: "swal-title",
-        text: "swal-text",
-        confirmButton: "swal-confirm-btn",
-        cancelButton: "swal-cancel-btn",
-      },
-    });
-console.log('Deleting partner with ID:', id);
-    if (confirmDelete.isConfirmed) {
-      try {
-        const token = localStorage.getItem("token");
-        console.log(token);
-        const response = await axios.delete(`${deletePartner}/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+//   const handleDelete = async (id) => {
+//     const confirmDelete = await Swal.fire({
+//       title: "Are You Sure You Want to Delete?",
+//       text: "Once you delete, all the data related to this user will be deleted.",
+//       icon: "error",
+//       showCancelButton: true,
+//       confirmButtonText: "Delete",
+//       cancelButtonText: "Cancel",
+//       confirmButtonColor: "#d33",
+//       cancelButtonColor: "#c4c4c4",
+//       customClass: {
+//         title: "swal-title",
+//         text: "swal-text",
+//         confirmButton: "swal-confirm-btn",
+//         cancelButton: "swal-cancel-btn",
+//       },
+//     });
+// console.log('Deleting partner with ID:', id);
+//     if (confirmDelete.isConfirmed) {
+//       try {
+//         const token = localStorage.getItem("token");
+//         console.log(token);
+//         const response = await axios.delete(`${deletePartner}/${id}`, {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         });
 
-        console.log(response);
-        if (response.data.status === true) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "The Partner has been deleted.",
-            icon: "success",
-            confirmButtonColor: "#3085d6",
-          });
-          setPartners(partners.filter((item) => item.id !== id));
-        } else {
-          toast.error("Failed to delete user!");
-        }
-      } catch (error) {
-        console.error("Error deleting Partners:", error);
-        toast.error("An error occurred while deleting the Partners!");
-      }
-    }
-  };
+//         console.log(response);
+//         if (response.data.status === true) {
+//           Swal.fire({
+//             title: "Deleted!",
+//             text: "The Partner has been deleted.",
+//             icon: "success",
+//             confirmButtonColor: "#3085d6",
+//           });
+//           setPartners(partners.filter((item) => item.id !== id));
+//         } else {
+//           toast.error("Failed to delete user!");
+//         }
+//       } catch (error) {
+//         console.error("Error deleting Partners:", error);
+//         toast.error("An error occurred while deleting the Partners!");
+//       }
+//     }
+//   };
 
   return (
     <>
@@ -155,7 +155,7 @@ console.log('Deleting partner with ID:', id);
                                   <i className="fas fa-edit"></i>
                                 </Link>
                                 <button
-                                  onClick={() => handleDelete(partner.id)}
+                                  // onClick={() => handleDelete(partner.id)}
                                   className="btn btn-danger btn-sm"
                                 >
                                   <i className="fas fa-trash"></i>
