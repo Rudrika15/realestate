@@ -7,19 +7,49 @@ import Topbar from "../../Components/Topbar/Topbar";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
+import Swal from "sweetalert2";
 import axios from "axios";
-import { editPartner, updatePartner } from "../../Api/ApiDipak";
+import {
+  editPartner,
+  fetchPartner,
+  updatePartner,
+  deletePartner,
+} from "../../Api/ApiDipak";
 
 const EditPartners = () => {
-  const [partner, setPartner] = useState({ name: "", percentage: "" }); 
-  const [dynamicFields, setDynamicFields] = useState([{ projectName: "", percentage: "" }]); 
+  const [partner, setPartner] = useState({ name: "" });
+  const [dynamicFields, setDynamicFields] = useState([
+    { projectName: "", percentage: "" },
+  ]);
   const [error, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const fetchPartners = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Token is missing.");
+        return;
+      }
+      const response = await axios.get(`${fetchPartner}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setPartner({ name: response.data.data.partnerName || "" });
+    } catch (error) {
+      console.error("Error fetching partner:", error);
+      if (error.response && error.response.status === 401) {
+        toast.error("Session expired! Please log in again.");
+        navigate("/");
+      }
+    }
+  };
 
-  const fetchPartner = async () => {
+  const fetchProject = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -33,39 +63,38 @@ const EditPartners = () => {
           "Content-Type": "application/json",
         },
       });
-
-      if (response.data.status === true && response.data.data && response.data.data.length > 0) {
+      console.log(response.data.data);
+      if (
+        response.data.status === true &&
+        response.data.data &&
+        response.data.data.length > 0
+      ) {
         const partnersData = response.data.data;
-
-        const partnerData = partnersData.find((partner) => partner.partnerId === parseInt(id));
+        const partnerData = partnersData.find(
+          (partner) => partner.partnerId === parseInt(id)
+        );
         if (partnerData) {
-          setPartner({
-            name: partnerData.project.projectName, 
-            percentage: partnerData.percentage,
-          });
-
           const fields = partnersData.map((partner) => ({
             projectName: partner.project.projectName,
             percentage: partner.percentage,
           }));
-          setDynamicFields(fields); 
+          setDynamicFields(fields);
         }
-
-        console.log(response.data.data);
-        
-      } else {
-        toast.error("Failed to fetch partner data!");
       }
     } catch (error) {
       console.error("Error fetching partner:", error);
+      if (error.response && error.response.status === 401) {
+        toast.error("Session expired! Please log in again.");
+        navigate("/");
+      }
       toast.error("Error fetching partner.");
     }
   };
 
   useEffect(() => {
-    fetchPartner();
+    fetchPartners();
+    fetchProject();
   }, [id]);
-
 
   const handleInputChange = (e, index) => {
     const { name, value } = e.target;
@@ -75,15 +104,15 @@ const EditPartners = () => {
 
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
+
   const handleAddFields = () => {
     setDynamicFields([...dynamicFields, { projectName: "", percentage: "" }]);
   };
 
   const handlePartnerNameChange = (e) => {
     const { value } = e.target;
-    setPartner({ ...partner, name: value }); 
+    setPartner({ ...partner, name: value });
   };
-
 
   const validateFields = () => {
     let isValid = true;
@@ -98,10 +127,15 @@ const EditPartners = () => {
         validationErrors[`percentage_${index}`] = "Percentage is required";
         isValid = false;
       } else if (isNaN(field.percentage)) {
-        validationErrors[`percentage_${index}`] = "Percentage must be a valid number";
+        validationErrors[`percentage_${index}`] =
+          "Percentage must be a valid number";
         isValid = false;
-      } else if (parseFloat(field.percentage) < 0 || parseFloat(field.percentage) > 100) {
-        validationErrors[`percentage_${index}`] = "Percentage must be between 0 and 100";
+      } else if (
+        parseFloat(field.percentage) < 0 ||
+        parseFloat(field.percentage) > 100
+      ) {
+        validationErrors[`percentage_${index}`] =
+          "Percentage must be between 0 and 100";
         isValid = false;
       }
     });
@@ -109,52 +143,102 @@ const EditPartners = () => {
     return isValid;
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  //   if (!validateFields()) {
+  //     return;
+  //   }
 
-    if (!validateFields()) {
-      return;
-    }
+  //   setLoading(true);
+  //   const PartnerData = {
+  //     partner_id: id,
+  //     partner_name: partner.name,
+  //     dynamicFields,
+  //   };
 
-    setLoading(true);
-    const PartnerData = {
-      partner_id: id,
-      partner_name: partner.name,
-      dynamicFields, 
-    };
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) {
+  //       toast.error("Token is missing or expired.");
+  //       setLoading(false);
+  //       return;
+  //     }
 
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("Token is missing or expired.");
-        setLoading(false);
-        return;
+  //     const response = await axios.post(`${updatePartner}/${id}`, PartnerData, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+
+  //     if (response.data.status === true) {
+  //       toast.success("Partner updated successfully!");
+  //       setTimeout(() => {
+  //         setLoading(false);
+  //         navigate("/partners");
+  //       }, 1000);
+  //     } else {
+  //       toast.error("Failed to update partner.");
+  //       setLoading(false);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating partner:", error);
+  //     if (error.response && error.response.status === 401) {
+  //       navigate("/");
+  //     }
+  //     toast.error("An error occurred while updating the partner.");
+  //   }
+  // };
+
+  const handleDelete = async (id) => {
+    console.log(id);
+    
+    const confirmDelete = await Swal.fire({
+      title: "Are You Sure You Want to Delete?",
+      text: "Once you delete, all the data related to this user will be deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#c4c4c4",
+      customClass: {
+        title: "swal-title",
+        text: "swal-text",
+        confirmButton: "swal-confirm-btn",
+        cancelButton: "swal-cancel-btn",
+      },
+    });
+
+    if (confirmDelete.isConfirmed) {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          toast.error("Token is missing.");
+          return;
+        }
+        const response = await axios.delete(`${deletePartner}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.data.status === true) {
+          Swal.fire({
+            title: "Deleted!",
+            text: "The partner has been deleted.",
+            icon: "success",
+            confirmButtonColor: "#3085d6",
+          });
+          toast.success(response.message);
+        }
+      } catch (error) {
+        console.error("Error deleting partner:", error);
+        if (error.response && error.response.status === 401) {
+          toast.error("Session expired! Please log in again.");
+          navigate("/");
+        }
       }
-
-      const response = await axios.post(`${updatePartner}/${id}`, PartnerData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.data.status === true) {
-        toast.success("Partner updated successfully!");
-        setTimeout(() => {
-          setLoading(false);
-          navigate("/partners");
-        }, 1000);
-      } else {
-        toast.error("Failed to update partner.");
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error updating partner:", error);
-      if (error.response && error.response.status === 401) {
-        navigate("/");
-      }
-      toast.error("An error occurred while updating the partner.");
     }
   };
 
@@ -186,17 +270,23 @@ const EditPartners = () => {
                       </Link>
                     </div>
                   </div>
-                  <form onSubmit={handleSubmit}>
+                  <form 
+                  // onSubmit={handleSubmit}
+                  
+                  >
                     <div className="row mb-3">
                       <div className="col">
                         <label className="form-label">Partner Name</label>
                         <input
                           type="text"
-                          className={`form-control ${error.name ? "is-invalid" : ""}`}
+                          className={`form-control ${
+                            error.name ? "is-invalid" : ""
+                          }`}
                           placeholder="Partner Name"
                           name="name"
                           value={partner.name}
                           onChange={handlePartnerNameChange}
+                          readOnly
                         />
                         {error.name && (
                           <div className="invalid-feedback">{error.name}</div>
@@ -211,7 +301,9 @@ const EditPartners = () => {
                           <label className="form-label">Project Name</label>
                           <input
                             type="text"
-                            className={`form-control ${error[`projectName_${index}`] ? "is-invalid" : ""}`}
+                            className={`form-control ${
+                              error[`projectName_${index}`] ? "is-invalid" : ""
+                            }`}
                             placeholder="Project Name"
                             name="projectName"
                             value={field.projectName}
@@ -227,7 +319,9 @@ const EditPartners = () => {
                           <label className="form-label">Percentage</label>
                           <input
                             type="number"
-                            className={`form-control ${error[`percentage_${index}`] ? "is-invalid" : ""}`}
+                            className={`form-control ${
+                              error[`percentage_${index}`] ? "is-invalid" : ""
+                            }`}
                             placeholder="Percentage"
                             name="percentage"
                             value={field.percentage}
@@ -241,11 +335,18 @@ const EditPartners = () => {
                         </div>
                         <div className="col mt-1">
                           <label className="form-label">&nbsp;</label>
-                          <div>
+                          <div className="d-flex gap-2">
                             <span>
                               <i
                                 className="bi bi-plus-circle-fill"
                                 onClick={handleAddFields}
+                                style={{ cursor: "pointer" }}
+                              ></i>
+                            </span>
+                            <span>
+                              <i
+                                className="bi bi-x-circle-fill"
+                                onClick={() => handleDelete(partner.id)}
                                 style={{ cursor: "pointer" }}
                               ></i>
                             </span>
