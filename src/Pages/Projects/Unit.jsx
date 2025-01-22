@@ -149,9 +149,9 @@ const Unit = () => {
     navigate("/projects");
   };
 
-  const handleEditUnit = () => {
+  // const handleEditUnit = () => {
     // navigate("/edit-unit");
-  };
+  // };
 
   return (
     <>
@@ -306,7 +306,7 @@ const Unit = () => {
                               </td>
                               <td className="d-flex gap-2 action-buttons">
                                 <button
-                                  onClick={() => handleEditUnit(index)}
+                                  // onClick={() => handleEditUnit()}
                                   className="btn btn-warning btn-sm me-2"
                                 >
                                   <i className="fas fa-edit"></i>

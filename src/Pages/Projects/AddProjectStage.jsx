@@ -44,7 +44,10 @@ function AddProjectStage() {
           toast.error('No wings found.');
         }
       } catch (error) {
-        console.error('Error fetching wings:', error);
+        console.error('Error fetching wings:', error); 
+        if (error.response && error.response.status === 401) {
+          navigate('/'); 
+      }
         toast.error('Error fetching wings');
       }
     };
@@ -129,6 +132,9 @@ function AddProjectStage() {
       }
     } catch (error) {
       console.error('Error adding project stage:', error);
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
       toast.error('Error adding project stage. Please try again.');
     } finally {
       setLoading(false);

@@ -4,12 +4,10 @@ import Topbar from "../../Components/Topbar/Topbar";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-
 import Swal from "sweetalert2";
 import axios from "axios";
 import { getProject } from "../../Api/ApiDipak";
 import Multiselect from "multiselect-react-dropdown";
-
 
 const Projects = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -55,16 +53,8 @@ const Projects = () => {
           console.error("Projects data not found in the response.");
         }
       } catch (error) {
-        if (error.response) {
-          if (error.response.status === 401) {
-            navigate("/");
-          } else {
-            console.error("Error response:", error.response.data);
-          }
-        } else if (error.request) {
-          console.error("Error request:", error.request);
-        } else {
-          console.error("Error message:", error.message);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
         }
       } finally {
         setLoading(false);
@@ -140,7 +130,10 @@ const Projects = () => {
 
                   {loading ? (
                     <div className="text-center">
-                      <div className="spinner-border" role="status"></div>
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      ></div>
                     </div>
                   ) : currentData.length > 0 ? (
                     <div className="table-responsive">

@@ -7,7 +7,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { Helmet } from "react-helmet";
 import { Modal, Spinner } from "react-bootstrap";
 import axios from "axios";
-import { addBroker, getBroker, getProject, getProjectWiseUnit } from "../../Api/DevanshiApi";
+import {
+  addBroker,
+  getBroker,
+  getProject,
+  getProjectWiseUnit,
+} from "../../Api/DevanshiApi";
 import { projectWiseUnit } from "../../Api/ApiDipak";
 
 function Booking() {
@@ -134,7 +139,7 @@ function Booking() {
   const fetchBroker = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await axios.get(`${getBroker}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -143,10 +148,13 @@ function Booking() {
       if (response.data.status === true) {
         setBrokers(response.data.data);
       } else {
-        toast.error('Failed to fetch Broker data!');
+        toast.error("Failed to fetch Broker data!");
       }
     } catch (error) {
-      console.error('Error fetching broker:', error);
+      console.error("Error fetching broker:", error);
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
     } finally {
       setLoading(false);
     }
@@ -188,7 +196,7 @@ function Booking() {
         {
           brokerName,
           brokerMobileNumber,
-          brokerAddress
+          brokerAddress,
         },
         {
           headers: {
@@ -208,22 +216,22 @@ function Booking() {
             brokerMobileNumber: result.data.brokerMobileNumber,
           },
         ]);
-        setBrokerName('');
-        setbrokerMobileNumber('');
-        setBrokerAddress('');
-        handleCloseModal()
+        setBrokerName("");
+        setbrokerMobileNumber("");
+        setBrokerAddress("");
+        handleCloseModal();
       } else {
         console.error(result.message);
       }
     } catch (error) {
-      console.error('Error adding broker:', error);
+      console.error("Error adding broker:", error);
+      if (error.response && error.response.status === 401) {
+        navigate('/'); 
+    }
     }
   };
 
-
-  const [rows, setRows] = useState([
-    { downPayment: "", downPaymentDate: "" },
-  ]);
+  const [rows, setRows] = useState([{ downPayment: "", downPaymentDate: "" }]);
 
   const [rows1, setRows1] = useState([
     { customerName: "", customerContact: "" },
@@ -244,7 +252,6 @@ function Booking() {
     }
     setRows1([...rows1, { customerName: "", customerContact: "" }]);
   };
-
 
   const handleInputChangeGeneric = (index, field, value, rowArrayName) => {
     if (rowArrayName === "rows1") {
@@ -511,7 +518,10 @@ function Booking() {
   };
 
   const handleProjectChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
     setSelectedProject(selectedOptions);
     setProjectError(selectedOptions.length === 0);
   };
@@ -522,7 +532,10 @@ function Booking() {
   };
 
   const handleUnitChange = (e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+    const selectedOptions = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
     setSelectedUnit(selectedOptions);
     setUnitError(selectedOptions.length === 0);
   };
@@ -650,71 +663,73 @@ function Booking() {
 
   const fetchProject = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        toast.error('Authentication token is missing!');
-        window.location.href = '/';
+        toast.error("Authentication token is missing!");
+        window.location.href = "/";
         return;
       }
-  
+
       // Use the predefined `getProject` URL
       const response = await axios.get(getProject, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (response.data.status) {
         const projects = response.data.data;
         setProjects(projects);
-  
+
         // Automatically fetch units for the first project if available
         if (projects && projects.length > 0) {
           const selectedProjectId = projects[0].id;
           await fetchUnit(selectedProjectId); // Fetch units for the first project
         }
       } else {
-        console.error('Failed to fetch project data!');
+        console.error("Failed to fetch project data!");
       }
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      console.error("Error fetching projects:", error);
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
     }
-  };  
-  
+  };
+
   const fetchUnit = async (projectId) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        toast.error('Token not found! Please log in.');
-        navigate('/');
+        toast.error("Token not found! Please log in.");
+        navigate("/");
         return;
       }
-  
+
       setLoading(true);
-  
+
       const response = await axios.get(projectWiseUnit(projectId), {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
-  
+
       if (response.data.status && response.data.data) {
         setUnits(response.data.data);
       } else {
-        console.warn('No units found for the selected project.');
+        console.warn("No units found for the selected project.");
       }
     } catch (error) {
-      if (error.response?.status === 401) {
-        toast.error('Session expired! Please log in again.');
-        navigate('/');
+      if (error.response && error.response.status === 401) {
+        navigate("/");
       } else {
-        console.error('Error fetching units:', error);
+        console.error("Error fetching units:", error);
       }
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
   useEffect(() => {
     fetchProject();
@@ -773,9 +788,18 @@ function Booking() {
                       </div>
                       <div className="col"></div>
                     </div>
-                    <Modal show={showModal} onHide={handleCloseModal} dialogClassName="custom-modal">
-                      <Modal.Header closeButton className="d-flex justify-content-center">
-                        <Modal.Title className="w-100 text-center">{modalType} Broker</Modal.Title>
+                    <Modal
+                      show={showModal}
+                      onHide={handleCloseModal}
+                      dialogClassName="custom-modal"
+                    >
+                      <Modal.Header
+                        closeButton
+                        className="d-flex justify-content-center"
+                      >
+                        <Modal.Title className="w-100 text-center">
+                          {modalType} Broker
+                        </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <div className="row pt-4">
@@ -787,7 +811,9 @@ function Booking() {
                               placeholder="Name"
                               name="name"
                               ref={brokerNameRef}
-                              onKeyDown={(e) => handleEnter(e, brokerContactRef)}
+                              onKeyDown={(e) =>
+                                handleEnter(e, brokerContactRef)
+                              }
                               value={brokerName}
                               onChange={(e) => setBrokerName(e.target.value)}
                             />
@@ -803,8 +829,12 @@ function Booking() {
                               name="Mobile Number"
                               ref={brokerContactRef}
                               value={brokerMobileNumber}
-                              onKeyDown={(e) => handleEnter(e, brokerAddressRef)}
-                              onChange={(e) => setbrokerMobileNumber(e.target.value)}
+                              onKeyDown={(e) =>
+                                handleEnter(e, brokerAddressRef)
+                              }
+                              onChange={(e) =>
+                                setbrokerMobileNumber(e.target.value)
+                              }
                             />
                           </div>
                         </div>
@@ -836,13 +866,17 @@ function Booking() {
                     <div className="row pt-4">
                       <div className="col">
                         <select
-                          className={`form-control bg-white ${projectError ? "is-invalid" : ""}`}
+                          className={`form-control bg-white ${
+                            projectError ? "is-invalid" : ""
+                          }`}
                           value={selectedProject}
                           ref={projectRef}
                           onChange={handleProjectChange}
                           onKeyDown={(e) => handleEnter(e, unitRef)}
                         >
-                          <option value="" disabled>Project Name</option>
+                          <option value="" disabled>
+                            Project Name
+                          </option>
                           {projects.map((project) => (
                             <option key={project.id} value={project.id}>
                               {project.projectName}
@@ -850,18 +884,24 @@ function Booking() {
                           ))}
                         </select>
                         {projectError && (
-                          <div className="invalid-feedback">Please select a Project</div>
+                          <div className="invalid-feedback">
+                            Please select a Project
+                          </div>
                         )}
                       </div>
                       <div className="col">
                         <select
-                          className={`form-control bg-white ${unitError ? "is-invalid" : ""}`}
+                          className={`form-control bg-white ${
+                            unitError ? "is-invalid" : ""
+                          }`}
                           value={selectedUnit}
                           ref={unitRef}
                           onChange={handleUnitChange}
                           onKeyDown={(e) => handleEnter(e, dateRef)}
                         >
-                          <option value="" disabled>Unit No</option>
+                          <option value="" disabled>
+                            Unit No
+                          </option>
                           {units.map((unit) => (
                             <option key={unit.id} value={unit.id}>
                               {unit.unitNo}
@@ -869,7 +909,9 @@ function Booking() {
                           ))}
                         </select>
                         {unitError && (
-                          <div className="invalid-feedback">Please select a Unit</div>
+                          <div className="invalid-feedback">
+                            Please select a Unit
+                          </div>
                         )}
                       </div>
                     </div>
@@ -879,7 +921,9 @@ function Booking() {
                           type="text"
                           id="date"
                           ref={dateRef}
-                          className={`form-control ${bookingError ? "is-invalid" : ""}`}
+                          className={`form-control ${
+                            bookingError ? "is-invalid" : ""
+                          }`}
                           value={formatDate(bookingDate)}
                           onChange={(e) => handleBookingDateChange(e)}
                           onKeyDown={(e) => handleEnter(e, customerNameRef)}
@@ -888,7 +932,9 @@ function Booking() {
                           onBlur={(e) => (e.target.type = "text")}
                         />
                         {bookingError && (
-                          <div className="invalid-feedback">Please select a booking Date</div>
+                          <div className="invalid-feedback">
+                            Please select a booking Date
+                          </div>
                         )}
                       </div>
                       <div className="col"></div>
@@ -900,43 +946,70 @@ function Booking() {
                         <div className="col position-relative">
                           <input
                             type="text"
-                            className={`form-control ${customerNameError ? "is-invalid" : ""}`}
+                            className={`form-control ${
+                              customerNameError ? "is-invalid" : ""
+                            }`}
                             id="name"
                             placeholder="Name"
                             name="name"
                             value={row.customerName}
                             ref={customerNameRef}
                             onChange={(e) =>
-                              handleInputChangeGeneric(index, "customerName", e.target.value, "rows1")
+                              handleInputChangeGeneric(
+                                index,
+                                "customerName",
+                                e.target.value,
+                                "rows1"
+                              )
                             }
-                            onKeyDown={(e) => handleEnter(e, customerContactRef)}
+                            onKeyDown={(e) =>
+                              handleEnter(e, customerContactRef)
+                            }
                           />
                           {customerNameError && (
-                            <div className="invalid-feedback">Enter a Customer Name</div>
+                            <div className="invalid-feedback">
+                              Enter a Customer Name
+                            </div>
                           )}
                         </div>
                         <div className="col">
                           <input
                             type="number"
-                            className={`form-control ${customerContactError ? "is-invalid" : ""}`}
+                            className={`form-control ${
+                              customerContactError ? "is-invalid" : ""
+                            }`}
                             id="Contact No"
                             placeholder="Contact No"
                             name="Contact No"
                             value={row.customerContact}
                             onChange={(e) =>
-                              handleInputChangeGeneric(index, "customerContact", e.target.value, "rows1")
+                              handleInputChangeGeneric(
+                                index,
+                                "customerContact",
+                                e.target.value,
+                                "rows1"
+                              )
                             }
-                            onKeyDown={(e) => handleEnter(e, customerAddressRef)}
+                            onKeyDown={(e) =>
+                              handleEnter(e, customerAddressRef)
+                            }
                             ref={customerContactRef}
                           />
                           {index === rows1.length - 1 && (
                             <i
                               className="bi bi-plus-circle-fill icon-2"
-                              onClick={() => setRows1([...rows1, { customerName: "", customerContact: "" }])}
+                              onClick={() =>
+                                setRows1([
+                                  ...rows1,
+                                  { customerName: "", customerContact: "" },
+                                ])
+                              }
                             ></i>
                           )}
                           {customerContactError && (
-                            <div className="invalid-feedback">Enter a Customer Contact Number</div>
+                            <div className="invalid-feedback">
+                              Enter a Customer Contact Number
+                            </div>
                           )}
                         </div>
                       </div>
@@ -944,7 +1017,9 @@ function Booking() {
                     <div className="row">
                       <div className="col pt-2">
                         <textarea
-                          className={`form-control ${customerAddressError ? "is-invalid" : ""}`}
+                          className={`form-control ${
+                            customerAddressError ? "is-invalid" : ""
+                          }`}
                           placeholder="Address"
                           id="floatingTextarea"
                           value={customerAddress}
@@ -953,20 +1028,24 @@ function Booking() {
                           ref={customerAddressRef}
                         ></textarea>
                         {customerAddressError && (
-                          <div className="invalid-feedback">Enter a Customer Address</div>
+                          <div className="invalid-feedback">
+                            Enter a Customer Address
+                          </div>
                         )}
                       </div>
                       <div className="col  pt-2">
                         <div className="col position-relative">
-                        <textarea
-                          className={`form-control ${remarkError ? "is-invalid" : ""}`}
-                          placeholder="Remark"
-                          id="floatingTextarea"
-                          value={remark}
-                          onChange={handleRemarkChange}
-                          onKeyDown={(e) => handleEnter(e, saleAmountRef)}
-                          ref={remarkRef}
-                        ></textarea>
+                          <textarea
+                            className={`form-control ${
+                              remarkError ? "is-invalid" : ""
+                            }`}
+                            placeholder="Remark"
+                            id="floatingTextarea"
+                            value={remark}
+                            onChange={handleRemarkChange}
+                            onKeyDown={(e) => handleEnter(e, saleAmountRef)}
+                            ref={remarkRef}
+                          ></textarea>
                         </div>
                       </div>
                     </div>
@@ -976,7 +1055,9 @@ function Booking() {
                       <div className="col">
                         <input
                           type="number"
-                          className={`form-control ${saleAmountError ? "is-invalid" : ""}`}
+                          className={`form-control ${
+                            saleAmountError ? "is-invalid" : ""
+                          }`}
                           id="Sale Deed Amount"
                           placeholder="Sale Deed Amount"
                           name="Sale Deed Amount"
@@ -986,13 +1067,17 @@ function Booking() {
                           ref={saleAmountRef}
                         />
                         {saleAmountError && (
-                          <div className="invalid-feedback">Enter a Sale Deed Amount</div>
+                          <div className="invalid-feedback">
+                            Enter a Sale Deed Amount
+                          </div>
                         )}
                       </div>
                       <div className="col">
                         <input
                           type="number"
-                          className={`form-control ${extraError ? "is-invalid" : ""}`}
+                          className={`form-control ${
+                            extraError ? "is-invalid" : ""
+                          }`}
                           id="Extra Work Amount"
                           placeholder="Extra Work Amount"
                           name="Extra Work Amount"
@@ -1002,7 +1087,9 @@ function Booking() {
                           ref={extraRef}
                         />
                         {extraError && (
-                          <div className="invalid-feedback">Enter an Extra Work Amount</div>
+                          <div className="invalid-feedback">
+                            Enter an Extra Work Amount
+                          </div>
                         )}
                       </div>
                     </div>
@@ -1010,7 +1097,9 @@ function Booking() {
                       <div className="col">
                         <input
                           type="number"
-                          className={`form-control ${workError ? "is-invalid" : ""}`}
+                          className={`form-control ${
+                            workError ? "is-invalid" : ""
+                          }`}
                           id="Work Amount"
                           placeholder="Work Amount"
                           name="Work Amount"
@@ -1020,7 +1109,9 @@ function Booking() {
                           ref={workRef}
                         />
                         {workError && (
-                          <div className="invalid-feedback">Enter Work Amount</div>
+                          <div className="invalid-feedback">
+                            Enter Work Amount
+                          </div>
                         )}
                       </div>
                       <div className="col"></div>
@@ -1028,23 +1119,36 @@ function Booking() {
                     <hr />
                     <p class="text-dark fs-5">Payment Terms</p>
                     <>
-                      <p className="text-gray" onClick={() => setShowTokenFields((prev) => !prev)}> Token Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
+                      <p
+                        className="text-gray"
+                        onClick={() => setShowTokenFields((prev) => !prev)}
+                      >
+                        {" "}
+                        Token Payment{" "}
+                        <i className="bi bi-plus-circle-fill icon-3"></i>
+                      </p>
                       {showTokenFields && (
                         <div className="row pt-2 mb-4">
                           <div className="col">
                             <input
                               type="number"
-                              className={`form-control ${tokenAmountError ? "is-invalid" : ""}`}
+                              className={`form-control ${
+                                tokenAmountError ? "is-invalid" : ""
+                              }`}
                               id="tokenamount"
                               placeholder="Token Amount"
                               name="tokenamount"
                               value={tokenAmount}
                               onChange={handleTokenAmountChange}
-                              onKeyDown={(e) => handleEnter(e, tokenPaymentDateRef)}
+                              onKeyDown={(e) =>
+                                handleEnter(e, tokenPaymentDateRef)
+                              }
                               ref={tokenAmountRef}
                             />
                             {tokenAmountError && (
-                              <div className="invalid-feedback">Enter Token Amount</div>
+                              <div className="invalid-feedback">
+                                Enter Token Amount
+                              </div>
                             )}
                           </div>
                           <div className="col">
@@ -1052,7 +1156,9 @@ function Booking() {
                               type="text"
                               id="date"
                               ref={tokenPaymentDateRef}
-                              className={`form-control ${tokenPaymentDateError ? "is-invalid" : ""}`}
+                              className={`form-control ${
+                                tokenPaymentDateError ? "is-invalid" : ""
+                              }`}
                               value={formatDate(tokenPaymentDate)}
                               onChange={(e) => handleTokenPaymentDateChange(e)}
                               onKeyDown={(e) => handleEnter(e, downPaymentRef)}
@@ -1061,7 +1167,9 @@ function Booking() {
                               onBlur={(e) => (e.target.type = "text")}
                             />
                             {tokenPaymentDateError && (
-                              <div className="invalid-feedback">Please select a Token Payment Date</div>
+                              <div className="invalid-feedback">
+                                Please select a Token Payment Date
+                              </div>
                             )}
                           </div>
                         </div>
@@ -1072,7 +1180,8 @@ function Booking() {
                         className="text-gray"
                         onClick={() => setShowTokenFields1((prev) => !prev)}
                       >
-                        Down Payment <i className="bi bi-plus-circle-fill icon-3"></i>
+                        Down Payment{" "}
+                        <i className="bi bi-plus-circle-fill icon-3"></i>
                       </p>
                       {showTokenFields1 && (
                         <div>
@@ -1081,19 +1190,30 @@ function Booking() {
                               <div className="col">
                                 <input
                                   type="number"
-                                  className={`form-control ${downPaymentError ? "is-invalid" : ""}`}
+                                  className={`form-control ${
+                                    downPaymentError ? "is-invalid" : ""
+                                  }`}
                                   id="downpayment"
                                   placeholder="Down Payment"
                                   name="downpayment"
                                   value={row.downPayment}
                                   onChange={(e) =>
-                                    handleInputChangeGeneric(index, "downPayment", e.target.value, "rows")
+                                    handleInputChangeGeneric(
+                                      index,
+                                      "downPayment",
+                                      e.target.value,
+                                      "rows"
+                                    )
                                   }
-                                  onKeyDown={(e) => handleEnter(e, downPaymentDateRef)}
+                                  onKeyDown={(e) =>
+                                    handleEnter(e, downPaymentDateRef)
+                                  }
                                   ref={downPaymentRef}
                                 />
                                 {downPaymentError && (
-                                  <div className="invalid-feedback">Enter Down Payment</div>
+                                  <div className="invalid-feedback">
+                                    Enter Down Payment
+                                  </div>
                                 )}
                               </div>
                               <div className="col">
@@ -1101,12 +1221,21 @@ function Booking() {
                                   type="text"
                                   id="date"
                                   ref={downPaymentDateRef}
-                                  className={`form-control ${downPaymentDateError ? "is-invalid" : ""}`}
+                                  className={`form-control ${
+                                    downPaymentDateError ? "is-invalid" : ""
+                                  }`}
                                   value={formatDate(row.downPaymentDate)}
                                   onChange={(e) =>
-                                    handleInputChangeGeneric(index, "downPaymentDate", e.target.value, "rows")
+                                    handleInputChangeGeneric(
+                                      index,
+                                      "downPaymentDate",
+                                      e.target.value,
+                                      "rows"
+                                    )
                                   }
-                                  onKeyDown={(e) => handleEnter(e, paymentFrequencyRef)}
+                                  onKeyDown={(e) =>
+                                    handleEnter(e, paymentFrequencyRef)
+                                  }
                                   placeholder="Down Payment Date"
                                   onFocus={(e) => (e.target.type = "date")}
                                   onBlur={(e) => (e.target.type = "text")}
@@ -1114,8 +1243,15 @@ function Booking() {
                                 {index === rows.length - 1 && (
                                   <i
                                     className="bi bi-plus-circle-fill icon-4"
-                                    onClick={() =>
-                                      setRows([...rows, { downPayment: "", downPaymentDate: "" }]) // Add a new row
+                                    onClick={
+                                      () =>
+                                        setRows([
+                                          ...rows,
+                                          {
+                                            downPayment: "",
+                                            downPaymentDate: "",
+                                          },
+                                        ]) // Add a new row
                                     }
                                   ></i>
                                 )}
@@ -1129,18 +1265,21 @@ function Booking() {
                           ))}
                         </div>
                       )}
-                      < p
+                      <p
                         className="text-gray"
                         onClick={() => setShowTokenFields2((prev) => !prev)}
                       >
-                        Installment Payment <i className="bi bi-plus-circle-fill icon-3"></i>
+                        Installment Payment{" "}
+                        <i className="bi bi-plus-circle-fill icon-3"></i>
                       </p>
                       {showTokenFields2 && (
                         <>
                           <div className="row pt-4">
                             <div className="col">
                               <select
-                                className={`form-control bg-white ${paymentFrequencyError ? "is-invalid" : ""}`}
+                                className={`form-control bg-white ${
+                                  paymentFrequencyError ? "is-invalid" : ""
+                                }`}
                                 value={paymentFrequency}
                                 onChange={handlePaymentFrequencyChange}
                                 onKeyDown={(e) => handleEnter(e, dueDateRef)}
@@ -1152,11 +1291,15 @@ function Booking() {
                                 <option value="Monthly">Monthly</option>
                                 <option value="Bi-monthly">Bi-monthly</option>
                                 <option value="Quarterly">Quarterly</option>
-                                <option value="Semi-Annually">Semi-Annually</option>
+                                <option value="Semi-Annually">
+                                  Semi-Annually
+                                </option>
                                 <option value="Annually">Annually</option>
                               </select>
                               {paymentFrequencyError && (
-                                <div className="invalid-feedback">Please select a Payment Frequency</div>
+                                <div className="invalid-feedback">
+                                  Please select a Payment Frequency
+                                </div>
                               )}
                             </div>
                             <div className="col">
@@ -1164,16 +1307,22 @@ function Booking() {
                                 type="text"
                                 id="date"
                                 ref={dueDateRef}
-                                className={`form-control ${dueDateError ? "is-invalid" : ""}`}
+                                className={`form-control ${
+                                  dueDateError ? "is-invalid" : ""
+                                }`}
                                 value={formatDate(dueDate)}
                                 onChange={handleDueDateChange}
-                                onKeyDown={(e) => handleEnter(e, noOfInstallmentRef)}
+                                onKeyDown={(e) =>
+                                  handleEnter(e, noOfInstallmentRef)
+                                }
                                 placeholder="Due Date"
                                 onFocus={(e) => (e.target.type = "date")}
                                 onBlur={(e) => (e.target.type = "text")}
                               />
                               {dueDateError && (
-                                <div className="invalid-feedback">Please select a Due Date</div>
+                                <div className="invalid-feedback">
+                                  Please select a Due Date
+                                </div>
                               )}
                             </div>
                           </div>
@@ -1183,15 +1332,21 @@ function Booking() {
                                 type="number"
                                 id="noofinstallment"
                                 ref={noOfInstallmentRef}
-                                onKeyDown={(e) => handleEnter(e, installmentRef)}
+                                onKeyDown={(e) =>
+                                  handleEnter(e, installmentRef)
+                                }
                                 placeholder="No Of Installments"
-                                className={`form-control ${noOfInstallmentError ? "is-invalid" : ""}`}
+                                className={`form-control ${
+                                  noOfInstallmentError ? "is-invalid" : ""
+                                }`}
                                 value={noOfInstallment}
                                 onChange={handleNoOfInstallmentChange}
                                 min="1"
                               />
                               {noOfInstallmentError && (
-                                <div className="invalid-feedback">Enter a valid number of installments</div>
+                                <div className="invalid-feedback">
+                                  Enter a valid number of installments
+                                </div>
                               )}
                             </div>
                             <div className="col"></div>
@@ -1206,38 +1361,52 @@ function Booking() {
                                 </tr>
                               </thead>
                               <tbody>
-                                {Array.from({ length: noOfInstallment }).map((_, idx) => {
-                                  const installmentDate = new Date(dueDate);
-                                  installmentDate.setMonth(
-                                    installmentDate.getMonth() + idx * getFrequencyInMonths(paymentFrequency)
-                                  );
-                                  const formattedDate = installmentDate.toLocaleDateString("en-GB", {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "numeric",
-                                  });
-                                  const formattedAmount = new Intl.NumberFormat("en-IN", {
-                                    style: "currency",
-                                    currency: "INR",
-                                    minimumFractionDigits: 2,
-                                  }).format(installmentAmount);
+                                {Array.from({ length: noOfInstallment }).map(
+                                  (_, idx) => {
+                                    const installmentDate = new Date(dueDate);
+                                    installmentDate.setMonth(
+                                      installmentDate.getMonth() +
+                                        idx *
+                                          getFrequencyInMonths(paymentFrequency)
+                                    );
+                                    const formattedDate =
+                                      installmentDate.toLocaleDateString(
+                                        "en-GB",
+                                        {
+                                          day: "2-digit",
+                                          month: "2-digit",
+                                          year: "numeric",
+                                        }
+                                      );
+                                    const formattedAmount =
+                                      new Intl.NumberFormat("en-IN", {
+                                        style: "currency",
+                                        currency: "INR",
+                                        minimumFractionDigits: 2,
+                                      }).format(installmentAmount);
 
-
-                                  return (
-                                    <tr key={idx}>
-                                      <td>Installment {idx + 1}</td>
-                                      <td>{formattedDate}</td>
-                                      <td>{formattedAmount}</td>
-                                    </tr>
-                                  );
-                                })}
+                                    return (
+                                      <tr key={idx}>
+                                        <td>Installment {idx + 1}</td>
+                                        <td>{formattedDate}</td>
+                                        <td>{formattedAmount}</td>
+                                      </tr>
+                                    );
+                                  }
+                                )}
                               </tbody>
                             </table>
                           </div>
                         </>
                       )}
                       <div>
-                        <p className="text-gray" onClick={() => setShowTokenFields3((prev) => !prev)}>Construction Linked Payment <i className="bi bi-plus-circle-fill icon-3"></i></p>
+                        <p
+                          className="text-gray"
+                          onClick={() => setShowTokenFields3((prev) => !prev)}
+                        >
+                          Construction Linked Payment{" "}
+                          <i className="bi bi-plus-circle-fill icon-3"></i>
+                        </p>
                       </div>
                       <div className="form-check pt-3">
                         <input
@@ -1249,7 +1418,9 @@ function Booking() {
                           ref={installmentRef}
                           id="installmentNotify"
                         />
-                        <label htmlFor="installmentNotify">Installment Notify</label>
+                        <label htmlFor="installmentNotify">
+                          Installment Notify
+                        </label>
                       </div>
 
                       <div className="row pt-4">
@@ -1271,8 +1442,8 @@ function Booking() {
               </div>
             </div>
           </div>
-        </div >
-      </div >
+        </div>
+      </div>
     </>
   );
 }

@@ -4,7 +4,6 @@ import Topbar from "../../Components/Topbar/Topbar";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { toast, ToastContainer } from "react-toastify";
-
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 import { getPartner, deletePartner } from "../../Api/ApiDipak";
@@ -19,39 +18,33 @@ const Partners = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
+
+
   const fetchPartner = async () => {
     const token = localStorage.getItem("token");
-
     try {
       if (!token) {
         navigate("/");
         return;
       }
-
       const response = await axios.get(getPartner, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        },
-      });
+        },        
+      }); 
+      console.log(response.data.data);
+
       if (response.data.status === true && response.data.data) {
         setPartners(response.data.data);
-        // toast.success(response.data.message);
       }
     } catch (error) {
-      if (error.response) {
-        if (error.response.status === 401) {
-          navigate("/");
-        } else {
-          console.error("Error response:", error.response.data);
-        }
-      } else {
-        console.error("Error message:", error.message);
-      }
+      if (error.response && error.response.status === 401) {
+        navigate('/'); 
+    }
     }
   };
 
@@ -76,16 +69,18 @@ const Partners = () => {
         cancelButton: "swal-cancel-btn",
       },
     });
-
+console.log('Deleting partner with ID:', id);
     if (confirmDelete.isConfirmed) {
       try {
         const token = localStorage.getItem("token");
+        console.log(token);
         const response = await axios.delete(`${deletePartner}/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
+        console.log(response);
         if (response.data.status === true) {
           Swal.fire({
             title: "Deleted!",
@@ -136,58 +131,42 @@ const Partners = () => {
                       </Link>
                     </div>
                   </div>
-                  {partners.length > 0 ? (
                     <div className="table-responsive">
                       <table className="table table-bordered text-center">
                         <thead>
                           <tr>
                             <th scope="col">Partner Id</th>
-                            <th scope="col">Project Name</th>
                             <th scope="col">Partner's Name</th>
-                            <th scope="col" className="w-20">
-                              Percentage
-                            </th>
                             <th scope="col" className="w-20">
                               Action
                             </th>
                           </tr>
                         </thead>
                         <tbody>
-                          {partners.map((partner) => (
-                            <tr key={partner.partnerId}>
-                              <td>{partner.partnerId}</td>
-                              <td>{partner.project?.projectName || "N/A"}</td>
-                              <td>{partner.ProjectPartners[0]?.partnerName}</td>
-                              <td>{partner.percentage}%</td>
+                         {partners.map((partner) => (
+                            <tr key={partner.id}>
+                              <td>{partner.id}</td>
+                              <td>{partner.partnerName}</td>
                               <td>
-                                {/* <Link
+                                <Link
                                   to={`/edit-partners/${partner.id}`}
                                   className="btn btn-warning btn-sm me-2"
                                 >
                                   <i className="fas fa-edit"></i>
-                                </Link> */}
-                                <Link
+                                </Link>
+                                <button
                                   onClick={() => handleDelete(partner.id)}
                                   className="btn btn-danger btn-sm"
                                 >
                                   <i className="fas fa-trash"></i>
-                                </Link>
+                                </button>
                               </td>
                             </tr>
                           ))}
-                        </tbody>
+                      
+                      </tbody>
                       </table>
                     </div>
-                  ) : (
-                    <div className="text-center">
-                      <img
-                        src="img/image_2024_12_26T09_23_33_935Z.png"
-                        alt="No Partners"
-                        className="img-fluid w-25 h-25"
-                      />
-                      <p className="text-dark">No Partners Found</p>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
