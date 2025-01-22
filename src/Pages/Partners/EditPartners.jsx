@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import { Link } from "react-router-dom";
@@ -7,21 +7,83 @@ import Topbar from "../../Components/Topbar/Topbar";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
+import Swal from "sweetalert2";
 import axios from "axios";
-import { editPartner, updatePartner } from "../../Api/ApiDipak";
+import {
+  editPartner, // fetch project and per.
+  fetchPartner, // fetch partner
+  getProject, // fetch partner drop down
+  deletePartner, // partner wise data delete
+  updatePartner,
+} from "../../Api/ApiDipak";
 
 const EditPartners = () => {
-  const [partner, setPartner] = useState({ name: "", percentage: "" });
-  const [Xyz, setXyz] = useState("");
-
-  const [projectName, setProjectName] = useState("");
+  const [partner, setPartner] = useState({ name: "" });
+  const [dynamicFields, setDynamicFields] = useState([
+    { projectName: "", percentage: "" },
+  ]);
+  const [projects, setProjects] = useState([]);
   const [error, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const fetchPartner = async () => {
+  const fetchPartners = async () => {
+    // partner fetch
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Token is missing.");
+        return;
+      }
+      const response = await axios.get(`${fetchPartner}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setPartner({ name: response.data.data.partnerName || "" });
+    } catch (error) {
+      console.error("Error fetching partner:", error);
+      if (error.response && error.response.status === 401) {
+        toast.error("Session expired! Please log in again.");
+        navigate("/");
+      }
+    }
+  };
+
+  const fetchProjects = async () => {
+    // Multipal Project fetch in dropdown
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/");
+        return;
+      }
+
+      const response = await axios.get(getProject, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.status === true && response.data.data) {
+        setProjects(response.data.data);
+      } else {
+        console.error("Projects data not found in the response.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      } else {
+        console.error("Error response:", error.response.data);
+      }
+    }
+  };
+
+  const fetchProject = async () => {
+    // multipal project fetch
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -35,87 +97,119 @@ const EditPartners = () => {
           "Content-Type": "application/json",
         },
       });
-
-      console.log(response.data.data.ProjectPartners[0]);
-
-      if (response.data.status === true) {
-        const {
-          name = response.data.data.ProjectPartners[0].partnerName,
-          percentage,
-          project,
-        } = response.data.data;
-        setPartner({ name, percentage });
-        setProjectName(project ? project.projectName : "");
-      } else {
-        toast.error("Failed to fetch partner data!");
+      if (
+        response.data.status === true &&
+        response.data.data &&
+        response.data.data.length > 0
+      ) {
+        const partnersData = response.data.data;
+        const partnerData = partnersData.find(
+          (partner) => partner.partnerId === parseInt(id)
+        );
+        if (partnerData) {
+          const fields = partnersData.map((partner) => ({
+            projectName: partner.project.projectName,
+            percentage: partner.percentage,
+            id: partner.id,
+          }));
+          setDynamicFields(fields);
+        }
       }
     } catch (error) {
       console.error("Error fetching partner:", error);
+      if (error.response && error.response.status === 401) {
+        toast.error("Session expired! Please log in again.");
+        navigate("/");
+      }
       toast.error("Error fetching partner.");
     }
   };
 
   useEffect(() => {
-    fetchPartner();
-  }, []);
+    fetchPartners();
+    fetchProjects();
+    fetchProject();
+  }, [id]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e, index) => {
     const { name, value } = e.target;
-    setPartner((prev) => ({ ...prev, [name]: value }));
+    const updatedFields = [...dynamicFields];
+    updatedFields[index][name] = value;
+    setDynamicFields(updatedFields);
+
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+  };
+
+  const handleAddFields = () => {
+    setDynamicFields([...dynamicFields, { projectName: "", percentage: "" }]);
+  };
+
+  const handlePartnerNameChange = (e) => {
+    const { value } = e.target;
+    setPartner({ ...partner, name: value });
   };
 
   const validateFields = () => {
     let isValid = true;
     const validationErrors = {};
-    if (!partner.name) {
-      validationErrors.name = "Please enter Name for partner";
-      isValid = false;
-    } else if (!/^[A-Za-z ]+$/.test(partner.name)) {
-      validationErrors.name = "Name can only contain letters and spaces";
-      isValid = false;
-    }
-    if (!partner.percentage) {
-      validationErrors.percentage = "Please enter Percentage for partner";
-      isValid = false;
-    } else if (isNaN(partner.percentage)) {
-      validationErrors.percentage = "Percentage must be a valid number";
-      isValid = false;
-    } else if (
-      parseFloat(partner.percentage) < 0 ||
-      parseFloat(partner.percentage) > 100
-    ) {
-      validationErrors.percentage = "Percentage must be between 0 and 100";
-      isValid = false;
-    }
 
+    dynamicFields.forEach((field, index) => {
+      if (!field.projectName) {
+        validationErrors[`projectName_${index}`] = "Project name is required";
+        isValid = false;
+      }
+      if (!field.percentage) {
+        validationErrors[`percentage_${index}`] = "Percentage is required";
+        isValid = false;
+      } else if (isNaN(field.percentage)) {
+        validationErrors[`percentage_${index}`] =
+          "Percentage must be a valid number";
+        isValid = false;
+      } else if (
+        parseFloat(field.percentage) < 0 ||
+        parseFloat(field.percentage) > 100
+      ) {
+        validationErrors[`percentage_${index}`] =
+          "Percentage must be between 0 and 100";
+        isValid = false;
+      }
+    });
     setErrors(validationErrors);
     return isValid;
   };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateFields()) {
       return;
     }
+    const percentages = dynamicFields.map((field) => field.percentage);
+    const projectIds = dynamicFields.map((field) => {
 
-    setLoading(true);
+      const project = projects.find(
+        (project) => project.projectName === field.projectName
+      );
+      return project ? project.id : null; 
+    });
+    const filteredProjectIds = projectIds.filter((id) => id !== null);
+  
     const PartnerData = {
-      partner_id: id,
-      partner_name: partner.name,
-      percentage: partner.percentage,
-      project_id: partner.projectId,
+      // partner_id: id,
+      // partner_name: partner.name,
+      percentages,      
+      projectIds: filteredProjectIds, 
     };
-
+  
+    console.log(PartnerData);
+    
+    const token = localStorage.getItem("token");
+  
     try {
-      const token = localStorage.getItem("token");
       if (!token) {
         toast.error("Token is missing or expired.");
-        setLoading(false);
         return;
       }
-
       const response = await axios.post(`${updatePartner}/${id}`, PartnerData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -123,23 +217,74 @@ const EditPartners = () => {
         },
       });
 
+      console.log(response.data);
+      
       if (response.data.status === true) {
         toast.success("Partner updated successfully!");
-        setTimeout(() => {
-          setLoading(false);
-          navigate("/partners");
-        }, 1000);
+        navigate("/partners");
+        
       } else {
         toast.error("Failed to update partner.");
-        setLoading(false);
       }
     } catch (error) {
       console.error("Error updating partner:", error);
       if (error.response && error.response.status === 401) {
         navigate("/");
       }
-      toast.error("An error occurred while updating the partner.");
-      // setLoading(false);
+    }
+  };
+  
+  const handleDelete = async (id) => {    // project wise delete
+    // console.log("Deleting project with ID:", id);
+    const confirmDelete = await Swal.fire({
+      title: "Are You Sure You Want to Delete?",
+      text: "Once you delete, all the data related to this project will be deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#c4c4c4",
+      customClass: {
+        title: "swal-title",
+        text: "swal-text",
+        confirmButton: "swal-confirm-btn",
+        cancelButton: "swal-cancel-btn",
+      },
+    });
+
+    if (confirmDelete.isConfirmed) {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          toast.error("Token is missing.");
+          return;
+        }
+        const response = await axios.delete(`${deletePartner}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.data.status === true) {
+          Swal.fire({
+            title: "Deleted!",
+            text: "The project has been deleted.",
+            icon: "success",
+            confirmButtonColor: "#3085d6",
+          });
+          // toast.success(response.data.message);
+          setDynamicFields(dynamicFields.filter((field) => field.id !== id));
+        } else {
+          toast.error("Failed to delete project.");
+        }
+      } catch (error) {
+        console.error("Error deleting project:", error);
+        if (error.response && error.response.status === 401) {
+          toast.error("Session expired! Please log in again.");
+          navigate("/");
+        }
+        toast.error("An error occurred while deleting the project.");
+      }
     }
   };
 
@@ -174,17 +319,7 @@ const EditPartners = () => {
                   <form onSubmit={handleSubmit}>
                     <div className="row mb-3">
                       <div className="col">
-                        <label className="form-label">Project Name</label>
-                        <input
-                          type="text"
-                          className={`form-control`}
-                          placeholder="Project Name"
-                          name="projectName"
-                          value={projectName}
-                        />
-                      </div>
-                      <div className="col">
-                        <label className="form-label"> Partner Name</label>
+                        <label className="form-label">Partner Name</label>
                         <input
                           type="text"
                           className={`form-control ${
@@ -193,39 +328,90 @@ const EditPartners = () => {
                           placeholder="Partner Name"
                           name="name"
                           value={partner.name}
-                          onChange={handleInputChange}
+                          onChange={handlePartnerNameChange}
                           readOnly
                         />
                         {error.name && (
                           <div className="invalid-feedback">{error.name}</div>
                         )}
                       </div>
-                    </div>
-                    <div className="row mb-3">
-                      <div className="col">
-                        <label className="form-label">Percentage</label>
-                        <input
-                          type="number"
-                          className={`form-control ${
-                            error.percentage ? "is-invalid" : ""
-                          }`}
-                          placeholder="Percentage"
-                          name="percentage"
-                          value={partner.percentage}
-                          onChange={handleInputChange}
-                        />
-                        {error.percentage && (
-                          <div className="invalid-feedback">
-                            {error.percentage}
-                          </div>
-                        )}
-                      </div>
                       <div className="col"></div>
                     </div>
 
+                    {dynamicFields.map((field, index) => (
+                      <div className="row mb-3" key={index}>
+                        <div className="col-6 ">
+                          <label className="form-label">Project Name</label>
+                          <select
+                            className={`form-select form-select-sm p-2 ${
+                              error[`selectProject-${index}`]
+                                ? "is-invalid"
+                                : ""
+                            }`}
+                            value={field.projectName}
+                            onChange={(e) => handleInputChange(e, index)}
+                            name="projectName"
+                          >
+                            <option value="">Select Project</option>
+                            {projects.map((project) => (
+                              <option
+                                key={project.id}
+                                value={project.projectName}
+                              >
+                                {project.projectName}
+                              </option>
+                            ))}
+                          </select>
+                          {error[`selectProject-${index}`] && (
+                            <div className="invalid-feedback">
+                              {error[`selectProject-${index}`]}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="col">
+                          <label className="form-label">Percentage</label>
+                          <input
+                            type="number"
+                            className={`form-control ${
+                              error[`percentage_${index}`] ? "is-invalid" : ""
+                            }`}
+                            placeholder="Percentage"
+                            name="percentage"
+                            value={field.percentage}
+                            onChange={(e) => handleInputChange(e, index)}
+                          />
+                          {error[`percentage_${index}`] && (
+                            <div className="invalid-feedback">
+                              {error[`percentage_${index}`]}
+                            </div>
+                          )}
+                        </div>
+                        <div className="col mt-1">
+                          <label className="form-label">&nbsp;</label>
+                          <div className="d-flex gap-2">
+                            <span>
+                              <i
+                                className="bi bi-plus-circle-fill"
+                                onClick={handleAddFields}
+                                style={{ cursor: "pointer" }}
+                              ></i>
+                            </span>
+                            <span>
+                              <i
+                                className="bi bi-x-circle-fill"
+                                onClick={() => handleDelete(field.id)}
+                                style={{ cursor: "pointer" }}
+                              ></i>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
                     <button
                       type="submit"
-                      className="btn btn-primary"
+                      className="btn btn-primary mt-3"
                       disabled={loading}
                     >
                       {loading ? (
@@ -241,7 +427,6 @@ const EditPartners = () => {
           </div>
         </div>
       </div>
-
       <ToastContainer />
     </>
   );

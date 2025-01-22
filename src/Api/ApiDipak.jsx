@@ -7,7 +7,9 @@ export const  projectWiseUnit = baseUrl + "v1/projects/get-project-unit";
 
   // partner //
 export const addPartner = baseUrl + "v1/partner/add-partner";          
-export const getPartner = baseUrl + "v1/partner/get-partner";
-export const deletePartner = baseUrl + "v1/partner/delete-partner";
-export const editPartner = baseUrl + "v1/partner/get-partner-by-id";
-export const updatePartner = baseUrl + "v1/partner/update-partner";
+export const getPartner = baseUrl + "v1/partner/get-partner";          
+export const editPartner = baseUrl + "v1/partner/get-partner-by-id";  
+export const fetchPartner = baseUrl + "v1/partner/get-single-partner"
+export const deletePartner = baseUrl + "v1/partner/delete-partner";    
+
+export const updatePartner = baseUrl + "v1/partner/update-partner";    

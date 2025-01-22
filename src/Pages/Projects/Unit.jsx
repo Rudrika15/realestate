@@ -11,23 +11,27 @@ import { useParams } from "react-router-dom";
 const Unit = () => {
   const [units, setUnits] = useState([
     {
-      wing: "",
+      // wing: "",
       unitNo: "",
       size: "",
       extraWorkAmount: "",
       unitType: "",
       saleDeedAmount: "",
+      terraceSize:" ",
+      terraceStatus:" ",
     },
   ]);
   const [loading, setLoading] = useState(true);
 
   const [unitErrors, setUnitErrors] = useState({
-    wingError: false,
+    // wingError: false,
     unitNoError: false,
     sizeError: false,
     extraWorkAmountError: false,
     unitTypeError: false,
     saleDeedAmountError: false,
+    terraceSizeError:false,
+    terraceStatusError:false,
   });
 
   const navigate = useNavigate();
@@ -63,6 +67,8 @@ const Unit = () => {
           if (response.data.status === true && response.data.data) {
             // toast.success(response.data.message);
             setUnits(response.data.data);
+            console.log(response.data.data);
+            
           }
         } catch (error) {
           if (error.response && error.response.status === 401) {
@@ -91,12 +97,14 @@ const Unit = () => {
     setUnits([
       ...units,
       {
-        wing: "",
+        // wing: "",
         unitNo: "",
         size: "",
         extraWorkAmount: "",
         unitType: "",
         saleDeedAmount: "",
+        terraceSize:"",
+        terraceStatus:"",
       },
     ]);
   };
@@ -104,19 +112,21 @@ const Unit = () => {
   const validateForm = () => {
     let isValid = true;
     const errors = {
-      wingError: false,
+      // wingError: false,
       unitNoError: false,
       sizeError: false,
       extraWorkAmountError: false,
       unitTypeError: false,
       saleDeedAmountError: false,
+      terraceSizeError:false,
+      terraceStatusError:false,
     };
 
     units.forEach((unit) => {
-      if (!unit.wing || !unit.wing.trim()) {
-        errors.wingError = true;
-        isValid = false;
-      }
+      // if (!unit.wing || !unit.wing.trim()) {
+      //   errors.wingError = true;
+      //   isValid = false;
+      // }
       if (!unit.unitNo || !unit.unitNo.trim()) {
         errors.unitNoError = true;
         isValid = false;
@@ -135,6 +145,14 @@ const Unit = () => {
       }
       if (!unit.saleDeedAmount || !unit.saleDeedAmount.trim()) {
         errors.saleDeedAmountError = true;
+        isValid = false;
+      }
+      if (!unit.terraceSize || !unit.terraceSize.trim()) {
+        errors.terraceSizeError = true;
+        isValid = false;
+      }
+      if (!unit.terraceStatus || !unit.terraceStatus.trim()) {
+        errors.terraceStatusError = true;
         isValid = false;
       }
     });
@@ -197,6 +215,8 @@ const Unit = () => {
                             <th scope="col">Extra Work Amount</th>
                             <th scope="col">Unit Type</th>
                             <th scope="col">Sales Deed Amount</th>
+                            <th scope="col">Terrace Size</th>
+                            <th scope="col">Terrace Status</th>
                             <th scope="col">Action</th>
                           </tr>
                         </thead>
@@ -232,7 +252,7 @@ const Unit = () => {
                                 />
                                 {unitErrors.unitNoError && (
                                   <div className="invalid-feedback">
-                                    Enter a Flat Name
+                                    Enter a Unit No
                                   </div>
                                 )}
                               </td>
@@ -301,6 +321,42 @@ const Unit = () => {
                                 {unitErrors.saleDeedAmountError && (
                                   <div className="invalid-feedback">
                                     Enter Sales Deed Amount
+                                  </div>
+                                )}
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  name="terraceSize"
+                                  className={`form-control ${
+                                    unitErrors.terraceSizeError
+                                      ? "is-invalid"
+                                      : ""
+                                  }`}
+                                  value={unit.terraceSize}
+                                  onChange={(e) => handleInputChange(e, index)}
+                                />
+                                {unitErrors.terraceSizeError && (
+                                  <div className="invalid-feedback">
+                                    Enter Terrace Size
+                                  </div>
+                                )}
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  name="terraceStatus"
+                                  className={`form-control ${
+                                    unitErrors.terraceStatusError
+                                      ? "is-invalid"
+                                      : ""
+                                  }`}
+                                  value={unit.terraceStatus}
+                                  onChange={(e) => handleInputChange(e, index)}
+                                />
+                                {unitErrors.terraceStatusError && (
+                                  <div className="invalid-feedback">
+                                    Enter Terrace Status
                                   </div>
                                 )}
                               </td>
