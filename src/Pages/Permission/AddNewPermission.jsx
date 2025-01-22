@@ -69,6 +69,9 @@ function AddNewPermission() {
         }
     } catch (error) {
         console.error(error); 
+        if (error.response && error.response.status === 401) {
+          navigate('/'); 
+      }
         toast.error("Failed to add permission. Please try again.");
     } finally {
         setLoading(false);

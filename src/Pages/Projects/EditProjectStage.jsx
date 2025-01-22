@@ -6,7 +6,7 @@ import Topbar from '../../Components/Topbar/Topbar';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import axios from 'axios';
-import { getProjectWing, getSingleProjectStage } from '../../Api/DevanshiApi';
+import { getProjectWing, getSingleProjectStage, updateProjectStage } from '../../Api/DevanshiApi';
 
 function EditProjectStage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -36,39 +36,6 @@ function EditProjectStage() {
     const percentageRef = useRef(null);
     const wingRef = useRef(null);
     const submitRef = useRef(null);
-
-    const handleEdit = async (e) => {
-        e.preventDefault();
-        let isValid = true;
-
-        if (!wing.trim()) {
-            setWingError(true);
-            isValid = false;
-        } else {
-            setWingError(false);
-        }
-
-        if (!percentage.trim()) {
-            setPercentageError(true);
-            isValid = false;
-        } else {
-            setPercentageError(false);
-        }
-
-        if (!title.trim()) {
-            setTitleError(true);
-            isValid = false;
-        } else {
-            setTitleError(false);
-        }
-
-        if (!isValid) return;
-        setLoading(true);
-
-        setLoading(false);
-        toast.success('Project Stage added successfully!');
-        navigate('/somewhere');
-    };
 
     const handleEnter = (e, nextField) => {
         if (e.key === 'Enter') {
@@ -175,6 +142,72 @@ function EditProjectStage() {
         if (e.target.value) setTitleError(false);
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        let isValid = true;
+
+        if (!percentage || isNaN(percentage)) {
+            toast.error('Percentage is required and must be a valid number.');
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                toast.error('Token is missing. Please log in again.');
+                setLoading(false);
+                return;
+            }
+
+            const payload = {
+                projectStageName: title,
+                projectStagePer: percentage,
+                projectId: id,
+                projectWingData: selectedWings.map((wing) => ({
+                    projectWingId: wing,
+                    status: 'In Progress',
+                    projectCompletionDate: stageDates[wing] || sharedDate,
+                })),
+            };
+
+            console.log('Payload:', payload);
+
+            const response = await axios.post(`${updateProjectStage}/${id}`, payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.data.status === true) {
+                toast.success(response.data.message || 'Project Stage updated successfully');
+                setTimeout(() => navigate(`/project-stage/${id}`), 1000);
+                console.log(response.data.message || 'Project Stage updated successfully');
+            } else {
+                toast.error(response?.data?.message || 'Failed to update Project Stage.');
+            }
+        } catch (error) {
+            console.error(error);
+            if (error.response?.status === 500 && error.response?.data?.status === true) {
+                toast.success(error.response.data.message || 'Project Stage updated successfully');
+                setTimeout(() => navigate(`/project-stage/${id}`), 1000);
+            } else {
+                if (error.response && error.response.status === 401) {
+                    navigate('/');
+                }
+                toast.error('An error occurred while updating Project Stage details.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <>
             <ToastContainer />
@@ -197,7 +230,7 @@ function EditProjectStage() {
                                             </h6>
                                         </Link>
                                     </div>
-                                    <form onSubmit={handleEdit}>
+                                    <form onSubmit={handleSubmit}>
                                         <div className="row">
                                             <div className="col">
                                                 <input

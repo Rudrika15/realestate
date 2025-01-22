@@ -4,18 +4,18 @@ import Topbar from "../../Components/Topbar/Topbar";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-
 import Swal from "sweetalert2";
 import axios from "axios";
 import { getProject } from "../../Api/ApiDipak";
 import Multiselect from "multiselect-react-dropdown";
-
+import { deleteProject } from "../../Api/DevanshiApi";
 
 const Projects = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [projects, setProjects] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -50,21 +50,12 @@ const Projects = () => {
         });
         if (response.data.status === true && response.data.data) {
           setData(response.data.data);
-          // toast.success(response.data.message);
         } else {
           console.error("Projects data not found in the response.");
         }
       } catch (error) {
-        if (error.response) {
-          if (error.response.status === 401) {
-            navigate("/");
-          } else {
-            console.error("Error response:", error.response.data);
-          }
-        } else if (error.request) {
-          console.error("Error request:", error.request);
-        } else {
-          console.error("Error message:", error.message);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
         }
       } finally {
         setLoading(false);
@@ -84,27 +75,52 @@ const Projects = () => {
     setCurrentPage(page);
   };
 
-  const handleClick = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "It may affect projects as well.",
-      icon: "warning",
+  const handleDelete = async (id) => {
+    const confirmDelete = await Swal.fire({
+      title: "Are You Sure You Want to Delete?",
+      text: "Once you delete, all the data related to this user will be deleted.",
+      icon: "error",
       showCancelButton: true,
       confirmButtonText: "Delete",
       cancelButtonText: "Cancel",
       confirmButtonColor: "#d33",
       cancelButtonColor: "#c4c4c4",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setData((prevData) => prevData.filter((project) => project.id !== id));
-        Swal.fire({
-          title: "Deleted!",
-          text: "The project has been deleted.",
-          icon: "success",
-          confirmButtonColor: "#3085d6",
-        });
-      }
+      customClass: {
+        title: "swal-title",
+        text: "swal-text",
+        confirmButton: "swal-confirm-btn",
+        cancelButton: "swal-cancel-btn",
+      },
     });
+
+    if (confirmDelete.isConfirmed) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${deleteProject}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.data.status === true) {
+          Swal.fire({
+            title: "Deleted!",
+            text: "The user has been deleted.",
+            icon: "success",
+            confirmButtonColor: "#3085d6",
+          });
+          setProjects(projects.filter((item) => item.id !== id));
+        } else {
+          toast.error("Failed to delete user!");
+        }
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        }
+        toast.error("An error occurred while deleting the user!");
+      }
+    }
   };
 
   return (
@@ -137,10 +153,12 @@ const Projects = () => {
                       </Link>
                     </div>
                   </div>
-
                   {loading ? (
                     <div className="text-center">
-                      <div className="spinner-border" role="status"></div>
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      ></div>
                     </div>
                   ) : currentData.length > 0 ? (
                     <div className="table-responsive">
@@ -172,14 +190,13 @@ const Projects = () => {
                                 >
                                   <i className="fas fa-edit"></i>
                                 </Link>
-
-                                <button
-                                  type="button"
-                                  className="btn btn-danger btn-sm me-2"
-                                  onClick={() => handleClick(project.id)}
+                                <Link
+                                  to=""
+                                  onClick={() => handleDelete(project.id)} 
+                                  className="btn btn-danger btn-sm"
                                 >
                                   <i className="fas fa-trash"></i>
-                                </button>
+                                </Link>
                                 <Link
                                   to={`/project-stage/${project.id}`}
                                   className="btn btn-secondary btn-sm"
@@ -194,9 +211,8 @@ const Projects = () => {
                       <nav aria-label="Page navigation">
                         <ul className="pagination justify-content-end">
                           <li
-                            className={`page-item ${
-                              currentPage === 1 ? "disabled" : ""
-                            }`}
+                            className={`page-item ${currentPage === 1 ? "disabled" : ""
+                              }`}
                           >
                             <button
                               className="page-link"
@@ -209,9 +225,8 @@ const Projects = () => {
                           {Array.from({ length: totalPages }, (_, i) => (
                             <li
                               key={i + 1}
-                              className={`page-item ${
-                                currentPage === i + 1 ? "active" : ""
-                              }`}
+                              className={`page-item ${currentPage === i + 1 ? "active" : ""
+                                }`}
                             >
                               <button
                                 className="page-link"
@@ -223,9 +238,8 @@ const Projects = () => {
                           ))}
 
                           <li
-                            className={`page-item ${
-                              currentPage === totalPages ? "disabled" : ""
-                            }`}
+                            className={`page-item ${currentPage === totalPages ? "disabled" : ""
+                              }`}
                           >
                             <button
                               className="page-link"

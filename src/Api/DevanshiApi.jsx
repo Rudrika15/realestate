@@ -9,6 +9,7 @@ export const addUsers = baseUrl + "v1/users/add-user";
 export const getSingleUsers = baseUrl + "v1/users/get-users-by-id";
 //Projects
 export const getProject = baseUrl + "v1/projects/get-project";
+export const deleteProject = baseUrl + "v1/projects/delete-project";
 //Broker
 export const getBroker = baseUrl + "v1/brokers/get-broker";
 export const addBroker = baseUrl + "v1/brokers/store-broker";

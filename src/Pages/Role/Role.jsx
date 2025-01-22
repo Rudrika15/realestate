@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
@@ -18,6 +18,7 @@ const Role = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [permissions, setPermissions] = useState([]);
+  const navigate= useNavigate()
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -44,6 +45,9 @@ const Role = () => {
       }
     } catch (error) {
       setError("There was an error fetching the data.");
+      if (error.response && error.response.status === 401) {
+        navigate('/'); 
+    }
     } finally {
       setLoading(false);
     }
@@ -85,6 +89,9 @@ const Role = () => {
         }
       } catch (error) {
         toast.error("An error occurred while deleting the role!");
+        if (error.response && error.response.status === 401) {
+          navigate('/'); 
+      }
       }
     }
   };

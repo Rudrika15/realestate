@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { Helmet } from 'react-helmet';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import Topbar from '../../Components/Topbar/Topbar';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { getProjectStage, getSingleProjectStage } from '../../Api/DevanshiApi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 function ProjectStage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -14,7 +15,8 @@ function ProjectStage() {
     const [loading, setLoading] = useState(false);
     const [projectStage, setProjectStage] = useState([]);
     const { id } = useParams();
-    const navigate = useNavigate();
+    const  navigate = useNavigate
+
 
     const fetchProjectStage = async () => {
         setLoading(true);
@@ -39,8 +41,11 @@ function ProjectStage() {
                 setProjectStage([]);
             }
         } catch (error) {
-            // toast.error(error.response?.data?.message || 'Error fetching project stages!');
-            setProjectStage([]);
+            toast.error(error.response?.data?.message || 'Error fetching project stages!');
+            
+        if (error.response && error.response.status === 401) {
+            navigate('/'); 
+        }
         } finally {
             setLoading(false);
         }
@@ -116,7 +121,7 @@ function ProjectStage() {
                                                             <td>{stage?.projectStagePer || 0}%</td>
                                                             <td>
                                                                 <Link
-                                                                    to={`/edit-projectstage/${id}`}
+                                                                    to={`/edit-projectstage/${stage?.id}`}
                                                                     className={`btn btn-warning btn-sm me-2 ${!stage?.id ? 'disabled' : ''}`}
                                                                 >
                                                                     <i className="fas fa-edit"></i>
