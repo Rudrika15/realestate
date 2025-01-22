@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import Footer from "../../Components/Footer/Footer";
 import axios from "axios";
 import { PermissionFetch } from "../../Api/Apikiran";
 import { toast } from "react-toastify";
@@ -11,14 +10,10 @@ import { toast } from "react-toastify";
 function Permission() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-  const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [permissions, setPermissions] = useState([]);
-
-  const navigate=useNavigate()
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -29,10 +24,9 @@ function Permission() {
   };
 
   const fetchPermission = async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      console.log("Token: ", token);
-
       const response = await axios.get(`${PermissionFetch}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -40,7 +34,7 @@ function Permission() {
         },
       });
       if (response.data.status === true) {
-        console.log("Permissions data:", response.data.data);
+        
         setPermissions(response.data.data);
       } else {
         toast.error("Failed to fetch permission data!");
@@ -48,20 +42,56 @@ function Permission() {
     } catch (error) {
       console.error("Error fetching permission:", error);
       if (error.response && error.response.status === 401) {
-        navigate('/'); 
-    }
+        navigate("/"); 
+      }
       toast.error("Error fetching permission.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCheckboxChange = (id) => {
-    setPermissions((prevPermissions) =>
-      prevPermissions.map((permission) =>
-        permission.id === id
-          ? { ...permission, isChecked: !permission.isChecked }
-          : permission
-      )
-    );
+  const updatePermission = async (id, updatedPermission) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${PermissionFetch}/${id}`,
+        updatedPermission,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.status === true) {
+        toast.success("Permission updated successfully!");
+        setPermissions((prevPermissions) =>
+          prevPermissions.map((permission) =>
+            permission.id === id ? { ...permission, permissionName: updatedPermission.permissionName } : permission
+          )
+        );
+      } else {
+        toast.error("Failed to update permission!");
+      }
+    } catch (error) {
+      console.error("Error updating permission:", error);
+      toast.error("Error updating permission.");
+    }
+  };
+
+  const handleEditPermission = (id) => {
+    const permissionToEdit = permissions.find((permission) => permission.id === id);
+    console.log("Editing permission: ", permissionToEdit);
+
+    const updatedName = prompt("Enter new permission name:", permissionToEdit.permissionName);
+
+    if (updatedName && updatedName !== permissionToEdit.permissionName) {
+      const updatedPermission = { ...permissionToEdit, permissionName: updatedName };
+      updatePermission(id, updatedPermission);
+    } else {
+      toast.info("Permission name is the same, no changes made.");
+    }
   };
 
   useEffect(() => {
@@ -92,15 +122,14 @@ function Permission() {
                       <h6 className="mb-4">Permission</h6>
                     </div>
                     <div className="p-2">
-                      <Link to="/addnewpermission" className="">
+                      <Link to="/addnewpermission">
                         <h6 className="mb-4">
                           <button
                             type="submit"
                             className="btn btn-primary"
                             disabled={loading}
-                          >                          
-                              Add Permission
-                            
+                          >
+                            Add Permission
                           </button>
                         </h6>
                       </Link>
@@ -108,26 +137,34 @@ function Permission() {
                   </div>
 
                   <div className="table-responsive">
-                    <table className="table table-bordered mt-4">
-                      <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Option</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {permissions.map((permission) => (
-                          <tr key={permission.id}>
-                            <td>{permission.permissionName}</td>
-                            <td>
-                              <Link class="btn btn-warning btn-sm me-2">
-                                <i className="bi bi-pen"></i>
-                              </Link>
-                            </td>
+                    {loading ? (
+                      <div>Loading...</div>
+                    ) : (
+                      <table className="table table-bordered mt-4">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Option</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {permissions.map((permission) => (
+                            <tr key={permission.id}>
+                              <td>{permission.permissionName}</td>
+                              <td>
+                                <button
+                                  className="btn btn-warning btn-sm me-2"
+                                  onClick={() => handleEditPermission(permission.id)}
+                                  aria-label={`Edit permission ${permission.permissionName}`}
+                                >
+                                  <i className="bi bi-pen"></i> Edit
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
                   </div>
                 </div>
               </div>
