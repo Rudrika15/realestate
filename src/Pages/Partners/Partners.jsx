@@ -34,7 +34,7 @@ const Partners = () => {
           "Content-Type": "application/json",
         },        
       }); 
-      console.log(response.data.data);
+      // console.log(response.data.data);
 
       if (response.data.status === true && response.data.data) {
         setPartners(response.data.data);

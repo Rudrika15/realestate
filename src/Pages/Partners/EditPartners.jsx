@@ -10,10 +10,11 @@ import { Spinner } from "react-bootstrap";
 import Swal from "sweetalert2";
 import axios from "axios";
 import {
-  editPartner,
-  fetchPartner,
+  editPartner, // fetch project and per.
+  fetchPartner, // fetch partner
+  getProject, // fetch partner drop down
+  deletePartner, // partner wise data delete
   updatePartner,
-  deletePartner,
 } from "../../Api/ApiDipak";
 
 const EditPartners = () => {
@@ -21,12 +22,14 @@ const EditPartners = () => {
   const [dynamicFields, setDynamicFields] = useState([
     { projectName: "", percentage: "" },
   ]);
+  const [projects, setProjects] = useState([]);
   const [error, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
   const fetchPartners = async () => {
+    // partner fetch
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -49,7 +52,38 @@ const EditPartners = () => {
     }
   };
 
+  const fetchProjects = async () => {
+    // Multipal Project fetch in dropdown
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/");
+        return;
+      }
+
+      const response = await axios.get(getProject, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.status === true && response.data.data) {
+        setProjects(response.data.data);
+      } else {
+        console.error("Projects data not found in the response.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      } else {
+        console.error("Error response:", error.response.data);
+      }
+    }
+  };
+
   const fetchProject = async () => {
+    // multipal project fetch
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -63,7 +97,6 @@ const EditPartners = () => {
           "Content-Type": "application/json",
         },
       });
-      console.log(response.data.data);
       if (
         response.data.status === true &&
         response.data.data &&
@@ -77,6 +110,7 @@ const EditPartners = () => {
           const fields = partnersData.map((partner) => ({
             projectName: partner.project.projectName,
             percentage: partner.percentage,
+            id: partner.id,
           }));
           setDynamicFields(fields);
         }
@@ -93,6 +127,7 @@ const EditPartners = () => {
 
   useEffect(() => {
     fetchPartners();
+    fetchProjects();
     fetchProject();
   }, [id]);
 
@@ -143,60 +178,67 @@ const EditPartners = () => {
     return isValid;
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateFields()) {
+      return;
+    }
+    const percentages = dynamicFields.map((field) => field.percentage);
+    const projectIds = dynamicFields.map((field) => {
 
-  //   if (!validateFields()) {
-  //     return;
-  //   }
-
-  //   setLoading(true);
-  //   const PartnerData = {
-  //     partner_id: id,
-  //     partner_name: partner.name,
-  //     dynamicFields,
-  //   };
-
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     if (!token) {
-  //       toast.error("Token is missing or expired.");
-  //       setLoading(false);
-  //       return;
-  //     }
-
-  //     const response = await axios.post(`${updatePartner}/${id}`, PartnerData, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     if (response.data.status === true) {
-  //       toast.success("Partner updated successfully!");
-  //       setTimeout(() => {
-  //         setLoading(false);
-  //         navigate("/partners");
-  //       }, 1000);
-  //     } else {
-  //       toast.error("Failed to update partner.");
-  //       setLoading(false);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error updating partner:", error);
-  //     if (error.response && error.response.status === 401) {
-  //       navigate("/");
-  //     }
-  //     toast.error("An error occurred while updating the partner.");
-  //   }
-  // };
-
-  const handleDelete = async (id) => {
-    console.log(id);
+      const project = projects.find(
+        (project) => project.projectName === field.projectName
+      );
+      return project ? project.id : null; 
+    });
+    const filteredProjectIds = projectIds.filter((id) => id !== null);
+  
+    const PartnerData = {
+      // partner_id: id,
+      // partner_name: partner.name,
+      percentages,      
+      projectIds: filteredProjectIds, 
+    };
+  
+    console.log(PartnerData);
     
+    const token = localStorage.getItem("token");
+  
+    try {
+      if (!token) {
+        toast.error("Token is missing or expired.");
+        return;
+      }
+      const response = await axios.post(`${updatePartner}/${id}`, PartnerData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(response.data);
+      
+      if (response.data.status === true) {
+        toast.success("Partner updated successfully!");
+        navigate("/partners");
+        
+      } else {
+        toast.error("Failed to update partner.");
+      }
+    } catch (error) {
+      console.error("Error updating partner:", error);
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+    }
+  };
+  
+  const handleDelete = async (id) => {    // project wise delete
+    // console.log("Deleting project with ID:", id);
     const confirmDelete = await Swal.fire({
       title: "Are You Sure You Want to Delete?",
-      text: "Once you delete, all the data related to this user will be deleted.",
+      text: "Once you delete, all the data related to this project will be deleted.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Delete",
@@ -226,18 +268,22 @@ const EditPartners = () => {
         if (response.data.status === true) {
           Swal.fire({
             title: "Deleted!",
-            text: "The partner has been deleted.",
+            text: "The project has been deleted.",
             icon: "success",
             confirmButtonColor: "#3085d6",
           });
-          toast.success(response.message);
+          // toast.success(response.data.message);
+          setDynamicFields(dynamicFields.filter((field) => field.id !== id));
+        } else {
+          toast.error("Failed to delete project.");
         }
       } catch (error) {
-        console.error("Error deleting partner:", error);
+        console.error("Error deleting project:", error);
         if (error.response && error.response.status === 401) {
           toast.error("Session expired! Please log in again.");
           navigate("/");
         }
+        toast.error("An error occurred while deleting the project.");
       }
     }
   };
@@ -270,10 +316,7 @@ const EditPartners = () => {
                       </Link>
                     </div>
                   </div>
-                  <form 
-                  // onSubmit={handleSubmit}
-                  
-                  >
+                  <form onSubmit={handleSubmit}>
                     <div className="row mb-3">
                       <div className="col">
                         <label className="form-label">Partner Name</label>
@@ -297,24 +340,35 @@ const EditPartners = () => {
 
                     {dynamicFields.map((field, index) => (
                       <div className="row mb-3" key={index}>
-                        <div className="col-6">
+                        <div className="col-6 ">
                           <label className="form-label">Project Name</label>
-                          <input
-                            type="text"
-                            className={`form-control ${
-                              error[`projectName_${index}`] ? "is-invalid" : ""
+                          <select
+                            className={`form-select form-select-sm p-2 ${
+                              error[`selectProject-${index}`]
+                                ? "is-invalid"
+                                : ""
                             }`}
-                            placeholder="Project Name"
-                            name="projectName"
                             value={field.projectName}
                             onChange={(e) => handleInputChange(e, index)}
-                          />
-                          {error[`projectName_${index}`] && (
+                            name="projectName"
+                          >
+                            <option value="">Select Project</option>
+                            {projects.map((project) => (
+                              <option
+                                key={project.id}
+                                value={project.projectName}
+                              >
+                                {project.projectName}
+                              </option>
+                            ))}
+                          </select>
+                          {error[`selectProject-${index}`] && (
                             <div className="invalid-feedback">
-                              {error[`projectName_${index}`]}
+                              {error[`selectProject-${index}`]}
                             </div>
                           )}
                         </div>
+
                         <div className="col">
                           <label className="form-label">Percentage</label>
                           <input
@@ -346,7 +400,7 @@ const EditPartners = () => {
                             <span>
                               <i
                                 className="bi bi-x-circle-fill"
-                                onClick={() => handleDelete(partner.id)}
+                                onClick={() => handleDelete(field.id)}
                                 style={{ cursor: "pointer" }}
                               ></i>
                             </span>
@@ -373,7 +427,6 @@ const EditPartners = () => {
           </div>
         </div>
       </div>
-
       <ToastContainer />
     </>
   );
