@@ -192,11 +192,11 @@ const Projects = () => {
                                 </Link>
                                 <Link
                                   to=""
-                                  onClick={() => handleDelete(project.id)} 
+                                  onClick={() => handleDelete(project.id)}
                                   className="btn btn-danger btn-sm"
                                 >
                                   <i className="fas fa-trash"></i>
-                                </Link>
+                                </Link>&nbsp;&nbsp;
                                 <Link
                                   to={`/project-stage/${project.id}`}
                                   className="btn btn-secondary btn-sm"

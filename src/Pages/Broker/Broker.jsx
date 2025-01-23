@@ -119,7 +119,6 @@ function Broker() {
     e.preventDefault();
     let isValid = true;
 
-    // Validation
     if (!brokerName) {
       setBrokerNameError("Broker name is required!");
       isValid = false;
@@ -134,8 +133,12 @@ function Broker() {
       setBrokerAddressError("");
     }
 
+    const phoneRegex = /^[0-9]{10}$/;
     if (!brokerMobileNumber) {
       setBrokerMobileNumberError("Broker mobile number is required!");
+      isValid = false;
+    } else if (!phoneRegex.test(brokerMobileNumber)) {
+      setBrokerMobileNumberError("Mobile number must be a valid 10 digit number.");
       isValid = false;
     } else {
       setBrokerMobileNumberError("");
@@ -310,7 +313,7 @@ function Broker() {
               <div className="row pt-4">
                 <div className="col position-relative">
                   <input
-                    type="number"
+                    type="text"
                     className="form-control"
                     id="Mobile Number"
                     placeholder="Mobile Number"
@@ -318,9 +321,7 @@ function Broker() {
                     value={brokerMobileNumber}
                     onChange={(e) => setBrokerMobileNumber(e.target.value)}
                   />
-                  {brokerMobileNumberError && (
-                    <p className="text-danger">{brokerMobileNumberError}</p>
-                  )}
+                  {brokerMobileNumberError && <p className="text-danger">{brokerMobileNumberError}</p>}
                 </div>
               </div>
               <div className="row pt-4">

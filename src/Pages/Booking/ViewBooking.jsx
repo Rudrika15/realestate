@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
@@ -18,7 +18,9 @@ const ViewBooking = () => {
     {
       No: 1,
       date: '12/2/2024',
-      customerName: 'Alice',
+      firstName: 'Alice',
+      lastName: 'Johnson',
+      surname: 'Smith',
       saleDeedAmount: '500000',
       receivedSdAmount: '250000',
       pendingSdAmount: '250000',
@@ -93,8 +95,8 @@ const ViewBooking = () => {
     } catch (error) {
       console.error("Error fetching peojects:", error);
       if (error.response && error.response.status === 401) {
-        navigate('/'); 
-    }
+        navigate('/');
+      }
     }
   };
 
@@ -188,7 +190,7 @@ const ViewBooking = () => {
                               <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{book.date}</td>
-                                <td>{book.customerName}</td>
+                                <td>{`${book.firstName} ${book.lastName} ${book.surname}`}</td>
                                 <td>{formatIndianNumbering(book.saleDeedAmount)}</td>
                                 <td>{formatIndianNumbering(book.receivedSdAmount)}</td>
                                 <td>{formatIndianNumbering(book.pendingSdAmount)}</td>

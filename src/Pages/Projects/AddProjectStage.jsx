@@ -231,7 +231,6 @@ function AddProjectStage() {
                             </div>
                           )}
                         </div>
-
                         {wingOptions.map((wing) => (
                           <div key={wing} className="form-check d-flex align-items-center">
                             <input

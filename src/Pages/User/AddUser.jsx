@@ -59,80 +59,80 @@ function AddUser() {
     fetchRoles();
   }, []);
 
-  const handleAdd = async (e) => {
-    e.preventDefault();
-    let isValid = true;
+    const handleAdd = async (e) => {
+      e.preventDefault();
+      let isValid = true;
 
-    if (!userName.trim()) {
-      setUserNameError(true);
-      isValid = false;
-    } else {
-      setUserNameError(false);
-    }
-
-    if (!passcode.trim()) {
-      setPasscodeError(true);
-      isValid = false;
-    } else {
-      setPasscodeError(false);
-    }
-
-    if (!authPasscode.trim() || authPasscode !== passcode) {
-      setAuthPasscodeError(true);
-      isValid = false;
-    } else {
-      setAuthPasscodeError(false);
-    }
-
-    if (selectedRoles.length === 0) {
-      setRoleError(true);
-      isValid = false;
-    } else {
-      setRoleError(false);
-    }
-
-    if (!isValid) return;
-    setLoading(true);
-
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        addUsers,
-        {
-          userName,
-          passcode,
-          authPasscode,
-          roles: selectedRoles,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.data.status) {
-        toast.success("User added successfully!");
-        setUserName("");
-        setPasscode("");
-        setAuthPasscode("");
-        setSelectedRoles([]);
-        setTimeout(() => {
-          navigate("/view-user");
-        }, 1000);
+      if (!userName.trim()) {
+        setUserNameError(true);
+        isValid = false;
       } else {
-        toast.error(response.data.message || "Failed to add user");
+        setUserNameError(false);
       }
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        navigate("/");
+
+      if (!passcode.trim()) {
+        setPasscodeError(true);
+        isValid = false;
+      } else {
+        setPasscodeError(false);
       }
-      toast.error("Failed to add user. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+
+      if (!authPasscode.trim()) {
+        setAuthPasscodeError(true);
+        isValid = false;
+      } else {
+        setAuthPasscodeError(false);
+      }
+
+      if (selectedRoles.length === 0) {
+        setRoleError(true);
+        isValid = false;
+      } else {
+        setRoleError(false);
+      }
+
+      if (!isValid) return;
+      setLoading(true);
+
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+          addUsers,
+          {
+            userName,
+            passcode,
+            authPasscode,
+            roles: selectedRoles,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.data.status) {
+          toast.success("User added successfully!");
+          setUserName("");
+          setPasscode("");
+          setAuthPasscode("");
+          setSelectedRoles([]);
+          setTimeout(() => {
+            navigate("/view-user");
+          }, 1000);
+        } else {
+          toast.error(response.data.message || "Failed to add user");
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        }
+        toast.error("Failed to add user. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
   const handleInputChange = (setter, errorSetter) => (e) => {
     setter(e.target.value);
@@ -197,9 +197,8 @@ function AddUser() {
                       <div className="col">
                         <input
                           type="text"
-                          className={`form-control ${
-                            userNameError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${userNameError ? "is-invalid" : ""
+                            }`}
                           placeholder="User Name"
                           value={userName}
                           ref={usernameRef}
@@ -221,9 +220,8 @@ function AddUser() {
                       <div className="col">
                         <input
                           type="password"
-                          className={`form-control ${
-                            passcodeError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${passcodeError ? "is-invalid" : ""
+                            }`}
                           placeholder="Passcode"
                           value={passcode}
                           ref={passcodeRef}
@@ -245,9 +243,8 @@ function AddUser() {
                       <div className="col">
                         <input
                           type="password"
-                          className={`form-control ${
-                            authPasscodeError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${authPasscodeError ? "is-invalid" : ""
+                            }`}
                           placeholder="Auth Passcode"
                           value={authPasscode}
                           ref={authpasscodeRef}

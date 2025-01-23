@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Helmet } from "react-helmet";
@@ -45,6 +45,7 @@ function Booking() {
   const [amount, setAmount] = useState("");
   const [paymentFrequency, setPaymentFrequency] = useState("");
   const [dueDate, setDueDate] = useState("");
+  // const { id } = useParams();
 
   const [projectError, setProjectError] = useState(false);
   const [unitError, setUnitError] = useState("");
@@ -226,8 +227,8 @@ function Booking() {
     } catch (error) {
       console.error("Error adding broker:", error);
       if (error.response && error.response.status === 401) {
-        navigate('/'); 
-    }
+        navigate('/');
+      }
     }
   };
 
@@ -662,42 +663,37 @@ function Booking() {
   const [selectedUnit, setSelectedUnit] = useState([]);
 
   const fetchProject = async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
+
       if (!token) {
-        toast.error("Authentication token is missing!");
-        window.location.href = "/";
+        navigate("/");
+
         return;
       }
 
-      // Use the predefined `getProject` URL
       const response = await axios.get(getProject, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
-
-      if (response.data.status) {
-        const projects = response.data.data;
-        setProjects(projects);
-
-        // Automatically fetch units for the first project if available
-        if (projects && projects.length > 0) {
-          const selectedProjectId = projects[0].id;
-          await fetchUnit(selectedProjectId); // Fetch units for the first project
-        }
+      if (response.data.status === true && response.data.data) {
+        setProjects(response.data.data);
       } else {
-        console.error("Failed to fetch project data!");
+        console.error("Projects data not found in the response.");
       }
     } catch (error) {
-      console.error("Error fetching projects:", error);
       if (error.response && error.response.status === 401) {
         navigate("/");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const fetchUnit = async (projectId) => {
+  const fetchUnit = async (id) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -708,28 +704,32 @@ function Booking() {
 
       setLoading(true);
 
-      const response = await axios.get(projectWiseUnit(projectId), {
+      const response = await axios.get(`${projectWiseUnit}/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-
-      if (response.data.status && response.data.data) {
+      console.log(response);
+      
+      if (response.data.status === true && response.data.data) {
         setUnits(response.data.data);
-      } else {
-        console.warn("No units found for the selected project.");
+        console.log(response.data.data);
+        
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
+        toast.error("Session expired! Please log in again.");
         navigate("/");
       } else {
-        console.error("Error fetching units:", error);
+        console.error("Error fetching data:", error);
       }
     } finally {
       setLoading(false);
     }
   };
+
+  
 
   useEffect(() => {
     fetchProject();
@@ -866,9 +866,8 @@ function Booking() {
                     <div className="row pt-4">
                       <div className="col">
                         <select
-                          className={`form-control bg-white ${
-                            projectError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control bg-white ${projectError ? "is-invalid" : ""
+                            }`}
                           value={selectedProject}
                           ref={projectRef}
                           onChange={handleProjectChange}
@@ -891,9 +890,8 @@ function Booking() {
                       </div>
                       <div className="col">
                         <select
-                          className={`form-control bg-white ${
-                            unitError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control bg-white ${unitError ? "is-invalid" : ""
+                            }`}
                           value={selectedUnit}
                           ref={unitRef}
                           onChange={handleUnitChange}
@@ -921,9 +919,8 @@ function Booking() {
                           type="text"
                           id="date"
                           ref={dateRef}
-                          className={`form-control ${
-                            bookingError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${bookingError ? "is-invalid" : ""
+                            }`}
                           value={formatDate(bookingDate)}
                           onChange={(e) => handleBookingDateChange(e)}
                           onKeyDown={(e) => handleEnter(e, customerNameRef)}
@@ -946,9 +943,8 @@ function Booking() {
                         <div className="col position-relative">
                           <input
                             type="text"
-                            className={`form-control ${
-                              customerNameError ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${customerNameError ? "is-invalid" : ""
+                              }`}
                             id="name"
                             placeholder="Name"
                             name="name"
@@ -975,9 +971,8 @@ function Booking() {
                         <div className="col">
                           <input
                             type="number"
-                            className={`form-control ${
-                              customerContactError ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${customerContactError ? "is-invalid" : ""
+                              }`}
                             id="Contact No"
                             placeholder="Contact No"
                             name="Contact No"
@@ -1017,9 +1012,8 @@ function Booking() {
                     <div className="row">
                       <div className="col pt-2">
                         <textarea
-                          className={`form-control ${
-                            customerAddressError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${customerAddressError ? "is-invalid" : ""
+                            }`}
                           placeholder="Address"
                           id="floatingTextarea"
                           value={customerAddress}
@@ -1036,9 +1030,8 @@ function Booking() {
                       <div className="col  pt-2">
                         <div className="col position-relative">
                           <textarea
-                            className={`form-control ${
-                              remarkError ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${remarkError ? "is-invalid" : ""
+                              }`}
                             placeholder="Remark"
                             id="floatingTextarea"
                             value={remark}
@@ -1055,9 +1048,8 @@ function Booking() {
                       <div className="col">
                         <input
                           type="number"
-                          className={`form-control ${
-                            saleAmountError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${saleAmountError ? "is-invalid" : ""
+                            }`}
                           id="Sale Deed Amount"
                           placeholder="Sale Deed Amount"
                           name="Sale Deed Amount"
@@ -1075,9 +1067,8 @@ function Booking() {
                       <div className="col">
                         <input
                           type="number"
-                          className={`form-control ${
-                            extraError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${extraError ? "is-invalid" : ""
+                            }`}
                           id="Extra Work Amount"
                           placeholder="Extra Work Amount"
                           name="Extra Work Amount"
@@ -1097,9 +1088,8 @@ function Booking() {
                       <div className="col">
                         <input
                           type="number"
-                          className={`form-control ${
-                            workError ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${workError ? "is-invalid" : ""
+                            }`}
                           id="Work Amount"
                           placeholder="Work Amount"
                           name="Work Amount"
@@ -1117,7 +1107,50 @@ function Booking() {
                       <div className="col"></div>
                     </div>
                     <hr />
+
                     <p class="text-dark fs-5">Payment Terms</p>
+                    <div className="d-flex align-items-center flex-wrap">
+                      <div className="form-check me-5 mb-3">
+                        <input
+                          type="checkbox"
+                          id="token-payment"
+                          className="form-check-input"
+                        />
+                        <label htmlFor="token-payment" className="form-check-label">
+                          Token Payment
+                        </label>
+                      </div>
+                      <div className="form-check me-5 mb-3">
+                        <input
+                          type="checkbox"
+                          id="down-payment"
+                          className="form-check-input"
+                        />
+                        <label htmlFor="down-payment" className="form-check-label">
+                          Down Payment
+                        </label>
+                      </div>
+                      <div className="form-check me-5 mb-3">
+                        <input
+                          type="checkbox"
+                          id="installment-payment"
+                          className="form-check-input"
+                        />
+                        <label htmlFor="installment-payment" className="form-check-label">
+                          Installment Payment
+                        </label>
+                      </div>
+                      <div className="form-check mb-3">
+                        <input
+                          type="checkbox"
+                          id="loan-payment"
+                          className="form-check-input"
+                        />
+                        <label htmlFor="loan-payment" className="form-check-label">
+                          Loan Payment
+                        </label>
+                      </div>
+                    </div>
                     <>
                       <p
                         className="text-gray"
@@ -1128,13 +1161,12 @@ function Booking() {
                         <i className="bi bi-plus-circle-fill icon-3"></i>
                       </p>
                       {showTokenFields && (
-                        <div className="row pt-2 mb-4">
+                        <div className="row mb-4">
                           <div className="col">
                             <input
                               type="number"
-                              className={`form-control ${
-                                tokenAmountError ? "is-invalid" : ""
-                              }`}
+                              className={`form-control ${tokenAmountError ? "is-invalid" : ""
+                                }`}
                               id="tokenamount"
                               placeholder="Token Amount"
                               name="tokenamount"
@@ -1156,9 +1188,8 @@ function Booking() {
                               type="text"
                               id="date"
                               ref={tokenPaymentDateRef}
-                              className={`form-control ${
-                                tokenPaymentDateError ? "is-invalid" : ""
-                              }`}
+                              className={`form-control ${tokenPaymentDateError ? "is-invalid" : ""
+                                }`}
                               value={formatDate(tokenPaymentDate)}
                               onChange={(e) => handleTokenPaymentDateChange(e)}
                               onKeyDown={(e) => handleEnter(e, downPaymentRef)}
@@ -1190,9 +1221,8 @@ function Booking() {
                               <div className="col">
                                 <input
                                   type="number"
-                                  className={`form-control ${
-                                    downPaymentError ? "is-invalid" : ""
-                                  }`}
+                                  className={`form-control ${downPaymentError ? "is-invalid" : ""
+                                    }`}
                                   id="downpayment"
                                   placeholder="Down Payment"
                                   name="downpayment"
@@ -1221,9 +1251,8 @@ function Booking() {
                                   type="text"
                                   id="date"
                                   ref={downPaymentDateRef}
-                                  className={`form-control ${
-                                    downPaymentDateError ? "is-invalid" : ""
-                                  }`}
+                                  className={`form-control ${downPaymentDateError ? "is-invalid" : ""
+                                    }`}
                                   value={formatDate(row.downPaymentDate)}
                                   onChange={(e) =>
                                     handleInputChangeGeneric(
@@ -1251,7 +1280,7 @@ function Booking() {
                                             downPayment: "",
                                             downPaymentDate: "",
                                           },
-                                        ]) // Add a new row
+                                        ])
                                     }
                                   ></i>
                                 )}
@@ -1277,9 +1306,8 @@ function Booking() {
                           <div className="row pt-4">
                             <div className="col">
                               <select
-                                className={`form-control bg-white ${
-                                  paymentFrequencyError ? "is-invalid" : ""
-                                }`}
+                                className={`form-control bg-white ${paymentFrequencyError ? "is-invalid" : ""
+                                  }`}
                                 value={paymentFrequency}
                                 onChange={handlePaymentFrequencyChange}
                                 onKeyDown={(e) => handleEnter(e, dueDateRef)}
@@ -1307,9 +1335,8 @@ function Booking() {
                                 type="text"
                                 id="date"
                                 ref={dueDateRef}
-                                className={`form-control ${
-                                  dueDateError ? "is-invalid" : ""
-                                }`}
+                                className={`form-control ${dueDateError ? "is-invalid" : ""
+                                  }`}
                                 value={formatDate(dueDate)}
                                 onChange={handleDueDateChange}
                                 onKeyDown={(e) =>
@@ -1336,9 +1363,8 @@ function Booking() {
                                   handleEnter(e, installmentRef)
                                 }
                                 placeholder="No Of Installments"
-                                className={`form-control ${
-                                  noOfInstallmentError ? "is-invalid" : ""
-                                }`}
+                                className={`form-control ${noOfInstallmentError ? "is-invalid" : ""
+                                  }`}
                                 value={noOfInstallment}
                                 onChange={handleNoOfInstallmentChange}
                                 min="1"
@@ -1366,8 +1392,8 @@ function Booking() {
                                     const installmentDate = new Date(dueDate);
                                     installmentDate.setMonth(
                                       installmentDate.getMonth() +
-                                        idx *
-                                          getFrequencyInMonths(paymentFrequency)
+                                      idx *
+                                      getFrequencyInMonths(paymentFrequency)
                                     );
                                     const formattedDate =
                                       installmentDate.toLocaleDateString(
