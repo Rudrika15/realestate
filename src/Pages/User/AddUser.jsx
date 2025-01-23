@@ -77,13 +77,6 @@ function AddUser() {
         setPasscodeError(false);
       }
 
-      if (!authPasscode.trim()) {
-        setAuthPasscodeError(true);
-        isValid = false;
-      } else {
-        setAuthPasscodeError(false);
-      }
-
       if (selectedRoles.length === 0) {
         setRoleError(true);
         isValid = false;
@@ -166,7 +159,6 @@ function AddUser() {
   const handleRemove = (selectedList) => {
     setSelectedRoles(selectedList);
   };
-
   return (
     <>
       <Helmet>
@@ -254,11 +246,6 @@ function AddUser() {
                           )}
                           onKeyDown={(e) => handleEnter(e, roleRef)}
                         />
-                        {authPasscodeError && (
-                          <div className="invalid-feedback">
-                            Auth Passcode must match Passcode
-                          </div>
-                        )}
                       </div>
                       <div className="col"></div>
                     </div>
