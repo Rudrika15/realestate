@@ -4,15 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import axios from "axios";
-import { PermissionFetch } from "../../Api/Apikiran";
+import { PermissionFetch, PermissionDelete } from "../../Api/Apikiran";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 function Permission() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [permissions, setPermissions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   const toggleSidebar = () => {
@@ -23,18 +24,18 @@ function Permission() {
     setIsTopbarOpen(!isTopbarOpen);
   };
 
+  // Fetch permissions from API
   const fetchPermission = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${PermissionFetch}`, {
+      const response = await axios.get(PermissionFetch, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
       if (response.data.status === true) {
-        
         setPermissions(response.data.data);
       } else {
         toast.error("Failed to fetch permission data!");
@@ -42,56 +43,59 @@ function Permission() {
     } catch (error) {
       console.error("Error fetching permission:", error);
       if (error.response && error.response.status === 401) {
-        navigate("/"); 
+        navigate("/");
+      } else {
+        toast.error("Error fetching permission data.");
       }
-      toast.error("Error fetching permission.");
     } finally {
       setLoading(false);
     }
   };
 
-  const updatePermission = async (id, updatedPermission) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        `${PermissionFetch}/${id}`,
-        updatedPermission,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  // Handle permission deletion
+  const handleDeletePermission = async (id) => {
+    const confirmDelete = await Swal.fire({
+      title: "Are You Sure You Want to Delete?",
+      text: "Once you delete, all the data related to this permission will be deleted.",
+      icon: "error",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#c4c4c4",
+    });
 
-      if (response.data.status === true) {
-        toast.success("Permission updated successfully!");
-        setPermissions((prevPermissions) =>
-          prevPermissions.map((permission) =>
-            permission.id === id ? { ...permission, permissionName: updatedPermission.permissionName } : permission
-          )
-        );
-      } else {
-        toast.error("Failed to update permission!");
+    if (confirmDelete.isConfirmed) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${PermissionDelete}/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.data.status === true) {
+          Swal.fire({
+            title: "Deleted!",
+            text: "The permission has been deleted.",
+            icon: "success",
+            confirmButtonColor: "#3085d6",
+          });
+          fetchPermission(); 
+        } else {
+          toast.error("Failed to delete permission!");
+        }
+      } catch (error) {
+        toast.error("An error occurred while deleting the permission!");
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+        } else {
+          toast.error("An unexpected error occurred.");
+        }
       }
-    } catch (error) {
-      console.error("Error updating permission:", error);
-      toast.error("Error updating permission.");
     }
   };
 
   const handleEditPermission = (id) => {
-    const permissionToEdit = permissions.find((permission) => permission.id === id);
-    console.log("Editing permission: ", permissionToEdit);
-
-    const updatedName = prompt("Enter new permission name:", permissionToEdit.permissionName);
-
-    if (updatedName && updatedName !== permissionToEdit.permissionName) {
-      const updatedPermission = { ...permissionToEdit, permissionName: updatedName };
-      updatePermission(id, updatedPermission);
-    } else {
-      toast.info("Permission name is the same, no changes made.");
-    }
+    navigate(`/editpermission/${id}`);
   };
 
   useEffect(() => {
@@ -154,10 +158,22 @@ function Permission() {
                               <td>
                                 <button
                                   className="btn btn-warning btn-sm me-2"
-                                  onClick={() => handleEditPermission(permission.id)}
+                                  onClick={() =>
+                                    handleEditPermission(permission.id)
+                                  }
                                   aria-label={`Edit permission ${permission.permissionName}`}
                                 >
                                   <i className="bi bi-pen"></i> Edit
+                                </button>
+
+                                <button
+                                  className="btn btn-danger btn-sm"
+                                  onClick={() =>
+                                    handleDeletePermission(permission.id)
+                                  }
+                                  aria-label={`Delete permission ${permission.permissionName}`}
+                                >
+                                  <i className="bi bi-trash"></i> Delete
                                 </button>
                               </td>
                             </tr>

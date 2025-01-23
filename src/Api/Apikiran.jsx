@@ -12,6 +12,8 @@ export const updateRole =  baseUrl + "v1/roles/update-role";
 export const AddPermissions = baseUrl + "v1/permissions/store-permission";
 export const RoleAndPermission = baseUrl + "v1/roles-permissions/store-role-permission";
 export const updatedPermission = baseUrl + "v1/permissions/update-permission";
+export const PermissionDelete = baseUrl + "v1/permissions/delete-permission";
+export const singleUpdatePermission = baseUrl + "v1/permissions/get-permission";
 
 
 

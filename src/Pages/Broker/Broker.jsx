@@ -26,7 +26,7 @@ function Broker() {
 
   const brokerNameRef = useRef();
   const brokerContactRef = useRef();
-  const brokerAddressRef = useRef();
+  const brokerAddressRef = useRef(); 
   const modalSubmitRef = useRef();
 
   const fetchBroker = async () => {
