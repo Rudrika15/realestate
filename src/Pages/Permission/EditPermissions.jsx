@@ -6,120 +6,118 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-import { PermissionFetch, updatedPermission } from "../../Api/Apikiran";
+import { singleUpdatePermission, updatedPermission } from "../../Api/Apikiran";
 
-function EditPermission() {
+function EditPermissions() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [permissionName, setpermissionName] = useState("");
+  const [permissionName, setPermissionName] = useState("");
   const [permissionNameError, setPermissionNameError] = useState("");
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const fetchPermission = async () => {
+  const fetchPermissionDetails = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         toast.error("Token is missing. Please log in again.");
-        navigate("/login");
+        navigate("/");
         return;
       }
-
-      const response = await axios.get(`${PermissionFetch}${id}`, {
+      const response = await axios.get(`${singleUpdatePermission}${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log(response.data); // Log the response to check
-
       if (response.data.status) {
-        const { permissionName } = response.data.data;
-        setpermissionName(permissionName || "");
+        const { permissionName } =
+          response.data.data;
+        setPermissionName(permissionName || "");
+       
       } else {
         toast.error(
           response?.data?.message || "Failed to fetch permission details."
         );
       }
     } catch (error) {
-      console.error("Error response:", error.response);
+      console.error(error);
       if (error.response && error.response.status === 401) {
-        navigate("/permission");
-      } else if (error.response && error.response.status === 404) {
-        toast.error("Permission not found.");
-      } else {
-        toast.error("An error occurred while fetching permission details.");
+        navigate("/");
       }
+      toast.error("An error occurred while permission details.");
     }
   };
 
   useEffect(() => {
-    fetchPermission();
-  }, [id]);
+    fetchPermissionDetails();
+  }, [id]); 
 
   const handleValidation = () => {
     let isValid = true;
-
-    if (!permissionName.trim()) {
+  
+    if (!permissionName.trim()) {  
       setPermissionNameError("Name is required");
       isValid = false;
     } else {
       setPermissionNameError("");
     }
-
+  
     return isValid;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!handleValidation()) return;
-
+  
+    if (!handleValidation()) {
+      return;
+    }
+  
     setLoading(true);
-
     try {
       const token = localStorage.getItem("token");
+  
       if (!token) {
         toast.error("Token is missing. Please log in again.");
-        setLoading(false);
         navigate("/");
         return;
       }
-
+  
+      
       const response = await axios.post(
-        `${updatedPermission}/${id}`,
-        {
-          permissionName,
-        },
+        `${updatedPermission}${id}`,
+        { permissionName },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
-
+    
+      console.log("API Response:", response.data);
+    
       if (response.data.status === true) {
-        toast.success(
-          response.data.message || "Permission updated successfully"
-        );
-        setTimeout(() => {
-          navigate("/permission");
-        }, 1000);
+        toast.success("Permission updated successfully.");
+        navigate("/permission");
       } else {
         toast.error(response?.data?.message || "Failed to update permission.");
-        console.log("Fetched permission name:", permissionName);
-        
       }
     } catch (error) {
-      console.error(error);
-      if (error.response && error.response.status === 401) {
-        navigate("/");
+      console.error("Error updating permission:", error);
+      if (error.response) {
+        console.error("Error response:", error.response.data);
+        console.error("Error status:", error.response.status);
+        if (error.response.data.message) {
+          toast.error(error.response.data.message); // Show detailed error message
+        }
       }
       toast.error("An error occurred while updating permission details.");
     } finally {
       setLoading(false);
-    }
-  };
+    }}
+      
+   
 
   return (
     <>
@@ -153,7 +151,7 @@ function EditPermission() {
                           type="text"
                           className="form-control"
                           value={permissionName}
-                          onChange={(e) => setpermissionName(e.target.value)}
+                          onChange={(e) => setPermissionName(e.target.value)}
                           placeholder="Enter permission name"
                         />
                         {permissionNameError && (
@@ -187,4 +185,4 @@ function EditPermission() {
   );
 }
 
-export default EditPermission;
+export default EditPermissions;

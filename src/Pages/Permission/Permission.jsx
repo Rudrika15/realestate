@@ -95,7 +95,7 @@ function Permission() {
   };
 
   const handleEditPermission = (id) => {
-    navigate(`/editpermission/${id}`);
+    navigate(`/editpermissions/${id}`);
   };
 
   useEffect(() => {

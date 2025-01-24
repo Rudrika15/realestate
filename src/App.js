@@ -44,7 +44,8 @@ import EditBroker from "./Pages/Broker/EditBroker";
 import Modal from "./Components/Modal/Modal";
 import AddNewPermission from "./Pages/Permission/AddNewPermission";
 import EditProjectStage from "./Pages/Projects/EditProjectStage";
-// import EditPermission from "./Pages/Permission/EditPermission";
+import EditPermissions from "./Pages/Permission/EditPermissions";
+
 
 const App = () => {
   return (
@@ -82,7 +83,7 @@ const App = () => {
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />
           <Route path="/addnewpermission" element={<AddNewPermission/>}/>
-          <Route path="/editpermission/:id" element={<EditPermission/>}/>
+          <Route path="/editpermissions/:id" element={<EditPermissions/>}/>
           <Route path="/add-projects" element={<AddProjects />} />
           <Route path="/edit-projects" element={<EditProjects />} />
           <Route path="/unit/:id" element={<Unit />} />
