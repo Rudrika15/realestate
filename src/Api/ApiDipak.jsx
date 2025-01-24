@@ -12,6 +12,7 @@ export const editPartner = baseUrl + "v1/partner/get-partner-by-id";
 export const fetchPartner = baseUrl + "v1/partner/get-single-partner"
 export const deletePartner = baseUrl + "v1/partner/delete-partner";    
 export const updatePartner = baseUrl + "v1/partner/update-partner";    
+export const partnerPartnerDelete = baseUrl +"v1/partner/partner-delete"
 
 // roles-wise-permissions //
 

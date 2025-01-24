@@ -89,7 +89,6 @@ const App = () => {
   const hasPermission = (requiredPermissions) => {
     return requiredPermissions.every((perm) => permissions.includes(perm));
   };
-  console.log(hasPermission);
 
   const ProtectedRoute = ({ requiredPermissions, children }) => {
     if (isLoading) return <div>Loading...</div>;
@@ -146,6 +145,33 @@ const App = () => {
           <Route path="/edit-unit" element={<EditUnit />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
+          <Route
+            path="/partners"
+            element={
+              <ProtectedRoute requiredPermissions={["view-partner"]}>
+                <Partners />
+              </ProtectedRoute>
+            }
+          />
+            <Route
+            path="/add-partners"
+            element={
+              <ProtectedRoute requiredPermissions={["Add-partner"]}>
+                <AddPartners />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="/edit-partners/:id"
+            element={
+              <ProtectedRoute requiredPermissions={["edit-partner"]}>
+                <EditPartners />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* 
           {hasPermission(["view-partner"]) && (
             <Route path="/partners" element={<Partners />} />
           )}
@@ -154,7 +180,7 @@ const App = () => {
           )}
           {hasPermission(["edit-partner"]) && (
             <Route path="/edit-partners/:id" element={<EditPartners />} />
-          )}
+          )} */}
 
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />

@@ -95,7 +95,6 @@ const App = () => {
           <Route path="/income" element={<Income />} />
           <Route path="/add-income" element={<AddIncome />} />
           <Route path="/edit-income" element={<EditIncome />} />
-
           <Route path="/report" element={<Report />} />
           <Route path="/add-customer-income" element={<AddCustomerIncome />} />
           <Route path="/add-partner-income" element={<AddPartnerIncome />} />
