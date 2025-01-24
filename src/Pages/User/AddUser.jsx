@@ -59,73 +59,73 @@ function AddUser() {
     fetchRoles();
   }, []);
 
-    const handleAdd = async (e) => {
-      e.preventDefault();
-      let isValid = true;
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    let isValid = true;
 
-      if (!userName.trim()) {
-        setUserNameError(true);
-        isValid = false;
-      } else {
-        setUserNameError(false);
-      }
+    if (!userName.trim() || userName.includes(" ")) {
+      setUserNameError(true);
+      isValid = false;
+    } else {
+      setUserNameError(false);
+    }
 
-      if (!passcode.trim()) {
-        setPasscodeError(true);
-        isValid = false;
-      } else {
-        setPasscodeError(false);
-      }
+    if (!passcode.trim()) {
+      setPasscodeError(true);
+      isValid = false;
+    } else {
+      setPasscodeError(false);
+    }
 
-      if (selectedRoles.length === 0) {
-        setRoleError(true);
-        isValid = false;
-      } else {
-        setRoleError(false);
-      }
+    if (selectedRoles.length === 0) {
+      setRoleError(true);
+      isValid = false;
+    } else {
+      setRoleError(false);
+    }
 
-      if (!isValid) return;
-      setLoading(true);
+    if (!isValid) return;
+    setLoading(true);
 
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.post(
-          addUsers,
-          {
-            userName,
-            passcode,
-            authPasscode,
-            roles: selectedRoles,
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        addUsers,
+        {
+          userName,
+          passcode,
+          authPasscode,
+          roles: selectedRoles,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        }
+      );
 
-        if (response.data.status) {
-          toast.success("User added successfully!");
-          setUserName("");
-          setPasscode("");
-          setAuthPasscode("");
-          setSelectedRoles([]);
-          setTimeout(() => {
-            navigate("/view-user");
-          }, 1000);
-        } else {
-          toast.error(response.data.message || "Failed to add user");
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          navigate("/");
-        }
-        toast.error("Failed to add user. Please try again.");
-      } finally {
-        setLoading(false);
+      if (response.data.status) {
+        toast.success("User added successfully!");
+        setUserName("");
+        setPasscode("");
+        setAuthPasscode("");
+        setSelectedRoles([]);
+        setTimeout(() => {
+          navigate("/view-user");
+        }, 1000);
+      } else {
+        toast.error(response.data.message || "Failed to add user");
       }
-    };
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+      toast.error("Failed to add user. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (setter, errorSetter) => (e) => {
     setter(e.target.value);

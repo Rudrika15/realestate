@@ -8,7 +8,7 @@ import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
 import axios from "axios";
-import { EditRoleData } from "../../Api/Apikiran";
+import { EditRoleData, PermissionFetch, RoleHasPermission, updateRole } from "../../Api/Apikiran";
 
 function EditRole() {
   const { id } = useParams();
@@ -19,9 +19,10 @@ function EditRole() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const role_nameRef = useRef(null);
+  const [permissions, setPermissions] = useState([]);
+  const [selectedPermissions, setSelectedPermissions] = useState([]);
 
-  // Fetch role data on component mount
-  const fetchRole = async () => {
+  const fetchRoleHasPermission = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -29,32 +30,85 @@ function EditRole() {
         setLoading(false);
         return;
       }
-      console.log("Token: ", token);
-
-      const response = await axios.get(`${EditRoleData}${id}`, {
+  
+      const response = await axios.get(`${RoleHasPermission}${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
+  
       if (response.data.status === true) {
-        console.log("role data:", response.data.data);
-        setRole_name(response.data.role_name);
+        const roleData = response.data.data;
+        setRole_name(roleData.role_name);
+  
+        const permissionNames = roleData.permissions && Array.isArray(roleData.permissions)
+          ? roleData.permissions.map((perm) => perm.permissionName)
+          : [];
+  
+        // Match permission names to IDs from the fetched `permissions` array
+        const matchedPermissions = permissions
+          .filter((perm) => permissionNames.includes(perm.permissionName))
+          .map((perm) => perm.id);
+  
+        setSelectedPermissions(matchedPermissions);
+      } else {
+        toast.error("Failed to fetch role permissions.");
+      }
+    } catch (error) {
+      console.error("Error fetching role permissions:", error);
+      if (error.response && error.response.status === 401) {
+        navigate('/');
+      }
+      toast.error("Error fetching role permissions.");
+    }
+  };
+  
+  const handlePermissionChange = (e) => {
+    const { value, checked } = e.target;
+    const permissionId = parseInt(value, 10);
+
+    setSelectedPermissions((prevSelectedPermissions) =>
+      checked
+        ? [...prevSelectedPermissions, permissionId]
+        : prevSelectedPermissions.filter((id) => id !== permissionId)
+    );
+  };
+
+  const fetchPermissions = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(PermissionFetch, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.status) {
+        setPermissions(response.data.data);
       } else {
         toast.error("Failed to fetch permission data!");
       }
     } catch (error) {
-      console.error("Error fetching role:", error);
+      console.error("Error fetching permission:", error);
       if (error.response && error.response.status === 401) {
-        navigate('/'); 
-    }
-      toast.error("Error fetching role.");
+        navigate('/');
+      }
+      toast.error("Error fetching permissions.");
     }
   };
 
   useEffect(() => {
-    fetchRole();
+    const fetchData = async () => {
+      await fetchPermissions();
+      await fetchRoleHasPermission(); // Call after permissions are fetched
+    };
+  
+    fetchData();
   }, []);
+  
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -64,7 +118,6 @@ function EditRole() {
     setIsTopbarOpen(!isTopbarOpen);
   };
 
-  // Handle form validation and submission
   const handleEdit = async (e) => {
     e.preventDefault();
     let isValid = true;
@@ -83,7 +136,7 @@ function EditRole() {
 
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.post(`/updateRole/${id}`, roleData, {
+        const res = await axios.post(`${updateRole}/${id}`, roleData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -123,6 +176,7 @@ function EditRole() {
     if (e.target.value) setRole_nameError(false);
   };
 
+
   return (
     <>
       <ToastContainer />
@@ -157,18 +211,12 @@ function EditRole() {
                   </div>
                   <form onSubmit={handleEdit}>
                     <div className="row mb-3 w-50">
-                      <label htmlFor="role_name" className="form-label">
-                        Role Name
-                      </label>
                       <div className="col">
                         <input
-                          className={`form-control ${
-                            role_nameerror ? "is-invalid" : ""
-                          }`}
-                          value={role_name}
+                          className={`form-control ${role_nameerror ? "is-invalid" : ""}`}
                           ref={role_nameRef}
                           onChange={handleRolenameChange}
-                          id="role_name"
+                          value={role_name}
                         />
                         {role_nameerror && (
                           <div className="invalid-feedback">
@@ -177,7 +225,28 @@ function EditRole() {
                         )}
                       </div>
                     </div>
-
+                    <div className="container-fluid">
+                      <div className="row">
+                      {permissions.map((permission) => (
+  <div key={permission.id} className="col-md-3">
+    <div className="form-check">
+      <input
+        type="checkbox"
+        className="form-check-input"
+        id={`permission-${permission.id}`}
+        name="permissions"
+        value={permission.id}
+        onChange={handlePermissionChange}
+        checked={selectedPermissions.includes(permission.id)} // Pre-check based on selectedPermissions
+      />
+      <label className="form-check-label" htmlFor={`permission-${permission.id}`}>
+        {permission.permissionName}
+      </label>
+    </div>
+  </div>
+))}
+                      </div>
+                    </div>
                     <button
                       type="submit"
                       className="btn btn-primary"

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
@@ -18,7 +18,7 @@ const Role = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [permissions, setPermissions] = useState([]);
-  const navigate= useNavigate()
+  const navigate = useNavigate()
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -46,8 +46,8 @@ const Role = () => {
     } catch (error) {
       setError("There was an error fetching the data.");
       if (error.response && error.response.status === 401) {
-        navigate('/'); 
-    }
+        navigate('/');
+      }
     } finally {
       setLoading(false);
     }
@@ -90,8 +90,8 @@ const Role = () => {
       } catch (error) {
         toast.error("An error occurred while deleting the role!");
         if (error.response && error.response.status === 401) {
-          navigate('/'); 
-      }
+          navigate('/');
+        }
       }
     }
   };
@@ -131,7 +131,7 @@ const Role = () => {
                               Role Id
                             </th>
                             <th scope="col">Role Name</th>
-                            <th scope="col">Permission</th>
+                            {/* <th scope="col">Permission</th> */}
                             <th scope="col" className="w-25">
                               Action
                             </th>
@@ -142,7 +142,7 @@ const Role = () => {
                             <tr key={role.id}>
                               <td>{role.id}</td>
                               <td>{role.role_name}</td>
-                              <td>
+                              {/* <td>
                                 <div>
                                   {role.Permissions.length > 0 ? (
                                     <select
@@ -168,11 +168,11 @@ const Role = () => {
                                     <div>No data</div>
                                   )}
                                 </div>
-                              </td>
+                              </td> */}
 
                               <td>
                                 <Link
-                                  to={`/edit-role`}
+                                  to={`/edit-role/${role.id}`}
                                   className="btn btn-warning btn-sm me-2"
                                 >
                                   <i className="fas fa-edit"></i>

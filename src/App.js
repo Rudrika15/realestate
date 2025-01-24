@@ -57,7 +57,7 @@ const App = () => {
           <Route path="/add-user" element={<AddUser />}></Route>
           <Route path="/role" element={<Role />}></Route>
           <Route path="/add-role" element={<AddRole />}></Route>
-          <Route path="/edit-role" element={<EditRole />}></Route>
+          <Route path="/edit-role/:id" element={<EditRole />}></Route>
           <Route path="/project-stage/:id" element={<ProjectStage />} />
           <Route
             path="/add-project-stage/:id"
