@@ -33,7 +33,7 @@ function EditPermissions() {
         const { permissionName } =
           response.data.data;
         setPermissionName(permissionName || "");
-       
+
       } else {
         toast.error(
           response?.data?.message || "Failed to fetch permission details."
@@ -50,21 +50,21 @@ function EditPermissions() {
 
   useEffect(() => {
     fetchPermissionDetails();
-  }, [id]); 
+  }, [id]);
 
   const handleValidation = () => {
     let isValid = true;
-  
-    if (!permissionName.trim()) {  
+
+    if (!permissionName.trim()) {
       setPermissionNameError("Name is required");
       isValid = false;
     } else {
       setPermissionNameError("");
     }
-  
+
     return isValid;
   };
-  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,18 +74,19 @@ function EditPermissions() {
     }
   
     setLoading(true);
-    try {
-      const token = localStorage.getItem("token");
   
+    try {
+      const token = localStorage.getItem('token');
+      console.log(token);
+      
       if (!token) {
-        toast.error("Token is missing. Please log in again.");
-        navigate("/");
+        toast.error('Token is missing. Please log in again.');
+        setLoading(false);
         return;
       }
   
-      
       const response = await axios.post(
-        `${updatedPermission}${id}`,
+        `${updatedPermission}/${id}`,
         { permissionName },
         {
           headers: {
@@ -94,31 +95,31 @@ function EditPermissions() {
           },
         }
       );
-    
+  
       console.log("API Response:", response.data);
-    
+  
       if (response.data.status === true) {
-        toast.success("Permission updated successfully.");
-        navigate("/permission");
+        toast.success(response.data.message || 'Permission updated successfully');
+        setTimeout(() => {
+          navigate("/permission");
+        }, 1000);
       } else {
-        toast.error(response?.data?.message || "Failed to update permission.");
+        toast.error(response?.data?.message || 'Failed to update permission.');
       }
     } catch (error) {
-      console.error("Error updating permission:", error);
+      console.error("Error:", error);
       if (error.response) {
-        console.error("Error response:", error.response.data);
-        console.error("Error status:", error.response.status);
-        if (error.response.data.message) {
-          toast.error(error.response.data.message); // Show detailed error message
+        console.error("Error Response:", error.response.data);
+        if (error.response.status === 401) {
+          navigate('/');
         }
       }
-      toast.error("An error occurred while updating permission details.");
+      toast.error('An error occurred while updating permission details.');
     } finally {
       setLoading(false);
-    }}
-      
-   
-
+    }
+  };
+  
   return (
     <>
       <Helmet>
