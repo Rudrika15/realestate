@@ -79,7 +79,7 @@ function Permission() {
             icon: "success",
             confirmButtonColor: "#3085d6",
           });
-          fetchPermission(); 
+          fetchPermission();
         } else {
           toast.error("Failed to delete permission!");
         }
@@ -126,21 +126,14 @@ function Permission() {
                       <h6 className="mb-4">Permission</h6>
                     </div>
                     <div className="p-2">
-                      <Link to="/addnewpermission">
+                      <Link to="/addnewpermission" className="">
                         <h6 className="mb-4">
-                          <button
-                            type="submit"
-                            className="btn btn-primary"
-                            disabled={loading}
-                          >
-                            Add Permission
-                          </button>
+                          <i className="bi bi-plus-circle-fill"></i> New Permission
                         </h6>
                       </Link>
                     </div>
                   </div>
-
-                  <div className="table-responsive">
+                  <div className="table-responsive text-center">
                     {loading ? (
                       <div>Loading...</div>
                     ) : (
@@ -163,7 +156,7 @@ function Permission() {
                                   }
                                   aria-label={`Edit permission ${permission.permissionName}`}
                                 >
-                                  <i className="bi bi-pen"></i> Edit
+                                  <i className="fas fa-edit"></i>
                                 </button>
 
                                 <button
@@ -173,7 +166,7 @@ function Permission() {
                                   }
                                   aria-label={`Delete permission ${permission.permissionName}`}
                                 >
-                                  <i className="bi bi-trash"></i> Delete
+                                  <i className="fas fa-trash"></i>
                                 </button>
                               </td>
                             </tr>

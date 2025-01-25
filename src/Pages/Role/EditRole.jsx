@@ -107,58 +107,70 @@ function EditRole() {
   const handleEdit = async (e) => {
     e.preventDefault();
     let isValid = true;
-
-    if (!role_name) {
+  
+    // Validate role name
+    if (!role_name.trim()) {
       setRole_nameError(true);
       isValid = false;
     } else {
       setRole_nameError(false);
     }
-
+  
+    // Validate permissions
+    if (selectedPermissions.length === 0) {
+      toast.error("Please select at least one permission.");
+      isValid = false;
+    }
+  
     if (isValid) {
       setLoading(true);
-
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (!token) {
-          toast.error('Token is missing. Please log in again.');
+          toast.error("Token is missing. Please log in again.");
           setLoading(false);
           return;
         }
-
-        const response = await axios.post(`${updateRole}/${id}`,
+  
+        // Map selectedPermissions to their IDs
+        const permissionIds = permissions
+          .filter((perm) => selectedPermissions.includes(perm.permissionName))
+          .map((perm) => perm.id); // Replace `id` with the correct field name if needed
+  
+        const response = await axios.post(
+          `${updateRole}/${id}`,
           {
-            role_name,
-            permissions: selectedPermissions, 
+            role_name: role_name.trim(),
+            permissionIds,
           },
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           }
         );
-
-        if (response.data.status === true) {
-          toast.success(response.data.message || 'Role updated successfully');
+  
+        if (response.data.status) {
+          toast.success(response.data.message || "Role updated successfully");
           setTimeout(() => {
             navigate("/role");
           }, 1000);
-          console.log(response.data.data); 
         } else {
-          toast.error(response?.data?.message);
+          toast.error(response.data.message || "Failed to update role.");
         }
       } catch (error) {
-        console.error(error);
-        if (error.response && error.response.status === 401) {
-          navigate('/');
+        console.error("Error updating role:", error);
+        toast.error("An error occurred while updating role details.");
+        if (error.response?.status === 401) {
+          navigate("/");
         }
-        toast.error('An error occurred while updating role details.');
       } finally {
         setLoading(false);
       }
     }
   };
+  
 
   return (
     <>

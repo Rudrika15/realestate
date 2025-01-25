@@ -181,7 +181,7 @@ const Role = () => {
                                   onClick={() => handleDelete(role.id)}
                                   className="btn btn-danger btn-sm"
                                 >
-                                  <i className="fas fa-trash"></i>
+                                    <i className="fas fa-trash"></i>
                                 </Link>
                               </td>
                             </tr>

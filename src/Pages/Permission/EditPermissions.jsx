@@ -68,26 +68,28 @@ function EditPermissions() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!handleValidation()) {
       return;
     }
-  
+
     setLoading(true);
-  
+
     try {
       const token = localStorage.getItem('token');
-      console.log(token);
-      
+
       if (!token) {
         toast.error('Token is missing. Please log in again.');
         setLoading(false);
         return;
       }
-  
+
+      const payload = { permission: permissionName.trim() };
+      console.log("Request Body:", payload);
+
       const response = await axios.post(
         `${updatedPermission}/${id}`,
-        { permissionName },
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -95,9 +97,7 @@ function EditPermissions() {
           },
         }
       );
-  
-      console.log("API Response:", response.data);
-  
+
       if (response.data.status === true) {
         toast.success(response.data.message || 'Permission updated successfully');
         setTimeout(() => {
@@ -119,7 +119,8 @@ function EditPermissions() {
       setLoading(false);
     }
   };
-  
+
+
   return (
     <>
       <Helmet>
@@ -161,8 +162,8 @@ function EditPermissions() {
                           </small>
                         )}
                       </div>
+                      <div className="col"></div>
                     </div>
-
                     <button
                       type="submit"
                       className="btn btn-primary"

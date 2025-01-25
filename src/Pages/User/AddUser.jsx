@@ -85,6 +85,9 @@ function AddUser() {
     }
 
     if (!isValid) return;
+
+    const roleIds = selectedRoles.map((role) => role.id);
+
     setLoading(true);
 
     try {
@@ -94,8 +97,8 @@ function AddUser() {
         {
           userName,
           passcode,
-          authPasscode,
-          roles: selectedRoles,
+          authPasscode: authPasscode.trim() || null,
+          roles: roleIds,
         },
         {
           headers: {
@@ -105,7 +108,7 @@ function AddUser() {
         }
       );
 
-      if (response.data.status) {
+      if (response.data.status === true) {
         toast.success("User added successfully!");
         setUserName("");
         setPasscode("");
@@ -235,15 +238,11 @@ function AddUser() {
                       <div className="col">
                         <input
                           type="password"
-                          className={`form-control ${authPasscodeError ? "is-invalid" : ""
-                            }`}
-                          placeholder="Auth Passcode"
+                          className="form-control"
+                          placeholder="Auth Passcode (Optional)"
                           value={authPasscode}
                           ref={authpasscodeRef}
-                          onChange={handleInputChange(
-                            setAuthPasscode,
-                            setAuthPasscodeError
-                          )}
+                          onChange={handleInputChange(setAuthPasscode, setAuthPasscodeError)}
                           onKeyDown={(e) => handleEnter(e, roleRef)}
                         />
                       </div>
