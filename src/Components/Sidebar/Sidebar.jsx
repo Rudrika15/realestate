@@ -226,7 +226,7 @@ const Sidebar = ({ isSidebarOpen }) => {
           </Link>
           <Link
             to="/permission"
-            className={`nav-item nav-link ${isActive("/role") ? "active" : ""}`}
+            className={`nav-item nav-link ${isActive("/permission") ? "active" : ""}`}
           >
             <i class="fas fa-shield-alt"></i>
             Permission

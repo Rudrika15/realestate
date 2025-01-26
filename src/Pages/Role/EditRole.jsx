@@ -8,120 +8,169 @@ import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { Spinner } from "react-bootstrap";
 import axios from "axios";
-import { EditRoleData } from "../../Api/Apikiran";
+import { EditRoleData, PermissionFetch, RoleHasPermission, updateRole } from "../../Api/Apikiran";
 
 function EditRole() {
   const { id } = useParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [role_name, setRole_name] = useState("");
-  const [role_nameerror, setRole_nameError] = useState("");
+  const [role_nameerror, setRole_nameError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [permissionsLoading, setPermissionsLoading] = useState(true);
   const navigate = useNavigate();
   const role_nameRef = useRef(null);
+  const [permissions, setPermissions] = useState([]);
+  const [selectedPermissions, setSelectedPermissions] = useState([]);
 
-  // Fetch role data on component mount
-  const fetchRole = async () => {
+  const fetchRoleHasPermission = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         toast.error("Token is missing. Please log in again.");
-        setLoading(false);
         return;
       }
-      console.log("Token: ", token);
 
-      const response = await axios.get(`${EditRoleData}${id}`, {
+      const response = await axios.get(`${RoleHasPermission}${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
+
       if (response.data.status === true) {
-        console.log("role data:", response.data.data);
-        setRole_name(response.data.role_name);
+        const roleData = response.data.data;
+        setRole_name(roleData.role_name);
+
+        const permissionNames = roleData.permissions?.map((perm) => perm.permissionName) || [];
+        setSelectedPermissions(permissionNames);
+      } else {
+        toast.error("Failed to fetch role permissions.");
+      }
+    } catch (error) {
+      console.error("Error fetching role permissions:", error);
+      if (error.response?.status === 401) {
+        navigate("/");
+      }
+      toast.error("Error fetching role permissions.");
+    }
+  };
+
+  const fetchPermissions = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(PermissionFetch, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.status) {
+        setPermissions(response.data.data);
       } else {
         toast.error("Failed to fetch permission data!");
       }
     } catch (error) {
-      console.error("Error fetching role:", error);
-      if (error.response && error.response.status === 401) {
-        navigate('/'); 
-    }
-      toast.error("Error fetching role.");
+      console.error("Error fetching permissions:", error);
+      if (error.response?.status === 401) {
+        navigate("/");
+      }
+      toast.error("Error fetching permissions.");
     }
   };
 
   useEffect(() => {
-    fetchRole();
+    const fetchData = async () => {
+      setPermissionsLoading(true);
+      try {
+        await fetchPermissions();
+        await fetchRoleHasPermission();
+      } finally {
+        setPermissionsLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+  const handlePermissionChange = (e) => {
+    const { value, checked } = e.target;
+
+    setSelectedPermissions((prevSelectedPermissions) =>
+      checked
+        ? [...prevSelectedPermissions, value]
+        : prevSelectedPermissions.filter((name) => name !== value)
+    );
   };
 
-  const toggleTopbar = () => {
-    setIsTopbarOpen(!isTopbarOpen);
-  };
-
-  // Handle form validation and submission
   const handleEdit = async (e) => {
     e.preventDefault();
     let isValid = true;
-
-    if (!role_name) {
+  
+    // Validate role name
+    if (!role_name.trim()) {
       setRole_nameError(true);
       isValid = false;
     } else {
       setRole_nameError(false);
     }
-
+  
+    // Validate permissions
+    if (selectedPermissions.length === 0) {
+      toast.error("Please select at least one permission.");
+      isValid = false;
+    }
+  
     if (isValid) {
       setLoading(true);
-
-      const roleData = { name: role_name };
-
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.post(`/updateRole/${id}`, roleData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+        if (!token) {
+          toast.error("Token is missing. Please log in again.");
+          setLoading(false);
+          return;
+        }
+  
+        // Map selectedPermissions to their IDs
+        const permissionIds = permissions
+          .filter((perm) => selectedPermissions.includes(perm.permissionName))
+          .map((perm) => perm.id); // Replace `id` with the correct field name if needed
+  
+        const response = await axios.post(
+          `${updateRole}/${id}`,
+          {
+            role_name: role_name.trim(),
+            permissionIds,
           },
-        });
-
-        if (res.data.data.status === true) {
-          toast.success("Role updated successfully!");
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+  
+        if (response.data.status) {
+          toast.success(response.data.message || "Role updated successfully");
           setTimeout(() => {
-            setLoading(false);
             navigate("/role");
           }, 1000);
         } else {
-          toast.error("Failed to update role.");
-          setLoading(false);
+          toast.error(response.data.message || "Failed to update role.");
         }
       } catch (error) {
         console.error("Error updating role:", error);
-        toast.error("An error occurred while updating the role.");
+        toast.error("An error occurred while updating role details.");
+        if (error.response?.status === 401) {
+          navigate("/");
+        }
+      } finally {
         setLoading(false);
       }
     }
   };
-  useEffect(() => {
-    console.log("Role Name Updated: ", role_name);
-  }, [role_name]);
-
-  const handleEnter = (e, nextField) => {
-    if (e.key === "Enter" && nextField?.current) {
-      e.preventDefault();
-      nextField.current.focus();
-    }
-  };
-
-  const handleRolenameChange = (e) => {
-    setRole_name(e.target.value);
-    if (e.target.value) setRole_nameError(false);
-  };
+  
 
   return (
     <>
@@ -134,60 +183,67 @@ function EditRole() {
 
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
           <Topbar
-            toggleSidebar={toggleSidebar}
+            toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
             isTopbarOpen={isTopbarOpen}
-            toggleTopbar={toggleTopbar}
+            toggleTopbar={() => setIsTopbarOpen(!isTopbarOpen)}
           />
-
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
-                    <div className="p-2 ">
-                      <h6 className="mb-4">Edit Role</h6>
-                    </div>
-                    <div className="p-2 ">
-                      <Link to="/role" className="">
-                        <h6 className="mb-4">
-                          <i className="bi bi-arrow-left-circle-fill"></i> Back
-                        </h6>
-                      </Link>
-                    </div>
+                    <h6>Edit Role</h6>
+                    <Link to="/role">
+                      <h6>
+                        <i className="bi bi-arrow-left-circle-fill"></i> Back
+                      </h6>
+                    </Link>
                   </div>
                   <form onSubmit={handleEdit}>
                     <div className="row mb-3 w-50">
-                      <label htmlFor="role_name" className="form-label">
-                        Role Name
-                      </label>
-                      <div className="col">
-                        <input
-                          className={`form-control ${
-                            role_nameerror ? "is-invalid" : ""
-                          }`}
-                          value={role_name}
-                          ref={role_nameRef}
-                          onChange={handleRolenameChange}
-                          id="role_name"
-                        />
-                        {role_nameerror && (
-                          <div className="invalid-feedback">
-                            Role name is required.
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <Spinner animation="border" size="sm" />
-                      ) : (
-                        "Submit"
+                      <input
+                        className={`form-control ${role_nameerror ? "is-invalid" : ""}`}
+                        ref={role_nameRef}
+                        onChange={(e) => {
+                          setRole_name(e.target.value);
+                          if (e.target.value) setRole_nameError(false);
+                        }}
+                        value={role_name}
+                      />
+                      {role_nameerror && (
+                        <div className="invalid-feedback">Role name is required.</div>
                       )}
+                    </div>
+                    {permissionsLoading ? (
+                      <div className="text-center">
+                        <Spinner animation="border" />
+                      </div>
+                    ) : (
+                      <div className="container-fluid">
+                        <div className="row">
+                          {permissions.map((permission) => (
+                            <div key={permission.permissionName} className="col-md-3">
+                              <div className="form-check">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  id={`permission-${permission.permissionName}`}
+                                  name="permissions"
+                                  value={permission.permissionName}  
+                                  onChange={handlePermissionChange}
+                                  checked={selectedPermissions.includes(permission.permissionName)}  
+                                />
+                                <label className="form-check-label" htmlFor={`permission-${permission.permissionName}`}>
+                                  {permission.permissionName}
+                                </label>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <button type="submit" className="btn btn-primary" disabled={loading}>
+                      {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
                     </button>
                   </form>
                 </div>

@@ -141,9 +141,6 @@ const View = () => {
                             <th scope="col" className="">
                               UserName
                             </th>
-                            {/* <th scope="col" className="">
-                              Roles
-                            </th> */}
                             <th scope="col">Action</th>
                           </tr>
                         </thead>
@@ -152,7 +149,6 @@ const View = () => {
                             <tr key={user.id}>
                               <td>{user.id}</td>
                               <td>{user.userName}</td>
-                              {/* <td>{user.roles}</td> */}
                               <td>
                                 <Link
                                   to=""
