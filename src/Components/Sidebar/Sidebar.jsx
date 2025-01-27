@@ -95,6 +95,14 @@ const Sidebar = ({ isSidebarOpen }) => {
           </div>
         </div>
         <div className="navbar-nav w-100">
+          <Link
+            to="/dashboard"
+            className={`nav-item nav-link ${
+              isActive("/dashboard") ? "active" : ""
+            }`}
+          >
+            <i className="fas fa-user"></i> Dashboard
+          </Link>
           {permissions.length === 0 && (
             <Link
               to="/view-user"
@@ -164,7 +172,7 @@ const Sidebar = ({ isSidebarOpen }) => {
             </Link>
           )}
 
-          {hasPermission("view-partner")    && (
+          {hasPermission("view-partner") && (
             <Link
               to="/partners"
               className={`nav-item nav-link ${

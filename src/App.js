@@ -53,6 +53,7 @@ import Modal from "./Components/Modal/Modal";
 import AddNewPermission from "./Pages/Permission/AddNewPermission";
 import EditProjectStage from "./Pages/Projects/EditProjectStage";
 import EditPermissions from "./Pages/Permission/EditPermissions";
+import Dashboard from "./Pages/Dashboard/Dashboard";
 
 const App = () => {
 
@@ -80,6 +81,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Login />}></Route>
+          <Route path="/dashboard" element={<Dashboard />}></Route>
           <Route path="/view-user" element={<View />}></Route>
           <Route path="/edit-user" element={<EditUser />}></Route>
           <Route path="/add-user" element={<AddUser />}></Route>
