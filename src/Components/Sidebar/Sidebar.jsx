@@ -284,24 +284,6 @@ const Sidebar = ({ isSidebarOpen }) => {
               className={`nav-item nav-link ${
                 isActive("/report") ? "active" : ""
               }`}
-<<<<<<< HEAD
-          >
-            <i className="bi bi-bar-chart"></i> Report
-          </Link>
-          <Link
-            to="/role"
-            className={`nav-item nav-link ${isActive("/role") ? "active" : ""}`}
-          >
-            <i className="bi bi-person-badge"></i> Role
-          </Link>
-          <Link
-            to="/permission"
-            className={`nav-item nav-link ${isActive("/permission") ? "active" : ""}`}
-          >
-            <i class="fas fa-shield-alt"></i>
-            Permission
-          </Link>
-=======
             >
               <i className="bi bi-bar-chart"></i> Report
             </Link>
@@ -328,7 +310,6 @@ const Sidebar = ({ isSidebarOpen }) => {
               Permission
             </Link>
           )}
->>>>>>> 60d603690bd2581aeb68533893deee450430707f
         </div>
       </nav>
     </div>

@@ -109,12 +109,7 @@ const App = () => {
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />
-<<<<<<< HEAD
-          <Route path="/addnewpermission" element={<AddNewPermission/>}/>
-          <Route path="/editpermissions/:id" element={<EditPermissions/>}/>
-=======
           <Route path="/addnewpermission" element={<AddNewPermission />} />
->>>>>>> 60d603690bd2581aeb68533893deee450430707f
           <Route path="/add-projects" element={<AddProjects />} />
           <Route path="/edit-projects" element={<EditProjects />} />
           <Route path="/unit/:id" element={<Unit />} />
