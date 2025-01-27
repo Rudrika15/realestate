@@ -59,80 +59,76 @@ function AddUser() {
     fetchRoles();
   }, []);
 
-    const handleAdd = async (e) => {
-      e.preventDefault();
-      let isValid = true;
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    let isValid = true;
 
-      if (!userName.trim()) {
-        setUserNameError(true);
-        isValid = false;
-      } else {
-        setUserNameError(false);
-      }
+    if (!userName.trim() || userName.includes(" ")) {
+      setUserNameError(true);
+      isValid = false;
+    } else {
+      setUserNameError(false);
+    }
 
-      if (!passcode.trim()) {
-        setPasscodeError(true);
-        isValid = false;
-      } else {
-        setPasscodeError(false);
-      }
+    if (!passcode.trim()) {
+      setPasscodeError(true);
+      isValid = false;
+    } else {
+      setPasscodeError(false);
+    }
 
-      if (!authPasscode.trim()) {
-        setAuthPasscodeError(true);
-        isValid = false;
-      } else {
-        setAuthPasscodeError(false);
-      }
+    if (selectedRoles.length === 0) {
+      setRoleError(true);
+      isValid = false;
+    } else {
+      setRoleError(false);
+    }
 
-      if (selectedRoles.length === 0) {
-        setRoleError(true);
-        isValid = false;
-      } else {
-        setRoleError(false);
-      }
+    if (!isValid) return;
 
-      if (!isValid) return;
-      setLoading(true);
+    const roleIds = selectedRoles.map((role) => role.id);
 
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.post(
-          addUsers,
-          {
-            userName,
-            passcode,
-            authPasscode,
-            roles: selectedRoles,
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        addUsers,
+        {
+          userName,
+          passcode,
+          authPasscode: authPasscode.trim() || null,
+          roles: roleIds,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        }
+      );
 
-        if (response.data.status) {
-          toast.success("User added successfully!");
-          setUserName("");
-          setPasscode("");
-          setAuthPasscode("");
-          setSelectedRoles([]);
-          setTimeout(() => {
-            navigate("/view-user");
-          }, 1000);
-        } else {
-          toast.error(response.data.message || "Failed to add user");
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          navigate("/");
-        }
-        toast.error("Failed to add user. Please try again.");
-      } finally {
-        setLoading(false);
+      if (response.data.status === true) {
+        toast.success("User added successfully!");
+        setUserName("");
+        setPasscode("");
+        setAuthPasscode("");
+        setSelectedRoles([]);
+        setTimeout(() => {
+          navigate("/view-user");
+        }, 1000);
+      } else {
+        toast.error(response.data.message || "Failed to add user");
       }
-    };
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+      toast.error("Failed to add user. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (setter, errorSetter) => (e) => {
     setter(e.target.value);
@@ -166,7 +162,6 @@ function AddUser() {
   const handleRemove = (selectedList) => {
     setSelectedRoles(selectedList);
   };
-
   return (
     <>
       <Helmet>
@@ -243,22 +238,13 @@ function AddUser() {
                       <div className="col">
                         <input
                           type="password"
-                          className={`form-control ${authPasscodeError ? "is-invalid" : ""
-                            }`}
-                          placeholder="Auth Passcode"
+                          className="form-control"
+                          placeholder="Auth Passcode (Optional)"
                           value={authPasscode}
                           ref={authpasscodeRef}
-                          onChange={handleInputChange(
-                            setAuthPasscode,
-                            setAuthPasscodeError
-                          )}
+                          onChange={handleInputChange(setAuthPasscode, setAuthPasscodeError)}
                           onKeyDown={(e) => handleEnter(e, roleRef)}
                         />
-                        {authPasscodeError && (
-                          <div className="invalid-feedback">
-                            Auth Passcode must match Passcode
-                          </div>
-                        )}
                       </div>
                       <div className="col"></div>
                     </div>
