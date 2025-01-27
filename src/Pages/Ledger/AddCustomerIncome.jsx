@@ -161,7 +161,7 @@ const AddCustomerIncome = () => {
                             <td>2,00,000</td>
                           </tr>
                           <tr>
-                            <th scope="row">1</th>
+                            <th scope="row">2</th>
                             <td>1-03-2024</td>
                             <td>Installment 2</td>
                             <td>5,00,000</td>
@@ -217,11 +217,19 @@ const AddCustomerIncome = () => {
                         />
                       </div>
                     </div>
-                    <div className="row pt-4 mb-3">
+                    <div className="row pt-4">
                       <div className="col">
-                        <input type="text" className="form-control" id="Amount" placeholder="Amount" name="Amount" />
+                        <input type="number" className="form-control" id="Amount" placeholder="Amount" name="Amount" />
                       </div>
                       <div className="col"></div>
+                    </div>
+                    <div className="row pt-4 mb-3">
+                      <div className="col">
+                        <input type="number" className="form-control" id="Receipt No" placeholder="Receipt No" name="Receipt No" />
+                      </div>
+                      <div className="col">
+                      <input type="text" className="form-control" id="Receipt Name" placeholder="Receipt Name" name="Receipt Name" />
+                      </div>
                     </div>
                     {/* <div className="row">
                       <div className="col pt-3">
