@@ -37,6 +37,7 @@ const Login = () => {
 
     if (!isValid) return;
     setLoading(true);
+    
     try {
       const data = { userName, passcode };
       const response = await axios.post(
@@ -54,6 +55,7 @@ const Login = () => {
         toast.success(response.data.message);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("roles", JSON.stringify(response.data.roles));
+        localStorage.setItem("userName", response.data.data.userName); 
         setTimeout(() => {
           navigate("/view-user");
         }, 1000);

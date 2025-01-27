@@ -12,6 +12,10 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
     toast.info("Logged out successfully!");
     navigate("/");
   };
+// const userName =localStorage.getItem(userName);
+const userName = localStorage.getItem('userName');
+console.log(userName);
+
   return (
     <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-5 py-0">
       <Link to="index.html" className="navbar-brand d-flex d-lg-none me-4">
@@ -96,7 +100,7 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
               src="/img/user.jpg"
               alt="User"
             />
-            <span className="d-none d-lg-inline-flex">Admin</span>
+            <span className="d-none d-lg-inline-flex">{userName}</span>
           </Link>
         
             <div
