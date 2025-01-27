@@ -205,7 +205,7 @@ const AddCustomerIncome = () => {
                         />
                       </div>
                       <div className="col">
-                      <input
+                        <input
                           type="text"
                           id="date"
                           className={`form-control`}
@@ -223,12 +223,48 @@ const AddCustomerIncome = () => {
                       </div>
                       <div className="col"></div>
                     </div>
+                    <div className="row pt-4 text-dark">
+                      <div className="col">
+                        <div class="input-container2">
+                          <label for="history">Mark Installments</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group pt-3">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="gridCheck" />
+                        <label class="form-check-label" for="gridCheck">
+                          Installment 1 - 2,00,000
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="gridCheck" />
+                        <label class="form-check-label" for="gridCheck">
+                          Installment 2 - 2,00,000
+                        </label>
+                      </div>
+                    </div>
                     <div className="row pt-4 mb-3">
                       <div className="col">
                         <input type="number" className="form-control" id="Receipt No" placeholder="Receipt No" name="Receipt No" />
                       </div>
                       <div className="col">
-                      <input type="text" className="form-control" id="Receipt Name" placeholder="Receipt Name" name="Receipt Name" />
+                        <input type="text" className="form-control" id="Receipt Name" placeholder="Receipt Name" name="Receipt Name" />
+                      </div>
+                    </div>
+                    <div className="row w-50">
+                      <div className="col">
+                        <div className="mb-3">
+                          <label htmlFor="unit" className="form-label">
+                            Upload Receipt :
+                          </label>
+                          <input
+                            type="file"
+                            // accept=".xls, .xlsx"
+                            className='form-control'
+                            id="unit"
+                          />
+                        </div>
                       </div>
                     </div>
                     {/* <div className="row">
