@@ -95,6 +95,14 @@ const Sidebar = ({ isSidebarOpen }) => {
           </div>
         </div>
         <div className="navbar-nav w-100">
+          <Link
+            to="/dashboard"
+            className={`nav-item nav-link ${
+              isActive("/dashboard") ? "active" : ""
+            }`}
+          >
+            <i className="fas fa-user"></i> Dashboard
+          </Link>
           {permissions.length === 0 && (
             <Link
               to="/view-user"
@@ -262,8 +270,9 @@ const Sidebar = ({ isSidebarOpen }) => {
           {permissions.length === 0 && (
             <Link
               to="/report"
-              className={`nav-item nav-link ${isActive("/report") ? "active" : ""
-                }`}
+              className={`nav-item nav-link ${
+                isActive("/report") ? "active" : ""
+              }`}
             >
               <i className="bi bi-bar-chart"></i> Report
             </Link>
