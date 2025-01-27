@@ -1,6 +1,14 @@
 import React from "react";
 import "./App.css";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import {
+  Route,
+  BrowserRouter as Router,
+  Routes,
+  Navigate,
+} from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import Login from "./Pages/Login/Login";
 import Projects from "./Pages/Projects/Projects";
 import AddProjects from "./Pages/Projects/AddProjects";
@@ -46,8 +54,27 @@ import AddNewPermission from "./Pages/Permission/AddNewPermission";
 import EditProjectStage from "./Pages/Projects/EditProjectStage";
 import EditPermissions from "./Pages/Permission/EditPermissions";
 
-
 const App = () => {
+
+  // const [permissions, setPermissions] = useState([]);
+  // const fetchPermissions = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const response = await axios.get(rolesWisePermissions, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     setPermissions(response.data.data.map((perm) => perm.name));
+  //   } catch (error) {
+  //     console.error("Error fetching permissions:", error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchPermissions();
+  // }, []);
+
   return (
     <>
       <Router>
@@ -61,7 +88,7 @@ const App = () => {
           <Route path="/edit-role/:id" element={<EditRole />}></Route>
           <Route path="/project-stage/:id" element={<ProjectStage />} />
           <Route
-            path="/add-project-stage/:id"
+            path="/add-project-stage"
             element={<AddProjectStage />}
           ></Route>
           <Route
@@ -78,25 +105,32 @@ const App = () => {
           ></Route>
           <Route path="/broker" element={<Broker />}></Route>
           <Route path="/edit-broker/:id" element={<EditBroker />} />
-          <Route path="/edit-projectstage/:id" element={<EditProjectStage />} />
+          <Route path="/edit-projectstage" element={<EditProjectStage />} />
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />
+<<<<<<< HEAD
           <Route path="/addnewpermission" element={<AddNewPermission/>}/>
           <Route path="/editpermissions/:id" element={<EditPermissions/>}/>
+=======
+          <Route path="/addnewpermission" element={<AddNewPermission />} />
+>>>>>>> 60d603690bd2581aeb68533893deee450430707f
           <Route path="/add-projects" element={<AddProjects />} />
           <Route path="/edit-projects" element={<EditProjects />} />
           <Route path="/unit/:id" element={<Unit />} />
           <Route path="/edit-unit" element={<EditUnit />} />
+
           <Route path="/partners" element={<Partners />} />
           <Route path="/add-partners" element={<AddPartners />} />
-          <Route path="/edit-partners/:id" element={<EditPartners />} />
+          <Route path="/edit-partners/:id" element={  <EditPartners />} />
+
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />
           <Route path="/edit-expenses" element={<EditExpenses />} />
           <Route path="/income" element={<Income />} />
           <Route path="/add-income" element={<AddIncome />} />
           <Route path="/edit-income" element={<EditIncome />} />
+
           <Route path="/report" element={<Report />} />
           <Route path="/add-customer-income" element={<AddCustomerIncome />} />
           <Route path="/add-partner-income" element={<AddPartnerIncome />} />
