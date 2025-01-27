@@ -14,6 +14,9 @@ const AddCustomerIncome = () => {
   const [check, setCheck] = useState(null);
   const [incomeDate, setIncomeDate] = useState("");
   const [depositDate, setDepositDate] = useState("");
+  const [incomeDateError, setIncomeDateError] = useState("");
+  const [depositDateError, setDepositDateError] = useState("");
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -25,6 +28,25 @@ const AddCustomerIncome = () => {
 
   const files = useRef(null);
 
+  const formatDate = (date) => {
+    if (date) {
+      const d = new Date(date);
+      const day = ("0" + d.getDate()).slice(-2);
+      const month = ("0" + (d.getMonth() + 1)).slice(-2);
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+    return "";
+  };
+
+  const handleIncomeDateChange = (e) => {
+    setIncomeDate(e.target.value);
+    if (e.target.value) setIncomeDateError(false);
+  };
+  const handleDepositDateChange = (e) => {
+    setDepositDate(e.target.value);
+    if (e.target.value) setDepositDateError(false);
+  };
 
   return (
     <>
@@ -61,21 +83,155 @@ const AddCustomerIncome = () => {
                         <input type="text" className="form-control" id="Unit No" placeholder="Unit No" name="Unit No" />
                       </div>
                     </div>
-                    <div className="row w-75">
+                    {/* <div className="row w-75">
                       <div className="col pt-3">
                         <textarea className="form-control" placeholder="Address" id="floatingTextarea"></textarea>
                       </div>
+                    </div> */}
+                    <div className="row pt-4">
+                      <div className="col">
+                        <input type="text" className="form-control" id="Installments" placeholder="Installments" name="Installments" />
+                      </div>
+                      <div className="col">
+                        {/* <input type="text" className="form-control" id="Status" placeholder="Status" name="Status" /> */}
+                      </div>
                     </div>
-                    <div className="row pt-3">
+                    <div className="row pt-5 mb-4 text-dark">
                       <div className="col">
-                        <input type="text" className="form-control" id="Sale Deed Price" placeholder="Sale Deed Price" name="Sale Deed Price" />
+                        <div class="input-container">
+                          <label for="sale-deed-amount">Sale Deed Amount</label>
+                          <div className="underline"></div>
+                        </div>
                       </div>
                       <div className="col">
-                        <input type="text" className="form-control" id="Status" placeholder="Status" name="Status" />
+                        <div class="input-container">
+                          <label for="other-work-amount">Other Work Amount</label>
+                        </div>
                       </div>
+                      <div className="col">
+                        <div class="input-container">
+                          <label for="extra-work-amount">Extra Work Amount</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-center align-items-center">
+                      <table className="table table-bordered w-75 text-center">
+                        <thead>
+                          <tr>
+                            <th scope="col">Sale Deed Amount</th>
+                            <th scope="col">Total Paid Amount</th>
+                            <th scope="col">Outstanding Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>9,00,000</td>
+                            <td>5,00,000</td>
+                            <td>4,00,000</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="row pt-5 mb-4 text-dark">
+                      <div className="col">
+                        <div class="input-container1 mb-2">
+                          <label for="history">History</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-center align-items-center">
+                      <table className="table table-bordered w-75 text-center">
+                        <thead>
+                          <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Payment Type</th>
+                            <th scope="col">Installment Amount</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Difference</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th scope="row">1</th>
+                            <td>1-02-2024</td>
+                            <td>Installment 1</td>
+                            <td>5,00,000</td>
+                            <td>3,00,000</td>
+                            <td>2,00,000</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">2</th>
+                            <td>1-03-2024</td>
+                            <td>Installment 2</td>
+                            <td>5,00,000</td>
+                            <td>3,00,000</td>
+                            <td>2,00,000</td>
+                          </tr>
+                          <tr>
+                            <td colSpan="3"><strong>Total Amount</strong></td>
+                            <td>10,00,000</td>
+                            <td>9,00,000</td>
+                            <td>4,00,000</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                     <hr />
-                    <div className="row">
+                    <div className="row pt-4">
+                      <div className="col">
+                        <select
+                          className={`form-control bg-white`}
+                          value="saledeedamount"
+                        >
+                          <option value="">Sale Deed Amount</option>
+                          <option value="">Extra Work Amount</option>
+                          <option value="">Other Work Amount</option>
+                        </select>
+                      </div>
+                      <div className="col"></div>
+                    </div>
+                    <div className="row pt-4">
+                      <div className="col">
+                        <input
+                          type="text"
+                          id="date"
+                          className={`form-control`}
+                          value={formatDate(incomeDate)}
+                          onChange={(e) => handleIncomeDateChange(e)}
+                          placeholder="Income Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                        />
+                      </div>
+                      <div className="col">
+                      <input
+                          type="text"
+                          id="date"
+                          className={`form-control`}
+                          value={formatDate(depositDate)}
+                          onChange={(e) => handleDepositDateChange(e)}
+                          placeholder="Deposit Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                        />
+                      </div>
+                    </div>
+                    <div className="row pt-4">
+                      <div className="col">
+                        <input type="number" className="form-control" id="Amount" placeholder="Amount" name="Amount" />
+                      </div>
+                      <div className="col"></div>
+                    </div>
+                    <div className="row pt-4 mb-3">
+                      <div className="col">
+                        <input type="number" className="form-control" id="Receipt No" placeholder="Receipt No" name="Receipt No" />
+                      </div>
+                      <div className="col">
+                      <input type="text" className="form-control" id="Receipt Name" placeholder="Receipt Name" name="Receipt Name" />
+                      </div>
+                    </div>
+                    {/* <div className="row">
                       <div className="col pt-3">
                         <div className="input-wrapper position-relative">
                           <input
@@ -130,14 +286,14 @@ const AddCustomerIncome = () => {
                           />
                         </div>
                       </div>
-                    </div>
-                    <div className="row pt-3">
+                    </div> */}
+                    {/* <div className="row pt-3">
                       <div className="col">
                         <input type="text" className="form-control" id="Amount" placeholder="Amount" name="Amount" />
                       </div>
                       <div className="col"></div>
-                    </div>
-                    <div className="row pt-3">
+                    </div> */}
+                    {/* <div className="row pt-3">
                       <p>Payment Mode</p>
                       <div className="form-check">
                         <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
@@ -151,8 +307,8 @@ const AddCustomerIncome = () => {
                           Cheque
                         </label>
                       </div>
-                    </div>
-                    <div className="row pt-3">
+                    </div> */}
+                    {/* <div className="row pt-3">
                       <div className="col">
                         <input type="text" className="form-control" id="Check No" placeholder="Check No" name="Check No" />
                       </div>
@@ -177,14 +333,13 @@ const AddCustomerIncome = () => {
                         ref={files}
                         onChange={(e) => setCheck(e.target.files)}
                       />
-                    </div>
+                    </div> */}
                     <button type="submit" className="btn btn-primary">Save</button>
                   </form>
                 </div>
               </div>
             </div>
           </div>
-          <Footer />
         </div >
       </div>
     </>

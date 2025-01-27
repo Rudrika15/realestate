@@ -6,7 +6,11 @@ import { Helmet } from "react-helmet";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
-import { getPartner,partnerPartnerDelete } from "../../Api/ApiDipak";
+import {
+  getPartner,
+  partnerPartnerDelete,
+  rolesWisePermissions,
+} from "../../Api/ApiDipak";
 import axios from "axios";
 
 const Partners = () => {
@@ -14,6 +18,7 @@ const Partners = () => {
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [partners, setPartners] = useState([]);
   const navigate = useNavigate();
+  const [permissions, setPermissions] = useState([]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -21,6 +26,27 @@ const Partners = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
+
+  const fetchPermissions = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(rolesWisePermissions, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setPermissions(response.data.data.map((perm) => perm.name));
+    } catch (error) {
+      console.error("Error fetching permissions:", error);
+    }
+  };
+  // console.log(permissions);
+  useEffect(() => {
+    fetchPermissions();
+  }, []);
+  const hasPermission = (permission) => permissions.includes(permission);
+
   const fetchPartner = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -34,7 +60,6 @@ const Partners = () => {
           "Content-Type": "application/json",
         },
       });
-      console.log(response.data.data);
 
       if (response.data.status === true && response.data.data) {
         setPartners(response.data.data);
@@ -50,7 +75,7 @@ const Partners = () => {
     fetchPartner();
   }, [navigate]);
 
-  const handleDeletePartner = async (id) => {    
+  const handleDeletePartner = async (id) => {
     const confirmDelete = await Swal.fire({
       title: "Are You Sure You Want to Delete?",
       text: "Once you delete, all the data related to this project will be deleted.",
@@ -127,11 +152,14 @@ const Partners = () => {
                       <h6 className="mb-4">Partners List</h6>
                     </div>
                     <div className="p-2">
-                      <Link to="/add-partners">
-                        <h6 className="mb-4">
-                          <i className="bi bi-plus-circle-fill"></i> New Partner
-                        </h6>
-                      </Link>
+                      {hasPermission("Add-partner") && (
+                        <Link to="/add-partners">
+                          <h6 className="mb-4">
+                            <i className="bi bi-plus-circle-fill"></i> New
+                            Partner
+                          </h6>
+                        </Link>
+                      )}
                     </div>
                   </div>
                   <div className="table-responsive">
@@ -142,9 +170,7 @@ const Partners = () => {
                           <th scope="col">Partner Name</th>
                           <th scope="col">Project Name</th>
                           <th scope="col">Percentage</th>
-                          <th scope="col">
-                            Action
-                          </th>
+                          <th scope="col">Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -172,35 +198,38 @@ const Partners = () => {
                                   display: "flex",
                                   justifyContent: "start",
                                   alignItems: "center",
-                                  gap:20,
+                                  gap: 20,
                                 }}
                               >
                                 <div
                                   style={{
                                     flex: 0,
-                                    width:"20px",
+                                    width: "20px",
                                     display: "flex",
                                     justifyContent: "start",
                                   }}
                                 >
-                                  <Link
-                                    to={`/edit-partners/${partner.id}`}
-                                    className="btn btn-warning btn-sm"
-                                  >
-                                    <i className="fas fa-edit"></i>
-                                  </Link>
+                                  {hasPermission("edit-partner") && (
+                                    <Link
+                                      to={`/edit-partners/${partner.id}`}
+                                      className="btn btn-warning btn-sm"
+                                    >
+                                      <i className="fas fa-edit"></i>
+                                    </Link>
+                                  )}
                                 </div>
-                                {(!partner.projects ||
-                                  partner.projects.length === 0) && (
-                                  <button
-                                    className="btn btn-danger btn-sm"
-                                    onClick={() =>
-                                      handleDeletePartner(partner.id)
-                                    }
-                                  >
-                                    <i className="fas fa-trash"></i>
-                                  </button>
-                                )}
+                                {hasPermission("delete-partner") &&
+                                  (!partner.projects ||
+                                    partner.projects.length === 0) && (
+                                    <button
+                                      className="btn btn-danger btn-sm"
+                                      onClick={() =>
+                                        handleDeletePartner(partner.id)
+                                      }
+                                    >
+                                      <i className="fas fa-trash"></i>
+                                    </button>
+                                  )}
                               </div>
                             </td>
                           </tr>

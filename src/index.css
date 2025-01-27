@@ -178,5 +178,20 @@ input[type="checkbox"] {
   border-color: #ddd;
 }
 
+.input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-
+.input-container .underline {
+  width: 100%; 
+  max-width: 100px; 
+  height: 4px;
+  background-color: #d3dfe0; 
+  margin-top: 9px; 
+}
+.input-container1 {
+  display: flex;
+  margin-left: 8rem;
+}

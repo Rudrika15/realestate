@@ -15,6 +15,5 @@ export const deletePartner = baseUrl + "v1/partner/delete-partner";
 export const updatePartner = baseUrl + "v1/partner/update-partner";
 export const partnerPartnerDelete = baseUrl + "v1/partner/partner-delete"
 
-// roles-wise-permissions //
 
 export const rolesWisePermissions = baseUrl + "v1/users/roles-wise-permissions"
