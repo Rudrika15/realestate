@@ -140,7 +140,7 @@ function Permission() {
                       <table className="table table-bordered mt-4">
                         <thead>
                           <tr>
-                            <th>Name</th>
+                            <th className="w-75">Name</th>
                             <th>Option</th>
                           </tr>
                         </thead>
