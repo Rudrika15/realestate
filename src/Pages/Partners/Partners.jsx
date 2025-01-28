@@ -63,6 +63,7 @@ const Partners = () => {
 
       if (response.data.status === true && response.data.data) {
         setPartners(response.data.data);
+        toast.success(response.data.message);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -112,7 +113,7 @@ const Partners = () => {
             icon: "success",
             confirmButtonColor: "#3085d6",
           });
-          // toast.success(response.data.message);
+          toast.success(response.data.message);
           setPartners(partners.filter((partner) => partner.id !== id));
         } else {
           toast.error("Failed to delete project.");
@@ -152,7 +153,7 @@ const Partners = () => {
                       <h6 className="mb-4">Partners List</h6>
                     </div>
                     <div className="p-2">
-                      {hasPermission("Add-partner") && (
+                      {hasPermission("add-partner") && (
                         <Link to="/add-partners">
                           <h6 className="mb-4">
                             <i className="bi bi-plus-circle-fill"></i> New

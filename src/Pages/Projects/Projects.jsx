@@ -35,10 +35,8 @@ const Projects = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-
         if (!token) {
           navigate("/");
-
           return;
         }
 
@@ -49,6 +47,7 @@ const Projects = () => {
           },
         });
         if (response.data.status === true && response.data.data) {
+          toast.success(response.data.message)
           setData(response.data.data);
         } else {
           console.error("Projects data not found in the response.");
@@ -61,7 +60,6 @@ const Projects = () => {
         setLoading(false);
       }
     };
-
     fetchProjects();
   }, [navigate]);
 
@@ -110,9 +108,8 @@ const Projects = () => {
             confirmButtonColor: "#3085d6",
           });
           setProjects(projects.filter((item) => item.id !== id));
-        } else {
-          toast.error("Failed to delete user!");
-        }
+          toast.success(response.data.message)
+        } 
       } catch (error) {
         console.error("Error deleting user:", error);
         if (error.response && error.response.status === 401) {
@@ -122,7 +119,6 @@ const Projects = () => {
       }
     }
   };
-
   return (
     <>
       <Helmet>

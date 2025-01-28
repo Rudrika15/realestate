@@ -1,21 +1,17 @@
 // src/Components/Topbar/Topbar.js
 import React, { useState } from "react";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    
-    localStorage.clear(); 
+    localStorage.clear();
     toast.info("Logged out successfully!");
     navigate("/");
   };
-// const userName =localStorage.getItem(userName);
-const userName = localStorage.getItem('userName');
-console.log(userName);
-
+  const userName = localStorage.getItem("userName");
   return (
     <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-5 py-0">
       <Link to="index.html" className="navbar-brand d-flex d-lg-none me-4">
@@ -25,7 +21,7 @@ console.log(userName);
       </Link>
       <Link
         to="#"
-                className="sidebar-toggler flex-shrink-0"
+        className="sidebar-toggler flex-shrink-0"
         onClick={toggleSidebar}
       >
         <i className="fa fa-bars"></i>
@@ -102,15 +98,16 @@ console.log(userName);
             />
             <span className="d-none d-lg-inline-flex">{userName}</span>
           </Link>
-        
-            <div
-              className={`dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0${
-                isTopbarOpen ? " show" : ""
-              }`}
-            >              
-              <Link to="/" className="dropdown-item" onClick={handleLogout}>Log Out</Link>
-            </div>
-        
+
+          <div
+            className={`dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0${
+              isTopbarOpen ? " show" : ""
+            }`}
+          >
+            <Link to="/" className="dropdown-item" onClick={handleLogout}>
+              Log Out
+            </Link>
+          </div>
         </div>
       </div>
       <style jsx="true">{`
