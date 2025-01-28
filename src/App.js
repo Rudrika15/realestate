@@ -78,16 +78,25 @@ const App = () => {
       setIsLoading(false); 
     }
   };
-  const ProtectedRoute = ({ element, requiredPermission }) => {
-    const [isLoading, setIsLoading] = useState(true);
+  // const ProtectedRoute = ({ element, requiredPermission }) => {
+  //   const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-      if (permissions.length || !requiredPermission) {
-        setIsLoading(false);
-      }
-    }, [permissions, requiredPermission]);
+  //   useEffect(() => {
+  //     if (permissions.length || !requiredPermission) {
+  //       setIsLoading(false);
+  //     }
+  //   }, [permissions, requiredPermission]);
+  //   if (isLoading) {
+  //     return ;
+  //   }
+  //   if (requiredPermission && !permissions.includes(requiredPermission)) {
+  //     return <Navigate to="/unauthorized" />;
+  //   }
+  //   return element;
+  // };
+  const ProtectedRoute = ({ element, requiredPermission }) => {
     if (isLoading) {
-      return ;
+      return <div></div>; 
     }
     if (requiredPermission && !permissions.includes(requiredPermission)) {
       return <Navigate to="/unauthorized" />;
