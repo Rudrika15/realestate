@@ -54,32 +54,45 @@ import AddNewPermission from "./Pages/Permission/AddNewPermission";
 import EditProjectStage from "./Pages/Projects/EditProjectStage";
 import EditPermissions from "./Pages/Permission/EditPermissions";
 import Dashboard from "./Pages/Dashboard/Dashboard";
+import Unauthorized from "./Pages/Unauthorized/Unauthorized";
+import { rolesWisePermissions } from "./Api/ApiDipak";
 
 const App = () => {
+  const [permissions, setPermissions] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // const [permissions, setPermissions] = useState([]);
-  // const fetchPermissions = async () => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     const response = await axios.get(rolesWisePermissions, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     setPermissions(response.data.data.map((perm) => perm.name));
-  //   } catch (error) {
-  //     console.error("Error fetching permissions:", error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   fetchPermissions();
-  // }, []);
+  const fetchPermissions = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(rolesWisePermissions, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setPermissions(response.data.data.map((perm) => perm.name));
+    } catch (error) {
+      console.error("Error fetching permissions:", error);
+    }
+  };
+  console.log(permissions);
+  useEffect(() => {
+    fetchPermissions();
+  }, []);
+  const ProtectedRoute = ({ element, requiredPermission }) => {
+    console.log("Checking permission:", requiredPermission);
+    console.log("User permissions:", permissions);
+    if (requiredPermission && !permissions.includes(requiredPermission)) {
+      return <Navigate to="/unauthorized" />; //
+    }
+    return element;
+  };
 
   return (
     <>
       <Router>
         <Routes>
+          <Route path="/unauthorized" element={<Unauthorized />}></Route>
           <Route path="/" element={<Login />}></Route>
           <Route path="/dashboard" element={<Dashboard />}></Route>
           <Route path="/view-user" element={<View />}></Route>
@@ -111,21 +124,39 @@ const App = () => {
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />
-
           <Route path="/addnewpermission" element={<AddNewPermission />} />
-
-          <Route path="/addnewpermission" element={<AddNewPermission/>}/>
-          <Route path="/editpermissions/:id" element={<EditPermissions/>}/>
-
+          <Route path="/editpermissions/:id" element={<EditPermissions />} />
           <Route path="/add-projects" element={<AddProjects />} />
           <Route path="/edit-projects" element={<EditProjects />} />
           <Route path="/unit/:id" element={<Unit />} />
           <Route path="/edit-unit" element={<EditUnit />} />
-
-          <Route path="/partners" element={<Partners />} />
-          <Route path="/add-partners" element={<AddPartners />} />
-          <Route path="/edit-partners/:id" element={  <EditPartners />} />
-
+          <Route
+            path="/partners"
+            element={
+              <ProtectedRoute
+                element={<Partners />}
+                requiredPermission="view-partner"
+              />
+            }
+          />
+          <Route
+            path="/add-partners"
+            element={
+              <ProtectedRoute
+                element={<AddPartners />}
+                requiredPermission="add-partner"
+              />
+            }
+          />
+          <Route
+            path="/edit-partners/:id"
+            element={
+              <ProtectedRoute
+                element={<EditPartners />}
+                requiredPermission="edit-partner"
+              />
+            }
+          />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />
           <Route path="/edit-expenses" element={<EditExpenses />} />

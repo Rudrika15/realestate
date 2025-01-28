@@ -25,8 +25,6 @@ const Sidebar = ({ isSidebarOpen }) => {
       console.error("Error fetching permissions:", error);
     }
   };
-  console.log(permissions);
-
   useEffect(() => {
     fetchPermissions();
   }, []);
@@ -101,7 +99,7 @@ const Sidebar = ({ isSidebarOpen }) => {
               isActive("/dashboard") ? "active" : ""
             }`}
           >
-            <i className="fas fa-user"></i> Dashboard
+            <i class="fa fa-th-large" aria-hidden="true"></i> Dashboard
           </Link>
           {permissions.length === 0 && (
             <Link
@@ -164,8 +162,7 @@ const Sidebar = ({ isSidebarOpen }) => {
               <i class="fas fa-user-tie"></i> Broker
             </Link>
           )}
-
-          {hasPermission("view-partner") && (
+          {(hasPermission("view-partner") || permissions.length === 0  ) && (
             <Link
               to="/partners"
               className={`nav-item nav-link ${isActive("/partners") ? "active" : ""
@@ -174,7 +171,6 @@ const Sidebar = ({ isSidebarOpen }) => {
               <i className="bi bi-people custom-icon"></i> Partners
             </Link>
           )}
-
           {permissions.length === 0 && (
             <Link
               to="/expenses"

@@ -128,56 +128,42 @@ const AddProjects = () => {
 
     try {
       const token = localStorage.getItem("token");
-      console.log("Token from localStorage:", token);  
-  
-      
+      console.log("Token from localStorage:", token);
       if (!token) {
         toast.error("Authentication failed. Please log in again.");
         navigate("/");
         return;
       }
-      
       const formData = new FormData();
       formData.append("project_name", projectName);
       formData.append("file", unit[0]);
-  
-      const response = await axios.post(
-        storeProject,
-        formData,  
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-  
-      console.log("response", response);
-  
+
+      const response = await axios.post(storeProject, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
       if (response.status === 200) {
-        toast.success("Project and units added successfully");
+        if (!response.data.status) {
+          toast.error(response.data.message );
+          setLoading(false);
+          return; 
+        }
         setProjectName("");
         files.current.value = null;
         setUnit(null);
         setError({});
         setLoading(false);
-  
-        navigate("/projects");  
+        navigate("/projects");
       }
     } catch (error) {
-      console.error("Error submitting project:", error);
-  
-      if (error.response) {
-        console.error("Error response:", error.response.data);
+      if (error.response.status === 401) {
+        navigate("/");
       }
-  
-      if (error.response && error.response.status === 401) {
-        navigate("/");  
-      } 
-  
       setLoading(false);
     }
-    };
+  };
 
   return (
     <>
