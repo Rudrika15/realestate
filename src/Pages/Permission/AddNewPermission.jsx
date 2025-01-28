@@ -22,19 +22,22 @@ function AddNewPermission() {
 
   const handleInputChange = (e) => {
     const value = e.target.value;
-    if (/[^a-z0-9-]/i.test(value)) {  
-      setPermissionNameError(true);
-    } else {
-      setPermissionNameError(false);
-    }
-    setPermissionName(value);
-  };
+    const sanitizedValue = value
+    .toLowerCase() 
+    .replace(/[^a-z0-9\s-]/gi, "") 
+    .replace(/\s+/g, "-"); 
+  if (/[^a-z0-9-]/i.test(sanitizedValue)) {
+    setPermissionNameError(true);
+  } else {
+    setPermissionNameError(false);
+  }
+  setPermissionName(sanitizedValue);
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate input
-    if (!permissionName.trim() || /[^a-z0-9-]/i.test(permissionName))  {
+    if (!permissionName.trim() || /[^a-z0-9-]/i.test(permissionName)) {
       setPermissionNameError(true);
       return;
     }
@@ -60,8 +63,6 @@ function AddNewPermission() {
         }
       );
 
-      console.log(response.data);
-
       if (response.data && response.data.status) {
         toast.success("Permission added successfully!");
         setPermissionName("");
@@ -72,7 +73,6 @@ function AddNewPermission() {
         toast.error(response.data.message || "Failed to add permission");
       }
     } catch (error) {
-      console.error(error);
       if (error.response && error.response.status === 401) {
         navigate("/");
       }

@@ -63,7 +63,7 @@ const Partners = () => {
 
       if (response.data.status === true && response.data.data) {
         setPartners(response.data.data);
-        toast.success(response.data.message);
+        // toast.success(response.data.message);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {

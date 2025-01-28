@@ -59,7 +59,7 @@ import { rolesWisePermissions } from "./Api/ApiDipak";
 
 const App = () => {
   const [permissions, setPermissions] = useState([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchPermissions = async () => {
     try {
@@ -74,20 +74,29 @@ const App = () => {
     } catch (error) {
       console.error("Error fetching permissions:", error);
     }
+    finally {
+      setIsLoading(false); 
+    }
   };
-  console.log(permissions);
-  useEffect(() => {
-    fetchPermissions();
-  }, []);
   const ProtectedRoute = ({ element, requiredPermission }) => {
-    console.log("Checking permission:", requiredPermission);
-    console.log("User permissions:", permissions);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+      if (permissions.length || !requiredPermission) {
+        setIsLoading(false);
+      }
+    }, [permissions, requiredPermission]);
+    if (isLoading) {
+      return ;
+    }
     if (requiredPermission && !permissions.includes(requiredPermission)) {
-      return <Navigate to="/unauthorized" />; //
+      return <Navigate to="/unauthorized" />;
     }
     return element;
   };
-
+  useEffect(() => {
+    fetchPermissions();
+  }, []);
   return (
     <>
       <Router>
