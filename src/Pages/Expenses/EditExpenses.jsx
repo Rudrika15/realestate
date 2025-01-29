@@ -1,46 +1,30 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../../Components/Sidebar/Sidebar";
-import Topbar from "../../Components/Topbar/Topbar";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-
 import { Helmet } from "react-helmet";
 import { Spinner } from "react-bootstrap";
+import { toast } from "react-toastify";
+import axios from "axios";
+import Sidebar from "../../Components/Sidebar/Sidebar";
+import Topbar from "../../Components/Topbar/Topbar";
+import { singleIdExpense, updatedExpense } from "../../Api/DevanshiApi"; // API import
 
 const EditExpenses = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
-
-  const sampleExpenses = [
-    {
-      id: 1,
-      date: "",
-      voucherNo: "",
-      head: "",
-      narration: "",
-      amount: "",
-    },
-  
-  ];
-
-  const expensesId = 1;
-  const selectedExpense =
-    sampleExpenses.find((expense) => expense.id === expensesId) || {};
+  const { id } = useParams();
 
   const [expense, setExpense] = useState({
-    date: selectedExpense.date || "",
-    voucherNo: selectedExpense.voucherNo || "",
-    head: selectedExpense.head || "",
-    narration: selectedExpense.narration || "",
-    amount: selectedExpense.amount || "",
+    voucherNo: "",
+    date: "",
+    head: "",
+    narration: "",
+    amount: "",
   });
 
-  const [expenseDate, setExpenseDate] = useState(expense.date);
   const [expenseDateError, setExpenseDateError] = useState(false);
-
   const [errors, setErrors] = useState({
     voucherNoError: false,
     headError: false,
@@ -67,7 +51,7 @@ const EditExpenses = () => {
     return "";
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let isValid = true;
 
@@ -78,7 +62,7 @@ const EditExpenses = () => {
       amountError: false,
     };
 
-    if (!expenseDate) {
+    if (!expense.date) {
       setExpenseDateError(true);
       isValid = false;
     } else {
@@ -108,15 +92,92 @@ const EditExpenses = () => {
     setErrors(validationErrors);
 
     if (!isValid) {
-      return; 
+      return;
     }
 
     setLoading(true);
-    setTimeout(() => {
+
+    try {
+      const token = localStorage.getItem('token');
+      console.log(token);
+      if (!token) {
+        toast.error('Token is missing. Please log in again.');
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.post(`${updatedExpense}/${id}`, expense, {
+        voucherNo: expense.voucherNo,
+        expenceDate: expense.date,
+        ExpenseHeadId: expense.head,
+        naration: expense.narration,
+        amount: expense.amount,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.data.status === true) {
+        toast.success(response.message || 'Expense updated successfully');
+        console.log(response.data.status);
+        setTimeout(() => {
+          navigate("/expenses");
+        }, 1000);
+      } else {
+        toast.error(response?.message || 'Failed to update expense.');
+      }
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.status === 401) {
+        navigate('/');
+      }
+      toast.error('An error occurred while updating expense details.');
+    } finally {
       setLoading(false);
-      navigate("/expenses");
-    }, 2000);
+    }
   };
+
+  const fetchExpenseDetails = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Token is missing. Please log in again.");
+        return;
+      }
+
+      const response = await axios.get(`${singleIdExpense}${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.status) {
+        const { voucherNo, expenceDate, ExpenseHeadId, naration, amount } = response.data.data;
+
+        setExpense({
+          voucherNo: voucherNo || "",
+          date: expenceDate || "",
+          head: ExpenseHeadId || "",
+          narration: naration || "",
+          amount: amount || "",
+        });
+      } else {
+        toast.error(response?.data?.message || "Failed to fetch expense details.");
+      }
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+      toast.error("An error occurred while fetching expense details.");
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchExpenseDetails(id);
+    }
+  }, [id]);
 
   return (
     <>
@@ -138,7 +199,7 @@ const EditExpenses = () => {
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
-                <div className="d-flex justify-content-between mb-3">
+                  <div className="d-flex justify-content-between mb-3">
                     <div className="p-2">
                       <h6 className="mb-4">Edit Expenses</h6>
                     </div>
@@ -157,7 +218,6 @@ const EditExpenses = () => {
                         <input
                           type="text"
                           className={`form-control ${errors.voucherNoError ? "is-invalid" : ""}`}
-                          placeholder="Voucher Number"
                           name="voucherNo"
                           value={expense.voucherNo}
                           onChange={handleInputChange}
@@ -172,14 +232,13 @@ const EditExpenses = () => {
                           type="text"
                           className={`form-control ${expenseDateError ? "is-invalid" : ""}`}
                           id="date"
-                          value={formatDate(expenseDate)}
-                          placeholder="Expense Date"
+                          value={formatDate(expense.date)}
                           onFocus={(e) => (e.target.type = "date")}
                           onBlur={(e) => (e.target.type = "text")}
-                          onChange={(e) => setExpenseDate(e.target.value)}
+                          onChange={(e) => setExpense((prev) => ({ ...prev, date: e.target.value }))}
                         />
                         {expenseDateError && (
-                          <div className="invalid-feedback">Please select a Expense date.</div>
+                          <div className="invalid-feedback">Please select an Expense date.</div>
                         )}
                       </div>
                     </div>
@@ -190,7 +249,6 @@ const EditExpenses = () => {
                         <input
                           type="text"
                           className={`form-control ${errors.headError ? "is-invalid" : ""}`}
-                          placeholder="Expense Head"
                           name="head"
                           value={expense.head}
                           onChange={handleInputChange}
@@ -205,7 +263,6 @@ const EditExpenses = () => {
                         <input
                           type="text"
                           className={`form-control ${errors.narrationError ? "is-invalid" : ""}`}
-                          placeholder="Narration"
                           name="narration"
                           value={expense.narration}
                           onChange={handleInputChange}
@@ -225,7 +282,6 @@ const EditExpenses = () => {
                           name="amount"
                           value={expense.amount}
                           onChange={handleInputChange}
-                          placeholder="Amount"
                         />
                         {errors.amountError && (
                           <div className="invalid-feedback">Amount should be a positive number.</div>

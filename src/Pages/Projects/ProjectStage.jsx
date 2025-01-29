@@ -121,7 +121,7 @@ function ProjectStage() {
                                                             <td>{stage?.projectStagePer || 0}%</td>
                                                             <td>
                                                                 <Link
-                                                                    to={`/edit-projectstage/${stage?.id}`}
+                                                                    to={`/edit-projectstage/${stage.id}`}
                                                                     className={`btn btn-warning btn-sm me-2 ${!stage?.id ? 'disabled' : ''}`}
                                                                 >
                                                                     <i className="fas fa-edit"></i>

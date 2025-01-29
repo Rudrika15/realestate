@@ -90,7 +90,7 @@ const App = () => {
           <Route path="/edit-role/:id" element={<EditRole />}></Route>
           <Route path="/project-stage/:id" element={<ProjectStage />} />
           <Route
-            path="/add-project-stage"
+            path="/add-project-stage/:id"
             element={<AddProjectStage />}
           ></Route>
           <Route
@@ -107,7 +107,7 @@ const App = () => {
           ></Route>
           <Route path="/broker" element={<Broker />}></Route>
           <Route path="/edit-broker/:id" element={<EditBroker />} />
-          <Route path="/edit-projectstage" element={<EditProjectStage />} />
+          <Route path="/edit-projectstage/:id" element={<EditProjectStage />} />
           <Route path="/view-booking" element={<ViewBooking />}></Route>
           <Route path="/projects" element={<Projects />} />
           <Route path="/permission" element={<Permission />} />
@@ -128,7 +128,7 @@ const App = () => {
 
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />
-          <Route path="/edit-expenses" element={<EditExpenses />} />
+          <Route path="/edit-expenses/:id" element={<EditExpenses />} />
           <Route path="/income" element={<Income />} />
           <Route path="/add-income" element={<AddIncome />} />
           <Route path="/edit-income" element={<EditIncome />} />

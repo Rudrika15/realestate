@@ -1,21 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
-import { Spinner } from "react-bootstrap";
+import { Modal, Spinner } from "react-bootstrap";
 import { numberToWords } from "number-to-words";
+import axios from "axios";
+import { addExpense, addExpenseHead, getExpenseHead, getProject, storeExpense, storeExpenseHead } from "../../Api/DevanshiApi";
+import { toast } from "react-toastify";
 
 const AddExpenses = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [expenseDateError, setExpenseDateError] = useState(false);
   const [voucherNoError, setVoucherNoError] = useState(false);
+  const [data, setData] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [ExpenseHeadName, setExpenseHeadName] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [expenseDate, setExpenseDate] = useState("");
   const [voucherNo, setVoucherNo] = useState("");
+  const [modalType, setModalType] = useState("Add");
   const [expenses, setExpenses] = useState([
     {
       id: "1",
@@ -32,12 +40,7 @@ const AddExpenses = () => {
       amountError: false,
     },
   ]);
-  const [expenseHeads, setExpenseHeads] = useState([
-    "Select",
-    "Construction Materials",
-    "Utilities",
-    "Site Preparation",
-  ]);
+  const [expenseHeads, setExpenseHeads] = useState([]);
   const [newOption, setNewOption] = useState("");
   const navigate = useNavigate();
 
@@ -85,54 +88,134 @@ const AddExpenses = () => {
   };
 
   const handleExpenseHeadChange = (index, value) => {
-    const updatedExpenses = [...expenses];
-    updatedExpenses[index].expenseHead = value;
-    setExpenses(updatedExpenses);
+    if (value === "add-new-option") {
+      setIsModalOpen(true);
+    } else {
+      const updatedExpenses = [...expenses];
+      updatedExpenses[index].expenseHead = value;
+      setExpenses(updatedExpenses);
+    }
   };
+
 
   const handleNewOptionChange = (e) => {
     setNewOption(e.target.value);
   };
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleAddNewOption = () => {
+    if (newOption.trim() !== "") {
+      setExpenseHeads((prevHeads) => [
+        ...prevHeads,
+        { id: prevHeads.length + 1, ExpenseHeadName: newOption.trim() },
+      ]);
+      setNewOption("");
+      handleCloseModal();
+    }
+  };
+
   const formatIndianNumbering = (num) => {
     if (isNaN(num)) return num;
-    num = num.toString().split('.'); 
+    num = num.toString().split('.');
     let integerPart = num[0];
     const decimalPart = num[1] ? '.' + num[1] : '';
     const regex = /\B(?=(\d{3})+(?!\d))/g;
     integerPart = integerPart.replace(regex, ',');
     return integerPart + decimalPart;
   };
-  
+
 
   const calculateTotalAmount = () => {
     const totalAmount = expenses.reduce(
       (total, expense) => total + (parseFloat(expense.amount) || 0),
       0
     );
-    return totalAmount; 
+    return totalAmount;
   };
-  
+
   const convertAmountToWords = (amount) => {
-    return numberToWords.toWords(amount).toUpperCase(); 
+    return numberToWords.toWords(amount).toUpperCase();
   };
 
+  const fetchProjects = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/");
 
+        return;
+      }
 
-
-  const handleNewOptionKeyDown = (e) => {
-    if (e.key === "Enter" && newOption.trim()) {
-      setExpenseHeads([...expenseHeads, newOption]);
-      setNewOption("");
-      e.preventDefault();
+      const response = await axios.get(getProject, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.data.status === true && response.data.data) {
+        setData(response.data.data);
+      } else {
+        console.error("Projects data not found in the response.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSubmit = (e) => {
+  const fetchExpenseHead = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        navigate("/");
+        return;
+      }
+
+      const response = await axios.get(getExpenseHead, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.status === true) {
+        setExpenseHeads(response.data.data);
+      } else {
+        console.error("Expense heads data not found in the response.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+    fetchExpenseHead();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+  
     let isValid = true;
     const updatedExpenses = [...expenses];
-
+  
     updatedExpenses.forEach((expense, index) => {
       if (!expense.project) {
         updatedExpenses[index].projectError = true;
@@ -146,21 +229,21 @@ const AddExpenses = () => {
       } else {
         updatedExpenses[index].nameError = false;
       }
-
+  
       if (!expense.expenseHead) {
         updatedExpenses[index].expenseHeadError = true;
         isValid = false;
       } else {
         updatedExpenses[index].expenseHeadError = false;
       }
-
+  
       if (!expense.narration) {
         updatedExpenses[index].narrationError = true;
         isValid = false;
       } else {
         updatedExpenses[index].narrationError = false;
       }
-
+  
       if (
         !expense.amount ||
         isNaN(expense.amount) ||
@@ -172,34 +255,108 @@ const AddExpenses = () => {
         updatedExpenses[index].amountError = false;
       }
     });
-
+  
     if (!expenseDate) {
       isValid = false;
     }
     if (!voucherNo) {
       isValid = false;
     }
-
+  
     setExpenseDateError(!expenseDate);
     setVoucherNoError(!voucherNo);
     setExpenses(updatedExpenses);
-
+  
     if (!isValid) {
       return;
     }
-
+  
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const token = localStorage.getItem("token");
+      console.log(token);
+  
+      const expenseData = {
+        voucherNo,
+        expenseDate,
+        totalAmount: calculateTotalAmount(),
+        expenseDetails: expenses.map((expense) => ({
+          ExpenseMasterId: expense.expenseMasterId,
+          name: "",  
+          projectId: expense.project,
+          ExpenseHeadId: expense.expenseHead,
+          narration: expense.narration,
+          amount: expense.amount,
+        })),
+      };
+  
+      const response = await axios.post(
+        storeExpense,
+        expenseData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (response.data.status === true) {
+        toast.success("Expense added successfully!");
+        setTimeout(() => {
+          navigate("/expense");
+        }, 1000);
+      } else {
+        toast.error(response.data.message || "Failed to add Expense");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");  
+      }
+      toast.error("Failed to add Expense. Please try again.");
+    } finally {
       setLoading(false);
-      navigate("/expenses", {
-        state: {
-          expenses,
-          voucherDate: expenseDate,
-          voucherNo,
-        },
-      });
-    }, 2000);
+    }
   };
+  
+
+  const addExpenseHead = async (e) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        storeExpenseHead,
+        { ExpenseHeadName: newOption },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.status === true) {
+        setExpenseHeads((prevHeads) => [
+          ...prevHeads,
+          response.data.data,
+        ]);
+        toast.success("Expense Head added successfully!");
+        setNewOption("");
+        setTimeout(() => {
+          navigate("/expense");
+        }, 1000);
+      } else {
+        toast.error(response.data.message || "Failed to add Expense Head");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+      toast.error("Failed to add Expense Head. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const preventFormSubmit = (e) => {
     if (e.key === "Enter") {
@@ -221,7 +378,6 @@ const AddExpenses = () => {
             isTopbarOpen={isTopbarOpen}
             toggleTopbar={toggleTopbar}
           />
-
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
@@ -238,58 +394,54 @@ const AddExpenses = () => {
                       </Link>
                     </div>
                   </div>
-
-                  <div className="row pt-1 pb-5 border-bottom">
-                    <div className="col">
-                      <input
-                        type="text"
-                        id="date"
-                        className={`form-control ${
-                          expenseDateError ? "is-invalid" : ""
-                        }`}
-                        value={formatDate(expenseDate)}
-                        placeholder="Expense Date"
-                        onFocus={(e) => (e.target.type = "date")}
-                        onBlur={(e) => (e.target.type = "text")}
-                        onChange={(e) => setExpenseDate(e.target.value)}
-                      />
-                      {expenseDateError && (
-                        <div className="invalid-feedback">
-                          Please select a Expense date.
-                        </div>
-                      )}
+                  <form onSubmit={handleSubmit}>
+                    <div className="row pt-1 pb-5 border-bottom">
+                      <div className="col">
+                        <input
+                          type="text"
+                          id="date"
+                          className={`form-control ${expenseDateError ? "is-invalid" : ""
+                            }`}
+                          value={formatDate(expenseDate)}
+                          placeholder="Expense Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                          onChange={(e) => setExpenseDate(e.target.value)}
+                        />
+                        {expenseDateError && (
+                          <div className="invalid-feedback">
+                            Please select a Expense date.
+                          </div>
+                        )}
+                      </div>
+                      <div className="col">
+                        <input
+                          type="text"
+                          className={`form-control ${voucherNoError ? "is-invalid" : ""
+                            }`}
+                          value={voucherNo}
+                          placeholder="Voucher No"
+                          onChange={(e) => setVoucherNo(e.target.value)}
+                        />
+                        {voucherNoError && (
+                          <div className="invalid-feedback">
+                            Please enter a voucher number.
+                          </div>
+                        )}
+                      </div>
+                      <div className="col"></div>
                     </div>
+
                     <div className="col">
-                      <input
-                        type="text"
-                        className={`form-control ${
-                          voucherNoError ? "is-invalid" : ""
-                        }`}
-                        value={voucherNo}
-                        placeholder="Voucher No"
-                        onChange={(e) => setVoucherNo(e.target.value)}
-                      />
-                      {voucherNoError && (
-                        <div className="invalid-feedback">
-                          Please enter a voucher number.
-                        </div>
-                      )}
+                      <h6 className="pt-3 pb-2 ps-3">Project Details</h6>
                     </div>
-                    <div className="col"></div>
-                  </div>
 
-                  <div className="col">
-                    <h6 className="pt-3 pb-2 ps-3">Project Details</h6>
-                  </div>
-
-                  <form onSubmit={handleSubmit} onKeyDown={preventFormSubmit}>
                     <table className="table table-bordered text-center">
                       <thead>
                         <tr>
                           <th scope="col">Project</th>
-                          <th scope="col">Name</th>
-                          <th scope="col">Expense Head</th>
                           <th scope="col">Narration</th>
+                          <th scope="col">Expense Head</th>
                           <th scope="col">Amount</th>
                           <th scope="col">Action</th>
                         </tr>
@@ -299,9 +451,8 @@ const AddExpenses = () => {
                           <tr key={expense.id}>
                             <td>
                               <select
-                                className={`form-select ${
-                                  expense.projectError ? "is-invalid" : ""
-                                }`}
+                                className={`form-select ${expense.projectError ? "is-invalid" : ""
+                                  }`}
                                 value={expense.project}
                                 onChange={(e) =>
                                   handleExpenseChange(
@@ -311,12 +462,14 @@ const AddExpenses = () => {
                                   )
                                 }
                               >
-                                <option value="" selected>
+                                <option value="" disabled>
                                   Select
                                 </option>
-                                <option>Shiv</option>
-                                <option>Mahadev</option>
-                                <option>Ganesh</option>
+                                {data.map((project) => (
+                                  <option key={project.id} value={project.id}>
+                                    {project.projectName}
+                                  </option>
+                                ))}
                               </select>
                               {expense.projectError && (
                                 <div className="invalid-feedback">
@@ -327,67 +480,8 @@ const AddExpenses = () => {
                             <td>
                               <input
                                 type="text"
-                                className={`form-control ${
-                                  expense.nameError ? "is-invalid" : ""
-                                }`}
-                                value={expense.name}
-                                onChange={(e) =>
-                                  handleExpenseChange(
-                                    index,
-                                    "name",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                              {expense.nameError && (
-                                <div className="invalid-feedback">
-                                  Name can only contain letters and spaces.
-                                </div>
-                              )}
-                            </td>
-                            <td>
-                              <select
-                                className={`form-select ${
-                                  expense.expenseHeadError ? "is-invalid" : ""
-                                }`}
-                                value={expense.expenseHead}
-                                onChange={(e) =>
-                                  handleExpenseHeadChange(index, e.target.value)
-                                }
-                              >
-                                {expenseHeads.map((head, idx) => (
-                                  <option key={idx} value={head}>
-                                    {head}
-                                  </option>
-                                ))}
-                                <option value="add-new-option">
-                                  Add New Option
-                                </option>
-                              </select>
-                              {expense.expenseHeadError && (
-                                <div className="invalid-feedback">
-                                  Please select an expense head.
-                                </div>
-                              )}
-                              {expense.expenseHead === "add-new-option" && (
-                                <div className="mt-2">
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    value={newOption}
-                                    onChange={handleNewOptionChange}
-                                    onKeyDown={handleNewOptionKeyDown}
-                                    placeholder="Enter new option"
-                                  />
-                                </div>
-                              )}
-                            </td>
-                            <td>
-                              <input
-                                type="text"
-                                className={`form-control ${
-                                  expense.narrationError ? "is-invalid" : ""
-                                }`}
+                                className={`form-control ${expense.narrationError ? "is-invalid" : ""
+                                  }`}
                                 value={expense.narration}
                                 onChange={(e) =>
                                   handleExpenseChange(
@@ -404,11 +498,60 @@ const AddExpenses = () => {
                               )}
                             </td>
                             <td>
+                              <select
+                                className={`form-select ${expense.expenseHeadError ? "is-invalid" : ""}`}
+                                value={expense.expenseHead}
+                                onChange={(e) => handleExpenseHeadChange(index, e.target.value)}
+                              >
+                                <option value="" disabled>
+                                  Select
+                                </option>
+                                <option value="add-new-option" onClick={handleOpenModal}>
+                                  Add new expense head...
+                                </option>
+                                {expenseHeads.map((expenseHead) => (
+                                  <option key={expenseHead.id} value={expenseHead.ExpenseHeadName}>
+                                    {expenseHead.ExpenseHeadName}
+                                  </option>
+                                ))}
+                              </select>
+                              {expense.expenseHeadError && (
+                                <div className="invalid-feedback">Please select an expense head.</div>
+                              )}
+
+                              {/* Modal for Adding New Expense Head */}
+                              <Modal show={isModalOpen} onHide={handleCloseModal}>
+                                <Modal.Header closeButton>
+                                  <Modal.Title>Add New Expense Head</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    value={newOption}
+                                    onChange={handleNewOptionChange}
+                                    placeholder="Enter new expense head"
+                                  />
+                                </Modal.Body>
+                                <Modal.Footer>
+                                  <button className="btn btn-secondary" onClick={handleCloseModal}>
+                                    Close
+                                  </button>
+                                  <button
+                                    className="btn btn-primary"
+                                    onClick={handleAddNewOption} // Add the new option
+                                  >
+                                    Add Expense Head
+                                  </button>
+                                </Modal.Footer>
+                              </Modal>
+                            </td>
+
+                            <td>
                               <input
                                 type="number"
-                                className={`form-control ${
-                                  expense.amountError ? "is-invalid" : ""
-                                }`}
+                                className={`form-control ${expense.amountError ? "is-invalid" : ""
+                                  }`}
                                 value={expense.amount}
                                 onChange={(e) =>
                                   handleExpenseChange(
@@ -448,7 +591,7 @@ const AddExpenses = () => {
                             Total Amount <br />
                             Amount In Word
                           </td>
-                    
+
                           <td
                             className="text-start"
                             colSpan={2}
@@ -460,7 +603,9 @@ const AddExpenses = () => {
                         </tr>
                       </tbody>
                     </table>
-
+                    <input type="hidden"
+                      value={formatIndianNumbering(calculateTotalAmount())}
+                    />
                     <button
                       type="submit"
                       className="btn btn-primary"
@@ -471,6 +616,7 @@ const AddExpenses = () => {
                       ) : (
                         "Submit"
                       )}
+
                     </button>
                   </form>
                 </div>

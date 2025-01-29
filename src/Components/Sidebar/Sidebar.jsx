@@ -25,7 +25,6 @@ const Sidebar = ({ isSidebarOpen }) => {
       console.error("Error fetching permissions:", error);
     }
   };
-  console.log(permissions);
 
   useEffect(() => {
     fetchPermissions();

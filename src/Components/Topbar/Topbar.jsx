@@ -14,7 +14,7 @@ const Topbar = ({ toggleSidebar, isTopbarOpen, toggleTopbar }) => {
   };
 // const userName =localStorage.getItem(userName);
 const userName = localStorage.getItem('userName');
-console.log(userName);
+
 
   return (
     <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-5 py-0">
