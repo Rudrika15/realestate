@@ -19,31 +19,25 @@ function AddNewPermission() {
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleTopbar = () => setIsTopbarOpen(!isTopbarOpen);
-
   const handleInputChange = (e) => {
     const value = e.target.value;
-    const sanitizedValue = value
-    .toLowerCase() 
-    .replace(/[^a-z0-9\s-]/gi, "") 
-    .replace(/\s+/g, "-"); 
-  if (/[^a-z0-9-]/i.test(sanitizedValue)) {
-    setPermissionNameError(true);
-  } else {
-    setPermissionNameError(false);
-  }
-  setPermissionName(sanitizedValue);
+    if (!/\d/.test(value)) {
+        setPermissionName(value);
+        setPermissionNameError(false);
+    }
 };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!permissionName.trim() || /[^a-z0-9-]/i.test(permissionName)) {
-      setPermissionNameError(true);
-      return;
+    if (!permissionName.trim()) {
+        setPermissionNameError(true);
+        return;
     }
-    setPermissionNameError(false);
 
+    setPermissionNameError(false);
     setLoading(true);
+
 
     try {
       const token = localStorage.getItem("token");
@@ -121,8 +115,7 @@ function AddNewPermission() {
                         />
                         {permissionNameError && (
                           <div className="invalid-feedback">
-                            Permission name cannot contain capital letters,
-                            spaces, or numbers.
+                            Permission Name is required.
                           </div>
                         )}
                       </div>

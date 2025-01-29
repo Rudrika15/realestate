@@ -73,9 +73,8 @@ const App = () => {
       setPermissions(response.data.data.map((perm) => perm.name));
     } catch (error) {
       console.error("Error fetching permissions:", error);
-    }
-    finally {
-      setIsLoading(false); 
+    } finally {
+      setIsLoading(false);
     }
   };
   // const ProtectedRoute = ({ element, requiredPermission }) => {
@@ -96,7 +95,7 @@ const App = () => {
   // };
   const ProtectedRoute = ({ element, requiredPermission }) => {
     if (isLoading) {
-      return <div></div>; 
+      return <div></div>;
     }
     if (requiredPermission && !permissions.includes(requiredPermission)) {
       return <Navigate to="/unauthorized" />;
@@ -113,41 +112,194 @@ const App = () => {
           <Route path="/unauthorized" element={<Unauthorized />}></Route>
           <Route path="/" element={<Login />}></Route>
           <Route path="/dashboard" element={<Dashboard />}></Route>
-          <Route path="/view-user" element={<View />}></Route>
-          <Route path="/edit-user" element={<EditUser />}></Route>
-          <Route path="/add-user" element={<AddUser />}></Route>
-          <Route path="/role" element={<Role />}></Route>
-          <Route path="/add-role" element={<AddRole />}></Route>
-          <Route path="/edit-role/:id" element={<EditRole />}></Route>
-          <Route path="/project-stage/:id" element={<ProjectStage />} />
+          {/* user  */}
+          <Route
+            path="/view-user"
+            element={
+              <ProtectedRoute
+                element={<View />}
+                requiredPermission="view-user"
+              />
+            }
+          />
+          <Route
+            path="/edit-user"
+            element={
+              <ProtectedRoute
+                element={<EditUser />}
+                requiredPermission="edit-user"
+              />
+            }
+          />
+          <Route
+            path="/add-user"
+            element={
+              <ProtectedRoute
+                element={<AddUser />}
+                requiredPermission="add-user"
+              />
+            }
+          />
+          {/*  project  */}
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute
+                element={<Projects />}
+                requiredPermission="view-project"
+              />
+            }
+          />
+          <Route
+            path="/add-projects"
+            element={
+              <ProtectedRoute
+                element={<AddProjects />}
+                requiredPermission="new-project"
+              />
+            }
+          />
+          <Route
+            path="/edit-projects"
+            element={
+              <ProtectedRoute
+                element={<EditProjects />}
+                requiredPermission="edit-project"
+              />
+            }
+          />
+          <Route
+            path="/unit/:id"
+            element={
+              <ProtectedRoute
+                element={<Unit />}
+                requiredPermission="unit-project"
+              />
+            }
+          />
+          <Route
+            path="/project-stage/:id"
+            element={
+              <ProtectedRoute
+                element={<ProjectStage />}
+                requiredPermission="project-stage"
+              />
+            }
+          />
+          <Route path="/edit-projectstage" element={<EditProjectStage />} />
+          <Route path="/edit-unit" element={<EditUnit />} />
           <Route
             path="/add-project-stage"
             element={<AddProjectStage />}
           ></Route>
+
+          {/* booking */}
+          <Route
+            path="/view-booking"
+            element={
+              <ProtectedRoute
+                element={<ViewBooking />}
+                requiredPermission="view-booking"
+              />
+            }
+          />
+          <Route
+            path="/cancelled-booking"
+            element={
+              <ProtectedRoute
+                element={<CancelledBooking />}
+                requiredPermission="cancelled-booking"
+              />
+            }
+          />
+          <Route
+            path="/view-cancelled-booking"
+            element={<ViewCancelledBooking />}
+          />
+          <Route path="/booking" element={<Booking />}></Route>
+
+          {/* broker */}
+          <Route
+            path="/broker"
+            element={
+              <ProtectedRoute
+                element={<Broker />}
+                requiredPermission="view-broker"
+              />
+            }
+          />
+          <Route
+            path="/edit-broker/:id"
+            element={
+              <ProtectedRoute
+                element={<EditBroker />}
+                requiredPermission="edit-broker"
+              />
+            }
+          />
+          <Route
+            path="/role"
+            element={
+              <ProtectedRoute
+                element={<Role />}
+                requiredPermission="view-role"
+              />
+            }
+          />
+          <Route
+            path="/add-role"
+            element={
+              <ProtectedRoute
+                element={<AddRole />}
+                requiredPermission="new-role"
+              />
+            }
+          />
+          <Route
+            path="/edit-role/:id"
+            element={
+              <ProtectedRoute
+                element={<EditRole />}
+                requiredPermission="edit-role"
+              />
+            }
+          />
+          {/* permission */}
+          <Route
+            path="/permission"
+            element={
+              <ProtectedRoute
+                element={<Permission />}
+                requiredPermission="view-permissions"
+              />
+            }
+          />
+          <Route
+            path="/addnewpermission"
+            element={
+              <ProtectedRoute
+                element={<AddNewPermission />}
+                requiredPermission="new-permissions"
+              />
+            }
+          />
+          <Route
+            path="/editpermissions/:id"
+            element={
+              <ProtectedRoute
+                element={<EditPermissions />}
+                requiredPermission="edit-permissions"
+              />
+            }
+          />
+          <Route path="/cash-deposit" element={<CashDeposit />}></Route>
+          <Route path="/cheque-deposit" element={<ChequeDeposit />}></Route>
+          {/* <Route path="/modal" element={<Modal />}></Route> */}
           <Route
             path="/booking-authorization"
             element={<BookingAuthorization />}
           ></Route>
-          <Route path="/cash-deposit" element={<CashDeposit />}></Route>
-          <Route path="/cheque-deposit" element={<ChequeDeposit />}></Route>
-          <Route path="/booking" element={<Booking />}></Route>
-          {/* <Route path="/modal" element={<Modal />}></Route> */}
-          <Route
-            path="/cancelled-booking"
-            element={<CancelledBooking />}
-          ></Route>
-          <Route path="/broker" element={<Broker />}></Route>
-          <Route path="/edit-broker/:id" element={<EditBroker />} />
-          <Route path="/edit-projectstage" element={<EditProjectStage />} />
-          <Route path="/view-booking" element={<ViewBooking />}></Route>
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/permission" element={<Permission />} />
-          <Route path="/addnewpermission" element={<AddNewPermission />} />
-          <Route path="/editpermissions/:id" element={<EditPermissions />} />
-          <Route path="/add-projects" element={<AddProjects />} />
-          <Route path="/edit-projects" element={<EditProjects />} />
-          <Route path="/unit/:id" element={<Unit />} />
-          <Route path="/edit-unit" element={<EditUnit />} />
+          
           <Route
             path="/partners"
             element={
@@ -175,13 +327,13 @@ const App = () => {
               />
             }
           />
+
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/add-expenses" element={<AddExpenses />} />
           <Route path="/edit-expenses" element={<EditExpenses />} />
           <Route path="/income" element={<Income />} />
           <Route path="/add-income" element={<AddIncome />} />
           <Route path="/edit-income" element={<EditIncome />} />
-
           <Route path="/report" element={<Report />} />
           <Route path="/add-customer-income" element={<AddCustomerIncome />} />
           <Route path="/add-partner-income" element={<AddPartnerIncome />} />
@@ -194,10 +346,6 @@ const App = () => {
           <Route
             path="/partner-reimbursement"
             element={<PartnerReimbursement />}
-          />
-          <Route
-            path="/view-cancelled-booking"
-            element={<ViewCancelledBooking />}
           />
         </Routes>
       </Router>
