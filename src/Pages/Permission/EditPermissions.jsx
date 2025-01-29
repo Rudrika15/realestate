@@ -56,7 +56,7 @@ function EditPermissions() {
     let isValid = true;
 
     if (!permissionName.trim()) {
-      setPermissionNameError("Name is required");
+      setPermissionNameError("Permission Name is required");
       isValid = false;
     } else {
       setPermissionNameError("");

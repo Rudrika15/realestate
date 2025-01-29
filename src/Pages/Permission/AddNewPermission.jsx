@@ -6,77 +6,75 @@ import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";  
+import axios from "axios";
 import { AddPermissions } from "../../Api/Apikiran";
 
 function AddNewPermission() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-  const [permissionName, setPermissionName] = useState("");  
+  const [permissionName, setPermissionName] = useState("");
   const [permissionNameError, setPermissionNameError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen); 
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleTopbar = () => setIsTopbarOpen(!isTopbarOpen);
-
   const handleInputChange = (e) => {
-    setPermissionName(e.target.value);
-  };
+    const value = e.target.value;
+    if (!/\d/.test(value)) {
+        setPermissionName(value);
+        setPermissionNameError(false);
+    }
+};
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate input
     if (!permissionName.trim()) {
         setPermissionNameError(true);
         return;
     }
-    setPermissionNameError(false);
 
+    setPermissionNameError(false);
     setLoading(true);
 
+
     try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            toast.error("Token is missing. Please login again.");
-            return;
-        }
-
-        
-        const response = await axios.post(
-            AddPermissions,  
-            { permission: permissionName }, 
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-
-        console.log(response.data); 
-
-        
-        if (response.data && response.data.status) {
-            toast.success("Permission added successfully!");
-            setPermissionName(""); 
-            setTimeout(() => {
-                navigate("/permission");
-            }, 1000);
-        } else {
-            toast.error(response.data.message || "Failed to add permission");
-        }
-    } catch (error) {
-        console.error(error); 
-        if (error.response && error.response.status === 401) {
-          navigate('/'); 
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Token is missing. Please login again.");
+        return;
       }
-        toast.error("Failed to add permission. Please try again.");
+
+      const response = await axios.post(
+        AddPermissions,
+        { permission: permissionName },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data && response.data.status) {
+        toast.success("Permission added successfully!");
+        setPermissionName("");
+        setTimeout(() => {
+          navigate("/permission");
+        }, 1000);
+      } else {
+        toast.error(response.data.message || "Failed to add permission");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+      toast.error("Failed to add permission. Please try again.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
   return (
     <>
@@ -113,11 +111,11 @@ function AddNewPermission() {
                           }`}
                           placeholder="Permission Name"
                           value={permissionName}
-                          onChange={handleInputChange} 
+                          onChange={handleInputChange}
                         />
                         {permissionNameError && (
                           <div className="invalid-feedback">
-                            Please enter a permission name
+                            Permission Name is required.
                           </div>
                         )}
                       </div>

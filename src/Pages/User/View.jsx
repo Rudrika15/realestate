@@ -7,6 +7,8 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { deleteUsers, getUsers } from "../../Api/DevanshiApi";
+import { rolesWisePermissions } from "../../Api/ApiDipak";
+import Allpermissions from "../Common component/Allpermissions";
 
 const View = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,6 +18,9 @@ const View = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
+  
+  const [permissions, setPermissions] = useState([]);
+  const hasPermission = (permission) => permissions.includes(permission);
 
   const fetchUsers = async (page = 1) => {
     setLoading(true);
@@ -97,14 +102,19 @@ const View = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    const fetchData = async () => {
+      await fetchUsers();
+    };
 
+    fetchData();
+  }, []);
   return (
     <>
       <Helmet>
         <title>React Estate | User</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissions} />
+
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
@@ -119,11 +129,13 @@ const View = () => {
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
                     <h6 className="mb-4">User List</h6>
-                    <Link to="/add-user" className="">
-                      <h6 className="mb-4">
-                        <i className="bi bi-plus-circle-fill"></i> New User
-                      </h6>
-                    </Link>
+                    {hasPermission("add-user") && (
+                      <Link to="/add-user" className="">
+                        <h6 className="mb-4">
+                          <i className="bi bi-plus-circle-fill"></i> New User
+                        </h6>
+                      </Link>
+                    )}
                   </div>
                   {loading ? (
                     <div className="text-center">
@@ -150,19 +162,23 @@ const View = () => {
                               <td>{user.id}</td>
                               <td>{user.userName}</td>
                               <td>
-                                <Link
-                                  to=""
-                                  className="btn btn-warning btn-sm me-2"
-                                >
-                                  <i className="fas fa-edit"></i>
-                                </Link>
-                                <Link
-                                  to=""
-                                  onClick={() => handleDelete(user.id)}
-                                  className="btn btn-danger btn-sm"
-                                >
-                                  <i className="fas fa-trash"></i>
-                                </Link>
+                                {hasPermission("edit-user") && (
+                                  <Link
+                                    to=""
+                                    className="btn btn-warning btn-sm me-2"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </Link>
+                                )}
+                                {hasPermission("delete-user") && (
+                                  <Link
+                                    to=""
+                                    onClick={() => handleDelete(user.id)}
+                                    className="btn btn-danger btn-sm"
+                                  >
+                                    <i className="fas fa-trash"></i>
+                                  </Link>
+                                )}
                               </td>
                             </tr>
                           ))}

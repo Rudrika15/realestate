@@ -9,29 +9,35 @@ import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { getProject } from "../../Api/DevanshiApi";
+import Allpermissions from "../Common component/Allpermissions";
 
 const ViewBooking = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
-  const navigate = useNavigate()
-  const [data, setData] = useState([
-    {
-      No: 1,
-      date: '12/2/2024',
-      firstName: 'Alice',
-      lastName: 'Johnson',
-      surname: 'Smith',
-      saleDeedAmount: '500000',
-      receivedSdAmount: '250000',
-      pendingSdAmount: '250000',
-      extraWorkAmount: '10000',
-      receivedEwAmount: '5000',
-      pendingEwAmount: '5000',
-      otherWorkAmount: '1000',
-      receivedOtAmount: '1500',
-      pendingOtAmount: '1500'
-    },
-  ].sort((a, b) => a.name.localeCompare(b.name)));
+  const navigate = useNavigate();
+
+  const [permissions, setPermissions] = useState([]);
+  const hasPermission = (permission) => permissions.includes(permission);
+  const [data, setData] = useState(
+    [
+      {
+        No: 1,
+        date: "12/2/2024",
+        firstName: "Alice",
+        lastName: "Johnson",
+        surname: "Smith",
+        saleDeedAmount: "500000",
+        receivedSdAmount: "250000",
+        pendingSdAmount: "250000",
+        extraWorkAmount: "10000",
+        receivedEwAmount: "5000",
+        pendingEwAmount: "5000",
+        otherWorkAmount: "1000",
+        receivedOtAmount: "1500",
+        pendingOtAmount: "1500",
+      },
+    ].sort((a, b) => a.name.localeCompare(b.name))
+  );
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -66,21 +72,19 @@ const ViewBooking = () => {
   // // useEffect(() => {
   // //   getData();
   // }, [data]);
-
-
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState([]);
 
   const fetchProject = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        toast.error('Authentication token is missing!');
-        window.location.href = '/';
+        toast.error("Authentication token is missing!");
+        window.location.href = "/";
         return;
       }
 
-      console.log('Token:', token);
+      console.log("Token:", token);
 
       const response = await axios.get(getProject, {
         headers: {
@@ -95,11 +99,10 @@ const ViewBooking = () => {
     } catch (error) {
       console.error("Error fetching peojects:", error);
       if (error.response && error.response.status === 401) {
-        navigate('/');
+        navigate("/");
       }
     }
   };
-
 
   useEffect(() => {
     fetchProject();
@@ -115,6 +118,8 @@ const ViewBooking = () => {
       <Helmet>
         <title>React Estate | Booking</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissions} />
+
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
@@ -134,9 +139,14 @@ const ViewBooking = () => {
                       <h6 className="mb-4">Booking List</h6>
                     </div>
                     <div className="p-2 ">
-                      <Link to="/booking" className="">
-                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> New Booking</h6>
-                      </Link>
+                      {hasPermission("new-booking") && (
+                        <Link to="/booking" className="">
+                          <h6 className="mb-4">
+                            <i className="bi bi-plus-circle-fill"></i> New
+                            Booking
+                          </h6>
+                        </Link>
+                      )}
                     </div>
                   </div>
                   <div className="row mb-4 d-flex align-items-center justify-content-between">
@@ -191,21 +201,42 @@ const ViewBooking = () => {
                                 <td>{index + 1}</td>
                                 <td>{book.date}</td>
                                 <td>{`${book.firstName} ${book.lastName} ${book.surname}`}</td>
-                                <td>{formatIndianNumbering(book.saleDeedAmount)}</td>
-                                <td>{formatIndianNumbering(book.receivedSdAmount)}</td>
-                                <td>{formatIndianNumbering(book.pendingSdAmount)}</td>
-                                <td>{formatIndianNumbering(book.extraWorkAmount)}</td>
-                                <td>{formatIndianNumbering(book.receivedEwAmount)}</td>
-                                <td>{formatIndianNumbering(book.pendingEwAmount)}</td>
-                                <td>{formatIndianNumbering(book.otherWorkAmount)}</td>
-                                <td>{formatIndianNumbering(book.receivedOtAmount)}</td>
-                                <td>{formatIndianNumbering(book.pendingOtAmount)}</td>
                                 <td>
-                                  <Link to="/view-cancelled-booking">
-                                    <button type="button" className="btn shadow-sm text-dark">
+                                  {formatIndianNumbering(book.saleDeedAmount)}
+                                </td>
+                                <td>
+                                  {formatIndianNumbering(book.receivedSdAmount)}
+                                </td>
+                                <td>
+                                  {formatIndianNumbering(book.pendingSdAmount)}
+                                </td>
+                                <td>
+                                  {formatIndianNumbering(book.extraWorkAmount)}
+                                </td>
+                                <td>
+                                  {formatIndianNumbering(book.receivedEwAmount)}
+                                </td>
+                                <td>
+                                  {formatIndianNumbering(book.pendingEwAmount)}
+                                </td>
+                                <td>
+                                  {formatIndianNumbering(book.otherWorkAmount)}
+                                </td>
+                                <td>
+                                  {formatIndianNumbering(book.receivedOtAmount)}
+                                </td>
+                                <td>
+                                  {formatIndianNumbering(book.pendingOtAmount)}
+                                </td>
+                                <td>
+                                {hasPermission("action-booking") && (<Link to="/view-cancelled-booking">
+                                    <button
+                                      type="button"
+                                      className="btn shadow-sm text-dark"
+                                    >
                                       Action
                                     </button>
-                                  </Link>
+                                  </Link>)}
                                 </td>
                               </tr>
                             ))}
@@ -214,7 +245,11 @@ const ViewBooking = () => {
                     </div>
                   ) : (
                     <div className="text-center">
-                      <img src="img/image_2024_12_26T09_23_33_935Z.png" alt="No Users" className="img-fluid w-25 h-25" />
+                      <img
+                        src="img/image_2024_12_26T09_23_33_935Z.png"
+                        alt="No Users"
+                        className="img-fluid w-25 h-25"
+                      />
                       <p className="text-dark">No Booking Data Found</p>
                     </div>
                   )}
@@ -225,10 +260,10 @@ const ViewBooking = () => {
         </div>
       </div>
       <style jsx="true">{`
-        .btn{
+        .btn {
           background-color: #a2bdba;
         }
-      `}</style >
+      `}</style>
     </>
   );
 };

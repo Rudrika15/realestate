@@ -7,11 +7,15 @@ import axios from "axios";
 import { PermissionFetch, PermissionDelete } from "../../Api/Apikiran";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import Allpermissions from "../Common component/Allpermissions";
 
 function Permission() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [permissions, setPermissions] = useState([]);
+  const [permissionss, setPermissionss] = useState([]);
+  const hasPermission = (permission) => permissionss.includes(permission);
+
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -36,7 +40,13 @@ function Permission() {
         },
       });
       if (response.data.status === true) {
-        setPermissions(response.data.data);
+        const transformedPermissions = response.data.data.map((permission) => ({
+          ...permission,
+          permissionName: permission.permissionName
+            .toLowerCase()
+            .replace(/\s+/g, "-"),
+        }));
+        setPermissions(transformedPermissions);
       } else {
         toast.error("Failed to fetch permission data!");
       }
@@ -107,6 +117,8 @@ function Permission() {
       <Helmet>
         <title>React Estate | Permission</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissionss} />
+
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
@@ -126,11 +138,14 @@ function Permission() {
                       <h6 className="mb-4">Permission</h6>
                     </div>
                     <div className="p-2">
-                      <Link to="/addnewpermission" className="">
-                        <h6 className="mb-4">
-                          <i className="bi bi-plus-circle-fill"></i> New Permission
-                        </h6>
-                      </Link>
+                      {hasPermission("new-permissions") && (
+                        <Link to="/addnewpermission" className="">
+                          <h6 className="mb-4">
+                            <i className="bi bi-plus-circle-fill"></i> New
+                            Permission
+                          </h6>
+                        </Link>
+                      )}
                     </div>
                   </div>
                   <div className="table-responsive text-center">
@@ -149,25 +164,28 @@ function Permission() {
                             <tr key={permission.id}>
                               <td>{permission.permissionName}</td>
                               <td>
-                                <button
-                                  className="btn btn-warning btn-sm me-2"
-                                  onClick={() =>
-                                    handleEditPermission(permission.id)
-                                  }
-                                  aria-label={`Edit permission ${permission.permissionName}`}
-                                >
-                                  <i className="fas fa-edit"></i>
-                                </button>
-
-                                <button
-                                  className="btn btn-danger btn-sm"
-                                  onClick={() =>
-                                    handleDeletePermission(permission.id)
-                                  }
-                                  aria-label={`Delete permission ${permission.permissionName}`}
-                                >
-                                  <i className="fas fa-trash"></i>
-                                </button>
+                                {hasPermission("edit-permissions") && (
+                                  <button
+                                    className="btn btn-warning btn-sm me-2"
+                                    onClick={() =>
+                                      handleEditPermission(permission.id)
+                                    }
+                                    aria-label={`Edit permission ${permission.permissionName}`}
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </button>
+                                )}
+                                {hasPermission("delete-permissions") && (
+                                  <button
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() =>
+                                      handleDeletePermission(permission.id)
+                                    }
+                                    aria-label={`Delete permission ${permission.permissionName}`}
+                                  >
+                                    <i className="fas fa-trash"></i>
+                                  </button>
+                                )}
                               </td>
                             </tr>
                           ))}

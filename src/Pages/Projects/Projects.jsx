@@ -9,6 +9,7 @@ import axios from "axios";
 import { getProject } from "../../Api/ApiDipak";
 import Multiselect from "multiselect-react-dropdown";
 import { deleteProject } from "../../Api/DevanshiApi";
+import Allpermissions from "../Common component/Allpermissions";
 
 const Projects = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,6 +17,9 @@ const Projects = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState([]);
+
+  const [permissions, setPermissions] = useState([]);
+  const hasPermission = (permission) => permissions.includes(permission);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -29,41 +33,35 @@ const Projects = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      setLoading(true);
-      try {
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-          navigate("/");
-
-          return;
-        }
-
-        const response = await axios.get(getProject, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.data.status === true && response.data.data) {
-          setData(response.data.data);
-        } else {
-          console.error("Projects data not found in the response.");
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          navigate("/");
-        }
-      } finally {
-        setLoading(false);
+  const fetchProjects = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/");
+        return;
       }
-    };
 
-    fetchProjects();
-  }, [navigate]);
+      const response = await axios.get(getProject, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.data.status === true && response.data.data) {
+        toast.success(response.data.message);
+        setData(response.data.data);
+      } else {
+        console.error("Projects data not found in the response.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -110,8 +108,7 @@ const Projects = () => {
             confirmButtonColor: "#3085d6",
           });
           setProjects(projects.filter((item) => item.id !== id));
-        } else {
-          toast.error("Failed to delete user!");
+          toast.success(response.data.message);
         }
       } catch (error) {
         console.error("Error deleting user:", error);
@@ -123,11 +120,19 @@ const Projects = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchProjects();
+    };
+    fetchData();
+  }, []);
   return (
     <>
       <Helmet>
         <title>React Estate | Projects</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissions} />
+
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
@@ -146,11 +151,14 @@ const Projects = () => {
                       <h6 className="mb-4">Projects</h6>
                     </div>
                     <div className="p-2">
-                      <Link to="/add-projects" className="">
-                        <h6 className="mb-4">
-                          <i className="bi bi-plus-circle-fill"></i> New Project
-                        </h6>
-                      </Link>
+                      {hasPermission("new-project") && (
+                        <Link to="/add-projects" className="">
+                          <h6 className="mb-4">
+                            <i className="bi bi-plus-circle-fill"></i> New
+                            Project
+                          </h6>
+                        </Link>
+                      )}
                     </div>
                   </div>
                   {loading ? (
@@ -178,31 +186,40 @@ const Projects = () => {
                               <td>{project.id}</td>
                               <td>{project.projectName}</td>
                               <td>
-                                <Link
-                                  to={`/unit/${project.id}`}
-                                  className="btn btn-info btn-sm me-2"
-                                >
-                                  <i className="fas fa-eye"></i>
-                                </Link>
-                                <Link
-                                  to="/edit-projects"
-                                  className="btn btn-warning btn-sm me-2"
-                                >
-                                  <i className="fas fa-edit"></i>
-                                </Link>
-                                <Link
-                                  to=""
-                                  onClick={() => handleDelete(project.id)}
-                                  className="btn btn-danger btn-sm"
-                                >
-                                  <i className="fas fa-trash"></i>
-                                </Link>&nbsp;&nbsp;
-                                <Link
-                                  to={`/project-stage/${project.id}`}
-                                  className="btn btn-secondary btn-sm"
-                                >
-                                  <i className="bi bi-bar-chart"></i>
-                                </Link>
+                                {hasPermission("unit-project") && (
+                                  <Link
+                                    to={`/unit/${project.id}`}
+                                    className="btn btn-info btn-sm me-2"
+                                  >
+                                    <i className="fas fa-eye"></i>
+                                  </Link>
+                                )}
+                                {hasPermission("edit-project") && (
+                                  <Link
+                                    to="/edit-projects"
+                                    className="btn btn-warning btn-sm me-2"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </Link>
+                                )}
+                                {hasPermission("delete-project") && (
+                                  <Link
+                                    to=""
+                                    onClick={() => handleDelete(project.id)}
+                                    className="btn btn-danger btn-sm"
+                                  >
+                                    <i className="fas fa-trash"></i>
+                                  </Link>
+                                )}
+                                &nbsp;&nbsp;
+                                {hasPermission("project-stage") && (
+                                  <Link
+                                    to={`/project-stage/${project.id}`}
+                                    className="btn btn-secondary btn-sm"
+                                  >
+                                    <i className="bi bi-bar-chart"></i>
+                                  </Link>
+                                )}
                               </td>
                             </tr>
                           ))}
@@ -211,8 +228,9 @@ const Projects = () => {
                       <nav aria-label="Page navigation">
                         <ul className="pagination justify-content-end">
                           <li
-                            className={`page-item ${currentPage === 1 ? "disabled" : ""
-                              }`}
+                            className={`page-item ${
+                              currentPage === 1 ? "disabled" : ""
+                            }`}
                           >
                             <button
                               className="page-link"
@@ -225,8 +243,9 @@ const Projects = () => {
                           {Array.from({ length: totalPages }, (_, i) => (
                             <li
                               key={i + 1}
-                              className={`page-item ${currentPage === i + 1 ? "active" : ""
-                                }`}
+                              className={`page-item ${
+                                currentPage === i + 1 ? "active" : ""
+                              }`}
                             >
                               <button
                                 className="page-link"
@@ -238,8 +257,9 @@ const Projects = () => {
                           ))}
 
                           <li
-                            className={`page-item ${currentPage === totalPages ? "disabled" : ""
-                              }`}
+                            className={`page-item ${
+                              currentPage === totalPages ? "disabled" : ""
+                            }`}
                           >
                             <button
                               className="page-link"

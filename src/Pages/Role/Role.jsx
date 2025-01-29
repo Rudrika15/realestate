@@ -10,6 +10,7 @@ import { DeleteRole, ViewRoleData } from "../../Api/Apikiran";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { RoleHasPermission } from "../../Api/Apikiran";
+import Allpermissions from "../Common component/Allpermissions";
 
 const Role = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -17,8 +18,11 @@ const Role = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const [permissions, setPermissions] = useState([]);
-  const navigate = useNavigate()
+  const hasPermission = (permission) => permissions.includes(permission);
+
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -46,7 +50,7 @@ const Role = () => {
     } catch (error) {
       setError("There was an error fetching the data.");
       if (error.response && error.response.status === 401) {
-        navigate('/');
+        navigate("/");
       }
     } finally {
       setLoading(false);
@@ -90,7 +94,7 @@ const Role = () => {
       } catch (error) {
         toast.error("An error occurred while deleting the role!");
         if (error.response && error.response.status === 401) {
-          navigate('/');
+          navigate("/");
         }
       }
     }
@@ -102,6 +106,8 @@ const Role = () => {
       <Helmet>
         <title>React Estate | Role</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissions} />
+
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
@@ -115,11 +121,13 @@ const Role = () => {
                       <h6 className="mb-4">Role List</h6>
                     </div>
                     <div className="p-2">
-                      <Link to="/add-role" className="">
-                        <h6 className="mb-4">
-                          <i className="bi bi-plus-circle-fill"></i> New Role
-                        </h6>
-                      </Link>
+                      {hasPermission("new-role") && (
+                        <Link to="/add-role" className="">
+                          <h6 className="mb-4">
+                            <i className="bi bi-plus-circle-fill"></i> New Role
+                          </h6>
+                        </Link>
+                      )}
                     </div>
                   </div>
                   {data.length > 0 ? (
@@ -171,18 +179,22 @@ const Role = () => {
                               </td> */}
 
                               <td>
-                                <Link
-                                  to={`/edit-role/${role.id}`}
-                                  className="btn btn-warning btn-sm me-2"
-                                >
-                                  <i className="fas fa-edit"></i>
-                                </Link>
-                                <Link
-                                  onClick={() => handleDelete(role.id)}
-                                  className="btn btn-danger btn-sm"
-                                >
+                                {hasPermission("edit-role") && (
+                                  <Link
+                                    to={`/edit-role/${role.id}`}
+                                    className="btn btn-warning btn-sm me-2"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </Link>
+                                )}
+                                {hasPermission("delete-role") && (
+                                  <Link
+                                    onClick={() => handleDelete(role.id)}
+                                    className="btn btn-danger btn-sm"
+                                  >
                                     <i className="fas fa-trash"></i>
-                                </Link>
+                                  </Link>
+                                )}
                               </td>
                             </tr>
                           ))}

@@ -6,19 +6,18 @@ import { Helmet } from "react-helmet";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
-import {
-  getPartner,
-  partnerPartnerDelete,
-  rolesWisePermissions,
-} from "../../Api/ApiDipak";
+import { getPartner, partnerPartnerDelete } from "../../Api/ApiDipak";
 import axios from "axios";
+import Allpermissions from "../Common component/Allpermissions";
 
 const Partners = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [partners, setPartners] = useState([]);
   const navigate = useNavigate();
+
   const [permissions, setPermissions] = useState([]);
+  const hasPermission = (permission) => permissions.includes(permission);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -26,27 +25,6 @@ const Partners = () => {
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
   };
-
-  const fetchPermissions = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(rolesWisePermissions, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      setPermissions(response.data.data.map((perm) => perm.name));
-    } catch (error) {
-      console.error("Error fetching permissions:", error);
-    }
-  };
-  // console.log(permissions);
-  useEffect(() => {
-    fetchPermissions();
-  }, []);
-  const hasPermission = (permission) => permissions.includes(permission);
-
   const fetchPartner = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -63,6 +41,7 @@ const Partners = () => {
 
       if (response.data.status === true && response.data.data) {
         setPartners(response.data.data);
+        // toast.success(response.data.message);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -70,10 +49,12 @@ const Partners = () => {
       }
     }
   };
-
   useEffect(() => {
-    fetchPartner();
-  }, [navigate]);
+    const fetchData = async () => {
+      await fetchPartner();
+    };
+    fetchData();
+  }, []);
 
   const handleDeletePartner = async (id) => {
     const confirmDelete = await Swal.fire({
@@ -112,7 +93,7 @@ const Partners = () => {
             icon: "success",
             confirmButtonColor: "#3085d6",
           });
-          // toast.success(response.data.message);
+          toast.success(response.data.message);
           setPartners(partners.filter((partner) => partner.id !== id));
         } else {
           toast.error("Failed to delete project.");
@@ -133,6 +114,8 @@ const Partners = () => {
       <Helmet>
         <title>React Estate | Partners</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissions} />
+
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
@@ -152,7 +135,7 @@ const Partners = () => {
                       <h6 className="mb-4">Partners List</h6>
                     </div>
                     <div className="p-2">
-                      {hasPermission("Add-partner") && (
+                      {hasPermission("add-partner") && (
                         <Link to="/add-partners">
                           <h6 className="mb-4">
                             <i className="bi bi-plus-circle-fill"></i> New

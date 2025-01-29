@@ -8,6 +8,7 @@ import { addBroker, deleteBroker, getBroker } from "../../Api/DevanshiApi";
 import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
+import Allpermissions from "../Common component/Allpermissions";
 
 function Broker() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -24,9 +25,12 @@ function Broker() {
   const [modalType, setModalType] = useState("Add");
   const navigate = useNavigate();
 
+  const [permissions, setPermissions] = useState([]);
+  const hasPermission = (permission) => permissions.includes(permission);
+
   const brokerNameRef = useRef();
   const brokerContactRef = useRef();
-  const brokerAddressRef = useRef(); 
+  const brokerAddressRef = useRef();
   const modalSubmitRef = useRef();
 
   const fetchBroker = async () => {
@@ -138,7 +142,9 @@ function Broker() {
       setBrokerMobileNumberError("Broker mobile number is required!");
       isValid = false;
     } else if (!phoneRegex.test(brokerMobileNumber)) {
-      setBrokerMobileNumberError("Mobile number must be a valid 10 digit number.");
+      setBrokerMobileNumberError(
+        "Mobile number must be a valid 10 digit number."
+      );
       isValid = false;
     } else {
       setBrokerMobileNumberError("");
@@ -200,6 +206,7 @@ function Broker() {
       <Helmet>
         <title>React Estate | Brokers</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissions} />
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
@@ -214,11 +221,13 @@ function Broker() {
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
                     <h6 className="mb-4">Broker List</h6>
-                    <Link onClick={toggleModal} className="">
-                      <h6 className="mb-4">
-                        <i className="bi bi-plus-circle-fill"></i> New Broker
-                      </h6>
-                    </Link>
+                    {hasPermission("new-broker") && (
+                      <Link onClick={toggleModal} className="">
+                        <h6 className="mb-4">
+                          <i className="bi bi-plus-circle-fill"></i> New Broker
+                        </h6>
+                      </Link>
+                    )}
                   </div>
                   {loading ? (
                     <div className="text-center">
@@ -247,19 +256,23 @@ function Broker() {
                               <td>{broker.brokerAddress}</td>
                               <td>{broker.brokerMobileNumber}</td>
                               <td>
-                                <Link
-                                  to={`/edit-broker/${broker.id}`}
-                                  className="btn btn-warning btn-sm me-2"
-                                >
-                                  <i className="fas fa-edit"></i>
-                                </Link>
-                                <Link
-                                  to=""
-                                  onClick={() => handleDelete(broker.id)}
-                                  className="btn btn-danger btn-sm"
-                                >
-                                  <i className="fas fa-trash"></i>
-                                </Link>
+                                {hasPermission("edit-broker") && (
+                                  <Link
+                                    to={`/edit-broker/${broker.id}`}
+                                    className="btn btn-warning btn-sm me-2"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </Link>
+                                )}
+                                {hasPermission("delete-broker") && (
+                                  <Link
+                                    to=""
+                                    onClick={() => handleDelete(broker.id)}
+                                    className="btn btn-danger btn-sm"
+                                  >
+                                    <i className="fas fa-trash"></i>
+                                  </Link>
+                                )}
                               </td>
                             </tr>
                           ))}
@@ -321,7 +334,9 @@ function Broker() {
                     value={brokerMobileNumber}
                     onChange={(e) => setBrokerMobileNumber(e.target.value)}
                   />
-                  {brokerMobileNumberError && <p className="text-danger">{brokerMobileNumberError}</p>}
+                  {brokerMobileNumberError && (
+                    <p className="text-danger">{brokerMobileNumberError}</p>
+                  )}
                 </div>
               </div>
               <div className="row pt-4">

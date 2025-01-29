@@ -10,8 +10,8 @@ import { Spinner } from "react-bootstrap";
 import Swal from "sweetalert2";
 import axios from "axios";
 import {
-  editPartner, // fetch project and per.
   fetchPartner, // fetch partner
+  editPartner, // fetch project and per.
   getProject, // fetch partner drop down
   deletePartner, // partner wise data delete
   updatePartner,
@@ -43,6 +43,7 @@ const EditPartners = () => {
         },
       });
       setPartner({ name: response.data.data.partnerName || "" });
+      toast.success(response.data.message);
     } catch (error) {
       console.error("Error fetching partner:", error);
       if (error.response && error.response.status === 401) {
@@ -70,6 +71,7 @@ const EditPartners = () => {
 
       if (response.data.status === true && response.data.data) {
         setProjects(response.data.data);
+        toast.success(response.data.message);
       } else {
         console.error("Projects data not found in the response.");
       }
@@ -178,7 +180,6 @@ const EditPartners = () => {
     return isValid;
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateFields()) {
@@ -186,25 +187,24 @@ const EditPartners = () => {
     }
     const percentages = dynamicFields.map((field) => field.percentage);
     const projectIds = dynamicFields.map((field) => {
-
       const project = projects.find(
         (project) => project.projectName === field.projectName
       );
-      return project ? project.id : null; 
+      return project ? project.id : null;
     });
     const filteredProjectIds = projectIds.filter((id) => id !== null);
-  
+
     const PartnerData = {
       // partner_id: id,
       // partner_name: partner.name,
-      percentages,      
-      projectIds: filteredProjectIds, 
+      percentages,
+      projectIds: filteredProjectIds,
     };
-  
+
     console.log(PartnerData);
-    
+
     const token = localStorage.getItem("token");
-  
+
     try {
       if (!token) {
         toast.error("Token is missing or expired.");
@@ -218,11 +218,10 @@ const EditPartners = () => {
       });
 
       console.log(response.data);
-      
+
       if (response.data.status === true) {
         toast.success("Partner updated successfully!");
         navigate("/partners");
-        
       } else {
         toast.error("Failed to update partner.");
       }
@@ -233,8 +232,9 @@ const EditPartners = () => {
       }
     }
   };
-  
-  const handleDelete = async (id) => {    // project wise delete
+
+  const handleDelete = async (id) => {
+    // project wise delete
     // console.log("Deleting project with ID:", id);
     const confirmDelete = await Swal.fire({
       title: "Are You Sure You Want to Delete?",
@@ -272,7 +272,7 @@ const EditPartners = () => {
             icon: "success",
             confirmButtonColor: "#3085d6",
           });
-          // toast.success(response.data.message);
+          toast.success(response.data.message);
           setDynamicFields(dynamicFields.filter((field) => field.id !== id));
         } else {
           toast.error("Failed to delete project.");

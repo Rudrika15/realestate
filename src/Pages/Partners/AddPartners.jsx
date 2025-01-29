@@ -107,6 +107,7 @@ function AddPartners() {
 
         if (response.data.status === true && response.data.data) {
           setProjects(response.data.data);
+          toast.success(response.data.message);
         } else {
           console.error("Projects data not found in the response.");
         }
