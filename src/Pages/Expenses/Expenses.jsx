@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { Helmet } from "react-helmet";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
+import Allpermissions from "../Common component/Allpermissions";
 
 const Expenses = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -13,8 +14,11 @@ const Expenses = () => {
   const [selectedExpenseHead, setSelectedExpenseHead] = useState("");
   const [selectedExpensesDate, setselectedExpensesDate] = useState("");
   const [expandedVoucher, setExpandedVoucher] = useState(null);
-  const [showAll, setShowAll] = useState(false); 
+  const [showAll, setShowAll] = useState(false);
   const [hideAll, setHideAll] = useState(false);
+
+  const [permissions, setPermissions] = useState([]);
+  const hasPermission = (permission) => permissions.includes(permission);
 
   const [expenses, setExpenses] = useState([
     {
@@ -164,17 +168,17 @@ const Expenses = () => {
 
   const handleShowAllChange = (e) => {
     setShowAll(e.target.checked);
-    setHideAll(false); 
+    setHideAll(false);
     if (e.target.checked) {
-      setExpandedVoucher(null); 
+      setExpandedVoucher(null);
     }
   };
 
   const handleHideAllChange = (e) => {
     setHideAll(e.target.checked);
-    setShowAll(false); 
+    setShowAll(false);
     if (e.target.checked) {
-      setExpandedVoucher(null); 
+      setExpandedVoucher(null);
     }
   };
 
@@ -183,6 +187,7 @@ const Expenses = () => {
       <Helmet>
         <title>React Estate | Expenses</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissions} />
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
@@ -201,11 +206,14 @@ const Expenses = () => {
                       <h6 className="mb-4">Expenses List</h6>
                     </div>
                     <div className="p-2">
-                      <Link to="/add-expenses" className="mb-4">
-                        <h6>
-                          <i className="bi bi-plus-circle-fill"></i> New Expense
-                        </h6>
-                      </Link>
+                      {hasPermission("new-expenses") && (
+                        <Link to="/add-expenses" className="mb-4">
+                          <h6>
+                            <i className="bi bi-plus-circle-fill"></i> New
+                            Expense
+                          </h6>
+                        </Link>
+                      )}
                     </div>
                   </div>
 
@@ -268,7 +276,6 @@ const Expenses = () => {
                         <input
                           type="checkbox"
                           className="form-check-input"
-
                           checked={hideAll}
                           onChange={handleHideAllChange}
                         />
@@ -285,7 +292,9 @@ const Expenses = () => {
                                     textAlign: "start",
                                   }}
                                   onClick={() =>
-                                    !showAll && !hideAll && toggleVoucherDetails(voucher.voucherNo)
+                                    !showAll &&
+                                    !hideAll &&
+                                    toggleVoucherDetails(voucher.voucherNo)
                                   }
                                 >
                                   <td colSpan="5">
@@ -297,49 +306,73 @@ const Expenses = () => {
                                   </td>
                                 </tr>
 
-                                {(expandedVoucher === voucher.voucherNo || showAll) && !hideAll && (
-                                  <tr>
-                                    <td colSpan="6">
-                                      <table className="table table-bordered text-center">
-                                        <thead>
-                                          <tr>
-                                            <th scope="col">Voucher No</th>
-                                            <th scope="col">Voucher Expense Date</th>
-                                            <th scope="col">Expense Head</th>
-                                            <th scope="col">Narration</th>
-                                            <th scope="col">Amount</th>
-                                            <th scope="col">Action</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          {voucher.expenses.map((expense) => (
-                                            <tr key={expense.id}>
-                                              <td>{expense.voucherNo || "N/A"}</td>
-                                              <td>{expense.voucherDate || "N/A"}</td>
-                                              <td>{expense.expenseHead || "N/A"}</td>
-                                              <td>{expense.narration || "N/A"}</td>
-                                              <td>{expense.amount || "N/A"}</td>
-                                              <td>
-                                                <Link
-                                                  to={"/edit-expenses"}
-                                                  className="btn btn-warning btn-sm me-2"
-                                                >
-                                                  <i className="fas fa-edit"></i>
-                                                </Link>
-                                                <button
-                                                  onClick={() => handleDelete(expense.id)}
-                                                  className="btn btn-danger btn-sm"
-                                                >
-                                                  <i className="fas fa-trash"></i>
-                                                </button>
-                                              </td>
+                                {(expandedVoucher === voucher.voucherNo ||
+                                  showAll) &&
+                                  !hideAll && (
+                                    <tr>
+                                      <td colSpan="6">
+                                        <table className="table table-bordered text-center">
+                                          <thead>
+                                            <tr>
+                                              <th scope="col">Voucher No</th>
+                                              <th scope="col">
+                                                Voucher Expense Date
+                                              </th>
+                                              <th scope="col">Expense Head</th>
+                                              <th scope="col">Narration</th>
+                                              <th scope="col">Amount</th>
+                                              <th scope="col">Action</th>
                                             </tr>
-                                          ))}
-                                        </tbody>
-                                      </table>
-                                    </td>
-                                  </tr>
-                                )}
+                                          </thead>
+                                          <tbody>
+                                            {voucher.expenses.map((expense) => (
+                                              <tr key={expense.id}>
+                                                <td>
+                                                  {expense.voucherNo || "N/A"}
+                                                </td>
+                                                <td>
+                                                  {expense.voucherDate || "N/A"}
+                                                </td>
+                                                <td>
+                                                  {expense.expenseHead || "N/A"}
+                                                </td>
+                                                <td>
+                                                  {expense.narration || "N/A"}
+                                                </td>
+                                                <td>
+                                                  {expense.amount || "N/A"}
+                                                </td>
+                                                <td>
+                                                  {hasPermission(
+                                                    "edit-expenses"
+                                                  ) && (
+                                                    <Link
+                                                      to={"/edit-expenses"}
+                                                      className="btn btn-warning btn-sm me-2"
+                                                    >
+                                                      <i className="fas fa-edit"></i>
+                                                    </Link>
+                                                  )}
+                                                  {hasPermission(
+                                                    "delete-expenses"
+                                                  ) && (
+                                                    <button
+                                                      onClick={() =>
+                                                        handleDelete(expense.id)
+                                                      }
+                                                      className="btn btn-danger btn-sm"
+                                                    >
+                                                      <i className="fas fa-trash"></i>
+                                                    </button>
+                                                  )}
+                                                </td>
+                                              </tr>
+                                            ))}
+                                          </tbody>
+                                        </table>
+                                      </td>
+                                    </tr>
+                                  )}
                               </React.Fragment>
                             ))}
                           </tbody>

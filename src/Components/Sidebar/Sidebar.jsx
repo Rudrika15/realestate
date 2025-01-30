@@ -166,7 +166,7 @@ const Sidebar = ({ isSidebarOpen }) => {
               <i className="bi bi-people custom-icon"></i> Partners
             </Link>
           )}
-          {permissions.length === 0 && (
+          {hasPermission("view-expenses") && (
             <Link
               to="/expenses"
               className={`nav-item nav-link ${
