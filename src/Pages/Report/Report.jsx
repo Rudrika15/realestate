@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import Footer from '../../Components/Footer/Footer'
-import Sidebar from '../../Components/Sidebar/Sidebar'
-import Topbar from '../../Components/Topbar/Topbar'
+import React, { useState } from "react";
+import Footer from "../../Components/Footer/Footer";
+import Sidebar from "../../Components/Sidebar/Sidebar";
+import Topbar from "../../Components/Topbar/Topbar";
 import { toast, ToastContainer } from "react-toastify";
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 
 function Report() {
@@ -27,7 +27,11 @@ function Report() {
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
         <div className={`content ${isSidebarOpen ? "content-open" : ""}`}>
-          <Topbar toggleSidebar={toggleSidebar} />
+          <Topbar
+            toggleSidebar={toggleSidebar}
+            isTopbarOpen={isTopbarOpen}
+            toggleTopbar={toggleTopbar}
+          />
 
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
@@ -46,7 +50,7 @@ function Report() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default Report
+export default Report;

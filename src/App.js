@@ -49,12 +49,12 @@ import ProjectStage from "./Pages/Projects/ProjectStage";
 import AddProjectStage from "./Pages/Projects/AddProjectStage";
 import Broker from "./Pages/Broker/Broker";
 import EditBroker from "./Pages/Broker/EditBroker";
-import Modal from "./Components/Modal/Modal";
 import AddNewPermission from "./Pages/Permission/AddNewPermission";
 import EditProjectStage from "./Pages/Projects/EditProjectStage";
 import EditPermissions from "./Pages/Permission/EditPermissions";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import Unauthorized from "./Pages/Unauthorized/Unauthorized";
+import Modal from "./Components/Modal/Modal";
 import { rolesWisePermissions } from "./Api/ApiDipak";
 
 const App = () => {
@@ -70,6 +70,7 @@ const App = () => {
           "Content-Type": "application/json",
         },
       });
+
       setPermissions(response.data.data.map((perm) => perm.name));
     } catch (error) {
       console.error("Error fetching permissions:", error);
@@ -77,22 +78,7 @@ const App = () => {
       setIsLoading(false);
     }
   };
-  // const ProtectedRoute = ({ element, requiredPermission }) => {
-  //   const [isLoading, setIsLoading] = useState(true);
 
-  //   useEffect(() => {
-  //     if (permissions.length || !requiredPermission) {
-  //       setIsLoading(false);
-  //     }
-  //   }, [permissions, requiredPermission]);
-  //   if (isLoading) {
-  //     return ;
-  //   }
-  //   if (requiredPermission && !permissions.includes(requiredPermission)) {
-  //     return <Navigate to="/unauthorized" />;
-  //   }
-  //   return element;
-  // };
   const ProtectedRoute = ({ element, requiredPermission }) => {
     if (isLoading) {
       return <div></div>;
@@ -107,6 +93,9 @@ const App = () => {
   }, []);
   return (
     <>
+      {/* {isLoading ? (
+      <div>Loading...</div> // Show a loader before rendering routes
+    ) : ( */}
       <Router>
         <Routes>
           <Route path="/unauthorized" element={<Unauthorized />}></Route>
@@ -186,12 +175,33 @@ const App = () => {
               />
             }
           />
-          <Route path="/edit-projectstage" element={<EditProjectStage />} />
-          <Route path="/edit-unit" element={<EditUnit />} />
           <Route
-            path="/add-project-stage/:id"
-            element={<AddProjectStage />}
-          ></Route>
+            path="/edit-projectstage"
+            element={
+              <ProtectedRoute
+                element={<EditProjectStage />}
+                requiredPermission="edit-projectstage"
+              />
+            }
+          />
+          <Route
+            path="/edit-unit"
+            element={
+              <ProtectedRoute
+                element={<EditUnit />}
+                requiredPermission="edit-unit"
+              />
+            }
+          />
+          <Route
+            path="/add-project-stage"
+            element={
+              <ProtectedRoute
+                element={<AddProjectStage />}
+                requiredPermission="add-project-stage"
+              />
+            }
+          />
 
           {/* booking */}
           <Route
@@ -237,6 +247,149 @@ const App = () => {
               />
             }
           />
+
+          {/* partners */}
+          <Route
+            path="/partners"
+            element={
+              <ProtectedRoute
+                element={<Partners />}
+                requiredPermission="view-partner"
+              />
+            }
+          />
+          <Route
+            path="/add-partners"
+            element={
+              <ProtectedRoute
+                element={<AddPartners />}
+                requiredPermission="add-partner"
+              />
+            }
+          />
+          <Route
+            path="/edit-partners/:id"
+            element={
+              <ProtectedRoute
+                element={<EditPartners />}
+                requiredPermission="edit-partner"
+              />
+            }
+          />
+          {/* Expenses */}
+          <Route
+            path="/expenses"
+            element={
+              <ProtectedRoute
+                element={<Expenses />}
+                requiredPermission="view-expenses"
+              />
+            }
+          />
+          <Route
+            path="/add-expenses"
+            element={
+              <ProtectedRoute
+                element={<AddExpenses />}
+                requiredPermission="new-expenses"
+              />
+            }
+          />
+          <Route
+            path="/edit-expenses"
+            element={
+              <ProtectedRoute
+                element={<EditExpenses />}
+                requiredPermission="edit-expenses"
+              />
+            }
+          />
+
+          {/* Income   */}
+          <Route
+            path="/income"
+            element={
+              <ProtectedRoute
+                element={<Income />}
+                requiredPermission="view-income"
+              />
+            }
+          />
+          <Route
+            path="/add-income"
+            element={
+              <ProtectedRoute
+                element={<AddIncome />}
+                requiredPermission="new-income"
+              />
+            }
+          />
+          <Route
+            path="/edit-income"
+            element={
+              <ProtectedRoute
+                element={<EditIncome />}
+                requiredPermission="edit-income"
+              />
+            }
+          />
+          {/* Ledger  */}
+          <Route
+            path="/partner-income"
+            element={
+              <ProtectedRoute
+                element={<PartnerIncome />}
+                requiredPermission="view-ledger-partner"
+              />
+            }
+          />
+          <Route
+            path="/add-partner-income"
+            element={
+              <ProtectedRoute
+                element={<AddPartnerIncome />}
+                requiredPermission="add-partner-income"
+              />
+            }
+          />
+          <Route
+            path="/partner-reimbursement"
+            element={
+              <ProtectedRoute
+                element={<PartnerReimbursement />}
+                requiredPermission="view-reimbursement"
+              />
+            }
+          />
+          <Route
+            path="/add-partner-reimbursment"
+            element={
+              <ProtectedRoute
+                element={<AddPartnerReimbursment />}
+                requiredPermission="add-partner-reimbursment"
+              />
+            }
+          />
+          <Route
+            path="/add-customer-income"
+            element={
+              <ProtectedRoute
+                element={<AddCustomerIncome />}
+                requiredPermission="add-customer-income"
+              />
+            }
+          />
+          <Route
+            path="/customer-income"
+            element={
+              <ProtectedRoute
+                element={<CustomerIncome />}
+                requiredPermission="view-customer-partner"
+              />
+            }
+          />
+
+          {/* role  */}
           <Route
             path="/role"
             element={
@@ -292,63 +445,47 @@ const App = () => {
               />
             }
           />
-          <Route path="/cash-deposit" element={<CashDeposit />}></Route>
-          <Route path="/cheque-deposit" element={<ChequeDeposit />}></Route>
-          {/* <Route path="/modal" element={<Modal />}></Route> */}
+          {/* Approval */}
+          <Route
+            path="/cash-deposit"
+            element={
+              <ProtectedRoute
+                element={<CashDeposit />}
+                requiredPermission="view-cash-deposit"
+              />
+            }
+          />
+          <Route
+            path="/cheque-deposit"
+            element={
+              <ProtectedRoute
+                element={<ChequeDeposit />}
+                requiredPermission="view-cheque-deposit"
+              />
+            }
+          />
           <Route
             path="/booking-authorization"
-            element={<BookingAuthorization />}
-          ></Route>
-          
-          <Route
-            path="/partners"
             element={
               <ProtectedRoute
-                element={<Partners />}
-                requiredPermission="view-partner"
+                element={<BookingAuthorization />}
+                requiredPermission="view-booking-authorization"
               />
             }
           />
-          <Route
-            path="/add-partners"
+           <Route
+            path="/report"
             element={
               <ProtectedRoute
-                element={<AddPartners />}
-                requiredPermission="add-partner"
+                element={<Report />}
+                requiredPermission="view-report"
               />
             }
           />
-          <Route
-            path="/edit-partners/:id"
-            element={
-              <ProtectedRoute
-                element={<EditPartners />}
-                requiredPermission="edit-partner"
-              />
-            }
-          />
-
-          <Route path="/expenses" element={<Expenses />} />
-          <Route path="/add-expenses" element={<AddExpenses />} />
-          <Route path="/edit-expenses/:id" element={<EditExpenses />} />
-          <Route path="/income" element={<Income />} />
-          <Route path="/add-income" element={<AddIncome />} />
-          <Route path="/edit-income" element={<EditIncome />} />
-          <Route path="/report" element={<Report />} />
-          <Route path="/add-customer-income" element={<AddCustomerIncome />} />
-          <Route path="/add-partner-income" element={<AddPartnerIncome />} />
-          <Route
-            path="/add-partner-reimbursment"
-            element={<AddPartnerReimbursment />}
-          />
-          <Route path="/customer-income" element={<CustomerIncome />} />
-          <Route path="/partner-income" element={<PartnerIncome />} />
-          <Route
-            path="/partner-reimbursement"
-            element={<PartnerReimbursement />}
-          />
+          {/* <Route path="/modal" element={<Modal />}></Route> */}
         </Routes>
       </Router>
+     {/* )} */}
     </>
   );
 };

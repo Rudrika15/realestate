@@ -7,10 +7,12 @@ import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
-
+import Allpermissions from "../Common component/Allpermissions";
 const PartnerReimbursement = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+  const [permissionss, setPermissionss] = useState([]);
+  const hasPermission = (permission) => permissionss.includes(permission);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -26,6 +28,8 @@ const PartnerReimbursement = () => {
       <Helmet>
         <title>React Estate | Partner Reimbursement</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissionss} />
+
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
@@ -71,12 +75,16 @@ const PartnerReimbursement = () => {
                     </div>
                   </div>
                   <div className="d-flex justify-content-between mb-3">
+                    <div className="p-2 "></div>
                     <div className="p-2 ">
-                    </div>
-                    <div className="p-2 ">
-                      <Link to="/add-partner-reimbursment" className="">
-                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add Reimbursement</h6>
-                      </Link>
+                      {hasPermission("add-partner-reimbursment") && (
+                        <Link to="/add-partner-reimbursment" className="">
+                          <h6 className="mb-4">
+                            <i className="bi bi-plus-circle-fill"></i> Add
+                            Reimbursement
+                          </h6>
+                        </Link>
+                      )}
                     </div>
                   </div>
                   <div className="table-responsive">
@@ -101,44 +109,19 @@ const PartnerReimbursement = () => {
                           <td></td>
                           <td></td>
                           <td>
-                            <Link to="" className="btn btn-warning btn-sm me-2">
-                              <i className="fas fa-edit"></i>
-                            </Link>
-                            <Link to="" className="btn btn-danger btn-sm">
-                              <i className="fas fa-trash"></i>
-                            </Link>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <Link to="" className="btn btn-warning btn-sm me-2">
-                              <i className="fas fa-edit"></i>
-                            </Link>
-                            <Link to="" className="btn btn-danger btn-sm">
-                              <i className="fas fa-trash"></i>
-                            </Link>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <Link to="" className="btn btn-warning btn-sm me-2">
-                              <i className="fas fa-edit"></i>
-                            </Link>
-                            <Link to="" className="btn btn-danger btn-sm">
-                              <i className="fas fa-trash"></i>
-                            </Link>
+                            {hasPermission("edit-partner-reimbursment") && (
+                              <Link
+                                to=""
+                                className="btn btn-warning btn-sm me-2"
+                              >
+                                <i className="fas fa-edit"></i>
+                              </Link>
+                            )}
+                            {hasPermission("delete-partner-reimbursment") && (
+                              <Link to="" className="btn btn-danger btn-sm">
+                                <i className="fas fa-trash"></i>
+                              </Link>
+                            )}
                           </td>
                         </tr>
                       </tbody>

@@ -5,12 +5,14 @@ import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
-
+import Allpermissions from "../Common component/Allpermissions";
 const PartnerIncome = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+  const [permissionss, setPermissionss] = useState([]);
+  const hasPermission = (permission) => permissionss.includes(permission);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -26,11 +28,17 @@ const PartnerIncome = () => {
       <Helmet>
         <title>React Estate | Partner Income</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissionss} />
+
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
-        <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
-          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
+        <div className={`content ${isSidebarOpen ? "open" : ""}`}>
+          <Topbar
+            toggleSidebar={toggleSidebar}
+            isTopbarOpen={isTopbarOpen}
+            toggleTopbar={toggleTopbar}
+          />
 
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
@@ -47,32 +55,38 @@ const PartnerIncome = () => {
                           border: "none",
                           backgroundColor: "#a2bdba",
                           borderRadius: "0.3rem",
-                          marginRight: '1rem'
+                          marginRight: "1rem",
                         }}
                       >
                         <a>Income</a>
                       </button>
-                      <Link to="/partner-reimbursement">
-                        <button
-                          className="shadow-sm"
-                          style={{
-                            border: "none",
-                            backgroundColor: "#a2bdba",
-                            borderRadius: "0.3rem",
-                          }}
-                        >
-                          <a>Reimbursement</a>
-                        </button>
-                      </Link>
+                      {hasPermission("view-reimbursement") && (
+                        <Link to="/partner-reimbursement">
+                          <button
+                            className="shadow-sm"
+                            style={{
+                              border: "none",
+                              backgroundColor: "#a2bdba",
+                              borderRadius: "0.3rem",
+                            }}
+                          >
+                            <a>Reimbursement</a>
+                          </button>
+                        </Link>
+                      )}
                     </div>
                   </div>
                   <div className="d-flex justify-content-between mb-3">
+                    <div className="p-2 "></div>
                     <div className="p-2 ">
-                    </div>
-                    <div className="p-2 ">
-                      <Link to="/add-partner-income" className="">
-                        <h6 className="mb-4"><i className="bi bi-plus-circle-fill"></i> Add Partner Income</h6>
-                      </Link>
+                      {hasPermission("add-partner-income") && (
+                        <Link to="/add-partner-income" className="">
+                          <h6 className="mb-4">
+                            <i className="bi bi-plus-circle-fill"></i> Add
+                            Partner Income
+                          </h6>
+                        </Link>
+                      )}
                     </div>
                   </div>
                   <table className="table table-bordered text-center">
@@ -94,44 +108,19 @@ const PartnerIncome = () => {
                         <td></td>
                         <td></td>
                         <td>
-                          <Link to="" className="btn btn-warning btn-sm me-2">
-                            <i className="fas fa-edit"></i>
-                          </Link>
-                          <Link to="" className="btn btn-danger btn-sm">
-                            <i className="fas fa-trash"></i>
-                          </Link>
+                          {hasPermission("edit-partner-incom") && (
+                            <Link to="" className="btn btn-warning btn-sm me-2">
+                              <i className="fas fa-edit"></i>
+                            </Link>
+                          )}
+                          {hasPermission("delete-partner-income") && (
+                            <Link to="" className="btn btn-danger btn-sm">
+                              <i className="fas fa-trash"></i>
+                            </Link>
+                          )}
                         </td>
                       </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <Link to="" className="btn btn-warning btn-sm me-2">
-                            <i className="fas fa-edit"></i>
-                          </Link>
-                          <Link to="" className="btn btn-danger btn-sm">
-                            <i className="fas fa-trash"></i>
-                          </Link>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          <Link to="" className="btn btn-warning btn-sm me-2">
-                            <i className="fas fa-edit"></i>
-                          </Link>
-                          <Link to="" className="btn btn-danger btn-sm">
-                            <i className="fas fa-trash"></i>
-                          </Link>
-                        </td>
-                      </tr>
+                      
                     </tbody>
                   </table>
                 </div>
@@ -140,7 +129,7 @@ const PartnerIncome = () => {
           </div>
           <Footer />
         </div>
-      </div >
+      </div>
     </>
   );
 };

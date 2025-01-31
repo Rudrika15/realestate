@@ -82,18 +82,19 @@ const Expenses = () => {
           "Content-Type": "application/json",
         },
       });
-
+  
       console.log("API Response:", response.data);
-
+  
       if (response.data.status === true) {
         setExpenses(response.data.data);
       } else {
+        // Clear the expenses if response status is false
         setExpenses([]);
       }
     } catch (error) {
       console.error("Fetch error:", error);
       if (error.response && error.response.status === 401) {
-        navigate("/");
+        navigate("/"); // Handle unauthorized access
       } else {
         toast.error("Failed to fetch expenses. Please try again.");
         setExpenses([]);
@@ -102,14 +103,15 @@ const Expenses = () => {
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
     fetchExpenses();
   }, []);
-
+  
   const clearExpenses = () => {
     setExpenses([]);
   };
+  
 
   useEffect(() => {
     fetchExpenses();
@@ -162,7 +164,7 @@ const Expenses = () => {
                               expense.details.map((detail) => (
                                 <tr key={detail.id}>
                                   <td>{expense.voucherNo || "N/A"}</td>
-                                  <td>{formatDate(expense.expenceDate)}</td>
+                                  <td>{formatDate(expense.expenceDate)}</td> 
                                   <td>{detail.ExpenseHeadId || "N/A"}</td>
                                   <td>{detail.naration || "N/A"}</td>
                                   <td>{detail.amount || "N/A"}</td>
@@ -185,7 +187,7 @@ const Expenses = () => {
                             ) : (
                               <tr key={expense.id}>
                                 <td>{expense.voucherNo || "N/A"}</td>
-                                <td>{formatDate(expense.expenceDate)}</td>
+                                <td>{formatDate(expense.expenceDate)}</td> 
                                 <td>{expense.ExpenseHeadId || "N/A"}</td>
                                 <td>{expense.naration || "N/A"}</td>
                                 <td>{expense.totalAmount || "N/A"}</td>

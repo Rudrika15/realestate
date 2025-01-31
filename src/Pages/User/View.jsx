@@ -20,7 +20,7 @@ const View = () => {
   const navigate = useNavigate();
   
   const [permissions, setPermissions] = useState([]);
-  const hasPermission = (permission) => permissions.includes(permission);
+  const hasPermission = (permission) => permissions.includes(permission);  
 
   const fetchUsers = async (page = 1) => {
     setLoading(true);

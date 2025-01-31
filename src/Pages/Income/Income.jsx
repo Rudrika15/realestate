@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { Helmet } from "react-helmet";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
+import Allpermissions from "../Common component/Allpermissions";
 
 const Income = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -13,8 +14,10 @@ const Income = () => {
   const [selectedIncomeHead, setSelectedIncomeHead] = useState("");
   const [selectedIncomeDate, setSelectedIncomeDate] = useState("");
   const [expandedIncomeId, setExpandedIncomeId] = useState(null);
-  const [showAll, setShowAll] = useState(false);  
-  const [hideAll, setHideAll] = useState(false);  
+  const [showAll, setShowAll] = useState(false);
+  const [hideAll, setHideAll] = useState(false);
+  const [permissionss, setPermissionss] = useState([]);
+  const hasPermission = (permission) => permissionss.includes(permission);
 
   const [incomes, setIncomes] = useState([
     {
@@ -23,7 +26,7 @@ const Income = () => {
       incomeHead: "Salary",
       amount: "50,000",
       date: "15-02-2024",
-      deleteId:1
+      deleteId: 1,
     },
     {
       id: 2,
@@ -31,7 +34,7 @@ const Income = () => {
       incomeHead: "Business",
       amount: "70,000",
       date: "16-02-2024",
-      deleteId:2
+      deleteId: 2,
     },
     {
       id: 3,
@@ -39,23 +42,23 @@ const Income = () => {
       incomeHead: "Shop",
       amount: "10,000",
       date: "18-02-2024",
-      deleteId:3
+      deleteId: 3,
     },
     {
-      id: 1, 
+      id: 1,
       name: "d",
       incomeHead: "Salary",
       amount: "20,000",
       date: "20-02-2024",
-      deleteId:4
+      deleteId: 4,
     },
     {
-      id: 2, 
+      id: 2,
       name: "e",
       incomeHead: "Business",
       amount: "15,000",
       date: "22-02-2024",
-      deleteId:5
+      deleteId: 5,
     },
   ]);
 
@@ -74,7 +77,9 @@ const Income = () => {
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
-        const updatedIncomes = incomes.filter((income) => income.deleteId !== deleteId);
+        const updatedIncomes = incomes.filter(
+          (income) => income.deleteId !== deleteId
+        );
         setIncomes(updatedIncomes);
         Swal.fire({
           title: "Deleted!",
@@ -101,7 +106,6 @@ const Income = () => {
     return true;
   });
 
-
   const groupedIncomes = filteredIncomes.reduce((acc, income) => {
     const existingGroup = acc.find((group) => group.id === income.id);
 
@@ -119,7 +123,6 @@ const Income = () => {
     return acc;
   }, []);
 
-
   const grandTotal = groupedIncomes.reduce(
     (total, group) => total + group.totalAmount,
     0
@@ -133,7 +136,7 @@ const Income = () => {
   );
 
   const toggleIncomeDetails = (id) => {
-    if (showAll || hideAll) return; 
+    if (showAll || hideAll) return;
     setExpandedIncomeId((prevState) => (prevState === id ? null : id));
   };
 
@@ -141,7 +144,7 @@ const Income = () => {
     setShowAll(e.target.checked);
     setHideAll(false);
     if (e.target.checked) {
-      setExpandedIncomeId(null); 
+      setExpandedIncomeId(null);
     }
   };
 
@@ -149,7 +152,7 @@ const Income = () => {
     setHideAll(e.target.checked);
     setShowAll(false);
     if (e.target.checked) {
-      setExpandedIncomeId(null); 
+      setExpandedIncomeId(null);
     }
   };
 
@@ -158,6 +161,8 @@ const Income = () => {
       <Helmet>
         <title>React Estate | Income</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissionss} />
+
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
@@ -176,11 +181,14 @@ const Income = () => {
                       <h6 className="mb-4">Income List</h6>
                     </div>
                     <div className="p-2">
-                      <Link to="/add-income" className="mb-4">
-                        <h6>
-                          <i className="bi bi-plus-circle-fill"></i> New Income
-                        </h6>
-                      </Link>
+                      {hasPermission("new-income") && (
+                        <Link to="/add-income" className="mb-4">
+                          <h6>
+                            <i className="bi bi-plus-circle-fill"></i> New
+                            Income
+                          </h6>
+                        </Link>
+                      )}
                     </div>
                   </div>
 
@@ -261,8 +269,8 @@ const Income = () => {
                                   onClick={() => toggleIncomeDetails(group.id)}
                                 >
                                   <td colSpan="3">
-                                    <strong>ID: {group.id}</strong> | Total Amount:{" "}
-                                    {group.totalAmount.toLocaleString()}
+                                    <strong>ID: {group.id}</strong> | Total
+                                    Amount: {group.totalAmount.toLocaleString()}
                                   </td>
                                 </tr>
 
@@ -287,18 +295,30 @@ const Income = () => {
                                               <td>{income.date || "N/A"}</td>
                                               <td>{income.amount || "N/A"}</td>
                                               <td>
-                                                <Link
-                                                  to={"/edit-income"}
-                                                  className="btn btn-warning btn-sm me-2"
-                                                >
-                                                  <i className="fas fa-edit"></i>
-                                                </Link>
-                                                <button
-                                                  onClick={() => handleDelete(income.deleteId)}
-                                                  className="btn btn-danger btn-sm"
-                                                >
-                                                  <i className="fas fa-trash"></i>
-                                                </button>
+                                                {hasPermission(
+                                                  "edit-income"
+                                                ) && (
+                                                  <Link
+                                                    to={"/edit-income"}
+                                                    className="btn btn-warning btn-sm me-2"
+                                                  >
+                                                    <i className="fas fa-edit"></i>
+                                                  </Link>
+                                                )}
+                                                {hasPermission(
+                                                  "delete-income"
+                                                ) && (
+                                                  <button
+                                                    onClick={() =>
+                                                      handleDelete(
+                                                        income.deleteId
+                                                      )
+                                                    }
+                                                    className="btn btn-danger btn-sm"
+                                                  >
+                                                    <i className="fas fa-trash"></i>
+                                                  </button>
+                                                )}
                                               </td>
                                             </tr>
                                           ))}

@@ -111,7 +111,11 @@ const Role = () => {
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
-          <Topbar toggleSidebar={toggleSidebar} />
+        <Topbar
+            toggleSidebar={toggleSidebar}
+            isTopbarOpen={isTopbarOpen}
+            toggleTopbar={toggleTopbar}
+          />
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
