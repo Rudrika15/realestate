@@ -14,12 +14,21 @@ const AddCustomerIncome = () => {
   const [check, setCheck] = useState(null);
   const [incomeDate, setIncomeDate] = useState("");
   const [depositDate, setDepositDate] = useState("");
+  const [chequeDate, setChequeDate] = useState("");
   const [incomeDateError, setIncomeDateError] = useState("");
   const [depositDateError, setDepositDateError] = useState("");
-
+  const [chequeDateError, setChequeDateError] = useState("");
+  const [showSaleDeedFields, setShowSaleDeedFields] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleRadioChange = (e) => {
+    setShowSaleDeedFields(e.target.value === "saleDeedAmount");
+    console.log(showSaleDeedFields);
+
   };
 
   const toggleTopbar = () => {
@@ -46,6 +55,10 @@ const AddCustomerIncome = () => {
   const handleDepositDateChange = (e) => {
     setDepositDate(e.target.value);
     if (e.target.value) setDepositDateError(false);
+  };
+  const handleChequeDateChange = (e) => {
+    setChequeDate(e.target.value);
+    if (e.target.value) setChequeDateError(false);
   };
 
   return (
@@ -82,18 +95,11 @@ const AddCustomerIncome = () => {
                       <div className="col">
                         <input type="text" className="form-control" id="Unit No" placeholder="Unit No" name="Unit No" />
                       </div>
-                    </div>
-                    {/* <div className="row w-75">
-                      <div className="col pt-3">
-                        <textarea className="form-control" placeholder="Address" id="floatingTextarea"></textarea>
-                      </div>
-                    </div> */}
-                    <div className="row pt-4">
                       <div className="col">
-                        <input type="text" className="form-control" id="Installments" placeholder="Installments" name="Installments" />
+                        <input type="number" className="form-control" id="Mobile No" placeholder="Mobile No" name="Mobile No" />
                       </div>
                       <div className="col">
-                        {/* <input type="text" className="form-control" id="Status" placeholder="Status" name="Status" /> */}
+                        <button type="button" class="btn btn-primary">Submit</button>
                       </div>
                     </div>
                     <div className="row pt-5 mb-4 text-dark">
@@ -113,8 +119,9 @@ const AddCustomerIncome = () => {
                           <label for="extra-work-amount">Extra Work Amount</label>
                         </div>
                       </div>
+                      <div className="col"></div>
                     </div>
-                    <div className="d-flex justify-content-center align-items-center">
+                    <div className="d-flex align-items-center">
                       <table className="table table-bordered w-75 text-center">
                         <thead>
                           <tr>
@@ -123,13 +130,7 @@ const AddCustomerIncome = () => {
                             <th scope="col">Outstanding Amount</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <tr>
-                            <td>9,00,000</td>
-                            <td>5,00,000</td>
-                            <td>4,00,000</td>
-                          </tr>
-                        </tbody>
+                        <tbody></tbody>
                       </table>
                     </div>
                     <div className="row pt-5 mb-4 text-dark">
@@ -139,7 +140,7 @@ const AddCustomerIncome = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="d-flex justify-content-center align-items-center">
+                    <div className="d-flex align-items-center">
                       <table className="table table-bordered w-75 text-center">
                         <thead>
                           <tr>
@@ -152,45 +153,63 @@ const AddCustomerIncome = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <th scope="row">1</th>
-                            <td>1-02-2024</td>
-                            <td>Installment 1</td>
-                            <td>5,00,000</td>
-                            <td>3,00,000</td>
-                            <td>2,00,000</td>
-                          </tr>
-                          <tr>
-                            <th scope="row">2</th>
-                            <td>1-03-2024</td>
-                            <td>Installment 2</td>
-                            <td>5,00,000</td>
-                            <td>3,00,000</td>
-                            <td>2,00,000</td>
-                          </tr>
+                          <tr></tr>
+                          <tr></tr>
                           <tr>
                             <td colSpan="3"><strong>Total Amount</strong></td>
-                            <td>10,00,000</td>
-                            <td>9,00,000</td>
-                            <td>4,00,000</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
                     <hr />
-                    <div className="row pt-4">
+                    <div className="row pt-3">
                       <div className="col">
-                        <select
-                          className={`form-control bg-white`}
-                          value="saledeedamount"
-                        >
-                          <option value="">Sale Deed Amount</option>
-                          <option value="">Extra Work Amount</option>
-                          <option value="">Other Work Amount</option>
-                        </select>
+                        <div class="custom-control custom-checkbox my-1 mr-sm-2">
+                          <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="optradio" value="saleDeedAmount" onChange={handleRadioChange} />&nbsp;
+                            Sale Deed Amount
+                          </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                          <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="optradio" value="extraWorkAmount" onChange={handleRadioChange} />&nbsp;
+                            Extra Work Amount
+                          </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                          <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="optradio" value="otherWorkAmount" onChange={handleRadioChange} />&nbsp;
+                            Other Work Amount
+                          </label>
+                        </div>
                       </div>
-                      <div className="col"></div>
                     </div>
+                    {showSaleDeedFields && (
+                      <>
+                        <div className="row pt-4">
+                          <div className="col">
+                            <input type="number" className="form-control" id="Cheque No" placeholder="Cheque No" name="Cheque No" />
+                          </div>
+                          <div className="col">
+                            <input
+                              type="text"
+                              id="date"
+                              className={`form-control`}
+                              value={formatDate(chequeDate)}
+                              onChange={(e) => handleChequeDateChange(e)}
+                              placeholder="Cheque Date"
+                              onFocus={(e) => (e.target.type = "date")}
+                              onBlur={(e) => (e.target.type = "text")}
+                            />
+                          </div>
+                        </div>
+                        <div className="row pt-4">
+                          <div className="col">
+                            <input type="text" className="form-control" id="Bank Name" placeholder="Bank Name" name="Bank Name" />
+                          </div>
+                          <div className="col"></div>
+                        </div>
+                      </>
+                    )}
                     <div className="row pt-4">
                       <div className="col">
                         <input
@@ -223,27 +242,6 @@ const AddCustomerIncome = () => {
                       </div>
                       <div className="col"></div>
                     </div>
-                    <div className="row pt-4 text-dark">
-                      <div className="col">
-                        <div class="input-container2">
-                          <label for="history">Mark Installments</label>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group pt-3">
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="gridCheck" />
-                        <label class="form-check-label" for="gridCheck">
-                          Installment 1 - 2,00,000
-                        </label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="gridCheck" />
-                        <label class="form-check-label" for="gridCheck">
-                          Installment 2 - 2,00,000
-                        </label>
-                      </div>
-                    </div>
                     <div className="row pt-4 mb-3">
                       <div className="col">
                         <input type="number" className="form-control" id="Receipt No" placeholder="Receipt No" name="Receipt No" />
@@ -260,116 +258,12 @@ const AddCustomerIncome = () => {
                           </label>
                           <input
                             type="file"
-                            // accept=".xls, .xlsx"
                             className='form-control'
                             id="unit"
                           />
                         </div>
                       </div>
                     </div>
-                    {/* <div className="row">
-                      <div className="col pt-3">
-                        <div className="input-wrapper position-relative">
-                          <input
-                            type="text"
-                            id="date"
-                            className="form-control"
-                            value={
-                              incomeDate
-                                ? new Date(incomeDate).toLocaleDateString("en-GB", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "2-digit",
-                                })
-                                : ""
-                            }
-                            onChange={(e) => {
-                              const inputDate = e.target.value;
-                              const [day, month, year] = inputDate.split("-");
-                              const formattedDate = `${year}-` + `${month}-` + `${day}`;
-                              setIncomeDate(new Date(formattedDate).toISOString().slice(0, 10));
-                            }}
-                            placeholder="Income Date"
-                            onFocus={(e) => (e.target.type = "date")}
-                            onBlur={(e) => (e.target.type = "text")}
-                          />
-                        </div>
-                      </div>
-                      <div className="col pt-3">
-                        <div className="input-wrapper position-relative">
-                          <input
-                            type="text"
-                            id="date"
-                            className="form-control"
-                            value={
-                              depositDate
-                                ? new Date(depositDate).toLocaleDateString("en-GB", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "2-digit",
-                                })
-                                : ""
-                            }
-                            onChange={(e) => {
-                              const inputDate = e.target.value;
-                              const [day, month, year] = inputDate.split("-");
-                              const formattedDate = `${year}-` + `${month}-` + `${day}`;
-                              setDepositDate(new Date(formattedDate).toISOString().slice(0, 10));
-                            }}
-                            placeholder="Deposit Date"
-                            onFocus={(e) => (e.target.type = "date")}
-                            onBlur={(e) => (e.target.type = "text")}
-                          />
-                        </div>
-                      </div>
-                    </div> */}
-                    {/* <div className="row pt-3">
-                      <div className="col">
-                        <input type="text" className="form-control" id="Amount" placeholder="Amount" name="Amount" />
-                      </div>
-                      <div className="col"></div>
-                    </div> */}
-                    {/* <div className="row pt-3">
-                      <p>Payment Mode</p>
-                      <div className="form-check">
-                        <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
-                        <label className="form-check-label" for="flexRadioDefault1">
-                          Cash
-                        </label>
-                      </div>
-                      <div className="form-check pt-2">
-                        <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
-                        <label className="form-check-label" for="flexRadioDefault1">
-                          Cheque
-                        </label>
-                      </div>
-                    </div> */}
-                    {/* <div className="row pt-3">
-                      <div className="col">
-                        <input type="text" className="form-control" id="Check No" placeholder="Check No" name="Check No" />
-                      </div>
-                      <div className="col"></div>
-                    </div>
-                    <div className="row pt-3">
-                      <div className="col">
-                        <select className="form-select mb-3 w-50" aria-label="Default select example">
-                          <option selected>Bank</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="mb-3">
-                      <label for="file" className="form-label">Upload Check : </label>
-                      <input
-                        type="file"
-                        accept=".jpg, .jpeg, .png, .pdf, .docx"
-                        className="form-control"
-                        multiple
-                        id="check"
-                        aria-describedby="check"
-                        ref={files}
-                        onChange={(e) => setCheck(e.target.files)}
-                      />
-                    </div> */}
                     <button type="submit" className="btn btn-primary">Save</button>
                   </form>
                 </div>

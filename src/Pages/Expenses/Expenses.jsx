@@ -96,10 +96,19 @@ const Expenses = () => {
         navigate("/");
       } else {
         toast.error("Failed to fetch expenses. Please try again.");
+        setExpenses([]);
       }
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+  const clearExpenses = () => {
+    setExpenses([]);
   };
 
   useEffect(() => {
@@ -153,7 +162,7 @@ const Expenses = () => {
                               expense.details.map((detail) => (
                                 <tr key={detail.id}>
                                   <td>{expense.voucherNo || "N/A"}</td>
-                                  <td>{formatDate(expense.expenceDate)}</td> 
+                                  <td>{formatDate(expense.expenceDate)}</td>
                                   <td>{detail.ExpenseHeadId || "N/A"}</td>
                                   <td>{detail.naration || "N/A"}</td>
                                   <td>{detail.amount || "N/A"}</td>
@@ -176,7 +185,7 @@ const Expenses = () => {
                             ) : (
                               <tr key={expense.id}>
                                 <td>{expense.voucherNo || "N/A"}</td>
-                                <td>{formatDate(expense.expenceDate)}</td> 
+                                <td>{formatDate(expense.expenceDate)}</td>
                                 <td>{expense.ExpenseHeadId || "N/A"}</td>
                                 <td>{expense.naration || "N/A"}</td>
                                 <td>{expense.totalAmount || "N/A"}</td>

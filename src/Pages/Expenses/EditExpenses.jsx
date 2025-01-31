@@ -98,46 +98,56 @@ const EditExpenses = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
-      console.log(token);
+      const token = localStorage.getItem("token");
+
       if (!token) {
-        toast.error('Token is missing. Please log in again.');
+        toast.error("Token is missing. Please log in again.");
         setLoading(false);
         return;
       }
 
-      const response = await axios.post(`${updatedExpense}/${id}`, expense, {
+      const requestData = {
         voucherNo: expense.voucherNo,
-        expenceDate: expense.date,
-        ExpenseHeadId: expense.head,
-        naration: expense.narration,
+        expenseDate: expense.date,
+        naration: expense.narration,  
         amount: expense.amount,
-      }, {
+        projectId: expense.projectId || 2,
+        expenseHeadId: expense.head,
+      };
+      
+
+      console.log("Request Payload: ", requestData);  
+
+      const response = await axios.post(`${updatedExpense}/${expense.id}`, requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
-      if (response.data.status === true) {
-        toast.success(response.message || 'Expense updated successfully');
-        console.log(response.data.status);
+      console.log("Response Data: ", response.data); 
+
+      if (response.data.status) {
+        toast.success(response.data.message || "Expense updated successfully");
         setTimeout(() => {
           navigate("/expenses");
         }, 1000);
       } else {
-        toast.error(response?.message || 'Failed to update expense.');
+        toast.error(response.data.message || "Failed to update expense.");
       }
     } catch (error) {
-      console.error(error);
+      console.error("API Error: ", error);
+
       if (error.response && error.response.status === 401) {
-        navigate('/');
+        navigate("/");
       }
-      toast.error('An error occurred while updating expense details.');
+
+      toast.error("An error occurred while updating expense details.");
     } finally {
       setLoading(false);
     }
   };
+
 
   const fetchExpenseDetails = async (id) => {
     try {
@@ -146,20 +156,23 @@ const EditExpenses = () => {
         toast.error("Token is missing. Please log in again.");
         return;
       }
-
+  
+      console.log("Fetching from URL:", `${singleIdExpense}${id}`); // Debug log
+  
       const response = await axios.get(`${singleIdExpense}${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
+      console.log("API Response:", response.data); // Debug log
+  
       if (response.data.status) {
-        const { voucherNo, expenceDate, ExpenseHeadId, naration, amount } = response.data.data;
-
+        const { expenseDetail, expenseMaster } = response.data.data;
         setExpense({
-          voucherNo: voucherNo || "",
-          date: expenceDate || "",
-          head: ExpenseHeadId || "",
-          narration: naration || "",
-          amount: amount || "",
+          voucherNo: expenseMaster?.voucherNo || "",
+          date: expenseMaster?.expenceDate || "",
+          head: expenseDetail?.ExpenseHeadId || "",
+          narration: expenseDetail?.naration || "",
+          amount: expenseDetail?.amount || "",
         });
       } else {
         toast.error(response?.data?.message || "Failed to fetch expense details.");
@@ -172,12 +185,18 @@ const EditExpenses = () => {
       toast.error("An error occurred while fetching expense details.");
     }
   };
+  
 
   useEffect(() => {
+    console.log("Expense ID:", id); // Debugging log
+  
     if (id) {
       fetchExpenseDetails(id);
+    } else {
+      toast.error("Expense ID is missing.");
     }
   }, [id]);
+  
 
   return (
     <>
