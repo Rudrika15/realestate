@@ -3,13 +3,16 @@ import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
-
+import Allpermissions from "../Common component/Allpermissions";
 const BookingAuthorization = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
+
+  const [permissions, setPermissions] = useState([]);
+  const hasPermission = (permission) => permissions.includes(permission);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -25,11 +28,18 @@ const BookingAuthorization = () => {
       <Helmet>
         <title>React Estate | Booking Authorization</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissions} />
+
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} className="d-none d-lg-block" />
 
-        <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
-          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} className="d-lg-none" />
+        <div className={`content ${isSidebarOpen ? "open" : ""}`}>
+          <Topbar
+            toggleSidebar={toggleSidebar}
+            isTopbarOpen={isTopbarOpen}
+            toggleTopbar={toggleTopbar}
+            className="d-lg-none"
+          />
 
           <div className="container-fluid pt-4 px-3 px-md-4">
             <div className="row g-3 g-lg-4">
@@ -56,7 +66,12 @@ const BookingAuthorization = () => {
                         <tr>
                           <td>
                             <div className="form-check">
-                              <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="flexCheckDefault"
+                              />
                             </div>
                           </td>
                           <td></td>
@@ -66,71 +81,46 @@ const BookingAuthorization = () => {
                           <td></td>
                           <td></td>
                           <td>
-                            <div className="btn-group" role="group" aria-label="Action Buttons">
-                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
-                              <i class="bi bi-check-circle"></i>
-                              </Link>
-                              <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
-                              <i class="bi bi-x-circle"></i>
-                              </Link>
-                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
-                              <i class="bi bi-eye"></i> 
-                              </Link>
+                            <div
+                              className="btn-group"
+                              role="group"
+                              aria-label="Action Buttons"
+                            >
+                              {hasPermission("check-booking-authorization") && (
+                                <Link
+                                  to=""
+                                  type="button"
+                                  className="btn shadow-sm text-dark accept-btn"
+                                >
+                                  <i class="bi bi-check-circle"></i>
+                                </Link>
+                              )}
+                              {hasPermission(
+                                "one-delete-booking-authorization"
+                              ) && (
+                                <Link
+                                  to=""
+                                  type="button"
+                                  className="btn shadow-sm text-dark reject-btn"
+                                >
+                                  <i class="bi bi-x-circle"></i>
+                                </Link>
+                              )}
+                              {hasPermission(
+                                "eye-booking-authorization"
+                              ) && (
+                                <Link
+                                  to=""
+                                  type="button"
+                                  className="btn shadow-sm text-dark view-btn"
+                                >
+                                  <i class="bi bi-eye"></i>
+                                </Link>
+                              )}
                             </div>
                           </td>
                         </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                            </div>
-                          </td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <div className="btn-group" role="group" aria-label="Action Buttons">
-                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
-                              <i class="bi bi-check-circle"></i>
-                              </Link>
-                              <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
-                              <i class="bi bi-x-circle"></i>
-                              </Link>
-                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
-                              <i class="bi bi-eye"></i>
-                              </Link>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                            </div>
-                          </td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <div className="btn-group" role="group" aria-label="Action Buttons">
-                              <Link to="" type="button" className="btn shadow-sm text-dark accept-btn">
-                              <i class="bi bi-check-circle"></i>
-                              </Link>
-                              <Link to="" type="button" className="btn shadow-sm text-dark reject-btn">
-                              <i class="bi bi-x-circle"></i>
-                              </Link>
-                              <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
-                              <i class="bi bi-eye"></i>
-                              </Link>
-                            </div>
-                          </td>
-                        </tr>
+                        
                       </tbody>
                     </table>
                   </div>

@@ -3,9 +3,10 @@ import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
-import Swal from 'sweetalert2';  
+import Swal from "sweetalert2";
+import Allpermissions from "../Common component/Allpermissions";
 
 const CashDeposit = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -14,16 +15,20 @@ const CashDeposit = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [cancellationReason, setCancellationReason] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
-  
+
+  const [permissions, setPermissions] = useState([]);
+  const hasPermission = (permission) => permissions.includes(permission);
 
   const [cashDepositData, setCashDepositData] = useState([
-    { id: 1, incomeDate: "2025-01-01", projectName: "Project A", unitNo: "Unit 101", customerName: "shiv", amount: "5000" },
-    { id: 2, incomeDate: "2025-01-02", projectName: "Project B", unitNo: "Unit 102", customerName: "mohan", amount: "4500" },
-    { id: 3, incomeDate: "2025-01-03", projectName: "Project C", unitNo: "Unit 103", customerName: "gopal", amount: "3500" },
-    { id: 4, incomeDate: "2025-01-04", projectName: "Project D", unitNo: "Unit 104", customerName: "Radha", amount: "4000" }
+    {
+      id: 1,
+      incomeDate: "2025-01-01",
+      projectName: "Project A",
+      unitNo: "Unit 101",
+      customerName: "shiv",
+      amount: "5000",
+    },
   ]);
-
-  
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -39,7 +44,9 @@ const CashDeposit = () => {
   };
 
   const confirmCancel = () => {
-    console.log(`Cancel action confirmed for row ${selectedRow} with reason: ${cancellationReason}`);
+    console.log(
+      `Cancel action confirmed for row ${selectedRow} with reason: ${cancellationReason}`
+    );
     setIsModalOpen(false);
   };
 
@@ -53,57 +60,54 @@ const CashDeposit = () => {
 
   const handleAccept = () => {
     Swal.fire({
-      title: 'Action Accepted!',
-      text: 'You have accepted this action.',
-      icon: 'success',
-      confirmButtonText: 'OK',
-      allowOutsideClick: false,  
+      title: "Action Accepted!",
+      text: "You have accepted this action.",
+      icon: "success",
+      confirmButtonText: "OK",
+      allowOutsideClick: false,
       customClass: {
-        popup: 'swal-popup',  
+        popup: "swal-popup",
       },
       buttonsStyling: false,
-      confirmButtonClass: 'btn btn-success', 
+      confirmButtonClass: "btn btn-success",
     });
   };
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-    
       setSelectedItems(cashDepositData.map((deposit) => deposit.id));
     } else {
-    
       setSelectedItems([]);
     }
   };
 
   const handleSelectItem = (id) => {
     if (selectedItems.includes(id)) {
-  
-      setSelectedItems(selectedItems.filter(item => item !== id));
+      setSelectedItems(selectedItems.filter((item) => item !== id));
     } else {
-      
       setSelectedItems([...selectedItems, id]);
     }
   };
 
   const handleDeleteSelected = () => {
     if (selectedItems.length > 0) {
-    
-      const remainingData = cashDepositData.filter(deposit => !selectedItems.includes(deposit.id));
+      const remainingData = cashDepositData.filter(
+        (deposit) => !selectedItems.includes(deposit.id)
+      );
       setCashDepositData(remainingData);
-      setSelectedItems([]); 
+      setSelectedItems([]);
       Swal.fire({
-        title: 'Deleted!',
-        text: 'Selected deposits have been deleted.',
-        icon: 'success',
-        confirmButtonText: 'OK',
+        title: "Deleted!",
+        text: "Selected deposits have been deleted.",
+        icon: "success",
+        confirmButtonText: "OK",
       });
     } else {
       Swal.fire({
-        title: 'No Selection!',
-        text: 'Please select items to delete.',
-        icon: 'warning',
-        confirmButtonText: 'OK',
+        title: "No Selection!",
+        text: "Please select items to delete.",
+        icon: "warning",
+        confirmButtonText: "OK",
       });
     }
   };
@@ -114,10 +118,16 @@ const CashDeposit = () => {
       <Helmet>
         <title>React Estate | Cash Deposit</title>
       </Helmet>
+      <Allpermissions onFetchPermissions={setPermissions} />
+
       <div className="container-fluid position-relative bg-white d-flex p-0">
         <Sidebar isSidebarOpen={isSidebarOpen} />
-        <div className={`content ${isSidebarOpen ? 'open' : ''}`}>
-          <Topbar toggleSidebar={toggleSidebar} isTopbarOpen={isTopbarOpen} toggleTopbar={toggleTopbar} />
+        <div className={`content ${isSidebarOpen ? "open" : ""}`}>
+          <Topbar
+            toggleSidebar={toggleSidebar}
+            isTopbarOpen={isTopbarOpen}
+            toggleTopbar={toggleTopbar}
+          />
 
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
@@ -125,22 +135,26 @@ const CashDeposit = () => {
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
                     <h6 className="">Cash Deposit</h6>
-                    <button 
-                      className="btn btn-primary"
-                      onClick={handleDeleteSelected}
-                    >
-                      Delete All
-                    </button>
+                    {hasPermission("all-delete-cash-deposit") && (
+                      <button
+                        className="btn btn-primary"
+                        onClick={handleDeleteSelected}
+                      >
+                        Delete All
+                      </button>
+                    )}
                   </div>
                   <div className="table-responsive">
                     <table className="table table-bordered text-center">
                       <thead>
                         <tr>
                           <th scope="col">
-                            <input 
-                              type="checkbox" 
-                              onChange={handleSelectAll} 
-                              checked={selectedItems.length === cashDepositData.length} 
+                            <input
+                              type="checkbox"
+                              onChange={handleSelectAll}
+                              checked={
+                                selectedItems.length === cashDepositData.length
+                              }
                             />
                           </th>
                           <th scope="col">Income Date</th>
@@ -155,10 +169,10 @@ const CashDeposit = () => {
                         {cashDepositData.map((deposit) => (
                           <tr key={deposit.id}>
                             <td>
-                              <input 
-                                type="checkbox" 
-                                checked={selectedItems.includes(deposit.id)} 
-                                onChange={() => handleSelectItem(deposit.id)} 
+                              <input
+                                type="checkbox"
+                                checked={selectedItems.includes(deposit.id)}
+                                onChange={() => handleSelectItem(deposit.id)}
                               />
                             </td>
                             <td>{deposit.incomeDate}</td>
@@ -168,19 +182,34 @@ const CashDeposit = () => {
                             <td>{deposit.amount}</td>
                             <td>
                               <div className="btn-group" role="group">
-                                <Link to="" type="button" className="btn shadow-sm text-dark accept-btn" onClick={handleAccept}>
-                                  <i className="bi bi-check-circle"></i>
-                                </Link>
-                                <button
-                                  type="button"
-                                  className="btn shadow-sm text-dark reject-btn"
-                                  onClick={() => handleCancel(deposit.id)}
-                                >
-                                  <i className="bi bi-x-circle"></i>
-                                </button>
-                                <Link to="" type="button" className="btn shadow-sm text-dark view-btn">
-                                  <i className="bi bi-eye"></i>
-                                </Link>
+                                {hasPermission("check-cash-deposit") && (
+                                  <Link
+                                    to=""
+                                    type="button"
+                                    className="btn shadow-sm text-dark accept-btn"
+                                    onClick={handleAccept}
+                                  >
+                                    <i className="bi bi-check-circle"></i>
+                                  </Link>
+                                )}
+                                {hasPermission("one-delete-cash-deposit") && (
+                                  <button
+                                    type="button"
+                                    className="btn shadow-sm text-dark reject-btn"
+                                    onClick={() => handleCancel(deposit.id)}
+                                  >
+                                    <i className="bi bi-x-circle"></i>
+                                  </button>
+                                )}
+                                {hasPermission("eye-cash-deposit") && (
+                                  <Link
+                                    to=""
+                                    type="button"
+                                    className="btn shadow-sm text-dark view-btn"
+                                  >
+                                    <i className="bi bi-eye"></i>
+                                  </Link>
+                                )}
                               </div>
                             </td>
                           </tr>
@@ -196,17 +225,26 @@ const CashDeposit = () => {
       </div>
 
       {isModalOpen && (
-        <div className="modal" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+        <div
+          className="modal"
+          style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Confirm Cancellation</h5>
-                <button type="button" className="btn-close" onClick={closeModal}></button>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeModal}
+                ></button>
               </div>
               <div className="modal-body">
                 <p>Are you sure you want to cancel this action?</p>
                 <div className="mb-3">
-                  <label htmlFor="cancellationReason" className="form-label">Reason for cancellation:</label>
+                  <label htmlFor="cancellationReason" className="form-label">
+                    Reason for cancellation:
+                  </label>
                   <textarea
                     id="cancellationReason"
                     className="form-control"
@@ -218,7 +256,13 @@ const CashDeposit = () => {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={closeModal}
+                >
+                  Close
+                </button>
                 <button
                   type="button"
                   className="btn btn-danger"

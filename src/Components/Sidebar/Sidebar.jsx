@@ -177,7 +177,7 @@ const Sidebar = ({ isSidebarOpen }) => {
             </Link>
           )}
 
-          {permissions.length === 0 && (
+          {hasPermission("view-income") && (
             <Link
               to="/income"
               className={`nav-item nav-link ${
@@ -189,7 +189,7 @@ const Sidebar = ({ isSidebarOpen }) => {
           )}
 
           <div className="nav-item dropdown">
-            {permissions.length === 0 && (
+            {hasPermission("ledger") && (
               <Link
                 to=""
                 className={`nav-link dropdown-toggle ${
@@ -206,26 +206,30 @@ const Sidebar = ({ isSidebarOpen }) => {
                 isLedgerOpen ? "show" : ""
               }`}
             >
-              <Link
-                to="/partner-income"
-                className={`dropdown-item ms-3 ${
-                  isActive("/partner-income") ? "active" : ""
-                }`}
-              >
-                <i className="bi bi-person-circle me-2"></i> Partner
-              </Link>
-              <Link
-                to="/customer-income"
-                className={`dropdown-item ms-3 ${
-                  isActive("/customer-income") ? "active" : ""
-                }`}
-              >
-                <i className="bi bi-person-lines-fill me-2"></i> Customer
-              </Link>
+              {hasPermission("view-ledger-partner") && (
+                <Link
+                  to="/partner-income"
+                  className={`dropdown-item ms-3 ${
+                    isActive("/partner-income") ? "active" : ""
+                  }`}
+                >
+                  <i className="bi bi-person-circle me-2"></i> Partner
+                </Link>
+              )}
+              {hasPermission("view-customer-partner") && (
+                <Link
+                  to="/customer-income"
+                  className={`dropdown-item ms-3 ${
+                    isActive("/customer-income") ? "active" : ""
+                  }`}
+                >
+                  <i className="bi bi-person-lines-fill me-2"></i> Customer
+                </Link>
+              )}
             </div>
           </div>
           <div className="nav-item dropdown">
-            {permissions.length === 0 && (
+            {hasPermission("approval") && (
               <Link
                 to=""
                 className={`nav-link dropdown-toggle ${
@@ -242,34 +246,40 @@ const Sidebar = ({ isSidebarOpen }) => {
                 isApprovalOpen ? "show" : ""
               }`}
             >
-              <Link
-                to="/cash-deposit"
-                className={`dropdown-item ms-3 ${
-                  isActive("/cash-deposit") ? "active" : ""
-                }`}
-              >
-                <i className="bi bi-cash-stack me-2"></i> Cash Deposit
-              </Link>
-              <Link
-                to="/cheque-deposit"
-                className={`dropdown-item ms-3 ${
-                  isActive("/cheque-deposit") ? "active" : ""
-                }`}
-              >
-                <i className="bi bi-credit-card me-2"></i> Cheque Deposit
-              </Link>
-              <Link
-                to="/booking-authorization"
-                className={`dropdown-item ms-3 ${
-                  isActive("/booking-authorization") ? "active" : ""
-                }`}
-              >
-                <i className="bi bi-check-circle me-2"></i> Booking
-                Authorization
-              </Link>
+              {hasPermission("view-cash-deposit") && (
+                <Link
+                  to="/cash-deposit"
+                  className={`dropdown-item ms-3 ${
+                    isActive("/cash-deposit") ? "active" : ""
+                  }`}
+                >
+                  <i className="bi bi-cash-stack me-2"></i> Cash Deposit
+                </Link>
+              )}
+              {hasPermission("view-cheque-deposit") && (
+                <Link
+                  to="/cheque-deposit"
+                  className={`dropdown-item ms-3 ${
+                    isActive("/cheque-deposit") ? "active" : ""
+                  }`}
+                >
+                  <i className="bi bi-credit-card me-2"></i> Cheque Deposit
+                </Link>
+              )}
+              {hasPermission("view-booking-authorization") && (
+                <Link
+                  to="/booking-authorization"
+                  className={`dropdown-item ms-3 ${
+                    isActive("/booking-authorization") ? "active" : ""
+                  }`}
+                >
+                  <i className="bi bi-check-circle me-2"></i> Booking
+                  Authorization
+                </Link>
+              )}
             </div>
           </div>
-          {permissions.length === 0 && (
+          {hasPermission("view-report") && (
             <Link
               to="/report"
               className={`nav-item nav-link ${
