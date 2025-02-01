@@ -153,8 +153,8 @@ label {
   vertical-align: middle;
 }
 input[type="checkbox"] {
-  margin-right: 10px; 
-  accent-color: black; 
+  margin-right: 10px;
+  accent-color: black;
   transform: scale(1.4);
   vertical-align: middle;
 }
@@ -169,7 +169,7 @@ input[type="checkbox"] {
   height: 15px;
   cursor: pointer;
   accent-color: black;
-  border: 2px solid #ddd; 
+  border: 2px solid #ddd;
   border-radius: 4px;
 }
 
@@ -199,11 +199,6 @@ input[type="checkbox"] {
 .input-container .underline.active {
   width: 100%;
 }
-
-
-
-
-
 
 .input-container1 {
   display: flex;

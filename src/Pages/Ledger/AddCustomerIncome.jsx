@@ -19,7 +19,6 @@ const AddCustomerIncome = () => {
   const [depositDateError, setDepositDateError] = useState("");
   const [chequeDateError, setChequeDateError] = useState("");
   const [showSaleDeedFields, setShowSaleDeedFields] = useState(false);
-  const [focusedField, setFocusedField] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
 
   const handleClick = (index) => {
