@@ -3,7 +3,6 @@ import React, { useState, useRef } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
 import { Link } from "react-router-dom";
-import Footer from "../../Components/Footer/Footer";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
@@ -49,7 +48,7 @@ const PartnerIncome = () => {
                       <h6 className="">Partner Income</h6>
                     </div>
                     <div className="">
-                      <button
+                      {/* <button
                         className="shadow-sm"
                         style={{
                           border: "none",
@@ -59,8 +58,8 @@ const PartnerIncome = () => {
                         }}
                       >
                         <a>Income</a>
-                      </button>
-                      {hasPermission("view-reimbursement") && (
+                      </button> */}
+                      {/* {hasPermission("view-reimbursement") && (
                         <Link to="/partner-reimbursement">
                           <button
                             className="shadow-sm"
@@ -73,7 +72,7 @@ const PartnerIncome = () => {
                             <a>Reimbursement</a>
                           </button>
                         </Link>
-                      )}
+                      )} */}
                     </div>
                   </div>
                   <div className="d-flex justify-content-between mb-3">
@@ -92,7 +91,8 @@ const PartnerIncome = () => {
                   <table className="table table-bordered text-center">
                     <thead>
                       <tr>
-                        <th scope="col">Name</th>
+                        <th scope="col"> Partner Name</th>
+                        <th scope="col"> Project Name</th>
                         <th scope="col">Income Date</th>
                         <th scope="col">Payment Mode</th>
                         <th scope="col">Amount</th>
@@ -102,6 +102,7 @@ const PartnerIncome = () => {
                     </thead>
                     <tbody>
                       <tr>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -127,7 +128,6 @@ const PartnerIncome = () => {
               </div>
             </div>
           </div>
-          <Footer />
         </div>
       </div>
     </>
