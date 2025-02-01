@@ -41,7 +41,6 @@ function AddPartners() {
       errors.name = "Name must only contain letters.";
     }
 
-    // Validate each pair of selectProject and percentage
     inputFields.forEach((field, index) => {
       if (!field.selectProject) {
         errors[`selectProject-${index}`] = "Project is required.";
@@ -202,7 +201,7 @@ function AddPartners() {
                   <form onSubmit={handleSubmit}>
                     <div className="row">
                       <div className="col">
-                        <div className="input-container">
+                        {/* <div className="input-container"> */}
                           <input
                             type="text"
                             className={`form-control mb-1 ${
@@ -216,7 +215,7 @@ function AddPartners() {
                           {error.name && (
                             <div className="invalid-feedback">{error.name}</div>
                           )}
-                        </div>
+                        {/* </div> */}
                       </div>
                       <div className="col"></div>
                     </div>
@@ -248,7 +247,7 @@ function AddPartners() {
                             </div>
                           )}
                         </div>
-                        <div className="col input-container">
+                        <div className="col ">
                           <input
                             type="number"
                             className={`form-control mb-1 ${
