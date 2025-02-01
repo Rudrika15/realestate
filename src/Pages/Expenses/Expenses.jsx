@@ -94,7 +94,7 @@ const Expenses = () => {
     } catch (error) {
       console.error("Fetch error:", error);
       if (error.response && error.response.status === 401) {
-        navigate("/"); // Handle unauthorized access
+        navigate("/"); 
       } else {
         toast.error("Failed to fetch expenses. Please try again.");
         setExpenses([]);

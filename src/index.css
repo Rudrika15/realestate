@@ -179,19 +179,31 @@ input[type="checkbox"] {
 }
 
 .input-container {
-  flex-direction: column;
+  position: relative;
   display: flex;
+  flex-direction: column;
+  cursor: pointer;
   margin-left: 20px;
 }
 
 .input-container .underline {
-  width: 100%; 
-  max-width: 100px; 
-  margin-left: 0.8rem;
+  width: 0%;
+  max-width: 100px;
   height: 4px;
-  background-color: #d3dfe0; 
-  margin-top: 9px; 
+  background-color: #d3dfe0;
+  margin-top: 9px;
+  margin-left: 1rem;
+  transition: width 0.3s ease-in-out;
 }
+
+.input-container .underline.active {
+  width: 100%;
+}
+
+
+
+
+
 
 .input-container1 {
   display: flex;

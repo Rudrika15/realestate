@@ -20,6 +20,11 @@ const AddCustomerIncome = () => {
   const [chequeDateError, setChequeDateError] = useState("");
   const [showSaleDeedFields, setShowSaleDeedFields] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
+
+  const handleClick = (index) => {
+    setActiveIndex(activeIndex === index ? null : index);
+  };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -103,23 +108,21 @@ const AddCustomerIncome = () => {
                       </div>
                     </div>
                     <div className="row pt-5 mb-4 text-dark">
-                      <div className="col">
-                        <div class="input-container">
-                          <label for="sale-deed-amount">Sale Deed Amount</label>
-                          <div className="underline"></div>
-                        </div>
-                      </div>
-                      <div className="col">
-                        <div class="input-container">
-                          <label for="other-work-amount">Other Work Amount</label>
-                        </div>
-                      </div>
-                      <div className="col">
-                        <div class="input-container">
-                          <label for="extra-work-amount">Extra Work Amount</label>
-                        </div>
-                      </div>
-                      <div className="col"></div>
+                      {["Sale Deed Amount", "Other Work Amount", "Extra Work Amount"].map(
+                        (label, index) => (
+                          <div className="col" key={index}>
+                            <div
+                              className="input-container"
+                              onClick={() => handleClick(index)}
+                            >
+                              <label>{label}</label>
+                              <div
+                                className={`underline ${activeIndex === index ? "active" : ""}`}
+                              ></div>
+                            </div>
+                          </div>
+                        )
+                      )}
                     </div>
                     <div className="d-flex align-items-center">
                       <table className="table table-bordered w-75 text-center">
