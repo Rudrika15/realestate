@@ -212,118 +212,94 @@ const AddExpenses = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     let isValid = true;
     const updatedExpenses = [...expenses];
-  
+
     updatedExpenses.forEach((expense, index) => {
-      if (!expense.project) {
-        updatedExpenses[index].projectError = true;
-        isValid = false;
-      } else {
-        updatedExpenses[index].projectError = false;
-      }
+      updatedExpenses[index].projectError = !expense.project;
+      updatedExpenses[index].expenseHeadError = !expense.expenseHead;
+      updatedExpenses[index].narrationError = !expense.narration.trim();
+      updatedExpenses[index].amountError = !expense.amount || isNaN(expense.amount) || parseFloat(expense.amount) <= 0;
 
-      if (!expense.expenseHead) {
-        updatedExpenses[index].expenseHeadError = true;
+      if (!expense.project || !expense.expenseHead || !expense.narration.trim() || !expense.amount || isNaN(expense.amount) || parseFloat(expense.amount) <= 0) {
         isValid = false;
-      } else {
-        updatedExpenses[index].expenseHeadError = false;
-      }
-
-      if (!expense.narration.trim()) {
-        updatedExpenses[index].narrationError = true;
-        isValid = false;
-      } else {
-        updatedExpenses[index].narrationError = false;
-      }
-
-      if (!expense.amount || isNaN(expense.amount) || parseFloat(expense.amount) <= 0) {
-        updatedExpenses[index].amountError = true;
-        isValid = false;
-      } else {
-        updatedExpenses[index].amountError = false;
       }
     });
 
     if (!expenseDate || !voucherNo) {
-        isValid = false;
-        setExpenseDateError(!expenseDate);
-        setVoucherNoError(!voucherNo);
+      isValid = false;
+      setExpenseDateError(!expenseDate);
+      setVoucherNoError(!voucherNo);
     }
 
     setExpenses(updatedExpenses);
-    
+
     if (!isValid) {
-        toast.error("❌ Validation failed! Fix errors before submitting.");
-        return;
+      toast.error("❌ Validation failed! Fix errors before submitting.");
+      return;
     }
 
     setLoading(true);
     try {
-        const token = localStorage.getItem("token");
-        console.log(token);
-        
-        if (!token) {
-            toast.error("Token missing. Please log in again.");
-            setLoading(false);
-            return;
-        }
-
-        const expenseData = {
-            voucherNo,
-            expenseDate,
-            totalAmount: Number(calculateTotalAmount()),
-            expenseDetails: expenses.map((expense) => ({
-                name: expense.name, 
-                projectId: expense.project,
-                ExpenseHeadId: expense.expenseHead,
-                narration: expense.narration, // ✅ Fixed backend field
-                amount: Number(expense.amount),
-            })),
-        };
-        console.log(expenseData);
-
-
-        const response = await axios.post(storeExpense, expenseData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (response.data.status) {
-            toast.success("✅ Expense added successfully!");
-
-            // Redirect and recommendation message after success
-            setVoucherNo("");
-            setExpenseDate("");
-            setExpenses([]);
-
-            setTimeout(() => {
-                toast.info("📄 You can view and manage your expenses in the Expense page.");
-                navigate("/expense");  // Redirect to the expense page
-            }, 1000);
-            console.log(response.data.data);
-
-        } else {
-            toast.error(response.data.message || "Failed to add Expense");
-        }
-    } catch (error) {
-        console.error("API Error: ", error);
-        toast.error("Failed to add Expense. Please try again.");
-        if (error.response && error.response.status === 401) {
-            navigate("/");
-        }
-    } finally {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Token missing. Please log in again.");
         setLoading(false);
+        return;
+      }
+
+      const expenseData = {
+        voucherNo,
+        expenseDate,
+        totalAmount: Number(calculateTotalAmount()),
+        expenseDetails: expenses.map((expense) => ({
+          name: expense.name,
+          projectId: expense.project,
+          ExpenseHeadId: expense.expenseHead,
+          naration: expense.narration,
+          amount: Number(expense.amount),
+        })),
+      };
+
+      console.log("Sending data:", expenseData);
+
+      const response = await axios.post(storeExpense, expenseData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data) {
+        toast.success("✅ Expense added successfully!");
+        console.log(response.data.status);
+
+        setVoucherNo("");
+        setExpenseDate("");
+        setExpenses([]);
+
+        console.log("Response Data:", response.data.data);
+        navigate("/expenses")
+
+      } else {
+        toast.error(response.data.message || "Failed to add Expense");
+      }
+    } catch (error) {
+      console.error("API Error: ", error);
+      toast.error("Failed to add Expense. Please try again.");
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+    } finally {
+      setLoading(false);
     }
-};
+  };
 
   const addExpenseHead = async (e) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage. getItem("token");
       const response = await axios.post(
         storeExpenseHead,
         { ExpenseHeadName: newOption },
@@ -341,9 +317,9 @@ const AddExpenses = () => {
         ]);
         toast.success("Expense Head added successfully!");
         setNewOption("");
-        setTimeout(() => {
-          navigate("/expense");
-        }, 1000);
+        // setTimeout(() => {
+        //   navigate("/expense");
+        // }, 1000);
       } else {
         toast.error(response.data.message || "Failed to add Expense Head");
       }

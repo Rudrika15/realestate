@@ -20,6 +20,7 @@ const AddCustomerIncome = () => {
   const [chequeDateError, setChequeDateError] = useState("");
   const [showSaleDeedFields, setShowSaleDeedFields] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
+  const [selectedOption, setSelectedOption] = useState("");
 
   const handleClick = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
@@ -64,6 +65,8 @@ const AddCustomerIncome = () => {
     setChequeDate(e.target.value);
     if (e.target.value) setChequeDateError(false);
   };
+
+
 
   return (
     <>
@@ -185,33 +188,6 @@ const AddCustomerIncome = () => {
                         </div>
                       </div>
                     </div>
-                    {showSaleDeedFields && (
-                      <>
-                        <div className="row pt-4">
-                          <div className="col">
-                            <input type="number" className="form-control" id="Cheque No" placeholder="Cheque No" name="Cheque No" />
-                          </div>
-                          <div className="col">
-                            <input
-                              type="text"
-                              id="date"
-                              className={`form-control`}
-                              value={formatDate(chequeDate)}
-                              onChange={(e) => handleChequeDateChange(e)}
-                              placeholder="Cheque Date"
-                              onFocus={(e) => (e.target.type = "date")}
-                              onBlur={(e) => (e.target.type = "text")}
-                            />
-                          </div>
-                        </div>
-                        <div className="row pt-4">
-                          <div className="col">
-                            <input type="text" className="form-control" id="Bank Name" placeholder="Bank Name" name="Bank Name" />
-                          </div>
-                          <div className="col"></div>
-                        </div>
-                      </>
-                    )}
                     <div className="row pt-4">
                       <div className="col">
                         <input
@@ -252,6 +228,33 @@ const AddCustomerIncome = () => {
                         <input type="text" className="form-control" id="Receipt Name" placeholder="Receipt Name" name="Receipt Name" />
                       </div>
                     </div>
+                    {showSaleDeedFields && (
+                      <>
+                        <div className="row pt-2">
+                          <div className="col">
+                            <input type="number" className="form-control" id="Cheque No" placeholder="Cheque No" name="Cheque No" />
+                          </div>
+                          <div className="col">
+                            <input
+                              type="text"
+                              id="date"
+                              className={`form-control`}
+                              value={formatDate(chequeDate)}
+                              onChange={(e) => handleChequeDateChange(e)}
+                              placeholder="Cheque Date"
+                              onFocus={(e) => (e.target.type = "date")}
+                              onBlur={(e) => (e.target.type = "text")}
+                            />
+                          </div>
+                        </div>
+                        <div className="row pt-4 mb-3">
+                          <div className="col">
+                            <input type="text" className="form-control" id="Bank Name" placeholder="Bank Name" name="Bank Name" />
+                          </div>
+                          <div className="col"></div>
+                        </div>
+                      </>
+                    )}
                     <div className="row w-50">
                       <div className="col">
                         <div className="mb-3">

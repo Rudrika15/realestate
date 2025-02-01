@@ -296,7 +296,7 @@ const App = () => {
             }
           />
           <Route
-            path="/edit-expenses"
+            path="/edit-expenses/:id"
             element={
               <ProtectedRoute
                 element={<EditExpenses />}
