@@ -111,7 +111,6 @@ function AddPartners() {
           console.error("Projects data not found in the response.");
         }
       } catch (error) {
-        
         if (error.response) {
           if (error.response.status === 401) {
             navigate("/");
@@ -147,16 +146,16 @@ function AddPartners() {
           percentage: parseFloat(field.percentage.trim()),
         })),
       };
-  
-      console.log(partnerData); 
-  
+
+      console.log(partnerData);
+
       const response = await axios.post(addPartner, partnerData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-  
+
       if (response.status === 200) {
         toast.success("Partner added successfully!");
         setLoading(false);
@@ -170,7 +169,7 @@ function AddPartners() {
       setLoading(false);
     }
   };
-  
+
   return (
     <>
       <ToastContainer />
@@ -202,19 +201,19 @@ function AddPartners() {
                     <div className="row">
                       <div className="col">
                         {/* <div className="input-container"> */}
-                          <input
-                            type="text"
-                            className={`form-control mb-1 ${
-                              error.name ? "is-invalid" : ""
-                            }`}
-                            placeholder="Name"
-                            value={name}
-                            onChange={handleNameChange}
-                            ref={nameRef}
-                          />
-                          {error.name && (
-                            <div className="invalid-feedback">{error.name}</div>
-                          )}
+                        <input
+                          type="text"
+                          className={`form-control mb-1 ${
+                            error.name ? "is-invalid" : ""
+                          }`}
+                          placeholder="Name"
+                          value={name}
+                          onChange={handleNameChange}
+                          ref={nameRef}
+                        />
+                        {error.name && (
+                          <div className="invalid-feedback">{error.name}</div>
+                        )}
                         {/* </div> */}
                       </div>
                       <div className="col"></div>
@@ -306,5 +305,3 @@ function AddPartners() {
 }
 
 export default AddPartners;
-
-
