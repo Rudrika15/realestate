@@ -6,8 +6,9 @@ import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import { getProject,getPartner } from "../../Api/ApiDipak";
+import { getProject, getPartner } from "../../Api/ApiDipak";
 import axios from "axios";
+import { storePartnerIncome } from "../../Api/DevanshiApi";
 const AddPartnerIncome = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
@@ -22,6 +23,8 @@ const AddPartnerIncome = () => {
   const [partner, setPartner] = useState([]);
   const [project, setProject] = useState([]);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({});
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -45,7 +48,6 @@ const AddPartnerIncome = () => {
 
       if (response.data.status === true && response.data.data) {
         setPartner(response.data.data);
-        // toast.success(response.data.message);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -86,11 +88,13 @@ const AddPartnerIncome = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let isValid = true;
     const validationErrors = {};
-    if (!partner  ) {
+  
+    // Validate fields
+    if (!partner) {
       validationErrors.partner = "Partner is required";
       isValid = false;
     }
@@ -98,22 +102,21 @@ const AddPartnerIncome = () => {
       validationErrors.project = "Project is required";
       isValid = false;
     }
-
     if (!incomeDate) {
       validationErrors.incomeDate = "Income Date is required";
       isValid = false;
     }
-
-    if (!amount || isNaN(amount) || amount <= 0) {
+  
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
       validationErrors.amount = "Valid Amount is required";
       isValid = false;
     }
-
+  
     if (!paymentMode) {
       validationErrors.paymentMode = "Payment Mode is required";
       isValid = false;
     }
-
+  
     if (paymentMode === "Cheque") {
       if (!chequeDate) {
         validationErrors.chequeDate = "Cheque Date is required";
@@ -128,22 +131,91 @@ const AddPartnerIncome = () => {
         isValid = false;
       }
     }
-    if (!remark.trim()) {
-      validationErrors.remark = "Remark is required";
-      isValid = false;
-    }
-
+  
+    // Removed remark validation based on your example
+    // if (!remark.trim()) {
+    //   validationErrors.remark = "Remark is required";
+    //   isValid = false;
+    // }
+  
     if (!isValid) {
       setError(validationErrors);
       return;
     }
     setError({});
+  
+    // Log the values for debugging
+    console.log('Amount:', amount);
+    console.log('Request Data:', {
+      projectId: formData.project,
+      incomeType: "Partner Income",
+      amount: Number(formData.amount), // Ensure amount is valid number
+      paymentMode: formData.paymentMode,
+      dateReceived: formData.incomeDate, // Ensure date format is correct
+      PartnerId: formData.partner,
+      bankName: formData.paymentMode === "Cheque" ? formData.bankName : "",
+      chequeNumber: formData.paymentMode === "Cheque" ? formData.chequeNumber : "",
+      chequeDate: formData.paymentMode === "Cheque" ? formData.chequeDate : "",
+      remark: formData.remark,
+    });
+  
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("No authorization token found.");
+        return;
+      }
+  
+      const requestData = {
+        projectId: formData.project,
+        incomeType: "Partner Income",
+        amount: Number(formData.amount), // Ensure amount is converted to number
+        paymentMode: formData.paymentMode,
+        dateReceived: formData.incomeDate, // Check the date format if necessary
+        PartnerId: formData.partner,
+        bankName: formData.paymentMode === "Cheque" ? formData.bankName : "",
+        chequeNumber: formData.paymentMode === "Cheque" ? formData.chequeNumber : "",
+        chequeDate: formData.paymentMode === "Cheque" ? formData.chequeDate : "",
+        remark: formData.remark, // Optional based on your needs
+      };
+  
+      console.log('Request Payload:', requestData);
+  
+      const response = await axios.post(storePartnerIncome, requestData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (response.data.success) {
+        toast.success(response.data.message || "Partner Income added successfully!");
+        console.log(response.data.data);
+        setTimeout(() => {
+          navigate("/partner-income");
+        }, 1000);
+      } else {
+        toast.error(response.data.message || "Failed to add partner income.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+      }
+      toast.error(error.response?.data?.message || "Failed to add partner income. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
-
+  
   useEffect(() => {
     fetchPartner()
     fetchProjects();
   }, []);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
   return (
     <>
       <ToastContainer />
@@ -178,17 +250,10 @@ const AddPartnerIncome = () => {
                   <form onSubmit={handleSubmit}>
                     <div className="row">
                       <div className="col">
-                        <select
-                          className={`form-select  ${
-                            error.partner ? "is-invalid" : ""
-                          }`}
-                          aria-label="Default select example"
-                        >
-                          <option selected>Select Partner</option>
-                          {partner.map((partner)   => (
-                            <option key={partner.id} value={partner.id}>
-                              {partner.partnerName}
-                            </option>
+                        <select name="partner" className="form-select" value={formData.partner} onChange={handleChange}>
+                          <option value="">Select Partner</option>
+                          {partner.map((p) => (
+                            <option key={p.id} value={p.id}>{p.partnerName}</option>
                           ))}
                         </select>
                         {error.partner && (
@@ -198,17 +263,10 @@ const AddPartnerIncome = () => {
                         )}
                       </div>
                       <div className="col">
-                        <select
-                          className={`form-select ${
-                            error.project ? "is-invalid" : ""
-                          }`}
-                          aria-label="Default select example"
-                        >
-                          <option value="" selected>Select Projects</option>
-                          {project.map((project) => (
-                            <option key={project.id} value={project.id}>
-                              {project.projectName}
-                            </option>
+                        <select name="project" className="form-select" value={formData.project} onChange={handleChange}>
+                          <option value="">Select Project</option>
+                          {project.map((p) => (
+                            <option key={p.id} value={p.id}>{p.projectName}</option>
                           ))}
                         </select>
                         {error.project && (
@@ -222,19 +280,18 @@ const AddPartnerIncome = () => {
                           <input
                             type="text"
                             id="date"
-                            className={`form-control ${
-                              error.incomeDate ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${error.incomeDate ? "is-invalid" : ""
+                              }`}
                             value={
                               incomeDate
                                 ? new Date(incomeDate).toLocaleDateString(
-                                    "en-GB",
-                                    {
-                                      day: "2-digit",
-                                      month: "2-digit",
-                                      year: "2-digit",
-                                    }
-                                  )
+                                  "en-GB",
+                                  {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "2-digit",
+                                  }
+                                )
                                 : ""
                             }
                             onChange={(e) => setIncomeDate(e.target.value)}
@@ -297,19 +354,18 @@ const AddPartnerIncome = () => {
                             <input
                               type="text"
                               id="date"
-                              className={`form-control ${
-                                error.chequeDate ? "is-invalid" : ""
-                              }`}
+                              className={`form-control ${error.chequeDate ? "is-invalid" : ""
+                                }`}
                               value={
                                 chequeDate
                                   ? new Date(chequeDate).toLocaleDateString(
-                                      "en-GB",
-                                      {
-                                        day: "2-digit",
-                                        month: "2-digit",
-                                        year: "2-digit",
-                                      }
-                                    )
+                                    "en-GB",
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "2-digit",
+                                    }
+                                  )
                                   : ""
                               }
                               onChange={(e) => setChequeDate(e.target.value)}
@@ -326,10 +382,9 @@ const AddPartnerIncome = () => {
                         </div>
                         <div className="col-4">
                           <input
-                            type="text"
-                            className={`form-control ${
-                              error.chequeNumber? "is-invalid" : ""
-                            }`}
+                            type="number"
+                            className={`form-control ${error.chequeNumber ? "is-invalid" : ""
+                              }`}
                             placeholder="Cheque Number"
                             value={chequeNumber}
                             onChange={(e) => setChequeNumber(e.target.value)}
@@ -341,12 +396,11 @@ const AddPartnerIncome = () => {
                           )}
                         </div>
                         <div className="col-4">
-                        <input
-                            type="text"
-                            className={`form-control ${
-                              error.bankName ? "is-invalid" : ""
-                            }`}
-                            placeholder="Cheque Number"
+                          <input
+                            type="number"
+                            className={`form-control ${error.bankName ? "is-invalid" : ""
+                              }`}
+                            placeholder="Bank Name"
                             value={bankName}
                             onChange={(e) => setBankName(e.target.value)}
                           />
@@ -362,9 +416,8 @@ const AddPartnerIncome = () => {
                       <div className="col pt-3">
                         <input
                           type="text"
-                          className={`form-control ${
-                            error.amount ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${error.amount ? "is-invalid" : ""
+                            }`}
                           id="amount"
                           placeholder="Amount"
                           name="amount"
@@ -380,9 +433,8 @@ const AddPartnerIncome = () => {
                     <div className="row w-75">
                       <div className="col pt-3">
                         <textarea
-                          className={`form-control ${
-                            error.remark ? "is-invalid" : ""
-                          }`}
+                          className={`form-control ${error.remark ? "is-invalid" : ""
+                            }`}
                           placeholder="Remark"
                           id="floatingTextarea"
                           value={remark}

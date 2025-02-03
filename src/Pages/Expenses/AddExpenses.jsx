@@ -97,7 +97,6 @@ const AddExpenses = () => {
     }
   };
 
-
   const handleNewOptionChange = (e) => {
     setNewOption(e.target.value);
   };
@@ -241,6 +240,7 @@ const AddExpenses = () => {
     }
 
     setLoading(true);
+
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -249,16 +249,28 @@ const AddExpenses = () => {
         return;
       }
 
+      const totalAmount = expenses.reduce((acc, expense) => acc + (parseFloat(expense.amount) || 0), 0);
+
+      const projectIds = expenses.map((expense) => expense.project).filter((projectId) => projectId);
+      const expenseHeadIds = expenses.map((expense) => expense.expenseHead).filter((expenseHeadId) => expenseHeadId);
+
+      if (projectIds.length === 0 || expenseHeadIds.length === 0) {
+        toast.error("❌ Please select project and expense head for all items.");
+        setLoading(false);
+        return;
+      }
+
       const expenseData = {
         voucherNo,
         expenseDate,
-        totalAmount: Number(calculateTotalAmount()),
+        amountTotal: parseFloat(totalAmount),
+        projectIds,
+        expenseHeadIds,
         expenseDetails: expenses.map((expense) => ({
-          name: expense.name,
           projectId: expense.project,
           ExpenseHeadId: expense.expenseHead,
           naration: expense.narration,
-          amount: Number(expense.amount),
+          amount: parseFloat(expense.amount) || 0,
         })),
       };
 
@@ -271,7 +283,7 @@ const AddExpenses = () => {
         },
       });
 
-      if (response.data) {
+      if (response.data && response.data.status) {
         toast.success("✅ Expense added successfully!");
         console.log(response.data.status);
 
@@ -279,9 +291,21 @@ const AddExpenses = () => {
         setExpenseDate("");
         setExpenses([]);
 
-        console.log("Response Data:", response.data.data);
-        navigate("/expenses")
+        const expenseMasterId = response.data.data.expenseMaster.id;
+        const expenseDetails = response.data.data.expenseDetails;
 
+        const updatedExpensesWithMasterId = expenses.map((expense, index) => ({
+          ...expense,
+          ExpenseMasterId: expenseMasterId,
+          name: expenseDetails[index]?.name || "",
+        }));
+
+        console.log("Updated expenses with ExpenseMasterId:", updatedExpensesWithMasterId);
+
+        setExpenses(updatedExpensesWithMasterId);
+
+        console.log("Response Data:", response.data.data);
+        navigate("/expenses");
       } else {
         toast.error(response.data.message || "Failed to add Expense");
       }
@@ -295,44 +319,6 @@ const AddExpenses = () => {
       setLoading(false);
     }
   };
-
-  const addExpenseHead = async (e) => {
-    setLoading(true);
-    try {
-      const token = localStorage. getItem("token");
-      const response = await axios.post(
-        storeExpenseHead,
-        { ExpenseHeadName: newOption },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.data.status === true) {
-        setExpenseHeads((prevHeads) => [
-          ...prevHeads,
-          response.data.data,
-        ]);
-        toast.success("Expense Head added successfully!");
-        setNewOption("");
-        // setTimeout(() => {
-        //   navigate("/expense");
-        // }, 1000);
-      } else {
-        toast.error(response.data.message || "Failed to add Expense Head");
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        navigate("/");
-      }
-      toast.error("Failed to add Expense Head. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
 
   const preventFormSubmit = (e) => {
     if (e.key === "Enter") {
@@ -427,15 +413,10 @@ const AddExpenses = () => {
                           <tr key={expense.id}>
                             <td>
                               <select
-                                className={`form-select ${expense.projectError ? "is-invalid" : ""
-                                  }`}
-                                value={expense.project}
+                                className={`form-select ${expense.projectError ? "is-invalid" : ""}`}
+                                value={expense.project || ""}
                                 onChange={(e) =>
-                                  handleExpenseChange(
-                                    index,
-                                    "project",
-                                    e.target.value
-                                  )
+                                  handleExpenseChange(index, "project", e.target.value)
                                 }
                               >
                                 <option value="" disabled>
@@ -486,7 +467,7 @@ const AddExpenses = () => {
                                   Add new expense head...
                                 </option>
                                 {expenseHeads.map((expenseHead) => (
-                                  <option key={expenseHead.id} value={expenseHead.ExpenseHeadName}>
+                                  <option key={expenseHead.id} value={expenseHead.id}>
                                     {expenseHead.ExpenseHeadName}
                                   </option>
                                 ))}
@@ -515,7 +496,7 @@ const AddExpenses = () => {
                                   </button>
                                   <button
                                     className="btn btn-primary"
-                                    onClick={handleAddNewOption} // Add the new option
+                                    onClick={handleAddNewOption}
                                   >
                                     Add Expense Head
                                   </button>

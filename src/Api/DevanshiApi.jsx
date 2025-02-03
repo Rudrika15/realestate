@@ -32,3 +32,5 @@ export const getExpense = baseUrl + "v1/expense/get-expense"
 export const deleteExpense = baseUrl + "v1/expense/delete-expense"
 export const singleIdExpense = baseUrl + "v1/expense/get-expense-by-id/"
 export const updatedExpense = baseUrl + "v1/expense/update-expense"
+// partner-income
+export const storePartnerIncome = baseUrl + "v1/partnerIncome/store-partner-income"
