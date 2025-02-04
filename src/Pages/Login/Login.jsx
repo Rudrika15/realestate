@@ -57,7 +57,8 @@ const Login = () => {
         localStorage.setItem("roles", JSON.stringify(response.data.roles));
         localStorage.setItem("userName", response.data.data.userName); 
         setTimeout(() => {
-          navigate("/dashboard");
+          // navigate("/dashboard");
+          window.location.href = "/dashboard";
         }, 1000);
         setUserName("");
         setPasscode("");
