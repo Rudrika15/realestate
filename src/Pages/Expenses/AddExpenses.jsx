@@ -70,17 +70,28 @@ const AddExpenses = () => {
     setExpenses(updatedExpenses);
   };
 
+  // const formatDate = (date) => {
+  //   if (date) {
+  //     const d = new Date(date);
+  //     const day = ("0" + d.getDate()).slice(-2);
+  //     const month = ("0" + (d.getMonth() + 1)).slice(-2);
+  //     const year = d.getFullYear();
+  //     return `${day}-${month}-${year}`;
+  //   }
+  //   return "";
+  // };
   const formatDate = (date) => {
-    if (date) {
-      const d = new Date(date);
-      const day = ("0" + d.getDate()).slice(-2);
-      const month = ("0" + (d.getMonth() + 1)).slice(-2);
-      const year = d.getFullYear();
-      return `${day}-${month}-${year}`;
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return ""; 
+    const day = ("0" + d.getDate()).slice(-2);
+    const month = ("0" + (d.getMonth() + 1)).slice(-2);
+    let year = d.getFullYear().toString();
+    if (year.length > 4) {
+        year = year.slice(0, 4);
     }
-    return "";
-  };
 
+    return `${day}-${month}-${year}`;
+};
   const handleExpenseChange = (index, field, value) => {
     const updatedExpenses = [...expenses];
     updatedExpenses[index][field] = value;

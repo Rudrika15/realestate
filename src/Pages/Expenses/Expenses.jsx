@@ -154,7 +154,7 @@ const Expenses = () => {
                             <th>Expense Date</th>
                             <th>Expense Head</th>
                             <th>Narration</th>
-                            <th>Amount</th>
+                            <th >Amount</th>
                             <th>Actions</th>
                           </tr>
                         </thead>
@@ -167,7 +167,7 @@ const Expenses = () => {
                                   <td>{formatDate(expense.expenceDate)}</td> 
                                   <td>{detail.ExpenseHeadId || "N/A"}</td>
                                   <td>{detail.naration || "N/A"}</td>
-                                  <td>{detail.amount || "N/A"}</td>
+                                  <td className="text-start">{detail.amount || "N/A"}</td>
                                   <td>
                                     <Link
                                       to={`/edit-expenses/${detail.id}`}
@@ -190,7 +190,7 @@ const Expenses = () => {
                                 <td>{formatDate(expense.expenceDate)}</td> 
                                 <td>{expense.ExpenseHeadId || "N/A"}</td>
                                 <td>{expense.naration || "N/A"}</td>
-                                <td>{expense.totalAmount || "N/A"}</td>
+                                <td className="text-start">{expense.totalAmount || "N/A"}</td>
                                 <td>
                                   <Link
                                     to={`/edit-expenses/${expense.id}`}
