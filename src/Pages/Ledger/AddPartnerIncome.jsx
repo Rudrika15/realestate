@@ -63,7 +63,6 @@ const AddPartnerIncome = () => {
         navigate("/");
         return;
       }
-
       const response = await axios.get(getProject, {
         headers: {
           Authorization: `Bearer ${token}`,

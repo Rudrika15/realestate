@@ -7,6 +7,8 @@ const Sidebar = ({ isSidebarOpen }) => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isLedgerOpen, setIsLedgerOpen] = useState(false);
   const [isApprovalOpen, setIsApprovalOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
   const location = useLocation();
 
   const [permissions, setPermissions] = useState([]);
@@ -23,23 +25,35 @@ const Sidebar = ({ isSidebarOpen }) => {
     ["/cash-deposit", "/cheque-deposit", "/booking-authorization"].includes(
       location.pathname
     );
+  const isAuthActive = () =>
+    ["/partner-income", "/customer-income", ""].includes(location.pathname);
 
   const toggleBookingDropdown = () => {
     setIsBookingOpen((prevState) => !prevState);
     setIsLedgerOpen(false);
     setIsApprovalOpen(false);
+    setIsAuthOpen(false);
   };
 
   const toggleLedgerDropdown = () => {
     setIsLedgerOpen((prevState) => !prevState);
     setIsBookingOpen(false);
     setIsApprovalOpen(false);
+    setIsAuthOpen(false);
   };
 
   const toggleApprovalDropdown = () => {
     setIsApprovalOpen((prevState) => !prevState);
     setIsBookingOpen(false);
     setIsLedgerOpen(false);
+    setIsAuthOpen(false);
+  };
+
+  const toggleAuthDropdown = () => {
+    setIsAuthOpen((prevState) => !prevState);
+    setIsBookingOpen(false);
+    setIsLedgerOpen(false);
+    setIsApprovalOpen(false);
   };
 
   useEffect(() => {
@@ -48,6 +62,7 @@ const Sidebar = ({ isSidebarOpen }) => {
         setIsBookingOpen(false);
         setIsLedgerOpen(false);
         setIsApprovalOpen(false);
+        setIsAuthOpen(false);
       }
     };
     document.addEventListener("click", handleClickOutside);
@@ -78,51 +93,45 @@ const Sidebar = ({ isSidebarOpen }) => {
         <div className="navbar-nav w-100">
           <Link
             to="/dashboard"
-            className={`nav-item nav-link ${isActive("/dashboard") ? "active" : ""
-              }`}
+            className={`nav-item nav-link ${
+              isActive("/dashboard") ? "active" : ""
+            }`}
           >
             <i class="fa fa-th-large" aria-hidden="true"></i> Dashboard
           </Link>
-          {hasPermission("view-user") && (
-            <Link
-              to="/view-user"
-              className={`nav-item nav-link ${isActive("/view-user") ? "active" : ""
-                }`}
-            >
-              <i className="fas fa-user"></i> User
-            </Link>
-          )}
-
           {hasPermission("view-project") && (
             <Link
               to="/projects"
-              className={`nav-item nav-link ${isActive("/projects") ? "active" : ""
-                }`}
+              className={`nav-item nav-link ${
+                isActive("/projects") ? "active" : ""
+              }`}
             >
               <i className="fas fa-briefcase"></i> Projects
             </Link>
           )}
-
           <div className="nav-item dropdown">
             {hasPermission("booking") && (
               <Link
                 to=""
-                className={`nav-link dropdown-toggle ${isBookingActive() ? "active" : ""
-                  }`}
+                className={`nav-link dropdown-toggle ${
+                  isBookingActive() ? "active" : ""
+                }`}
                 onClick={toggleBookingDropdown}
               >
                 <i className="fas fa-calendar-check"></i> Booking
               </Link>
             )}
             <div
-              className={`dropdown-menu bg-transparent border-0 ${isBookingOpen ? "show" : ""
-                }`}
+              className={`dropdown-menu bg-transparent border-0 ${
+                isBookingOpen ? "show" : ""
+              }`}
             >
               {hasPermission("view-booking") && (
                 <Link
                   to="/view-booking"
-                  className={`dropdown-item ms-3 ${isActive("/view-booking") ? "active" : ""
-                    }`}
+                  className={`dropdown-item ms-3 ${
+                    isActive("/view-booking") ? "active" : ""
+                  }`}
                 >
                   <i className="bi bi-eye me-2"></i> View Bookings
                 </Link>
@@ -130,58 +139,53 @@ const Sidebar = ({ isSidebarOpen }) => {
               {hasPermission("cancelled-booking") && (
                 <Link
                   to="/cancelled-booking"
-                  className={`dropdown-item ms-3 ${isActive("/cancelled-booking") ? "active" : ""
-                    }`}
+                  className={`dropdown-item ms-3 ${
+                    isActive("/cancelled-booking") ? "active" : ""
+                  }`}
                 >
                   <i className="bi bi-x-circle me-2"></i> Cancelled Bookings
                 </Link>
               )}
             </div>
           </div>
-
-          {hasPermission("view-broker") && (
-            <Link
-              to="/broker"
-              className={`nav-item nav-link ${isActive("/broker") ? "active" : ""
-                }`}
-            >
-              <i class="fas fa-user-tie"></i> Broker
-            </Link>
-          )}
           {hasPermission("view-partner") && (
             <Link
               to="/partners"
-              className={`nav-item nav-link ${isActive("/partners") ? "active" : ""
-                }`}
+              className={`nav-item nav-link ${
+                isActive("/partners") ? "active" : ""
+              }`}
             >
               <i className="bi bi-people custom-icon"></i> Partners
+            </Link>
+          )}
+          {hasPermission("view-broker") && (
+            <Link
+              to="/broker"
+              className={`nav-item nav-link ${
+                isActive("/broker") ? "active" : ""
+              }`}
+            >
+              <i class="fas fa-user-tie"></i> Broker
             </Link>
           )}
           {hasPermission("view-expenses") && (
             <Link
               to="/expenses"
-              className={`nav-item nav-link ${isActive("/expenses") ? "active" : ""
-                }`}
+              className={`nav-item nav-link ${
+                isActive("/expenses") ? "active" : ""
+              }`}
             >
               <i className="bi bi-cash-stack"></i> Expenses
             </Link>
           )}
 
-          {hasPermission("view-income") && (
-            <Link
-              to="/income"
-              className={`nav-item nav-link ${isActive("/income") ? "active" : ""
-                }`}
-            >
-              <i className="bi bi-wallet"></i> Income
-            </Link>
-          )}
           <div className="nav-item dropdown">
             {hasPermission("ledger") && (
               <Link
                 to=""
-                className={`nav-link dropdown-toggle ${isLedgerActive() ? "active" : ""
-                  }`}
+                className={`nav-link dropdown-toggle ${
+                  isLedgerActive() ? "active" : ""
+                }`}
                 onClick={toggleLedgerDropdown}
               >
                 <i className="bi bi-journal"></i> Ledger
@@ -189,9 +193,20 @@ const Sidebar = ({ isSidebarOpen }) => {
             )}
 
             <div
-              className={`dropdown-menu bg-transparent border-0 ${isLedgerOpen ? "show" : ""
-                }`}
+              className={`dropdown-menu bg-transparent border-0 ${
+                isLedgerOpen ? "show" : ""
+              }`}
             >
+              {hasPermission("view-income") && (
+                <Link
+                  to="/income"
+                  className={`dropdown-item ms-3 ${
+                    isActive("/income") ? "active" : ""
+                  }`}
+                >
+                  <i className="bi bi-wallet me-2"></i> Income
+                </Link>
+              )}
               {hasPermission("view-ledger-partner") && (
                 <Link
                   to="/partner-income"
@@ -218,8 +233,9 @@ const Sidebar = ({ isSidebarOpen }) => {
             {hasPermission("approval") && (
               <Link
                 to=""
-                className={`nav-link dropdown-toggle ${isApprovalActive() ? "active" : ""
-                  }`}
+                className={`nav-link dropdown-toggle ${
+                  isApprovalActive() ? "active" : ""
+                }`}
                 onClick={toggleApprovalDropdown}
               >
                 <i className="bi bi-clipboard-check"></i> Approval
@@ -227,8 +243,9 @@ const Sidebar = ({ isSidebarOpen }) => {
             )}
 
             <div
-              className={`dropdown-menu bg-transparent border-0 ${isApprovalOpen ? "show" : ""
-                }`}
+              className={`dropdown-menu bg-transparent border-0 ${
+                isApprovalOpen ? "show" : ""
+              }`}
             >
               {hasPermission("view-cash-deposit") && (
                 <Link
@@ -263,33 +280,66 @@ const Sidebar = ({ isSidebarOpen }) => {
               )}
             </div>
           </div>
+
+          <div className="nav-item dropdown">
+            {/* {hasPermission("approval") && ( */}
+            <Link
+              to=""
+              className={`nav-link dropdown-toggle ${
+                isAuthActive() ? "active" : ""
+              }`}
+              onClick={toggleAuthDropdown}
+            >
+              <i class="bi bi-gear-fill"></i> Auth
+            </Link>
+            <div
+              className={`dropdown-menu bg-transparent border-0 ${
+                isAuthOpen ? "show" : ""
+              }`}
+            // )}
+            >
+              {hasPermission("view-user") && (
+                <Link
+                  to="/view-user"
+                  className={`dropdown-item ms-3 ${
+                    isActive("/view-user") ? "active" : ""
+                  }`}
+                >
+                  <i className="fas fa-user me-2"></i> User
+                </Link>
+              )}
+              {hasPermission("view-role") && (
+                <Link
+                  to="/role"
+                  className={`dropdown-item ms-3 ${
+                    isActive("/role") ? "active" : ""
+                  }`}
+                >
+                  <i className="bi bi-person-badge me-2"></i> Role
+                </Link>
+              )}
+              {hasPermission("view-permissions") && (
+                <Link
+                  to="/permission"
+                  className={`dropdown-item ms-3 ${
+                    isActive("/permission") ? "active" : ""
+                  }`}
+                >
+                  <i class="fas fa-shield-alt me-2"></i>
+                  Permission
+                </Link>
+              )}
+              
+            </div>
+          </div>
           {hasPermission("view-report") && (
             <Link
               to="/report"
-              className={`nav-item nav-link ${isActive("/report") ? "active" : ""
-                }`}
+              className={`nav-item nav-link ${
+                isActive("/report") ? "active" : ""
+              }`}
             >
               <i className="bi bi-bar-chart"></i> Report
-            </Link>
-          )}
-
-          {hasPermission("view-role") && (
-            <Link
-              to="/role"
-              className={`nav-item nav-link ${isActive("/role") ? "active" : ""
-                }`}
-            >
-              <i className="bi bi-person-badge"></i> Role
-            </Link>
-          )}
-          {hasPermission("view-permissions") && (
-            <Link
-              to="/permission"
-              className={`nav-item nav-link ${isActive("/role") ? "active" : ""
-                }`}
-            >
-              <i class="fas fa-shield-alt"></i>
-              Permission
             </Link>
           )}
         </div>
