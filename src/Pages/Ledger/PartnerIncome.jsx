@@ -1,25 +1,54 @@
-// src/Pages/Add/Add.js
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import Topbar from "../../Components/Topbar/Topbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { Helmet } from "react-helmet";
 import "react-toastify/dist/ReactToastify.css";
 import Allpermissions from "../Common component/Allpermissions";
+import axios from "axios";
+import { getPartnerIncome } from "../../Api/DevanshiApi";
+
 const PartnerIncome = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [permissionss, setPermissionss] = useState([]);
+  const [partnerIncome, setPartnerIncome] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
   const hasPermission = (permission) => permissionss.includes(permission);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const toggleTopbar = () => setIsTopbarOpen(!isTopbarOpen);
+
+  const fetchPartnerIncome = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(getPartnerIncome, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        setPartnerIncome(response.data.data);
+      } else {
+        toast.error("Failed to fetch Partner Income data!");
+      }
+    } catch (error) {
+      console.error("Error fetching Partner Income:", error);
+      if (error.response?.status === 401) {
+        navigate("/");
+      }
+      toast.error("Error fetching Partner Income!");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const toggleTopbar = () => {
-    setIsTopbarOpen(!isTopbarOpen);
-  };
+  useEffect(() => {
+    fetchPartnerIncome();
+  }, []);
 
   return (
     <>
@@ -33,97 +62,79 @@ const PartnerIncome = () => {
         <Sidebar isSidebarOpen={isSidebarOpen} />
 
         <div className={`content ${isSidebarOpen ? "open" : ""}`}>
-          <Topbar
-            toggleSidebar={toggleSidebar}
-            isTopbarOpen={isTopbarOpen}
-            toggleTopbar={toggleTopbar}
-          />
+          <Topbar toggleSidebar={toggleSidebar} toggleTopbar={toggleTopbar} />
 
           <div className="container-fluid pt-4 px-4">
             <div className="row g-4">
               <div className="col-sm-12 col-xl-12">
                 <div className="bg-light rounded h-100 p-4">
                   <div className="d-flex justify-content-between mb-3">
-                    <div className="">
-                      <h6 className="">Partner Income</h6>
-                    </div>
-                    <div className="">
-                      {/* <button
-                        className="shadow-sm"
-                        style={{
-                          border: "none",
-                          backgroundColor: "#a2bdba",
-                          borderRadius: "0.3rem",
-                          marginRight: "1rem",
-                        }}
-                      >
-                        <a>Income</a>
-                      </button> */}
-                      {/* {hasPermission("view-reimbursement") && (
-                        <Link to="/partner-reimbursement">
-                          <button
-                            className="shadow-sm"
-                            style={{
-                              border: "none",
-                              backgroundColor: "#a2bdba",
-                              borderRadius: "0.3rem",
-                            }}
-                          >
-                            <a>Reimbursement</a>
-                          </button>
-                        </Link>
-                      )} */}
-                    </div>
+                    <h6>Partner Income</h6>
+                    {hasPermission("add-partner-income") && (
+                      <Link to="/add-partner-income">
+                        <h6 className="mb-4">
+                          <i className="bi bi-plus-circle-fill"></i> Add Partner Income
+                        </h6>
+                      </Link>
+                    )}
                   </div>
-                  <div className="d-flex justify-content-between mb-3">
-                    <div className="p-2 "></div>
-                    <div className="p-2 ">
-                      {hasPermission("add-partner-income") && (
-                        <Link to="/add-partner-income" className="">
-                          <h6 className="mb-4">
-                            <i className="bi bi-plus-circle-fill"></i> Add
-                            Partner Income
-                          </h6>
-                        </Link>
-                      )}
+
+                  {loading ? (
+                    <div className="text-center">
+                      <div className="spinner-border text-primary" role="status"></div>
                     </div>
-                  </div>
-                  <table className="table table-bordered text-center">
-                    <thead>
-                      <tr>
-                        <th scope="col"> Partner Name</th>
-                        <th scope="col"> Project Name</th>
-                        <th scope="col">Income Date</th>
-                        <th scope="col">Payment Mode</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Remark</th>
-                        <th scope="col">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                          {hasPermission("edit-partner-incom") && (
-                            <Link to="" className="btn btn-warning btn-sm me-2">
-                              <i className="fas fa-edit"></i>
-                            </Link>
-                          )}
-                          {hasPermission("delete-partner-income") && (
-                            <Link to="" className="btn btn-danger btn-sm">
-                              <i className="fas fa-trash"></i>
-                            </Link>
-                          )}
-                        </td>
-                      </tr>
-                      
-                    </tbody>
-                  </table>
+                  ) : partnerIncome.length > 0 ? (
+                    <div className="table-responsive">
+                      <table className="table table-bordered text-center">
+                        <thead>
+                          <tr>
+                            <th>Partner Name</th>
+                            <th>Project Name</th>
+                            <th>Income Date</th>
+                            <th>Payment Mode</th>
+                            <th>Amount</th>
+                            {/* <th>Remark</th> */}
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {partnerIncome.map((income) => (
+                            <tr key={income.id}>
+                              <td>{income.PartnerIncome?.Partner?.partnerName || "N/A"}</td>
+                              <td>{income.Project?.projectName || "N/A"}</td>
+                              <td>{income.dateReceived ? new Date(income.dateReceived).toLocaleDateString() : "N/A"}</td>
+                              <td>{income.paymentMode || "N/A"}</td>
+                              <td>{parseFloat(income.amount).toFixed(2) || "N/A"}</td>
+                              {/* <td>
+                                {income.PartnerIncome?.remark || income.PartnerIncome?.remark || "N/A"}
+                              </td> */}
+                              <td>
+                                {hasPermission("edit-partner-incom") && (
+                                  <Link to="" className="btn btn-warning btn-sm me-2">
+                                    <i className="fas fa-edit"></i>
+                                  </Link>
+                                )}
+                                {hasPermission("delete-partner-income") && (
+                                  <button className="btn btn-danger btn-sm">
+                                    <i className="fas fa-trash"></i>
+                                  </button>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <img
+                        src="img/image_2024_12_26T09_23_33_935Z.png"
+                        alt="No Users"
+                        className="img-fluid w-25 h-25"
+                      />
+                      <p className="text-dark">No Partner Income Found</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

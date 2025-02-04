@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { getProject, getPartner } from "../../Api/ApiDipak";
 import axios from "axios";
 import { storePartnerIncome } from "../../Api/DevanshiApi";
+import { Spinner } from "react-bootstrap";
 const AddPartnerIncome = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
@@ -90,107 +91,64 @@ const AddPartnerIncome = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     let isValid = true;
     const validationErrors = {};
-  
-    // Validate fields
-    if (!partner) {
-      validationErrors.partner = "Partner is required";
-      isValid = false;
-    }
-    if (!project) {
-      validationErrors.project = "Project is required";
-      isValid = false;
-    }
-    if (!incomeDate) {
-      validationErrors.incomeDate = "Income Date is required";
-      isValid = false;
-    }
-  
-    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
-      validationErrors.amount = "Valid Amount is required";
-      isValid = false;
-    }
-  
-    if (!paymentMode) {
-      validationErrors.paymentMode = "Payment Mode is required";
-      isValid = false;
-    }
-  
+
+    if (!partner) validationErrors.partner = "Partner is required";
+    if (!project) validationErrors.project = "Project is required";
+    if (!incomeDate) validationErrors.incomeDate = "Income Date is required";
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) validationErrors.amount = "Valid Amount is required";
+    if (!paymentMode) validationErrors.paymentMode = "Payment Mode is required";
+
     if (paymentMode === "Cheque") {
-      if (!chequeDate) {
-        validationErrors.chequeDate = "Cheque Date is required";
-        isValid = false;
-      }
-      if (!chequeNumber.trim()) {
-        validationErrors.chequeNumber = "Cheque Number is required";
-        isValid = false;
-      }
-      if (!bankName.trim()) {
-        validationErrors.bankName = "Bank Name is required";
-        isValid = false;
-      }
+      if (!chequeDate) validationErrors.chequeDate = "Cheque Date is required";
+      if (!chequeNumber.trim()) validationErrors.chequeNumber = "Cheque Number is required";
+      if (!bankName.trim()) validationErrors.bankName = "Bank Name is required";
     }
-  
-    // Removed remark validation based on your example
-    // if (!remark.trim()) {
-    //   validationErrors.remark = "Remark is required";
-    //   isValid = false;
-    // }
-  
-    if (!isValid) {
+
+    if (!remark.trim()) validationErrors.remark = "Remark is required";
+
+    if (Object.keys(validationErrors).length > 0) {
       setError(validationErrors);
       return;
     }
     setError({});
-  
-    // Log the values for debugging
-    console.log('Amount:', amount);
-    console.log('Request Data:', {
-      projectId: formData.project,
-      incomeType: "Partner Income",
-      amount: Number(formData.amount), // Ensure amount is valid number
-      paymentMode: formData.paymentMode,
-      dateReceived: formData.incomeDate, // Ensure date format is correct
-      PartnerId: formData.partner,
-      bankName: formData.paymentMode === "Cheque" ? formData.bankName : "",
-      chequeNumber: formData.paymentMode === "Cheque" ? formData.chequeNumber : "",
-      chequeDate: formData.paymentMode === "Cheque" ? formData.chequeDate : "",
-      remark: formData.remark,
-    });
-  
+
+    console.log("Project Value Before Submission:", project); // Debugging
+
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         toast.error("No authorization token found.");
         return;
       }
-  
+
       const requestData = {
-        projectId: formData.project,
+        projectId: Array.isArray(project) ? Number(project[0]?.id) : Number(project),
         incomeType: "Partner Income",
-        amount: Number(formData.amount), // Ensure amount is converted to number
-        paymentMode: formData.paymentMode,
-        dateReceived: formData.incomeDate, // Check the date format if necessary
-        PartnerId: formData.partner,
-        bankName: formData.paymentMode === "Cheque" ? formData.bankName : "",
-        chequeNumber: formData.paymentMode === "Cheque" ? formData.chequeNumber : "",
-        chequeDate: formData.paymentMode === "Cheque" ? formData.chequeDate : "",
-        remark: formData.remark, // Optional based on your needs
+        amount: Number(amount),
+        paymentMode,
+        dateReceived: incomeDate,
+        PartnerId: Array.isArray(partner) ? Number(partner[0]?.id) : Number(partner),
+        bankName: paymentMode === "Cheque" ? bankName : "",
+        chequeNumber: paymentMode === "Cheque" ? chequeNumber : "",
+        chequeDate: paymentMode === "Cheque" && chequeDate ? new Date(chequeDate).toISOString().split("T")[0] : null, // Ensure valid date format
+        remark,
       };
-  
-      console.log('Request Payload:', requestData);
-  
+
+      console.log("Formatted Cheque Date:", requestData.chequeDate);
+
       const response = await axios.post(storePartnerIncome, requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-  
+
       if (response.data.success) {
         toast.success(response.data.message || "Partner Income added successfully!");
-        console.log(response.data.data);
+        console.log("Created Income Data:", response.data.data);
         setTimeout(() => {
           navigate("/partner-income");
         }, 1000);
@@ -198,15 +156,18 @@ const AddPartnerIncome = () => {
         toast.error(response.data.message || "Failed to add partner income.");
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        navigate("/");
+      if (error.response) {
+        console.error("Error Response:", error.response.data);
+        toast.error(error.response.data.message || "An error occurred while adding income.");
+      } else {
+        console.error("Error:", error);
+        toast.error("Failed to connect to the server. Please try again.");
       }
-      toast.error(error.response?.data?.message || "Failed to add partner income. Please try again.");
     } finally {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchPartner()
     fetchProjects();
@@ -397,7 +358,7 @@ const AddPartnerIncome = () => {
                         </div>
                         <div className="col-4">
                           <input
-                            type="number"
+                            type="text"
                             className={`form-control ${error.bankName ? "is-invalid" : ""
                               }`}
                             placeholder="Bank Name"
@@ -415,7 +376,7 @@ const AddPartnerIncome = () => {
                     <div className="row ">
                       <div className="col pt-3">
                         <input
-                          type="text"
+                          type="number"
                           className={`form-control ${error.amount ? "is-invalid" : ""
                             }`}
                           id="amount"
@@ -431,7 +392,7 @@ const AddPartnerIncome = () => {
                       <div className="col"></div>
                     </div>
                     <div className="row w-75">
-                      <div className="col pt-3">
+                      <div className="col pt-3 mb-3">
                         <textarea
                           className={`form-control ${error.remark ? "is-invalid" : ""
                             }`}
@@ -445,8 +406,16 @@ const AddPartnerIncome = () => {
                         )}
                       </div>
                     </div>
-                    <button type="submit" className="btn btn-primary mt-3">
-                      Save
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <Spinner animation="border" size="sm" />
+                      ) : (
+                        "Submit"
+                      )}
                     </button>
                   </form>
                 </div>
