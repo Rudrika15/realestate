@@ -35,3 +35,5 @@ export const updatedExpense = baseUrl + "v1/expense/update-expense"
 // partner-income
 export const storePartnerIncome = baseUrl + "v1/partnerIncome/store-partner-income"
 export const getPartnerIncome = baseUrl + "v1/partnerIncome/get-partner-income"
+//Booking
+export const getProjectWiseStage = baseUrl + "v1/bookings/project-wise-stages"

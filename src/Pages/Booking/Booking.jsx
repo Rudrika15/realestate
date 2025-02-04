@@ -11,6 +11,8 @@ import {
   addBroker,
   getBroker,
   getProject,
+  getProjectWiseStage,
+  projectWiseStage,
 } from "../../Api/DevanshiApi";
 import { projectWiseUnit } from "../../Api/ApiDipak";
 
@@ -44,7 +46,11 @@ function Booking() {
   const [amount, setAmount] = useState("");
   const [paymentFrequency, setPaymentFrequency] = useState("");
   const [dueDate, setDueDate] = useState("");
-  // const { id } = useParams();
+  const [loanDate, setLoanDate] = useState("");
+  const [bankName, setBankName] = useState("");
+  const [status, setStatus] = useState("");
+  const [agent, setAgent] = useState("");
+  const [projectWiseStage, setProjectWiseStage] = useState("");
 
   const [projectError, setProjectError] = useState(false);
   const [unitError, setUnitError] = useState("");
@@ -71,6 +77,10 @@ function Booking() {
   const [paymentFrequencyError, setPaymentFrequencyError] = useState("");
   const [dueDateError, setDueDateError] = useState("");
   const [amountError, setAmountError] = useState("");
+  const [loanDateError, setLoanDateError] = useState("");
+  const [bankNameError, setBankNameError] = useState("");
+  const [statusError, setStatusError] = useState("");
+  const [agentError, setAgentError] = useState("");
 
   const projectRef = useRef(null);
   const unitRef = useRef(null);
@@ -102,6 +112,10 @@ function Booking() {
   const brokerAddressRef = useRef(null);
   const brokerContactRef = useRef(null);
   const modalSubmitRef = useRef(null);
+  const loanDateRef = useRef(null);
+  const bankNameRef = useRef(null);
+  const statusRef = useRef(null);
+  const agentRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
@@ -518,12 +532,11 @@ function Booking() {
   };
 
   const handleProjectChange = (e) => {
-    const selectedOptions = Array.from(
-      e.target.selectedOptions,
-      (option) => option.value
-    );
-    setSelectedProject(selectedOptions);
-    setProjectError(selectedOptions.length === 0);
+    const projectId = e.target.value;
+    setSelectedProject(projectId);
+    setSelectedUnit("");
+    fetchUnit(projectId);
+    fetchProjectWiseStage(projectId);
   };
 
   const handleAmountChange = (e) => {
@@ -532,12 +545,7 @@ function Booking() {
   };
 
   const handleUnitChange = (e) => {
-    const selectedOptions = Array.from(
-      e.target.selectedOptions,
-      (option) => option.value
-    );
-    setSelectedUnit(selectedOptions);
-    setUnitError(selectedOptions.length === 0);
+    setSelectedUnit(e.target.value);
   };
 
   const handleBookingDateChange = (e) => {
@@ -610,9 +618,19 @@ function Booking() {
     if (e.target.value) setTokenAmountError(false);
   };
 
+  const handleBankChange = (e) => {
+    setBankName(e.target.value);
+    if (e.target.value) setBankNameError(false);
+  };
+
   const handleTokenPaymentDateChange = (e) => {
     setTokenPaymentDate(e.target.value);
     if (e.target.value) setTokenPaymentDateError(false);
+  };
+
+  const handleLoanDateChange = (e) => {
+    setLoanDate(e.target.value);
+    if (e.target.value) setLoanDateError(false);
   };
 
   const handlePendingPaymentDateChange = (e) => {
@@ -665,13 +683,10 @@ function Booking() {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-
       if (!token) {
         navigate("/");
-
         return;
       }
-
       const response = await axios.get(getProject, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -692,7 +707,9 @@ function Booking() {
     }
   };
 
-  const fetchUnit = async (id) => {
+  const fetchUnit = async (projectId) => {
+    if (!projectId) return;
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -701,20 +718,15 @@ function Booking() {
         return;
       }
 
-      setLoading(true);
-
-      const response = await axios.get(`${projectWiseUnit}/${id}`, {
+      const response = await axios.get(`${projectWiseUnit}/${projectId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      console.log(response);
-      
+
       if (response.data.status === true && response.data.data) {
         setUnits(response.data.data);
-        console.log(response.data.data);
-        
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -728,12 +740,46 @@ function Booking() {
     }
   };
 
-  
+  const fetchProjectWiseStage = async (projectId) => {
+    if (!projectId) return;
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      console.log(token);
+      if (!token) {
+        toast.error("Token not found! Please log in.");
+        navigate("/");
+        return;
+      }
+
+      const response = await axios.get(`${getProjectWiseStage}/${projectId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.status === true) {
+        setProjectWiseStage(response.data.data);
+        console.log(response.data.data);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        toast.error("Session expired! Please log in again.");
+        navigate("/");
+      } else {
+        console.error("Error fetching data:", error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchProject();
     fetchUnit();
     fetchBroker();
+    fetchProjectWiseStage();
   }, []);
 
   return (
@@ -865,8 +911,7 @@ function Booking() {
                     <div className="row pt-4">
                       <div className="col">
                         <select
-                          className={`form-control bg-white ${projectError ? "is-invalid" : ""
-                            }`}
+                          className={`form-control bg-white ${projectError ? "is-invalid" : ""}`}
                           value={selectedProject}
                           ref={projectRef}
                           onChange={handleProjectChange}
@@ -882,15 +927,13 @@ function Booking() {
                           ))}
                         </select>
                         {projectError && (
-                          <div className="invalid-feedback">
-                            Please select a Project
-                          </div>
+                          <div className="invalid-feedback">Please select a Project</div>
                         )}
                       </div>
+
                       <div className="col">
                         <select
-                          className={`form-control bg-white ${unitError ? "is-invalid" : ""
-                            }`}
+                          className={`form-control bg-white ${unitError ? "is-invalid" : ""}`}
                           value={selectedUnit}
                           ref={unitRef}
                           onChange={handleUnitChange}
@@ -906,9 +949,7 @@ function Booking() {
                           ))}
                         </select>
                         {unitError && (
-                          <div className="invalid-feedback">
-                            Please select a Unit
-                          </div>
+                          <div className="invalid-feedback">Please select a Unit</div>
                         )}
                       </div>
                     </div>
@@ -1109,7 +1150,7 @@ function Booking() {
 
                     <p class="text-dark fs-5">Payment Terms</p>
                     <div className="d-flex align-items-center flex-wrap">
-                      <div className="form-check me-5 mb-3">
+                      {/* <div className="form-check me-5 mb-3">
                         <input
                           type="checkbox"
                           id="token-payment"
@@ -1118,7 +1159,7 @@ function Booking() {
                         <label htmlFor="token-payment" className="form-check-label">
                           Token Payment
                         </label>
-                      </div>
+                      </div> */}
                       <div className="form-check me-5 mb-3">
                         <input
                           type="checkbox"
@@ -1148,6 +1189,49 @@ function Booking() {
                         <label htmlFor="loan-payment" className="form-check-label">
                           Loan Payment
                         </label>
+                      </div>
+                    </div>
+                    <div className="row mb-4">
+                      <div className="col">
+                        <input
+                          type="text"
+                          id="date"
+                          ref={loanDateRef}
+                          className={`form-control ${loanDateError ? "is-invalid" : ""
+                            }`}
+                          value={formatDate(loanDate)}
+                          onChange={(e) => handleLoanDateChange(e)}
+                          onKeyDown={(e) => handleEnter(e, downPaymentRef)}
+                          placeholder="Loan Date"
+                          onFocus={(e) => (e.target.type = "date")}
+                          onBlur={(e) => (e.target.type = "text")}
+                        />
+                        {loanDateError && (
+                          <div className="invalid-feedback">
+                            Please select a Loan Date
+                          </div>
+                        )}
+                      </div>
+                      <div className="col">
+                        <input
+                          type="text"
+                          className={`form-control ${bankNameError ? "is-invalid" : ""
+                            }`}
+                          id="tokenamount"
+                          placeholder="Bank Name"
+                          name="tokenamount"
+                          value={bankName}
+                          onChange={handleBankChange}
+                          onKeyDown={(e) =>
+                            handleEnter(e, tokenPaymentDateRef)
+                          }
+                          ref={bankNameRef}
+                        />
+                        {bankNameError && (
+                          <div className="invalid-feedback">
+                            Enter Bank Name
+                          </div>
+                        )}
                       </div>
                     </div>
                     <>
@@ -1433,6 +1517,43 @@ function Booking() {
                           <i className="bi bi-plus-circle-fill icon-3"></i>
                         </p>
                       </div>
+                      {showTokenFields3 && (
+                        <div className="row pt-4">
+                          <div className="col">
+                          </div>
+
+                          <div className="d-flex align-items-center">
+                            {loading ? (
+                              <p>Loading...</p>
+                            ) : (
+                              <table className="table table-bordered w-50 text-center">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Installment</th>
+                                    <th scope="col">Project Stage Name</th>
+                                    <th scope="col">Project Stage Percentage</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {projectWiseStage.length > 0 ? (
+                                    projectWiseStage.map((stage, index) => (
+                                      <tr key={stage.id}>
+                                        <td>{index + 1}</td>
+                                        <td>{stage.projectStageName}</td>
+                                        <td>{stage.projectStagePer}%</td>
+                                      </tr>
+                                    ))
+                                  ) : (
+                                    <tr>
+                                      <td colSpan="3">No data available</td>
+                                    </tr>
+                                  )}
+                                </tbody>
+                              </table>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       <div className="form-check pt-3">
                         <input
                           type="checkbox"
