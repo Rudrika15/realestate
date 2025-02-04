@@ -178,7 +178,7 @@ const App = () => {
               }
             />
             <Route
-              path="/edit-projectstage"
+              path="/edit-projectstage/:id"
               element={
                 <ProtectedRoute
                   element={<EditProjectStage />}
@@ -196,7 +196,7 @@ const App = () => {
               }
             />
             <Route
-              path="/add-project-stage"
+              path="/add-project-stage/:id"
               element={
                 <ProtectedRoute
                   element={<AddProjectStage />}
@@ -250,64 +250,6 @@ const App = () => {
               }
             />
 
-<<<<<<< HEAD
-          {/* partners */}
-          <Route
-            path="/partners"
-            element={
-              <ProtectedRoute
-                element={<Partners />}
-                requiredPermission="view-partner"
-              />
-            }
-          />
-          <Route
-            path="/add-partners"
-            element={
-              <ProtectedRoute
-                element={<AddPartners />}
-                requiredPermission="add-partner"
-              />
-            }
-          />
-          <Route
-            path="/edit-partners/:id"
-            element={
-              <ProtectedRoute
-                element={<EditPartners />}
-                requiredPermission="edit-partner"
-              />
-            }
-          />
-          {/* Expenses */}
-          <Route
-            path="/expenses"
-            element={
-              <ProtectedRoute
-                element={<Expenses />}
-                requiredPermission="view-expenses"
-              />
-            }
-          />
-          <Route
-            path="/add-expenses"
-            element={
-              <ProtectedRoute
-                element={<AddExpenses />}
-                requiredPermission="new-expenses"
-              />
-            }
-          />
-          <Route
-            path="/edit-expenses/:id"
-            element={
-              <ProtectedRoute
-                element={<EditExpenses />}
-                requiredPermission="edit-expenses"
-              />
-            }
-          />
-=======
             {/* partners */}
             <Route
               path="/partners"
@@ -356,7 +298,7 @@ const App = () => {
               }
             />
             <Route
-              path="/edit-expenses"
+              path="/edit-expenses/:id"
               element={
                 <ProtectedRoute
                   element={<EditExpenses />}
@@ -364,7 +306,6 @@ const App = () => {
                 />
               }
             />
->>>>>>> fb259fdfac176d1650d663b64d5cfed807738e19
 
             {/* Income   */}
             <Route
