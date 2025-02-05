@@ -37,3 +37,5 @@ export const storePartnerIncome = baseUrl + "v1/partnerIncome/store-partner-inco
 export const getPartnerIncome = baseUrl + "v1/partnerIncome/get-partner-income"
 //Booking
 export const getProjectWiseStage = baseUrl + "v1/bookings/project-wise-stages"
+export const storeBooking = baseUrl + "v1/bookings/store-booking"
+

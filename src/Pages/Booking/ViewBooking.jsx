@@ -10,33 +10,17 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { getProject } from "../../Api/DevanshiApi";
 import Allpermissions from "../Common component/Allpermissions";
+import { projectWiseUnit } from "../../Api/ApiDipak";
 
 const ViewBooking = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const navigate = useNavigate();
+  const [units, setUnits] = useState([]);
 
   const [permissions, setPermissions] = useState([]);
   const hasPermission = (permission) => permissions.includes(permission);
-  const [data, setData] = useState(
-    [
-      {
-        No: 1,
-        date: "12/2/2024",
-        firstName: "Alice",
-        lastName: "Johnson",
-        surname: "Smith",
-        saleDeedAmount: "500000",
-        receivedSdAmount: "250000",
-        pendingSdAmount: "250000",
-        extraWorkAmount: "10000",
-        receivedEwAmount: "5000",
-        pendingEwAmount: "5000",
-        otherWorkAmount: "1000",
-        receivedOtAmount: "1500",
-        pendingOtAmount: "1500",
-      },
-    ].sort((a, b) => a.name.localeCompare(b.name))
+  const [data, setData] = useState([].sort((a, b) => a.name.localeCompare(b.name))
   );
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -55,23 +39,6 @@ const ViewBooking = () => {
     return formattedInteger + decimalPart;
   };
 
-  // // const getData = async () => {
-  // //   try {
-  // //     const res = await axios.get();
-  // //     if (res.data.status === true) {
-  // //       const sortedData = res.data.data.sort((a, b) => a.name.localeCompare(b.name));
-  // //       setData(sortedData);
-  // //     } else {
-  // //       console.error('Error fetching data:', res.data.message);
-  // //     }
-  // //   } catch (error) {
-  // //     console.error('Error:', error);
-  // //   }
-  // // };
-
-  // // useEffect(() => {
-  // //   getData();
-  // }, [data]);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState([]);
 
@@ -91,22 +58,59 @@ const ViewBooking = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (response.data.status == true) {
+      if (response.data.status === true) {
         setProjects(response.data.data);
       } else {
-        console.error("Failed to fetch peoject data!");
+        console.error("Failed to fetch project data!");
       }
     } catch (error) {
-      console.error("Error fetching peojects:", error);
+      console.error("Error fetching projects:", error);
       if (error.response && error.response.status === 401) {
         navigate("/");
       }
     }
   };
 
+  const fetchUnit = async (projectId) => {
+    if (!projectId) return;
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Token not found! Please log in.");
+        navigate("/");
+        return;
+      }
+
+      const response = await axios.get(`${projectWiseUnit}/${projectId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.status === true && response.data.data) {
+        setUnits(response.data.data);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        toast.error("Session expired! Please log in again.");
+        navigate("/");
+      } else {
+        console.error("Error fetching data:", error);
+      }
+    }
+  };
+
   useEffect(() => {
+    fetchUnit();
     fetchProject();
-  }, []);
+  }, [data]);
+
+  const handleProjectChange = (e) => {
+    const projectId = e.target.value;
+    setSelectedProject(projectId);
+    fetchUnit(projectId);
+  };
 
   const toggleTopbar = () => {
     setIsTopbarOpen(!isTopbarOpen);
@@ -152,7 +156,11 @@ const ViewBooking = () => {
                   <div className="row mb-4 d-flex align-items-center justify-content-between">
                     <div className="col-12 col-md-8 d-flex gap-3">
                       <div className="w-25">
-                        <select className="form-select form-select-sm text-dark fs-6">
+                        <select
+                          className="form-select form-select-sm text-dark fs-6"
+                          onChange={handleProjectChange}
+                          value={selectedProject || ""}
+                        >
                           <option value="">Projects</option>
                           {projects.map((project) => (
                             <option key={project.id} value={project.id}>
@@ -161,9 +169,15 @@ const ViewBooking = () => {
                           ))}
                         </select>
                       </div>
+
                       <div className="w-25">
                         <select className="form-select form-select-sm text-dark fs-6">
                           <option value="">Units</option>
+                          {units.map((unit) => (
+                            <option key={unit.id} value={unit.id}>
+                              {unit.unitNo}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div className="w-25">
@@ -229,7 +243,7 @@ const ViewBooking = () => {
                                   {formatIndianNumbering(book.pendingOtAmount)}
                                 </td>
                                 <td>
-                                {hasPermission("action-booking") && (<Link to="/view-cancelled-booking">
+                                  {hasPermission("action-booking") && (<Link to="/view-cancelled-booking">
                                     <button
                                       type="button"
                                       className="btn shadow-sm text-dark"
@@ -258,7 +272,7 @@ const ViewBooking = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div >
       <style jsx="true">{`
         .btn {
           background-color: #a2bdba;

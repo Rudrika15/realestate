@@ -13,6 +13,7 @@ import {
   getProject,
   getProjectWiseStage,
   projectWiseStage,
+  storeBooking,
 } from "../../Api/DevanshiApi";
 import { projectWiseUnit } from "../../Api/ApiDipak";
 
@@ -81,6 +82,7 @@ function Booking() {
   const [bankNameError, setBankNameError] = useState("");
   const [statusError, setStatusError] = useState("");
   const [agentError, setAgentError] = useState("");
+  const [brokerError, setBrokerError] = useState("");
 
   const projectRef = useRef(null);
   const unitRef = useRef(null);
@@ -352,192 +354,103 @@ function Booking() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let isValid = true;
 
-    if (!projectName) {
-      setProjectError(true);
-      isValid = false;
-    } else {
-      setProjectError(false);
-    }
+    const validateFields = [
+      { value: brokerName, setter: setBrokerError },
+      { value: projectName, setter: setProjectError },
+      { value: unit, setter: setUnitError },
+      { value: bookingDate, setter: setBookingError },
+      { value: customerName, setter: setCustomerNameError },
+      { value: customerContact, setter: setCustomerContactError },
+      { value: customerAddress, setter: setCustomerAddressError },
+      { value: remark, setter: setRemarkError },
+      { value: saleAmount, setter: setSaleAmountError },
+      { value: extra, setter: setExtraError },
+      { value: work, setter: setWorkError }
+    ];
 
-    if (!amount) {
-      setAmountError(true);
-      isValid = false;
-    } else {
-      setAmountError(false);
-    }
-
-    if (!unit) {
-      setUnitError(true);
-      isValid = false;
-    } else {
-      setUnitError(false);
-    }
-
-    if (!bookingDate) {
-      setBookingError(true);
-      isValid = false;
-    } else {
-      setBookingError(false);
-    }
-
-    if (!customerName) {
-      setCustomerNameError(true);
-      isValid = false;
-    } else {
-      setCustomerNameError(false);
-    }
-
-    if (!customerContact) {
-      setCustomerContactError(true);
-      isValid = false;
-    } else {
-      setCustomerContactError(false);
-    }
-
-    if (!customerAddress) {
-      setCustomerAddressError(true);
-      isValid = false;
-    } else {
-      setCustomerAddressError(false);
-    }
-
-    if (!remark) {
-      setRemarkError(true);
-      isValid = false;
-    } else {
-      setRemarkError(false);
-    }
-
-    if (!saleAmount) {
-      setSaleAmountError(true);
-      isValid = false;
-    } else {
-      setSaleAmountError(false);
-    }
-
-    if (!extra) {
-      setExtraError(true);
-      isValid = false;
-    } else {
-      setExtraError(false);
-    }
-
-    if (!work) {
-      setWorkError(true);
-      isValid = false;
-    } else {
-      setWorkError(false);
-    }
-
-    if (!installment) {
-      setInstallmentError(true);
-      isValid = false;
-    } else {
-      setInstallmentError(false);
-    }
-
-    if (!noOfInstallment) {
-      setNoOfInstallmentError(true);
-      isValid = false;
-    } else {
-      setNoOfInstallmentError(false);
-    }
-
-    if (!paymentplan) {
-      setPaymentPlanError(true);
-      isValid = false;
-    } else {
-      setPaymentPlanError(false);
-    }
-
-    if (!paymentFrequency) {
-      setPaymentFrequencyError(true);
-      isValid = false;
-    } else {
-      setPaymentFrequencyError(false);
-    }
-
-    if (!dueDate) {
-      setDueDateError(true);
-      isValid = false;
-    } else {
-      setDueDateError(false);
-    }
-
-    if (!tokenAmount) {
-      setTokenAmountError(true);
-      isValid = false;
-    } else {
-      setTokenAmountError(false);
-    }
-
-    if (!tokenPaymentDate) {
-      setTokenPaymentDateError(true);
-      isValid = false;
-    } else {
-      setTokenPaymentDateError(false);
-    }
-
-    if (!pendingPaymentDate) {
-      setPendingPaymentDateError(true);
-      isValid = false;
-    } else {
-      setPendingPaymentDateError(false);
-    }
-
-    if (!pendingAmount) {
-      setPendingAmountError(true);
-      isValid = false;
-    } else {
-      setPendingAmountError(false);
-    }
-
-    if (!loanAmount) {
-      setLoanAmountError(true);
-      isValid = false;
-    } else {
-      setLoanAmountError(false);
-    }
-
-    if (!loanPaymentDate) {
-      setLoanPaymentDateError(true);
-      isValid = false;
-    } else {
-      setLoanPaymentDateError(false);
-    }
-
-    if (!bankDetails) {
-      setBankDetailsError(true);
-      isValid = false;
-    } else {
-      setBankDetailsError(false);
-    }
-
-    if (!downPayment) {
-      setDownPaymentError(true);
-      isValid = false;
-    } else {
-      setDownPaymentError(false);
-    }
-
-    if (!downPaymentDate) {
-      setDownPaymentDateError(true);
-      isValid = false;
-    } else {
-      setDownPaymentDateError(false);
-    }
+    validateFields.forEach(field => {
+      if (!field.value) {
+        field.setter(true);
+        isValid = false;
+      } else {
+        field.setter(false);
+      }
+    });
 
     if (isValid) {
-      setLoading(true);
-      toast.success("Booking Added Successfully!");
-      setTimeout(() => {
+      try {
+        const token = localStorage.getItem("token");
+        console.log(token);
+        if (!token) {
+          toast.error("No authorization token found.");
+          return;
+        }
+
+        const requestData = {
+          projectId: projectName,
+          projectUnitId: unit,
+          brokerId: brokerName,
+          saleDeedAmount: saleAmount,
+          extraWorkAmount: extra,
+          otherWorkAmount: work,
+          bookingDate: bookingDate,
+          customerNames: [customerName],
+          address: customerAddress,
+          mobileNumber: [customerContact],
+          selectPlan: paymentplan,
+          frequency: paymentFrequency,
+          defaultDate: dueDate,
+          loanStatus: status,
+          loanBankName: bankName,
+          loanAgentName: agent,
+          isByBuilder: true,
+          installmentDetails: [
+            {
+              type: "token",
+              id: "",
+              installmentAmount: tokenAmount,
+              installmentDueDate: tokenPaymentDate
+            },
+          ]
+        };
+
+        const response = await axios.post(storeBooking, requestData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+
+        if (response.data.status) {
+          toast.success(response.data.message || "Booking added successfully!");
+          console.log("Booking Data:", response.data.data);
+
+          const { booking, customers, paymentTerms } = response.data.data;
+          console.log("Booking Created:", booking);
+          console.log("Customer Details:", customers);
+          console.log("Payment Terms:", paymentTerms);
+
+          setTimeout(() => {
+            navigate("/view-booking");
+          }, 1000);
+        } else {
+          toast.error(response.data.message || "Failed to add booking.");
+        }
+      } catch (error) {
+        if (error.response) {
+          console.error("Error Response:", error.response.data);
+          toast.error(error.response.data.message || "An error occurred while adding booking.");
+        } else {
+          console.error("Error:", error);
+          toast.error("Failed to connect to the server. Please try again.");
+        }
+      } finally {
         setLoading(false);
-        navigate("/view-booking");
-      }, 2000);
+      }
     }
   };
 
@@ -838,7 +751,7 @@ function Booking() {
                     <div className="row">
                       <div className="col">
                         <select
-                          className="form-control bg-white"
+                          className={`form-control bg-white ${brokerError ? "is-invalid" : ""}`}
                           value={selectedOption}
                           onChange={handleSelectChange}
                         >
@@ -850,6 +763,9 @@ function Booking() {
                             </option>
                           ))}
                         </select>
+                        {brokerError && (
+                          <div className="invalid-feedback">Please select a broker</div>
+                        )}
                       </div>
                       <div className="col"></div>
                     </div>
@@ -1296,7 +1212,6 @@ function Booking() {
                             id="buildersBankYes"
                             value="yes"
                             onChange={() => setIsLoanFromBuildersBank(true)}
-                            checked
                           />
                           <label className="form-check-label1" htmlFor="buildersBankYes">Yes</label>
                           <input
@@ -1631,7 +1546,7 @@ function Booking() {
                           </div>
                         </div>
                       )}
-                      <div className="form-check pt-3">
+                      {/* <div className="form-check pt-3">
                         <input
                           type="checkbox"
                           className="form-check-input"
@@ -1644,7 +1559,7 @@ function Booking() {
                         <label htmlFor="installmentNotify">
                           Installment Notify
                         </label>
-                      </div>
+                      </div> */}
 
                       <div className="row pt-4">
                         <div className="col">

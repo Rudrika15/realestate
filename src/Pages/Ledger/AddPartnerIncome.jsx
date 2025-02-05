@@ -114,7 +114,7 @@ const AddPartnerIncome = () => {
     }
     setError({});
 
-    console.log("Project Value Before Submission:", project); // Debugging
+    console.log("Project Value Before Submission:", project); 
 
     try {
       const token = localStorage.getItem("token");
