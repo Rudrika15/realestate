@@ -7,7 +7,16 @@ import "react-toastify/dist/ReactToastify.css";
 import { Modal, Spinner } from "react-bootstrap";
 import { numberToWords } from "number-to-words";
 import axios from "axios";
-import { addExpense, addExpenseHead, getExpenseHead, getProject, storeExpense, storeExpenseHead } from "../../Api/DevanshiApi";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import {
+  addExpense,
+  addExpenseHead,
+  getExpenseHead,
+  getProject,
+  storeExpense,
+  storeExpenseHead,
+} from "../../Api/DevanshiApi";
 import { toast } from "react-toastify";
 
 const AddExpenses = () => {
@@ -69,29 +78,6 @@ const AddExpenses = () => {
     const updatedExpenses = expenses.filter((_, i) => i !== index);
     setExpenses(updatedExpenses);
   };
-
-  // const formatDate = (date) => {
-  //   if (date) {
-  //     const d = new Date(date);
-  //     const day = ("0" + d.getDate()).slice(-2);
-  //     const month = ("0" + (d.getMonth() + 1)).slice(-2);
-  //     const year = d.getFullYear();
-  //     return `${day}-${month}-${year}`;
-  //   }
-  //   return "";
-  // };
-  const formatDate = (date) => {
-    const d = new Date(date);
-    if (isNaN(d.getTime())) return ""; 
-    const day = ("0" + d.getDate()).slice(-2);
-    const month = ("0" + (d.getMonth() + 1)).slice(-2);
-    let year = d.getFullYear().toString();
-    if (year.length > 4) {
-        year = year.slice(0, 4);
-    }
-
-    return `${day}-${month}-${year}`;
-};
   const handleExpenseChange = (index, field, value) => {
     const updatedExpenses = [...expenses];
     updatedExpenses[index][field] = value;
@@ -133,14 +119,13 @@ const AddExpenses = () => {
 
   const formatIndianNumbering = (num) => {
     if (isNaN(num)) return num;
-    num = num.toString().split('.');
+    num = num.toString().split(".");
     let integerPart = num[0];
-    const decimalPart = num[1] ? '.' + num[1] : '';
+    const decimalPart = num[1] ? "." + num[1] : "";
     const regex = /\B(?=(\d{3})+(?!\d))/g;
-    integerPart = integerPart.replace(regex, ',');
+    integerPart = integerPart.replace(regex, ",");
     return integerPart + decimalPart;
   };
-
 
   const calculateTotalAmount = () => {
     const totalAmount = expenses.reduce(
@@ -230,9 +215,19 @@ const AddExpenses = () => {
       updatedExpenses[index].projectError = !expense.project;
       updatedExpenses[index].expenseHeadError = !expense.expenseHead;
       updatedExpenses[index].narrationError = !expense.narration.trim();
-      updatedExpenses[index].amountError = !expense.amount || isNaN(expense.amount) || parseFloat(expense.amount) <= 0;
+      updatedExpenses[index].amountError =
+        !expense.amount ||
+        isNaN(expense.amount) ||
+        parseFloat(expense.amount) <= 0;
 
-      if (!expense.project || !expense.expenseHead || !expense.narration.trim() || !expense.amount || isNaN(expense.amount) || parseFloat(expense.amount) <= 0) {
+      if (
+        !expense.project ||
+        !expense.expenseHead ||
+        !expense.narration.trim() ||
+        !expense.amount ||
+        isNaN(expense.amount) ||
+        parseFloat(expense.amount) <= 0
+      ) {
         isValid = false;
       }
     });
@@ -260,10 +255,17 @@ const AddExpenses = () => {
         return;
       }
 
-      const totalAmount = expenses.reduce((acc, expense) => acc + (parseFloat(expense.amount) || 0), 0);
+      const totalAmount = expenses.reduce(
+        (acc, expense) => acc + (parseFloat(expense.amount) || 0),
+        0
+      );
 
-      const projectIds = expenses.map((expense) => expense.project).filter((projectId) => projectId);
-      const expenseHeadIds = expenses.map((expense) => expense.expenseHead).filter((expenseHeadId) => expenseHeadId);
+      const projectIds = expenses
+        .map((expense) => expense.project)
+        .filter((projectId) => projectId);
+      const expenseHeadIds = expenses
+        .map((expense) => expense.expenseHead)
+        .filter((expenseHeadId) => expenseHeadId);
 
       if (projectIds.length === 0 || expenseHeadIds.length === 0) {
         toast.error("❌ Please select project and expense head for all items.");
@@ -311,7 +313,10 @@ const AddExpenses = () => {
           name: expenseDetails[index]?.name || "",
         }));
 
-        console.log("Updated expenses with ExpenseMasterId:", updatedExpensesWithMasterId);
+        console.log(
+          "Updated expenses with ExpenseMasterId:",
+          updatedExpensesWithMasterId
+        );
 
         setExpenses(updatedExpensesWithMasterId);
 
@@ -370,16 +375,15 @@ const AddExpenses = () => {
                   <form onSubmit={handleSubmit}>
                     <div className="row pt-1 pb-5 border-bottom">
                       <div className="col">
-                        <input
-                          type="text"
+                        <DatePicker
                           id="date"
-                          className={`form-control ${expenseDateError ? "is-invalid" : ""
-                            }`}
-                          value={formatDate(expenseDate)}
-                          placeholder="Expense Date"
-                          onFocus={(e) => (e.target.type = "date")}
-                          onBlur={(e) => (e.target.type = "text")}
-                          onChange={(e) => setExpenseDate(e.target.value)}
+                          selected={expenseDate}
+                          onChange={(date) => setExpenseDate(date)}
+                          placeholderText="Income Date"
+                          className={`form-control ${
+                            expenseDateError  ? "is-invalid" : ""
+                          }`}
+                          dateFormat="dd/MM/yyyy"
                         />
                         {expenseDateError && (
                           <div className="invalid-feedback">
@@ -390,8 +394,9 @@ const AddExpenses = () => {
                       <div className="col">
                         <input
                           type="text"
-                          className={`form-control ${voucherNoError ? "is-invalid" : ""
-                            }`}
+                          className={`form-control ${
+                            voucherNoError ? "is-invalid" : ""
+                          }`}
                           value={voucherNo}
                           placeholder="Voucher No"
                           onChange={(e) => setVoucherNo(e.target.value)}
@@ -424,10 +429,16 @@ const AddExpenses = () => {
                           <tr key={expense.id}>
                             <td>
                               <select
-                                className={`form-select ${expense.projectError ? "is-invalid" : ""}`}
+                                className={`form-select ${
+                                  expense.projectError ? "is-invalid" : ""
+                                }`}
                                 value={expense.project || ""}
                                 onChange={(e) =>
-                                  handleExpenseChange(index, "project", e.target.value)
+                                  handleExpenseChange(
+                                    index,
+                                    "project",
+                                    e.target.value
+                                  )
                                 }
                               >
                                 <option value="" disabled>
@@ -448,8 +459,9 @@ const AddExpenses = () => {
                             <td>
                               <input
                                 type="text"
-                                className={`form-control ${expense.narrationError ? "is-invalid" : ""
-                                  }`}
+                                className={`form-control ${
+                                  expense.narrationError ? "is-invalid" : ""
+                                }`}
                                 value={expense.narration}
                                 onChange={(e) =>
                                   handleExpenseChange(
@@ -467,30 +479,47 @@ const AddExpenses = () => {
                             </td>
                             <td>
                               <select
-                                className={`form-select ${expense.expenseHeadError ? "is-invalid" : ""}`}
+                                className={`form-select ${
+                                  expense.expenseHeadError ? "is-invalid" : ""
+                                }`}
                                 value={expense.expenseHead}
-                                onChange={(e) => handleExpenseHeadChange(index, e.target.value)}
+                                onChange={(e) =>
+                                  handleExpenseHeadChange(index, e.target.value)
+                                }
                               >
                                 <option value="" disabled>
                                   Select
                                 </option>
-                                <option value="add-new-option" onClick={handleOpenModal}>
+                                <option
+                                  value="add-new-option"
+                                  onClick={handleOpenModal}
+                                >
                                   Add new expense head...
                                 </option>
                                 {expenseHeads.map((expenseHead) => (
-                                  <option key={expenseHead.id} value={expenseHead.id}>
+                                  <option
+                                    key={expenseHead.id}
+                                    value={expenseHead.id}
+                                  >
                                     {expenseHead.ExpenseHeadName}
                                   </option>
                                 ))}
                               </select>
                               {expense.expenseHeadError && (
-                                <div className="invalid-feedback">Please select an expense head.</div>
+                                <div className="invalid-feedback">
+                                  Please select an expense head.
+                                </div>
                               )}
 
                               {/* Modal for Adding New Expense Head */}
-                              <Modal show={isModalOpen} onHide={handleCloseModal}>
+                              <Modal
+                                show={isModalOpen}
+                                onHide={handleCloseModal}
+                              >
                                 <Modal.Header closeButton>
-                                  <Modal.Title>Add New Expense Head</Modal.Title>
+                                  <Modal.Title>
+                                    Add New Expense Head
+                                  </Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
                                   <input
@@ -502,7 +531,10 @@ const AddExpenses = () => {
                                   />
                                 </Modal.Body>
                                 <Modal.Footer>
-                                  <button className="btn btn-secondary" onClick={handleCloseModal}>
+                                  <button
+                                    className="btn btn-secondary"
+                                    onClick={handleCloseModal}
+                                  >
                                     Close
                                   </button>
                                   <button
@@ -518,8 +550,9 @@ const AddExpenses = () => {
                             <td>
                               <input
                                 type="number"
-                                className={`form-control ${expense.amountError ? "is-invalid" : ""
-                                  }`}
+                                className={`form-control ${
+                                  expense.amountError ? "is-invalid" : ""
+                                }`}
                                 value={expense.amount}
                                 onChange={(e) =>
                                   handleExpenseChange(
@@ -565,13 +598,15 @@ const AddExpenses = () => {
                             colSpan={2}
                             style={{ width: "130px" }}
                           >
-                            {formatIndianNumbering(calculateTotalAmount())} <br />
+                            {formatIndianNumbering(calculateTotalAmount())}{" "}
+                            <br />
                             {convertAmountToWords(calculateTotalAmount())}
                           </td>
                         </tr>
                       </tbody>
                     </table>
-                    <input type="hidden"
+                    <input
+                      type="hidden"
                       value={formatIndianNumbering(calculateTotalAmount())}
                     />
                     <button
@@ -584,7 +619,6 @@ const AddExpenses = () => {
                       ) : (
                         "Submit"
                       )}
-
                     </button>
                   </form>
                 </div>

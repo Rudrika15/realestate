@@ -10,6 +10,8 @@ import { getProject, getPartner } from "../../Api/ApiDipak";
 import axios from "axios";
 import { storePartnerIncome } from "../../Api/DevanshiApi";
 import { Spinner } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const AddPartnerIncome = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
@@ -26,6 +28,8 @@ const AddPartnerIncome = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
+
+  console.log(new Date());
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -46,6 +50,7 @@ const AddPartnerIncome = () => {
           "Content-Type": "application/json",
         },
       });
+      console.log(response);
 
       if (response.data.status === true && response.data.data) {
         setPartner(response.data.data);
@@ -97,12 +102,14 @@ const AddPartnerIncome = () => {
     if (!partner) validationErrors.partner = "Partner is required";
     if (!project) validationErrors.project = "Project is required";
     if (!incomeDate) validationErrors.incomeDate = "Income Date is required";
-    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) validationErrors.amount = "Valid Amount is required";
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0)
+      validationErrors.amount = "Valid Amount is required";
     if (!paymentMode) validationErrors.paymentMode = "Payment Mode is required";
 
     if (paymentMode === "Cheque") {
       if (!chequeDate) validationErrors.chequeDate = "Cheque Date is required";
-      if (!chequeNumber.trim()) validationErrors.chequeNumber = "Cheque Number is required";
+      if (!chequeNumber.trim())
+        validationErrors.chequeNumber = "Cheque Number is required";
       if (!bankName.trim()) validationErrors.bankName = "Bank Name is required";
     }
 
@@ -124,15 +131,22 @@ const AddPartnerIncome = () => {
       }
 
       const requestData = {
-        projectId: Array.isArray(project) ? Number(project[0]?.id) : Number(project),
+        projectId: Array.isArray(project)
+          ? Number(project[0]?.id)
+          : Number(project),
         incomeType: "Partner Income",
         amount: Number(amount),
         paymentMode,
         dateReceived: incomeDate,
-        PartnerId: Array.isArray(partner) ? Number(partner[0]?.id) : Number(partner),
+        PartnerId: Array.isArray(partner)
+          ? Number(partner[0]?.id)
+          : Number(partner),
         bankName: paymentMode === "Cheque" ? bankName : "",
         chequeNumber: paymentMode === "Cheque" ? chequeNumber : "",
-        chequeDate: paymentMode === "Cheque" && chequeDate ? new Date(chequeDate).toISOString().split("T")[0] : null, // Ensure valid date format
+        chequeDate:
+          paymentMode === "Cheque" && chequeDate
+            ? new Date(chequeDate).toISOString().split("T")[0]
+            : null, // Ensure valid date format
         remark,
       };
 
@@ -146,7 +160,9 @@ const AddPartnerIncome = () => {
       });
 
       if (response.data.success) {
-        toast.success(response.data.message || "Partner Income added successfully!");
+        toast.success(
+          response.data.message || "Partner Income added successfully!"
+        );
         console.log("Created Income Data:", response.data.data);
         setTimeout(() => {
           navigate("/partner-income");
@@ -157,7 +173,10 @@ const AddPartnerIncome = () => {
     } catch (error) {
       if (error.response) {
         console.error("Error Response:", error.response.data);
-        toast.error(error.response.data.message || "An error occurred while adding income.");
+        toast.error(
+          error.response.data.message ||
+            "An error occurred while adding income."
+        );
       } else {
         console.error("Error:", error);
         toast.error("Failed to connect to the server. Please try again.");
@@ -168,12 +187,23 @@ const AddPartnerIncome = () => {
   };
 
   useEffect(() => {
-    fetchPartner()
+    fetchPartner();
     fetchProjects();
   }, []);
-
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "partner") {
+      const selectedPartner = partner.find((p) => p.id == value);
+      setProject(selectedPartner ? selectedPartner.projects : []);
+      if (selectedPartner && selectedPartner.projects.length > 0) {
+        setProject(selectedPartner.projects);
+        setFormData((prev) => ({ ...prev, project: "" }));
+      } else {
+        setProject([]);
+        setFormData((prev) => ({ ...prev, project: "" }));
+      }
+    }
   };
 
   return (
@@ -210,10 +240,17 @@ const AddPartnerIncome = () => {
                   <form onSubmit={handleSubmit}>
                     <div className="row">
                       <div className="col">
-                        <select name="partner" className="form-select" value={formData.partner} onChange={handleChange}>
+                        <select
+                          name="partner"
+                          className="form-select"
+                          value={formData.partner}
+                          onChange={handleChange}
+                        >
                           <option value="">Select Partner</option>
                           {partner.map((p) => (
-                            <option key={p.id} value={p.id}>{p.partnerName}</option>
+                            <option key={p.id} value={p.id}>
+                              {p.partnerName}
+                            </option>
                           ))}
                         </select>
                         {error.partner && (
@@ -223,12 +260,27 @@ const AddPartnerIncome = () => {
                         )}
                       </div>
                       <div className="col">
-                        <select name="project" className="form-select" value={formData.project} onChange={handleChange}>
+                        {/* <select name="project" className="form-select" value={formData.project} onChange={handleChange}>
                           <option value="">Select Project</option>
                           {project.map((p) => (
                             <option key={p.id} value={p.id}>{p.projectName}</option>
                           ))}
+                        </select> */}
+                        <select
+                          name="project"
+                          className="form-select"
+                          value={formData.project}
+                          onChange={handleChange}
+                          disabled={!formData.partner}
+                        >
+                          <option value="">Select Project</option>
+                          {project.map((p, index) => (
+                            <option key={index} value={p.projectName}>
+                              {p.projectName}
+                            </option>
+                          ))}
                         </select>
+
                         {error.project && (
                           <div className="invalid-feedback">
                             {error.project}
@@ -237,30 +289,26 @@ const AddPartnerIncome = () => {
                       </div>
                       <div className="col ">
                         <div className="input-wrapper position-relative">
-                          <input
-                            type="text"
+                          <DatePicker
                             id="date"
-                            className={`form-control ${error.incomeDate ? "is-invalid" : ""
-                              }`}
-                            value={
-                              incomeDate
-                                ? new Date(incomeDate).toLocaleDateString(
-                                  "en-GB",
-                                  {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "2-digit",
-                                  }
-                                )
-                                : ""
-                            }
-                            onChange={(e) => setIncomeDate(e.target.value)}
-                            placeholder="Income Date"
-                            onFocus={(e) => (e.target.type = "date")}
-                            onBlur={(e) => (e.target.type = "text")}
+                            selected={incomeDate}
+                            onChange={(date) => {
+                              setIncomeDate(date);
+                              if (date) {
+                                setError((prev) => ({
+                                  ...prev,
+                                  incomeDate: "",
+                                }));
+                              }
+                            }}
+                            placeholderText="Income Date"
+                            className={`form-control ${
+                              error.incomeDate ? "is-invalid" : ""
+                            }`}
+                            dateFormat="dd/MM/yyyy"
                           />
                           {error.incomeDate && (
-                            <div className="invalid-feedback">
+                            <div className="text-danger">
                               {error.incomeDate}
                             </div>
                           )}
@@ -311,30 +359,26 @@ const AddPartnerIncome = () => {
                       <div className="row pt-3">
                         <div className="col-4">
                           <div className="input-wrapper position-relative">
-                            <input
-                              type="text"
+                            <DatePicker
                               id="date"
-                              className={`form-control ${error.chequeDate ? "is-invalid" : ""
-                                }`}
-                              value={
-                                chequeDate
-                                  ? new Date(chequeDate).toLocaleDateString(
-                                    "en-GB",
-                                    {
-                                      day: "2-digit",
-                                      month: "2-digit",
-                                      year: "2-digit",
-                                    }
-                                  )
-                                  : ""
-                              }
-                              onChange={(e) => setChequeDate(e.target.value)}
-                              placeholder="Cheque Date"
-                              onFocus={(e) => (e.target.type = "date")}
-                              onBlur={(e) => (e.target.type = "text")}
+                              selected={chequeDate}
+                              onChange={(date) => {
+                                setChequeDate(date);
+                                if (date) {
+                                  setError((prev) => ({
+                                    ...prev,
+                                    chequeDate: "",
+                                  })); // Clear error on selection
+                                }
+                              }}
+                              placeholderText="Cheque Date"
+                              className={`form-control ${
+                                error.chequeDate ? "is-invalid" : ""
+                              }`}
+                              dateFormat="dd/MM/yyyy"
                             />
                             {error.chequeDate && (
-                              <div className="invalid-feedback">
+                              <div className="text-danger">
                                 {error.chequeDate}
                               </div>
                             )}
@@ -343,8 +387,9 @@ const AddPartnerIncome = () => {
                         <div className="col-4">
                           <input
                             type="number"
-                            className={`form-control ${error.chequeNumber ? "is-invalid" : ""
-                              }`}
+                            className={`form-control ${
+                              error.chequeNumber ? "is-invalid" : ""
+                            }`}
                             placeholder="Cheque Number"
                             value={chequeNumber}
                             onChange={(e) => setChequeNumber(e.target.value)}
@@ -358,8 +403,9 @@ const AddPartnerIncome = () => {
                         <div className="col-4">
                           <input
                             type="text"
-                            className={`form-control ${error.bankName ? "is-invalid" : ""
-                              }`}
+                            className={`form-control ${
+                              error.bankName ? "is-invalid" : ""
+                            }`}
                             placeholder="Bank Name"
                             value={bankName}
                             onChange={(e) => setBankName(e.target.value)}
@@ -376,8 +422,9 @@ const AddPartnerIncome = () => {
                       <div className="col pt-3">
                         <input
                           type="number"
-                          className={`form-control ${error.amount ? "is-invalid" : ""
-                            }`}
+                          className={`form-control ${
+                            error.amount ? "is-invalid" : ""
+                          }`}
                           id="amount"
                           placeholder="Amount"
                           name="amount"
@@ -393,8 +440,9 @@ const AddPartnerIncome = () => {
                     <div className="row w-75">
                       <div className="col pt-3 mb-3">
                         <textarea
-                          className={`form-control ${error.remark ? "is-invalid" : ""
-                            }`}
+                          className={`form-control ${
+                            error.remark ? "is-invalid" : ""
+                          }`}
                           placeholder="Remark"
                           id="floatingTextarea"
                           value={remark}

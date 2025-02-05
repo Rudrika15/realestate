@@ -32,6 +32,7 @@ const ViewBooking = () => {
     const parts = num.split(".");
     let integerPart = parts[0];
     const decimalPart = parts[1] === "00" ? "" : "." + parts[1];
+    if (integerPart.length <= 3) return integerPart + decimalPart;
     const lastThree = integerPart.slice(-3);
     const otherNumbers = integerPart.slice(0, -3);
     const formattedInteger =

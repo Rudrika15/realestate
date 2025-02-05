@@ -46,6 +46,22 @@ const PartnerIncome = () => {
     }
   };
 
+  
+  const formatIndianNumbering = (num) => {
+    if (isNaN(num)) return num;
+    num = parseFloat(num).toFixed(2);
+    const parts = num.split(".");
+    let integerPart = parts[0];
+    const decimalPart = parts[1] === "00" ? "" : "." + parts[1];
+    if (integerPart.length <= 3) return integerPart + decimalPart;
+    const lastThree = integerPart.slice(-3);
+    const otherNumbers = integerPart.slice(0, -3);
+    const formattedInteger =
+      otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree;
+    return formattedInteger + decimalPart;
+  };
+ 
+
   useEffect(() => {
     fetchPartnerIncome();
   }, []);
@@ -104,7 +120,7 @@ const PartnerIncome = () => {
                               <td>{income.Project?.projectName || "N/A"}</td>
                               <td>{income.dateReceived ? new Date(income.dateReceived).toLocaleDateString() : "N/A"}</td>
                               <td>{income.paymentMode || "N/A"}</td>
-                              <td>{parseFloat(income.amount).toFixed(2) || "N/A"}</td>
+                              <td>{formatIndianNumbering(parseFloat(income.amount).toFixed(2) || "N/A")}</td>
                               {/* <td>
                                 {income.PartnerIncome?.remark || income.PartnerIncome?.remark || "N/A"}
                               </td> */}
