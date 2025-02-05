@@ -129,9 +129,13 @@ function Booking() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTopbarOpen, setIsTopbarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isLoanFromBuildersBank, setIsLoanFromBuildersBank] = useState(null);
   const navigate = useNavigate();
   const remainingAmount = saleAmount - tokenAmount - downPayment;
   const installmentAmount = remainingAmount / noOfInstallment;
+  const [LoanFields, setLoanFields] = useState(false);
+  const [InstallmentFields, setInstallmentFields] = useState(false);
+  const [DownPaymentFields, setDownPaymentFields] = useState(false);
 
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value;
@@ -140,6 +144,12 @@ function Booking() {
       setModalType("Add Broker");
       setShowModal(true);
     }
+  };
+
+  const handleRadioChange = (e) => {
+    setLoanFields(e.target.value === "Loan");
+    setShowTokenFields1(e.target.value === "DownPayment");
+    setShowTokenFields2(e.target.value === "Installment");
   };
 
   const handleCloseModal = () => {
@@ -621,6 +631,16 @@ function Booking() {
   const handleBankChange = (e) => {
     setBankName(e.target.value);
     if (e.target.value) setBankNameError(false);
+  };
+
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+    if (e.target.value) setStatusError(false);
+  };
+
+  const handleAgentNameChange = (e) => {
+    setAgent(e.target.value);
+    if (e.target.value) setAgentError(false);
   };
 
   const handleTokenPaymentDateChange = (e) => {
@@ -1160,7 +1180,18 @@ function Booking() {
                           Token Payment
                         </label>
                       </div> */}
-                      <div className="form-check me-5 mb-3">
+                      <div class="form-check-inline1 mb-4">
+                        <label class="form-check-label1">
+                          <input type="radio" class="form-check-input1" value="DownPayment" onChange={handleRadioChange} name="optradio" /> Down Payment
+                        </label>
+                        <label class="form-check-label1">
+                          <input type="radio" class="form-check-input1" name="optradio" value="Installment" onChange={handleRadioChange} /> Installment Payment
+                        </label>
+                        <label class="form-check-label1">
+                          <input type="radio" class="form-check-input1" name="optradio" value="Loan" onChange={handleRadioChange} />  Loan Payment
+                        </label>
+                      </div>
+                      {/* <div className="form-check me-5 mb-3">
                         <input
                           type="checkbox"
                           id="down-payment"
@@ -1189,51 +1220,97 @@ function Booking() {
                         <label htmlFor="loan-payment" className="form-check-label">
                           Loan Payment
                         </label>
-                      </div>
+                      </div> */}
                     </div>
-                    <div className="row mb-4">
-                      <div className="col">
-                        <input
-                          type="text"
-                          id="date"
-                          ref={loanDateRef}
-                          className={`form-control ${loanDateError ? "is-invalid" : ""
-                            }`}
-                          value={formatDate(loanDate)}
-                          onChange={(e) => handleLoanDateChange(e)}
-                          onKeyDown={(e) => handleEnter(e, downPaymentRef)}
-                          placeholder="Loan Date"
-                          onFocus={(e) => (e.target.type = "date")}
-                          onBlur={(e) => (e.target.type = "text")}
-                        />
-                        {loanDateError && (
-                          <div className="invalid-feedback">
-                            Please select a Loan Date
+                    {LoanFields && (
+                      <div>
+                        <div className="row mb-4">
+                          <div className="col">
+                            <input
+                              type="text"
+                              id="loanDate"
+                              ref={loanDateRef}
+                              className={`form-control ${loanDateError ? "is-invalid" : ""}`}
+                              value={formatDate(loanDate)}
+                              onChange={handleLoanDateChange}
+                              onKeyDown={(e) => handleEnter(e, downPaymentRef)}
+                              placeholder="Loan Date"
+                              onFocus={(e) => (e.target.type = "date")}
+                              onBlur={(e) => (e.target.type = "text")}
+                            />
+                            {loanDateError && <div className="invalid-feedback">Please select a Loan Date</div>}
                           </div>
-                        )}
-                      </div>
-                      <div className="col">
-                        <input
-                          type="text"
-                          className={`form-control ${bankNameError ? "is-invalid" : ""
-                            }`}
-                          id="tokenamount"
-                          placeholder="Bank Name"
-                          name="tokenamount"
-                          value={bankName}
-                          onChange={handleBankChange}
-                          onKeyDown={(e) =>
-                            handleEnter(e, tokenPaymentDateRef)
-                          }
-                          ref={bankNameRef}
-                        />
-                        {bankNameError && (
-                          <div className="invalid-feedback">
-                            Enter Bank Name
+                          <div className="col">
+                            <input
+                              type="text"
+                              className={`form-control ${bankNameError ? "is-invalid" : ""}`}
+                              id="bankName"
+                              placeholder="Bank Name"
+                              name="bankName"
+                              value={bankName}
+                              onChange={handleBankChange}
+                              onKeyDown={(e) => handleEnter(e, tokenPaymentDateRef)}
+                              ref={bankNameRef}
+                            />
+                            {bankNameError && <div className="invalid-feedback">Enter Bank Name</div>}
                           </div>
-                        )}
+                        </div>
+
+                        <div className="row mb-3">
+                          <div className="col">
+                            <input
+                              type="text"
+                              className={`form-control ${agentError ? "is-invalid" : ""}`}
+                              id="agentName"
+                              placeholder="Agent Name"
+                              name="agent"
+                              value={agent}
+                              onChange={handleAgentNameChange}
+                              onKeyDown={(e) => handleEnter(e, tokenPaymentDateRef)}
+                              ref={agentRef}
+                            />
+                            {agentError && <div className="invalid-feedback">Enter Agent Name</div>}
+                          </div>
+                          <div className="col">
+                            <input
+                              type="text"
+                              className={`form-control ${statusError ? "is-invalid" : ""}`}
+                              id="status"
+                              placeholder="Status"
+                              name="status"
+                              value={status}
+                              onChange={handleStatusChange}
+                              onKeyDown={(e) => handleEnter(e, tokenPaymentDateRef)}
+                              ref={statusRef}
+                            />
+                            {statusError && <div className="invalid-feedback">Enter Status</div>}
+                          </div>
+                        </div>
+
+                        <p className="mb-2">Is Loan from Builders Bank?</p>
+                        <div className="form-check form-check-inline1">
+                          <input
+                            type="radio"
+                            className="form-check-input1"
+                            name="buildersBank"
+                            id="buildersBankYes"
+                            value="yes"
+                            onChange={() => setIsLoanFromBuildersBank(true)}
+                            checked
+                          />
+                          <label className="form-check-label1" htmlFor="buildersBankYes">Yes</label>
+                          <input
+                            type="radio"
+                            className="form-check-input1"
+                            name="buildersBank"
+                            id="buildersBankNo"
+                            value="no"
+                            onChange={() => setIsLoanFromBuildersBank(false)}
+                          />
+                          <label className="form-check-label1" htmlFor="buildersBankNo">No</label>
+                        </div>
                       </div>
-                    </div>
+                    )}
                     <>
                       <p
                         className="text-gray"
