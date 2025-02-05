@@ -27,6 +27,22 @@ const Expenses = () => {
 
   const navigate = useNavigate();
 
+  
+  const formatIndianNumbering = (num) => {
+    if (isNaN(num)) return num;
+    num = parseFloat(num).toFixed(2);
+    const parts = num.split(".");
+    let integerPart = parts[0];
+    const decimalPart = parts[1] === "00" ? "" : "." + parts[1];
+    if (integerPart.length <= 3) return integerPart + decimalPart;
+    const lastThree = integerPart.slice(-3);
+    const otherNumbers = integerPart.slice(0, -3);
+    const formattedInteger =
+      otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree;
+    return formattedInteger + decimalPart;
+  };
+ 
+
   const handleDelete = async (id) => {
     const confirmDelete = await Swal.fire({
       title: "Are You Sure You Want to Delete?",
@@ -167,7 +183,10 @@ const Expenses = () => {
                                   <td>{formatDate(expense.expenceDate)}</td> 
                                   <td>{detail.ExpenseHeadId || "N/A"}</td>
                                   <td>{detail.naration || "N/A"}</td>
-                                  <td className="text-start">{detail.amount || "N/A"}</td>
+                                  <td className="text-start">{formatIndianNumbering(detail.amount || "N/A")}
+                                    {/* {detail.amount || "N/A"} */}
+
+                                  </td>
                                   <td>
                                     <Link
                                       to={`/edit-expenses/${detail.id}`}
@@ -190,7 +209,7 @@ const Expenses = () => {
                                 <td>{formatDate(expense.expenceDate)}</td> 
                                 <td>{expense.ExpenseHeadId || "N/A"}</td>
                                 <td>{expense.naration || "N/A"}</td>
-                                <td className="text-start">{expense.totalAmount || "N/A"}</td>
+                                <td className="text-start">{formatIndianNumbering(expense.totalAmount || "N/A")}</td>
                                 <td>
                                   <Link
                                     to={`/edit-expenses/${expense.id}`}
